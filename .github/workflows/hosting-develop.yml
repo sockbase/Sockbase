@@ -3,9 +3,9 @@ on:
   push:
     branches:
       - develop
-    path:
-      - '.github/workflows/hosting-develop.yml'
-      - 'packages/client/**'
+      path:
+        - '.github/workflows/hosting-develop.yml'
+        - 'packages/client/**'
 jobs:
   deploy:
     runs-on: ubuntu-latest
