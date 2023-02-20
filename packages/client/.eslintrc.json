@@ -1,29 +1,29 @@
 {
-    "extends": [
-        "./../../.eslintrc.json",
-        "plugin:react/recommended"
-    ],
-    "plugins": [
-        "react"
-    ],
-    "settings": {
-        "react": {
-            "version": "detect"
-        }
-    },
-    "rules": {
-        "@typescript-eslint/no-confusing-void-expression": [
-            "warn",
-            {
-                "ignoreArrowShorthand": true
-            }
-        ],
-        "react/react-in-jsx-scope": "off",
-        "react/function-component-definition": [
-            2,
-            {
-                "namedComponents": "arrow-function"
-            }
-        ]
+  "extends": [
+    "./../../.eslintrc.json",
+    "plugin:react/recommended"
+  ],
+  "plugins": [
+    "react"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
     }
+  },
+  "rules": {
+    "@typescript-eslint/no-confusing-void-expression": [
+      "warn",
+      {
+        "ignoreArrowShorthand": true
+      }
+    ],
+    "react/react-in-jsx-scope": "off",
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function"
+      }
+    ]
+  }
 }
