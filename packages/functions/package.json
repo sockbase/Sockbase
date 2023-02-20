@@ -1,0 +1,8 @@
+{
+  "name": "@sockbase/functions",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "firebase-functions": "^4.2.1"
+  }
+}

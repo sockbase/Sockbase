@@ -8,6 +8,7 @@
     "strict": true,
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "moduleResolution": "node"
   }
 }
