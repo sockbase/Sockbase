@@ -15,7 +15,6 @@
     "node": "18"
   },
   "main": "lib/index.js",
-  "type": "module",
   "dependencies": {
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^4.2.1"
