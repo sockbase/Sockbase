@@ -3,9 +3,9 @@ on:
   push:
     branches:
       - develop
-      path:
-        - '.github/workflows/functions-develop.yml'
-        - 'packages/functions/**'
+    path:
+      - '.github/workflows/**'
+      - 'packages/functions/**'
 env:
   sockbaseURL: 'https://scbs.nrsy.jp'
   firebaseProjectId: 'sockbase-dev'
