@@ -1,0 +1,41 @@
+name: [Functions] Deploy to Develop
+on:
+  push:
+    branches:
+      - develop
+    path:
+      - '.github/workflows/functions-develop.yml'
+      - 'packages/functions/**'
+env:
+  sockbaseURL: 'https://scbs.nrsy.jp'
+  firebaseProjectId: 'sockbase-dev'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/functions
+      
+      steps:
+        - uses: action/checkout@v2
+
+        - name: Install monorepo packages
+          working-directory: ./
+          run: yarn install
+        
+        - name: Install Firebase
+          run: yarn global add firebase-tools
+        
+        - name: Install package for client
+          run: yarn install
+        
+        - name: Configure Firebase Environment Variables
+          run: firebase functions:config:set --project ${{ env.firebaseProjectId }} 
+          env:
+            FIREBASE_TOKEN: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOCKBASE_DEV }}"
+        
+        - name: Deploy to Firebase
+          run: firebase deploy --only functions --project ${{ env.firebaseProjectId }}
+          env:
+            FIREBASE_TOKEN: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOCKBASE_DEV }}"
