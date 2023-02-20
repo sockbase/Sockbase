@@ -38,4 +38,4 @@ jobs:
       - name: Deploy to Firebase
         run: firebase deploy --only functions --project ${{ env.firebaseProjectId }}
         env:
-          FIREBASE_TOKEN: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SOCKBASE_DEV }}"
+          FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
