@@ -1,4 +1,4 @@
-name: [Hosting] Deploy to Develop
+name: "[Hosting] Deploy to Develop"
 on:
   push:
     branches:
