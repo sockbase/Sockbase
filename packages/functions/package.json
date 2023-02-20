@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "@sockbase/functions",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
