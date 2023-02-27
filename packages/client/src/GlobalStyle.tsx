@@ -1,15 +1,12 @@
 import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
-* {
-  box-sizing: border-box;
-}
 html, body {
-  margin: 0;
-  padding: 0;
+  font-family: "Noto Sans JP", sans-serif;
+  height: 100vh;
 }
-body {
-  font-family: sans-serif;
+#root {
+  height: 100%;
 }
 `
 
