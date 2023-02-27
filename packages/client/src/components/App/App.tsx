@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './../../assets/react.svg'
 
 const App: React.FC = () => {
   const [count, setCount] = useState(0)
@@ -9,9 +8,6 @@ const App: React.FC = () => {
       <div>
         <a href="https://vitejs.dev" rel="noreferrer" target="_blank">
           <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" rel="noreferrer" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
       <h1>Sockbase</h1>
