@@ -134,9 +134,11 @@ const FormTemplate: React.FC = (props) => {
         </FormItem>
       </FormSection>
 
-      <FormItem>
-        <FormButton>入力内容確認</FormButton>
-      </FormItem>
+      <FormSection>
+        <FormItem>
+          <FormButton>入力内容確認</FormButton>
+        </FormItem>
+      </FormSection>
     </>
   )
 }
