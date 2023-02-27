@@ -7,7 +7,7 @@ import Footer from './Footer'
 
 interface Props {
   children: React.ReactNode
-  title: string
+  title?: string
 }
 const DefaultLayout: React.FC<Props> = (props) => {
   return (
@@ -29,7 +29,7 @@ const StyledLayout = styled.div({
 const StyledContainer = styled.main`
   padding: 40px 25%;
 
-  @media screen and (max-width: 1000px) {
-    padding: 10px;
+  @media screen and (max-width: 840px) {
+    padding: 20px;
   }
 `
