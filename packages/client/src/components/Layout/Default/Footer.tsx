@@ -1,11 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 
+import LogoSVG from '../../../assets/logo.svg'
+
 const Footer: React.FC = () => {
   return (
     <StyledFooter>
       <Copyright>Powered by Sockbase</Copyright>
-      <Logo>Logo</Logo>
+      <Logo>
+        <LogoImage src={LogoSVG} alt="Sockbase Logo" />
+      </Logo>
     </StyledFooter>
   )
 }
@@ -18,6 +22,9 @@ const StyledFooter = styled.footer`
   text-align: center;
 `
 const Copyright = styled.div`
-margin-bottom: 20px;
+margin-bottom: 40px;
 `
 const Logo = styled.div``
+const LogoImage = styled.img`
+  height: 32px;
+`
