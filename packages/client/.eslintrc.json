@@ -24,6 +24,7 @@
       {
         "namedComponents": "arrow-function"
       }
-    ]
+    ],
+    "react/prop-types": "off"
   }
 }
