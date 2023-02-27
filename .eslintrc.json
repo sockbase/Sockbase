@@ -21,10 +21,7 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    "@typescript-eslint/strict-boolean-expressions": [
-      "error",
-      "allowString"
-    ]
+    "@typescript-eslint/strict-boolean-expressions": "off"
     // "semi": [
     //     "error",
     //     "never"

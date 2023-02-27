@@ -2,16 +2,16 @@ import React from 'react'
 import styled from 'styled-components'
 
 interface Props {
-  steps: {
-    text: string,
+  steps: Array<{
+    text: string
     isActive: boolean
-  }[]
+  }>
 }
 
 const StepProgress: React.FC<Props> = (props) => {
   return (
     <StyledStepProgress>
-      {props.steps.map(i => <li className={i.isActive ? 'active' : ''}>{i.text}</li>)}
+      {props.steps.map((i, k) => <li key={k} className={i.isActive ? 'active' : ''}>{i.text}</li>)}
     </StyledStepProgress>
   )
 }

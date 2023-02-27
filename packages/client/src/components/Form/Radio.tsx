@@ -2,11 +2,11 @@ import styled from 'styled-components'
 
 interface Props {
   key: string
-  values: {
+  values: Array<{
     value: string
     text: string
     checked?: boolean
-  }[]
+  }>
 }
 const FormRadio: React.FC<Props> = (props) => {
   return (

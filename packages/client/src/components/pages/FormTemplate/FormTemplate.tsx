@@ -10,10 +10,7 @@ import FormRadio from '../../Form/Radio'
 import FormSelect from '../../Form/Select'
 import FormButton from '../../Form/Button'
 
-interface Props {
-}
-
-const FormTemplate: React.FC<Props> = (props) => {
+const FormTemplate: React.FC = (props) => {
   return (
     <>
       <h1>第二回しおばな祭 サークル申込み受付</h1>
