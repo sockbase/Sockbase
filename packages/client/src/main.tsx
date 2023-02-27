@@ -8,6 +8,7 @@ import ResetStyle from './ResetStyle'
 import GlobalStyle from './GlobalStyle'
 
 import App from './containers/App'
+import FormTemplate from './containers/FormTemplate'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -17,6 +18,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />} />
+
+          <Route path="/formTemplate" element={<FormTemplate />} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>
