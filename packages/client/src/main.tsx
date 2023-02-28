@@ -9,6 +9,7 @@ import GlobalStyle from './GlobalStyle'
 
 import App from './containers/App'
 import FormTemplate from './containers/FormTemplate'
+import DashboardTemplate from './containers/DashboardTemplate'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -20,6 +21,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <Route path="/" element={<App />} />
 
           <Route path="/formTemplate" element={<FormTemplate />} />
+          <Route path="/dashboardTemplate" element={<DashboardTemplate />} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>
