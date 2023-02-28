@@ -9,6 +9,7 @@ import FormHelp from '../../Form/Help'
 import FormRadio from '../../Form/Radio'
 import FormSelect from '../../Form/Select'
 import FormButton from '../../Form/Button'
+import FormSection from '../../Form/FormSection'
 
 const FormTemplate: React.FC = (props) => {
   return (
@@ -39,95 +40,105 @@ const FormTemplate: React.FC = (props) => {
 
       <h2>申込みスペース数</h2>
       <p>ここにお好きなテキストを入力してください。テキストを入力した後は合成ボタンをクリックしてください。</p>
-      <FormItem>
-        <FormLabel>スペース数</FormLabel>
-        <FormRadio key='space' values={[
-          {
-            text: '1スペース',
-            value: '1',
-            checked: true
-          },
-          {
-            text: '2スペース',
-            value: '2',
-            checked: false
-          }
-        ]} />
-      </FormItem>
+      <FormSection>
+        <FormItem>
+          <FormLabel>スペース数</FormLabel>
+          <FormRadio key='space' values={[
+            {
+              text: '1スペース',
+              value: '1',
+              checked: true
+            },
+            {
+              text: '2スペース',
+              value: '2',
+              checked: false
+            }
+          ]} />
+        </FormItem>
+      </FormSection>
 
       <h2>サークル情報</h2>
-      <FormItem>
-        <FormLabel>サークル名</FormLabel>
-        <FormInput />
-      </FormItem>
+      <FormSection>
+        <FormItem>
+          <FormLabel>サークル名</FormLabel>
+          <FormInput />
+        </FormItem>
 
-      <FormItem>
-        <FormLabel>サークル名よみ</FormLabel>
-        <FormInput />
-        <FormHelp>
-          ひらがなのみで入力してください。
-        </FormHelp>
-      </FormItem>
+        <FormItem>
+          <FormLabel>サークル名よみ</FormLabel>
+          <FormInput />
+          <FormHelp>
+            ひらがなのみで入力してください。
+          </FormHelp>
+        </FormItem>
 
-      <FormItem>
-        <FormLabel>ペンネーム</FormLabel>
-        <FormInput />
-      </FormItem>
+        <FormItem>
+          <FormLabel>ペンネーム</FormLabel>
+          <FormInput />
+        </FormItem>
 
-      <FormItem>
-        <FormLabel>ペンネームよみ</FormLabel>
-        <FormInput />
-        <FormHelp>
-          ひらがなのみで入力してください。
-        </FormHelp>
-      </FormItem>
+        <FormItem>
+          <FormLabel>ペンネームよみ</FormLabel>
+          <FormInput />
+          <FormHelp>
+            ひらがなのみで入力してください。
+          </FormHelp>
+        </FormItem>
 
-      <FormItem>
-        <FormLabel>成人向け頒布物の有無</FormLabel>
-        <FormSelect>
-          <option>成人向け頒布物の有無を選択してください</option>
-          <option>成人向け頒布物はありません</option>
-          <option>成人向け頒布物があります</option>
-        </FormSelect>
-      </FormItem>
+        <FormItem>
+          <FormLabel>成人向け頒布物の有無</FormLabel>
+          <FormSelect>
+            <option>成人向け頒布物の有無を選択してください</option>
+            <option>成人向け頒布物はありません</option>
+            <option>成人向け頒布物があります</option>
+          </FormSelect>
+        </FormItem>
+      </FormSection>
 
       <h2>サークルカット</h2>
       <p>ここにお好きなテキストを入力してください。テキストを入力した後は合成ボタンをクリックしてください。</p>
-      <FormItem>
-        <FormLabel>サークルカット</FormLabel>
-        <FormInput type="file" />
-      </FormItem>
+      <FormSection>
+        <FormItem>
+          <FormLabel>サークルカット</FormLabel>
+          <FormInput type="file" />
+        </FormItem>
+      </FormSection>
 
       <h2>申込み責任者情報</h2>
-      <FormItem>
-        <FormLabel>申込み責任者氏名</FormLabel>
-        <FormInput />
-      </FormItem>
+      <FormSection>
+        <FormItem>
+          <FormLabel>申込み責任者氏名</FormLabel>
+          <FormInput />
+        </FormItem>
 
-      <FormItem>
-        <FormLabel>メールアドレス</FormLabel>
-        <FormInput type="email" />
-        <FormHelp>
-          受信できるメールアドレスを入力してください。
-        </FormHelp>
-      </FormItem>
+        <FormItem>
+          <FormLabel>メールアドレス</FormLabel>
+          <FormInput type="email" />
+          <FormHelp>
+            受信できるメールアドレスを入力してください。
+          </FormHelp>
+        </FormItem>
 
-      <FormItem>
-        <FormLabel>Sockbase ログインパスワード</FormLabel>
-        <FormInput type="password" />
-        <FormHelp>
-          よしなに書く
-        </FormHelp>
-      </FormItem>
+        <FormItem>
+          <FormLabel>Sockbase ログインパスワード</FormLabel>
+          <FormInput type="password" />
+          <FormHelp>
+            よしなに書く
+          </FormHelp>
+        </FormItem>
 
-      <FormItem>
-        <FormLabel>Sockbase ログインパスワード(再入力)</FormLabel>
-        <FormInput type="password" />
-      </FormItem>
+        <FormItem>
+          <FormLabel>Sockbase ログインパスワード(再入力)</FormLabel>
+          <FormInput type="password" />
+        </FormItem>
+      </FormSection>
 
-      <FormItem>
-        <FormButton>入力内容確認</FormButton>
-      </FormItem>
+      <FormSection>
+        <FormItem>
+          <FormButton>入力内容確認</FormButton>
+        </FormItem>
+      </FormSection>
     </>
   )
 }
