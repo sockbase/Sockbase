@@ -16,7 +16,7 @@ const PageTitle: React.FC<Props> = (props) => {
   )
 }
 
-const StyledPageTitleContainer = styled.div`
+const StyledPageTitleContainer = styled.header`
   display: grid;
   padding-bottom: 20px;
   margin-bottom: 20px;

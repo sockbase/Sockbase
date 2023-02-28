@@ -148,8 +148,8 @@ const Sidebar: React.FC = (props) => {
   )
 }
 
-const StyledSidebarContainer = styled.div``
-const StyledSection = styled.div`
+const StyledSidebarContainer = styled.nav``
+const StyledSection = styled.section`
   margin-bottom: 10px;
   &:last-child {
     margin-bottom: 0;
@@ -167,7 +167,7 @@ const StyledSectionHeader = styled.h2`
     display: none;
   }
 `
-const StyledMenu = styled.div``
+const StyledMenu = styled.section``
 const StyledMenuItem = styled(Link)`
   display: grid;
   grid-template-columns: 48px 1fr;
