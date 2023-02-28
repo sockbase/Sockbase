@@ -1,7 +1,7 @@
-
 import styled from 'styled-components'
 
 import HeadHelper from '../../../libs/Helmet'
+import LogotypeSVG from '../../../assets/logotype.svg'
 
 interface Props {
   children: React.ReactNode
@@ -11,7 +11,7 @@ const DashboardLayout: React.FC<Props> = (props) => {
   return (
     <StyledLayout>
       <HeadHelper title={props.title} />
-      <StyledHeader>ロゴ</StyledHeader>
+      <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
       <StyledContainer>
         <StyledSidebar>sidebar</StyledSidebar>
         <StyledMain>{props.children}</StyledMain>
@@ -24,7 +24,7 @@ export default DashboardLayout
 
 const StyledLayout = styled.div`
   display: grid;
-  max-height: 100%;
+  height: 100%;
   grid-template-rows: auto 1fr;
   overflow: hidden;
 `
@@ -34,7 +34,7 @@ const StyledHeader = styled.header`
 `
 const StyledContainer = styled.div`
   display: grid;
-  max-height: 100%;
+  height: 100%;
   overflow-y: hidden;
   grid-template-columns: 25% 1fr;
 `
@@ -46,4 +46,8 @@ const StyledSidebar = styled.nav`
 const StyledMain = styled.main`
   padding: 20px;
   overflow-y: auto;
+`
+
+const Logotype = styled.img`
+  height: 16px;
 `

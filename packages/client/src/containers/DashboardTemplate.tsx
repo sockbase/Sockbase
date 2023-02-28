@@ -1,12 +1,12 @@
 import DashboardLayout from '../components/Layout/Dashboard/Dashboard'
-import FormTemplateComponent from '../components/pages/FormTemplate/FormTemplate'
+import DashboardTemplateComponent from '../components/pages/DashboardTemplate/DashboardTemplate'
 
-const FormTemplate: React.FC = () => {
+const DashboardTemplate: React.FC = () => {
   return (
     <DashboardLayout title="ダッシュボード">
-      <FormTemplateComponent />
+      <DashboardTemplateComponent />
     </DashboardLayout>
   )
 }
 
-export default FormTemplate
+export default DashboardTemplate
