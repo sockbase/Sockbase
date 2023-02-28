@@ -2,14 +2,17 @@ import Breadcrumbs from '../../Parts/Breadcrumbs'
 import PageTitle from '../../Layout/Dashboard/PageTitle'
 import Alert from '../../Parts/Alert'
 
+import { MdEditNote } from 'react-icons/md'
+
 const DashboardTemplate: React.FC = (props) => {
   return (
     <>
       <Breadcrumbs>
-        <li>ダッシュボード</li>
+        <li><a href="">ダッシュボード</a></li>
         <li>第二回しおばな祭</li>
       </Breadcrumbs>
       <PageTitle
+        icon={<MdEditNote />}
         title="ねくたりしょん / Nectarition"
         description="サークル申込み情報照会" />
 
