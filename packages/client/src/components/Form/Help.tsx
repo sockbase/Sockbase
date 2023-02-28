@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const FormHelp = styled.div`
+const FormHelp = styled.label`
   display: block;
   margin-top: -2px;
   padding: 5px;

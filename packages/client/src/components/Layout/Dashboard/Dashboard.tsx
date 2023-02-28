@@ -26,7 +26,7 @@ const DashboardLayout: React.FC<Props> = (props) => {
 
 export default DashboardLayout
 
-const StyledLayout = styled.div`
+const StyledLayout = styled.section`
   display: grid;
   height: 100%;
   grid-template-rows: auto 1fr;
@@ -36,7 +36,7 @@ const StyledHeader = styled.header`
   padding: 10px;
   background-color: #ea6183;
 `
-const StyledContainer = styled.div`
+const StyledContainer = styled.section`
   display: grid;
   height: 100%;
   overflow-y: hidden;
