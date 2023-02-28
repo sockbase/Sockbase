@@ -5,11 +5,9 @@ const useFirebaseError: () => IUseFirebaseError =
   () => {
     const parse: (errorMessage: string) => string =
       (errorMessage) => {
-        const message = errorMessage.includes('auth/wrong-password')
-          ? 'メールアドレスまたはパスワードが違います'
-          : errorMessage.includes('auth/user-not-found')
-            ? 'ユーザが見つかりません'
-            : errorMessage
+        const message = errorMessage.includes('auth/wrong-password') || errorMessage.includes('auth/user-not-found')
+          ? 'メールアドレスが間違っています'
+          : errorMessage
         return message
       }
 
