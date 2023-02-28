@@ -6,6 +6,7 @@ import FormItem from '../../Form/FormItem'
 import FormLabel from '../../Form/Label'
 import FormInput from '../../Form/Input'
 import FormButton from '../../Form/Button'
+import Alert from '../../Parts/Alert'
 
 interface Props {
   email: string
@@ -16,6 +17,7 @@ interface Props {
   login: () => void
   logout: () => void
   isProccesing: boolean
+  error?: { title: string, content: string }
 
   user?: User
   isLoggedIn?: boolean
@@ -27,6 +29,13 @@ const LoginSandbox: React.FC<Props> = (props) => {
       <h1>ログインサンドボックス</h1>
 
       <h2>ログイン</h2>
+      {
+        props.error &&
+        <Alert
+          type="danger"
+          title={props.error.title}>{props.error.content}</Alert>
+      }
+
       <Form>
         <FormSection>
           <FormItem>
