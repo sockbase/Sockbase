@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 
 interface Props {
+  icon?: React.ReactNode
   title?: string
   description?: string
 }
@@ -8,7 +9,7 @@ interface Props {
 const PageTitle: React.FC<Props> = (props) => {
   return (
     <StyledPageTitleContainer>
-      <StyledIcon>icon</StyledIcon>
+      <StyledIcon>{props.icon}</StyledIcon>
       <StyledTitle>{props.title}</StyledTitle>
       <StyledDescription>{props.description}</StyledDescription>
     </StyledPageTitleContainer>
@@ -25,12 +26,12 @@ const StyledPageTitleContainer = styled.div`
   grid-template-rows: auto auto;
 `
 const StyledIcon = styled.div`
-  grid-row: 1 / 2;
-  & * {
-    display: flex;
-    justify-items: center;
-    align-items: center;
-  }
+  grid-row: 1 / 3;
+
+  font-size: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 const StyledTitle = styled.div`
   grid-column: 2;

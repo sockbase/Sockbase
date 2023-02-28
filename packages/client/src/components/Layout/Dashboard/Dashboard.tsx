@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import HeadHelper from '../../../libs/Helmet'
 import LogotypeSVG from '../../../assets/logotype.svg'
 
+import Sidebar from './Sidebar'
+
 interface Props {
   children: React.ReactNode
   title: string
@@ -13,7 +15,9 @@ const DashboardLayout: React.FC<Props> = (props) => {
       <HeadHelper title={props.title} />
       <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
       <StyledContainer>
-        <StyledSidebar>sidebar</StyledSidebar>
+        <StyledSidebar>
+          <Sidebar />
+        </StyledSidebar>
         <StyledMain>{props.children}</StyledMain>
       </StyledContainer>
     </StyledLayout>
