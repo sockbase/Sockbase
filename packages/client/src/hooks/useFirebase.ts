@@ -9,6 +9,8 @@ import {
   sendPasswordResetEmail,
   onIdTokenChanged
 } from 'firebase/auth'
+import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase/firestore'
+
 import { getFirebaseApp } from '../libs/FirebaseApp'
 
 interface IUseFirebase {
@@ -19,8 +21,8 @@ interface IUseFirebase {
   loginByEmail: (email: string, password: string) => Promise<UserCredential>
   logout: () => Promise<void>
   sendPasswordResetURL: (email: string) => Promise<void>
-  // TODO Firestore接続情報
-  //   getFirestore: () => void
+
+  getFirestore: () => Firestore
   // TODO Cloud Storage接続情報
   //   getStorage: () => void
 }
@@ -74,6 +76,9 @@ const useFirebase: () => IUseFirebase =
           })
       }
 
+    const getFirestore: () => Firestore =
+      () => getFirebaseFirestore()
+
     const onAuthenticationUpdated: () => void =
       () => {
         const f: () => Promise<void> =
@@ -97,7 +102,9 @@ const useFirebase: () => IUseFirebase =
       getAuth,
       loginByEmail,
       logout,
-      sendPasswordResetURL
+      sendPasswordResetURL,
+
+      getFirestore
     }
   }
 

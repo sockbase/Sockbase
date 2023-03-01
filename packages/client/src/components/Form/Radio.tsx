@@ -1,23 +1,39 @@
 import styled from 'styled-components'
 
 interface Props {
-  key: string
+  name: string
   values: Array<{
     value: string
     text: string
     checked?: boolean
   }>
+  value: string
+  onChange: (value: string) => void
 }
 const FormRadio: React.FC<Props> = (props) => {
   return (
     <>
-      {props.values.map(i => <>
-        <StyledRadio name={props.key} id={`${props.key}-${i.value}`} value={i.value} checked={i.checked} />
-        <StyledRadioLabel htmlFor={`${props.key}-${i.value}`}>{i.text}</StyledRadioLabel>
-      </>)}
+      {props.values.map(i => <StyledRadioItem key={`${props.name}-${i.value}`}>
+        <StyledRadio
+          name={props.name}
+          id={`${props.name}-${i.value}`}
+
+          value={i.value}
+          onChange={e => props.onChange(e.target.value)}
+          checked={props.value === i.value}
+          defaultChecked={i.checked} />
+        <StyledRadioLabel htmlFor={`${props.name}-${i.value}`}>{i.text}</StyledRadioLabel>
+      </StyledRadioItem>)}
     </>
   )
 }
+
+const StyledRadioItem = styled.div`
+  margin-bottom: 5px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
 
 const StyledRadio = styled.input.attrs({ type: 'radio' })`
   display: none;
@@ -25,7 +41,7 @@ const StyledRadio = styled.input.attrs({ type: 'radio' })`
 
 const StyledRadioLabel = styled.label`
   display: block;
-  margin-bottom: 5px;
+
   padding: 10px;
   padding-left: 44px;
   border: 2px solid #a0a0a0;
@@ -70,10 +86,6 @@ const StyledRadioLabel = styled.label`
     &::after {
       opacity: 1;
     }
-  }
-
-  &:last-child {
-    margin-bottom: 0;
   }
 `
 

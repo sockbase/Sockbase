@@ -4,7 +4,7 @@ const ResetStyle = createGlobalStyle`
 * {
   box-sizing: border-box;
 }
-html, body, ul, ol, li, fieldset {
+html, body, ul, ol, li, fieldset, textarea {
   margin: 0;
   padding: 0;
 }
