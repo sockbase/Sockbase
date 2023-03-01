@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { SockbaseEvent } from 'sockbase'
 
 import StepProgress from '../../../Parts/StepProgress'
@@ -25,15 +25,24 @@ const stepProgresses = [
 
 interface Props {
   event: SockbaseEvent
+  isLoggedIn: boolean
 }
 const StepContainer: React.FC<Props> = (props) => {
   const [step, setStep] = useState(0)
-  const [stepComponents] = useState([
-    <Step1 key="step1" spaces={props.event.spaces} nextStep={() => setStep(1)} />,
-    <p key="step2" onClick={() => setStep(2)}>確認</p>,
-    <p key="step3" onClick={() => setStep(3)}>決済</p>,
-    <p key="step4">完了</p>
-  ]) // 一旦仮組み
+  const [stepComponents, setStepComponents] = useState<JSX.Element[]>() // 一旦仮組み
+
+  const onInitialize: () => void =
+    () => {
+      if (props.isLoggedIn === undefined) return
+
+      setStepComponents([
+        <Step1 isLoggedIn={props.isLoggedIn} key="step1" spaces={props.event.spaces} nextStep={() => setStep(1)} />,
+        < p key="step2" onClick={() => setStep(2)}> 確認</p >,
+        <p key="step3" onClick={() => setStep(3)}>決済</p>,
+        <p key="step4">完了</p>
+      ])
+    }
+  useEffect(onInitialize, [props.isLoggedIn])
 
   return (
     <>
@@ -49,7 +58,7 @@ const StepContainer: React.FC<Props> = (props) => {
         }))
       } />
 
-      {stepComponents[step] ?? 'エラー！'}
+      {stepComponents?.[step] ?? 'エラー！'}
     </>
   )
 }

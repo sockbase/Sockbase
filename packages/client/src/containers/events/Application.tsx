@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { type SockbaseEvent } from 'sockbase'
 
 import useEvent from '../../hooks/useEvent'
+import useFirebase from '../../hooks/useFirebase'
 
 import DefaultLayout from '../../components/Layout/Default/Default'
 import StepContainerComponent from '../../components/pages/events/Application/StepContainer'
@@ -12,6 +13,7 @@ import Loading from '../../components/Parts/Loading'
 const EventApplication: React.FC = () => {
   const params = useParams<{ eventId: string }>()
   const { getEventByIdAsync } = useEvent()
+  const { isLoggedIn, user } = useFirebase()
 
   const [pageTitle, setPageTitle] = useState('')
   const [event, setEvent] = useState<SockbaseEvent | null | undefined>()
@@ -46,7 +48,12 @@ const EventApplication: React.FC = () => {
               指定されたIDのイベントを見つけることができませんでした。<br />
               URLが正しく入力されていることを確認してください。
             </Alert>
-            : event && <StepContainerComponent event={event} />
+            : event && isLoggedIn !== undefined && user !== undefined && <>
+              {user?.email && <Alert>
+                {user.email} としてログイン中です
+              </Alert>}
+              <StepContainerComponent event={event} isLoggedIn={isLoggedIn} />
+            </>
       }
     </DefaultLayout>
   )

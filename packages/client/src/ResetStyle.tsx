@@ -4,11 +4,11 @@ const ResetStyle = createGlobalStyle`
 * {
   box-sizing: border-box;
 }
-html, body, ul, ol, li, fieldset, textarea {
+html, body, fieldset, textarea {
   margin: 0;
   padding: 0;
 }
-h1, h2, h3, h4, h5, h6, p {
+h1, h2, h3, h4, h5, h6, p, ol, ul {
   margin: 0;
   margin-bottom: 20px;
   &:last-child {

@@ -1,13 +1,18 @@
 import styled from 'styled-components'
 
 const Breadcrumbs = styled.ul`
+  margin: 0;
   margin-bottom: 10px;
+  padding: 0;
+  
   &:last-child {
     margin-bottom: 0;
   }
   
   list-style: none;
   li {
+    margin: 0;
+    padding: 0;
     display: inline-block;
     padding-right: 24px;
 
