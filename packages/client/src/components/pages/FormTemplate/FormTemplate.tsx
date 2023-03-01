@@ -41,18 +41,22 @@ const FormTemplate: React.FC = (props) => {
       <FormSection>
         <FormItem>
           <FormLabel>スペース数</FormLabel>
-          <FormRadio key='space' values={[
-            {
-              text: '1スペース',
-              value: '1',
-              checked: true
-            },
-            {
-              text: '2スペース',
-              value: '2',
-              checked: false
-            }
-          ]} />
+          <FormRadio
+            key='space'
+            values={[
+              {
+                text: '1スペース',
+                value: '1',
+                checked: true
+              },
+              {
+                text: '2スペース',
+                value: '2',
+                checked: false
+              }
+            ]}
+            onChange={e => alert(e)}
+            value="" />
         </FormItem>
       </FormSection>
 

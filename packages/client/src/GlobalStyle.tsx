@@ -8,7 +8,7 @@ html, body {
   font-family: "Noto Sans JP", sans-serif;
   height: 100vh;
 }
-input, select {
+input, select, textarea {
   font-family: "Noto Sans JP", sans-serif;
   font-size: 1rem;
 }

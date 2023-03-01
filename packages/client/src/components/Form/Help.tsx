@@ -11,7 +11,7 @@ const FormHelp = styled.label`
   transition: background-color 0.1s linear,
               border 0.1s linear;
 
-  input:focus + & {
+  *:focus + & {
     background-color: #ea618380;
     border: 2px solid #ea618380;
   }
