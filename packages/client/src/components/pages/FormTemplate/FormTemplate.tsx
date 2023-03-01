@@ -42,7 +42,7 @@ const FormTemplate: React.FC = (props) => {
         <FormItem>
           <FormLabel>スペース数</FormLabel>
           <FormRadio
-            key='space'
+            name='space'
             values={[
               {
                 text: '1スペース',
