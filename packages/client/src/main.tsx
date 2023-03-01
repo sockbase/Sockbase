@@ -12,6 +12,17 @@ import FormTemplate from './containers/FormTemplate'
 import DashboardTemplate from './containers/DashboardTemplate'
 import EventApplication from './containers/events/Application'
 
+import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
+
+getFirebaseApp()
+  .catch(err => {
+    throw err
+  })
+initializeAppCheck()
+  .catch(err => {
+    throw err
+  })
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
