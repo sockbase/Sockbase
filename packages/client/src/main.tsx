@@ -6,13 +6,14 @@ import { HelmetProvider } from 'react-helmet-async'
 import './main.css'
 import ResetStyle from './ResetStyle'
 import GlobalStyle from './GlobalStyle'
+import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 
 import App from './containers/App'
 import FormTemplate from './containers/FormTemplate'
 import DashboardTemplate from './containers/DashboardTemplate'
 import EventApplication from './containers/events/Application'
-
-import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
+import TermsOfService from './containers/static/TermsOfService'
+import PrivacyPolicy from './containers/static/PrivacyPolicy'
 
 getFirebaseApp()
   .catch(err => {
@@ -31,6 +32,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/tos" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           <Route path="/formTemplate" element={<FormTemplate />} />
           <Route path="/dashboardTemplate" element={<DashboardTemplate />} />

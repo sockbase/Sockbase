@@ -63,7 +63,7 @@ const useFirebase: () => IUseFirebase =
           .catch(e => {
             throw e
           })
-        setUser(undefined)
+        setUser(null)
         setLoggedIn(false)
       }
 

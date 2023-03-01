@@ -19,7 +19,7 @@ export default StepProgress
 
 const StyledStepProgress = styled.ol`
   margin-bottom: 20px;
-  padding-bottom: 20px;
+  padding: 20px 0;
   border-bottom: 2px solid #e0e0e0;
   display: flex;
   list-style: none;

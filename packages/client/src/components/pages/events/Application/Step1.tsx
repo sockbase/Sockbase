@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import type { SockbaseEventSpace, SockbaseCircleApplication } from 'sockbase'
 
@@ -31,6 +32,7 @@ const paymentMethods: Array<{
 interface Props {
   spaces: SockbaseEventSpace[]
   nextStep: () => void
+  isLoggedIn: boolean
 }
 const Step1: React.FC<Props> = (props) => {
   const [app, setApp] = useState<SockbaseCircleApplication>({
@@ -51,7 +53,7 @@ const Step1: React.FC<Props> = (props) => {
     petitCode: '',
     leader: {
       name: '',
-      birthday: '',
+      birthday: '1990-01-01',
       postalCode: '',
       address: '',
       telephone: '',
@@ -72,8 +74,6 @@ const Step1: React.FC<Props> = (props) => {
       setSpaceInfo(space)
     }
   useEffect(onChangeSpaceSelect, [app.spaceId])
-
-  useEffect(() => console.log(app), [app])
 
   return (
     <>
@@ -189,7 +189,7 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection >
 
-      <h2>隣接配置希望(合体)・プチオンリー情報</h2>
+      <h2>隣接配置希望(合体)情報</h2>
       <FormSection>
         <FormItem>
           <FormLabel>合体希望サークル 合体申込みID</FormLabel>
@@ -199,11 +199,11 @@ const Step1: React.FC<Props> = (props) => {
           <FormHelp>先に申し込んだ方から提供された合体申込みIDを入力してください。</FormHelp>
         </FormItem>
         <FormItem>
-          <FormLabel>プチオンリーコード(任意)</FormLabel>
+          <FormLabel>プチオンリーコード</FormLabel>
           <FormInput
             value={app.petitCode}
             onChange={e => setApp(s => ({ ...s, petitCode: e.target.value }))} />
-          <FormHelp>プチオンリーに参加しない場合は、空欄で問題ありません。</FormHelp>
+          <FormHelp>プチオンリー主催から入力を指示された場合のみ入力してください。</FormHelp>
         </FormItem>
       </FormSection>
 
@@ -246,34 +246,34 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      <h2>Sockbaseログイン情報</h2>
-      <p>
-        申込み情報の確認等に使用するアカウントを作成します。
-      </p>
-      <p>
-        nirsmmy@gmail.com としてログイン中<br />
-        ログアウトする
-      </p>
-      <FormSection>
-        <FormItem>
-          <FormLabel>メールアドレス</FormLabel>
-          <FormInput type="email"
-            value={app.leader.email}
-            onChange={e => setApp(s => ({ ...s, leader: { ...s.leader, email: e.target.value } }))} />
-        </FormItem>
-        <FormItem>
-          <FormLabel>パスワード</FormLabel>
-          <FormInput type="password"
-            value={app.leader.password}
-            onChange={e => setApp(s => ({ ...s, leader: { ...s.leader, password: e.target.value } }))} />
-        </FormItem>
-        <FormItem>
-          <FormLabel>パスワード(確認)</FormLabel>
-          <FormInput type="password"
-            value={app.leader.rePassword}
-            onChange={e => setApp(s => ({ ...s, leader: { ...s.leader, rePassword: e.target.value } }))} />
-        </FormItem>
-      </FormSection>
+      {!props.isLoggedIn
+        ? <>
+          <h2>Sockbaseログイン情報</h2>
+          <p>
+            申込み情報の確認等に使用するアカウントを作成します。
+          </p>
+          <FormSection>
+            <FormItem>
+              <FormLabel>メールアドレス</FormLabel>
+              <FormInput type="email"
+                value={app.leader.email}
+                onChange={e => setApp(s => ({ ...s, leader: { ...s.leader, email: e.target.value } }))} />
+            </FormItem>
+            <FormItem>
+              <FormLabel>パスワード</FormLabel>
+              <FormInput type="password"
+                value={app.leader.password}
+                onChange={e => setApp(s => ({ ...s, leader: { ...s.leader, password: e.target.value } }))} />
+            </FormItem>
+            <FormItem>
+              <FormLabel>パスワード(確認)</FormLabel>
+              <FormInput type="password"
+                value={app.leader.rePassword}
+                onChange={e => setApp(s => ({ ...s, leader: { ...s.leader, rePassword: e.target.value } }))} />
+            </FormItem>
+          </FormSection>
+        </>
+        : <></>}
 
       <h2>サークル参加費お支払い方法</h2>
       {
@@ -313,7 +313,8 @@ const Step1: React.FC<Props> = (props) => {
           : <Alert>申込みたいスペース数を選択してください</Alert>
       }
 
-      <h2>運営チームへのメッセージ</h2>
+      <h2>通信欄</h2>
+      <p>申込みにあたり運営チームへの要望等がありましたら入力してください。</p>
       <FormSection>
         <FormItem>
           <FormTextarea
