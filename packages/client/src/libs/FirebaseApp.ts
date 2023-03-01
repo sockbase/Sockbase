@@ -1,10 +1,12 @@
 import type { FirebaseApp } from 'firebase/app'
-import * as fb from 'firebase/app'
+import * as App from 'firebase/app'
+import type { AppCheck as FirebaseAppCheck } from 'firebase/app-check'
+import * as AppCheck from 'firebase/app-check'
 
 export const getFirebaseApp: () => Promise<FirebaseApp> =
   async () => {
-    return fb.getApps().length === 0
-      ? fb.initializeApp({
+    return App.getApps().length === 0
+      ? App.initializeApp({
         apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
         authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
         databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
@@ -14,5 +16,16 @@ export const getFirebaseApp: () => Promise<FirebaseApp> =
         appId: import.meta.env.VITE_FIREBASE_APP_ID,
         measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
       })
-      : fb.getApps()[0]
+      : App.getApps()[0]
+  }
+
+export const initializeAppCheck: () => Promise<FirebaseAppCheck> =
+  async () => {
+    const app = await getFirebaseApp()
+    return AppCheck.initializeAppCheck(
+      app,
+      {
+        provider: new AppCheck.ReCaptchaEnterpriseProvider(import.meta.env.VITE_RECAPTCHA_ENTERPRISE_SITEKEY),
+        isTokenAutoRefreshEnabled: true
+      })
   }
