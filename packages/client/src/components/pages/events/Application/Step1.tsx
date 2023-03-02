@@ -50,7 +50,7 @@ const Step1: React.FC<Props> = (props) => {
   })
   const [leader, setLeader] = useState({
     name: '',
-    birthday: '1990-01-01',
+    birthday: 0,
     postalCode: '',
     address: '',
     telephone: '',
@@ -58,6 +58,8 @@ const Step1: React.FC<Props> = (props) => {
     password: '',
     rePassword: ''
   })
+  const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
+
   const [isAgreed, setAgreed] = useState(false)
 
   const [spaceIds, setSpaceIds] = useState<string[]>()
@@ -119,7 +121,7 @@ const Step1: React.FC<Props> = (props) => {
       if (!props.isLoggedIn) {
         const accountValidators = [
           !validator.isEmpty(leader.name),
-          validator.isDate(leader.birthday),
+          // validator.isDate(leader.birthday),
           validator.isPostalCode(leader.postalCode),
           validator.isEmail(leader.email),
           !validator.isEmpty(leader.password),
@@ -143,6 +145,10 @@ const Step1: React.FC<Props> = (props) => {
     }
   useEffect(onChangeForm, [spaceIds, app, leader])
 
+  const onChangeBirthday: () => void =
+    () => setLeader(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
+  useEffect(onChangeBirthday, [displayBirthday])
+
   const handleSubmit: () => void =
     () => {
       setError(undefined)
@@ -152,6 +158,7 @@ const Step1: React.FC<Props> = (props) => {
         return
       }
 
+      console.log(leader)
       props.nextStep(app, leader)
     }
 
@@ -316,8 +323,8 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>生年月日</FormLabel>
               <FormInput type="date"
-                value={leader.birthday}
-                onChange={e => setLeader(s => ({ ...s, birthday: e.target.value }))} />
+                value={displayBirthday}
+                onChange={e => setDisplayBirthday(e.target.value)} />
             </FormItem>
           </FormSection>
           <FormSection>
