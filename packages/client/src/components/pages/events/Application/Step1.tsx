@@ -88,7 +88,7 @@ const Step1: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton onClick={() => props.prevStep()}>申し込み説明画面へ戻る</FormButton>
+          <FormButton color="default" onClick={() => props.prevStep()}>申し込み説明画面へ戻る</FormButton>
         </FormItem>
       </FormSection>
       <h2>申込むスペース数</h2>
