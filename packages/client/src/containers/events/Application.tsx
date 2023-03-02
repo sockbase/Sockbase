@@ -29,7 +29,7 @@ const EventApplication: React.FC = () => {
       setEvent(fetchedEvent)
 
       if (fetchedEvent) {
-        setPageTitle(`${fetchedEvent?.eventName} サークル参加申込み受付`)
+        setPageTitle(`${fetchedEvent?.eventName} サークル参加申し込み受付`)
       }
     }
     f().catch(err => {
@@ -48,11 +48,11 @@ const EventApplication: React.FC = () => {
               指定されたIDのイベントを見つけることができませんでした。<br />
               URLが正しく入力されていることを確認してください。
             </Alert>
-            : event && isLoggedIn !== undefined && user !== undefined && <>
+            : params.eventId && isLoggedIn !== undefined && user !== undefined && event && <>
               {user?.email && <Alert>
                 {user.email} としてログイン中です
               </Alert>}
-              <StepContainerComponent event={event} isLoggedIn={isLoggedIn} />
+              <StepContainerComponent eventId={params.eventId} event={event} isLoggedIn={isLoggedIn} />
             </>
       }
     </DefaultLayout>
