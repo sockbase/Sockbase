@@ -17,6 +17,7 @@ export default Footer
 
 const StyledFooter = styled.footer`
   padding: 10px;
+  padding-bottom calc(10px + env(safe-area-inset-bottom));
   background-color: #c0c0c0;
   color: #ffffff;
 `

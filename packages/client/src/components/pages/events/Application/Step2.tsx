@@ -109,11 +109,11 @@ const Step2: React.FC<Props> = (props) => {
             <tbody>
               <tr>
                 <th>合体希望サークル 合体申し込みID</th>
-                <td>{props.app.unionCircleId}</td>
+                <td>{props.app.unionCircleId || '(空欄)'}</td>
               </tr>
               <tr>
                 <th>プチオンリーコード</th>
-                <td>{props.app.petitCode}</td>
+                <td>{props.app.petitCode || '(空欄)'}</td>
               </tr>
             </tbody>
           </table>

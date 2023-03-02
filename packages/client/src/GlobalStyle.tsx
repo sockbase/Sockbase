@@ -76,6 +76,14 @@ table {
       color: #ffffff !important;
     }
   }
+
+  tbody {
+    tr {
+      th {
+        width: 30%;
+      }
+    }
+  }
 }
 
 a {

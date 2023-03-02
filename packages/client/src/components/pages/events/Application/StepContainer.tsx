@@ -58,6 +58,7 @@ const StepContainer: React.FC<Props> = (props) => {
         <Introduction key="introduction" nextStep={() => setStep(1)} event={props.event} />,
         <Step1 key="step1"
           app={app}
+          leader={leader}
           isLoggedIn={props.isLoggedIn} spaces={props.event.spaces}
           paymentMethods={paymentMethods}
           prevStep={() => setStep(0)}
@@ -78,7 +79,7 @@ const StepContainer: React.FC<Props> = (props) => {
         <Step4 key="step4" />
       ])
     }
-  useEffect(onInitialize, [props.isLoggedIn, app])
+  useEffect(onInitialize, [props.isLoggedIn, app, leader])
 
   return (
     <>
