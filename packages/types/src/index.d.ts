@@ -1,7 +1,18 @@
 export interface SockbaseEvent {
   eventName: string
   descriptions: string[]
+  rules: string[]
   spaces: SockbaseEventSpace[]
+  schedules: {
+    startApplication: number
+    endApplication: number
+    publishSpaces: number
+    startEvent: number
+    endEvent: number
+  }
+  organization: SockbaseOrganization & {
+    id: string
+  }
 }
 
 export interface SockbaseEventSpace {
@@ -11,7 +22,12 @@ export interface SockbaseEventSpace {
   price: number
 }
 
-export interface SockbaseCircleApplication {
+export interface SockbaseOrganization {
+  name: string
+  contactUrl: string
+}
+
+export interface SockbaseApplication {
   spaceId: string
   circle: {
     name: string
@@ -27,27 +43,25 @@ export interface SockbaseCircleApplication {
   }
   unionCircleId: string
   petitCode: string
-  leader: {
-    name: string
-    birthday: string
-    postalCode: string
-    address: string
-    telephone: string
-    email: string
-    password: string
-    rePassword: string
-  }
   paymentMethod: string
   remarks: string
 }
 export type CircleGenreType = ''
-export type SockbaseCircleApplicationDocument = SockbaseCircleApplication & {
-  eventId: string
+export type SockbaseApplicationDocument = SockbaseApplication & {
+  userId: string
+  timestamp: number
 }
 
 export interface SockbaseAccount {
   name: string
+  birthday: string
   postalCode: string
   address: string
-  birthday: number
+  telephone: string
+}
+
+export type SockbaseAccountSecure = SockbaseAccount & {
+  email: string
+  password: string
+  rePassword: string
 }

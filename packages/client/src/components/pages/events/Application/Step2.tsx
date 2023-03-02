@@ -1,41 +1,60 @@
-import { useEffect } from 'react'
-import type { SockbaseCircleApplication } from 'sockbase'
+import { useState, useEffect } from 'react'
+import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace } from 'sockbase'
+import type { IPaymentMethod } from './StepContainer'
 
 import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
+import Alert from '../../../Parts/Alert'
 
 interface Props {
-  app: SockbaseCircleApplication | undefined
+  app: SockbaseApplication | undefined
+  leader: SockbaseAccountSecure | undefined
+  spaces: SockbaseEventSpace[]
+  paymentMethods: IPaymentMethod[]
+
+  submitApplication: () => Promise<void>
   prevStep: () => void
   nextStep: () => void
 }
 const Step2: React.FC<Props> = (props) => {
-  useEffect(() => console.log(props.app), [props.app])
+  const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace | undefined>()
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState<IPaymentMethod | undefined>()
+  const [isProgress, setProgress] = useState(false)
+  const [error, setError] = useState<Error | undefined>()
+
+  const onChangeSpaceSelect: () => void =
+    () => {
+      if (!props.app || !props.spaces || !props.paymentMethods) return
+      const space = props.spaces
+        .filter(i => i.id === props.app?.spaceId)[0]
+      setSpaceInfo(space)
+
+      const paymentMethod = props.paymentMethods
+        .filter(i => i.id === props.app?.paymentMethod)[0]
+      setPaymentMethodInfo(paymentMethod)
+    }
+  useEffect(onChangeSpaceSelect, [props.app, props.spaces, props])
+
+  const handleSubmit: () => void =
+    () => {
+      setProgress(true)
+      setError(undefined)
+      // props.submitApplication()
+      //   .then(() => props.nextStep())
+      //   .catch(err => {
+      //     setError(err)
+      //     throw err
+      //   })
+      //   .finally(() => setProgress(false))
+      props.nextStep()
+    }
 
   return (
     <>
       {
-        props.app && <>
+        props.app && props.leader && <>
           <h1>入力内容確認</h1>
-
-          <h2>申し込むスペース数</h2>
-          <table>
-            <tbody>
-              <tr>
-                <th>スペース</th>
-                <td>1スペース</td>
-              </tr>
-              <tr>
-                <th>詳細</th>
-                <td>机半分, 椅子1脚, 通行証1枚</td>
-              </tr>
-              <tr>
-                <th>参加費</th>
-                <td>4,500円</td>
-              </tr>
-            </tbody>
-          </table>
 
           <h2>サークルカット</h2>
 
@@ -89,7 +108,7 @@ const Step2: React.FC<Props> = (props) => {
           <table>
             <tbody>
               <tr>
-                <th>合体希望サークル 合体申込みID</th>
+                <th>合体希望サークル 合体申し込みID</th>
                 <td>{props.app.unionCircleId}</td>
               </tr>
               <tr>
@@ -104,23 +123,23 @@ const Step2: React.FC<Props> = (props) => {
             <tbody>
               <tr>
                 <th>氏名</th>
-                <td>{props.app.leader.name}</td>
+                <td>{props.leader.name}</td>
               </tr>
               <tr>
                 <th>生年月日</th>
-                <td>{new Date(props.app.leader.birthday).toLocaleDateString()}</td>
+                <td>{new Date(props.leader.birthday).toLocaleDateString()}</td>
               </tr>
               <tr>
                 <th>郵便番号</th>
-                <td>{props.app.leader.postalCode}</td>
+                <td>{props.leader.postalCode}</td>
               </tr>
               <tr>
                 <th>住所</th>
-                <td>{props.app.leader.address}</td>
+                <td>{props.leader.address}</td>
               </tr>
               <tr>
                 <th>電話番号</th>
-                <td>{props.app.leader.telephone}</td>
+                <td>{props.leader.telephone}</td>
               </tr>
             </tbody>
           </table>
@@ -130,9 +149,33 @@ const Step2: React.FC<Props> = (props) => {
             {props.app.remarks || '(空欄)'}
           </p>
 
+          <h2>サークル参加費</h2>
+          <h3>選択されたスペース</h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>スペース</th>
+                <td>{spaceInfo?.name}</td>
+              </tr>
+              <tr>
+                <th>詳細</th>
+                <td>{spaceInfo?.description}</td>
+              </tr>
+              <tr>
+                <th>参加費</th>
+                <td>{spaceInfo?.price.toLocaleString()}円</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>決済方法</h3>
+          <p>
+            {paymentMethodInfo?.description}
+          </p>
+
           <h1>申し込み情報送信</h1>
           <p>
-            上記の内容で正しければ「決済に進む(申込み情報送信)」ボタンを押してください。
+            上記の内容で正しければ「決済に進む(申し込み情報送信)」ボタンを押してください。
           </p>
           <p>
             修正する場合は、「修正」ボタンを押してください。
@@ -147,11 +190,17 @@ const Step2: React.FC<Props> = (props) => {
             </FormItem>
             <FormItem>
               <FormButton
-                onClick={() => props.nextStep()}>
-                決済に進む(申込み情報送信)
+                onClick={handleSubmit}
+                disabled={isProgress}>
+                決済に進む(申し込み情報送信)
               </FormButton>
             </FormItem>
           </FormSection>
+
+          {error &&
+            <Alert type="danger" title="エラーが発生しました">
+              {error.name}({error.message})
+            </Alert>}
         </>
       }
     </>
