@@ -31,7 +31,7 @@ const paymentMethods: Array<{
 
 interface Props {
   spaces: SockbaseEventSpace[]
-  nextStep: () => void
+  nextStep: (app: SockbaseCircleApplication) => void
   isLoggedIn: boolean
 }
 const Step1: React.FC<Props> = (props) => {
@@ -338,7 +338,7 @@ const Step1: React.FC<Props> = (props) => {
       </FormSection>
       <FormButton
         disabled={!isAgreed}
-        onClick={() => props.nextStep()}>
+        onClick={() => props.nextStep(app)}>
         入力内容確認画面へ進む
       </FormButton>
     </>
