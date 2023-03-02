@@ -2,27 +2,11 @@ import { useEffect, useState } from 'react'
 import type { SockbaseCircleApplication, SockbaseEvent } from 'sockbase'
 
 import StepProgress from '../../../Parts/StepProgress'
+import Introduction from './Introduction'
 import Step1 from './Step1'
 import Step2 from './Step2'
 
-const stepProgresses = [
-  {
-    text: '入力',
-    isActive: true
-  },
-  {
-    text: '確認',
-    isActive: false
-  },
-  {
-    text: '決済',
-    isActive: false
-  },
-  {
-    text: '完了',
-    isActive: false
-  }
-]
+const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
 
 interface Props {
   event: SockbaseEvent
@@ -39,12 +23,13 @@ const StepContainer: React.FC<Props> = (props) => {
       if (props.isLoggedIn === undefined) return
 
       setStepComponents([
-        <Step1 isLoggedIn={props.isLoggedIn} key="step1" spaces={props.event.spaces} nextStep={app => {
+        <Introduction key="introduction" nextStep={() => setStep(1)} />,
+        <Step1 key="step1" app={app} isLoggedIn={props.isLoggedIn} spaces={props.event.spaces} prevStep={() => setStep(0)} nextStep={app => {
           setApp(app)
-          setStep(1)
+          setStep(2)
         }} />,
-        <Step2 key="step2" app={app} />,
-        <p key="step3" onClick={() => setStep(3)}>決済</p>,
+        <Step2 key="step2" app={app} prevStep={() => setStep(1)} nextStep={() => setStep(3)} />,
+        <p key="step3" onClick={() => setStep(4)}>決済</p>,
         <p key="step4">完了</p>
       ])
     }
@@ -59,7 +44,7 @@ const StepContainer: React.FC<Props> = (props) => {
 
       <StepProgress steps={
         stepProgresses.map((i, k) => ({
-          text: i.text,
+          text: i,
           isActive: k === step
         }))
       } />
