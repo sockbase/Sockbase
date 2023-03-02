@@ -12,7 +12,7 @@ interface IUseEvent {
   submitApplicationAsync: (eventId: string, app: SockbaseApplication) => Promise<void>
 }
 
-const eventConverter = {
+const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
   toFirestore: (event: SockbaseEvent): FirestoreDB.DocumentData => ({
     eventName: event.eventName,
     rules: event.rules,
@@ -48,7 +48,7 @@ const eventConverter = {
   }
 }
 
-const applicationConverter = {
+const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicationDocument> = {
   toFirestore: (app: SockbaseApplicationDocument): FirestoreDB.DocumentData => ({
     userId: app.userId,
     spaceId: app.spaceId,
@@ -95,8 +95,7 @@ const useEvent: () => IUseEvent = () => {
       const eventDoc = FirestoreDB
         .doc(db, 'events', eventId)
         .withConverter(eventConverter)
-      const snap = await FirestoreDB
-        .getDoc(eventDoc)
+      const snap = await FirestoreDB.getDoc(eventDoc)
       if (snap.exists()) {
         return snap.data()
       } else {

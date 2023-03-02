@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace } from 'sockbase'
+import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount } from 'sockbase'
 import type { IPaymentMethod } from './StepContainer'
 
 import FormSection from '../../../Form/FormSection'
@@ -12,6 +12,7 @@ interface Props {
   leader: SockbaseAccountSecure | undefined
   spaces: SockbaseEventSpace[]
   paymentMethods: IPaymentMethod[]
+  user: SockbaseAccount | null
 
   submitApplication: () => Promise<void>
   prevStep: () => void
@@ -123,23 +124,23 @@ const Step2: React.FC<Props> = (props) => {
             <tbody>
               <tr>
                 <th>氏名</th>
-                <td>{props.leader.name}</td>
+                <td>{props.user?.name ?? props.leader.name}</td>
               </tr>
               <tr>
                 <th>生年月日</th>
-                <td>{new Date(props.leader.birthday).toLocaleDateString()}</td>
+                <td>{new Date(props.user?.birthday ?? props.leader.birthday).toLocaleDateString()}</td>
               </tr>
               <tr>
                 <th>郵便番号</th>
-                <td>{props.leader.postalCode}</td>
+                <td>{props.user?.postalCode ?? props.leader.postalCode}</td>
               </tr>
               <tr>
                 <th>住所</th>
-                <td>{props.leader.address}</td>
+                <td>{props.user?.address ?? props.leader.address}</td>
               </tr>
               <tr>
                 <th>電話番号</th>
-                <td>{props.leader.telephone}</td>
+                <td>{props.user?.telephone ?? props.leader.telephone}</td>
               </tr>
             </tbody>
           </table>

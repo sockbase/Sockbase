@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import type { SockbaseAccountSecure, SockbaseApplication, SockbaseEvent } from 'sockbase'
+import type { SockbaseAccount, SockbaseAccountSecure, SockbaseApplication, SockbaseEvent } from 'sockbase'
 
 import useEvent from '../../../../hooks/useEvent'
+import useUser from '../../../../hooks/useUser'
 
 import StepProgress from '../../../Parts/StepProgress'
 import Introduction from './Introduction'
@@ -35,11 +36,14 @@ interface Props {
 }
 const StepContainer: React.FC<Props> = (props) => {
   const { submitApplicationAsync } = useEvent()
+  const { getMyUserDataAsync } = useUser()
 
   const [step, setStep] = useState(0)
   const [app, setApp] = useState<SockbaseApplication>()
   const [leader, setLeader] = useState<SockbaseAccountSecure>()
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
+
+  const [userData, setUserData] = useState<SockbaseAccount | null | undefined>()
 
   const submitApplication: () => Promise<void> =
     async () => {
@@ -50,9 +54,23 @@ const StepContainer: React.FC<Props> = (props) => {
         })
     }
 
+  const fetchUserData: () => void =
+    () => {
+      const f: () => Promise<void> =
+        async () => {
+          const userData = await getMyUserDataAsync()
+          setUserData(userData)
+        }
+      f().catch(err => {
+        throw err
+      })
+    }
+  useEffect(fetchUserData, [getMyUserDataAsync])
+
   const onInitialize: () => void =
     () => {
       if (props.isLoggedIn === undefined) return
+      if (userData === undefined) return
 
       setStepComponents([
         <Introduction key="introduction" nextStep={() => setStep(1)} event={props.event} />,
@@ -71,6 +89,7 @@ const StepContainer: React.FC<Props> = (props) => {
           app={app}
           leader={leader}
           spaces={props.event.spaces}
+          user={userData}
           paymentMethods={paymentMethods}
           submitApplication={submitApplication}
           prevStep={() => setStep(1)}
@@ -79,7 +98,7 @@ const StepContainer: React.FC<Props> = (props) => {
         <Step4 key="step4" />
       ])
     }
-  useEffect(onInitialize, [props.isLoggedIn, app, leader])
+  useEffect(onInitialize, [props.isLoggedIn, app, leader, userData])
 
   return (
     <>

@@ -54,7 +54,7 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
 
 export interface SockbaseAccount {
   name: string
-  birthday: string
+  birthday: number
   postalCode: string
   address: string
   telephone: string
