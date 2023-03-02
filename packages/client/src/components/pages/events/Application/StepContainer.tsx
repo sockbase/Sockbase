@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import type { SockbaseEvent } from 'sockbase'
+import type { SockbaseCircleApplication, SockbaseEvent } from 'sockbase'
 
 import StepProgress from '../../../Parts/StepProgress'
 import Step1 from './Step1'
+import Step2 from './Step2'
 
 const stepProgresses = [
   {
@@ -29,6 +30,8 @@ interface Props {
 }
 const StepContainer: React.FC<Props> = (props) => {
   const [step, setStep] = useState(0)
+  const [app, setApp] = useState<SockbaseCircleApplication>()
+
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>() // 一旦仮組み
 
   const onInitialize: () => void =
@@ -36,13 +39,16 @@ const StepContainer: React.FC<Props> = (props) => {
       if (props.isLoggedIn === undefined) return
 
       setStepComponents([
-        <Step1 isLoggedIn={props.isLoggedIn} key="step1" spaces={props.event.spaces} nextStep={() => setStep(1)} />,
-        < p key="step2" onClick={() => setStep(2)}> 確認</p >,
+        <Step1 isLoggedIn={props.isLoggedIn} key="step1" spaces={props.event.spaces} nextStep={app => {
+          setApp(app)
+          setStep(1)
+        }} />,
+        <Step2 key="step2" app={app} />,
         <p key="step3" onClick={() => setStep(3)}>決済</p>,
         <p key="step4">完了</p>
       ])
     }
-  useEffect(onInitialize, [props.isLoggedIn])
+  useEffect(onInitialize, [props.isLoggedIn, app])
 
   return (
     <>
