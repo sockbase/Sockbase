@@ -44,6 +44,11 @@ h5 { font-size: 0.8em; }
 h6 { font-size: 0.7em; }
 
 table {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
   width: 100%;
   border-collapse: collapse;
   thead {
