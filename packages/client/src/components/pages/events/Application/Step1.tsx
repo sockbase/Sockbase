@@ -30,7 +30,9 @@ const paymentMethods: Array<{
   ]
 
 interface Props {
+  app: SockbaseCircleApplication | undefined
   spaces: SockbaseEventSpace[]
+  prevStep: () => void
   nextStep: (app: SockbaseCircleApplication) => void
   isLoggedIn: boolean
 }
@@ -66,6 +68,13 @@ const Step1: React.FC<Props> = (props) => {
   })
   const [isAgreed, setAgreed] = useState(false)
 
+  const onInitialize: () => void =
+    () => {
+      if (!props.app) return
+      setApp(props.app)
+    }
+  useEffect(onInitialize, [props.app])
+
   const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace | undefined>()
   const onChangeSpaceSelect: () => void =
     () => {
@@ -77,6 +86,11 @@ const Step1: React.FC<Props> = (props) => {
 
   return (
     <>
+      <FormSection>
+        <FormItem>
+          <FormButton onClick={() => props.prevStep()}>申し込み説明画面へ戻る</FormButton>
+        </FormItem>
+      </FormSection>
       <h2>申込むスペース数</h2>
       <FormSection>
         <FormItem>
@@ -91,6 +105,14 @@ const Step1: React.FC<Props> = (props) => {
             }
             onChange={(spaceId) => setApp(s => ({ ...s, spaceId }))}
             value={app.spaceId} />
+        </FormItem>
+      </FormSection>
+
+      <h2>サークルカット</h2>
+      <FormSection>
+        <FormItem>
+          <FormLabel>サークルカット</FormLabel>
+          <FormInput type="file" />
         </FormItem>
       </FormSection>
 
