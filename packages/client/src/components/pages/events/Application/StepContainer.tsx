@@ -108,7 +108,7 @@ const StepContainer: React.FC<Props> = (props) => {
         <Step1 key="step1"
           app={app}
           leader={leader}
-          circleCutData={circleCutData}
+          circleCutFile={circleCutFile}
           isLoggedIn={props.isLoggedIn} spaces={props.event.spaces}
           paymentMethods={paymentMethods}
           prevStep={() => setStep(0)}
