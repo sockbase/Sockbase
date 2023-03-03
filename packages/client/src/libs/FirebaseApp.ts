@@ -3,8 +3,8 @@ import * as App from 'firebase/app'
 import type { AppCheck as FirebaseAppCheck } from 'firebase/app-check'
 import * as AppCheck from 'firebase/app-check'
 
-export const getFirebaseApp: () => Promise<FirebaseApp> =
-  async () => {
+export const getFirebaseApp: () => FirebaseApp =
+  () => {
     return App.getApps().length === 0
       ? App.initializeApp({
         apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -19,9 +19,9 @@ export const getFirebaseApp: () => Promise<FirebaseApp> =
       : App.getApps()[0]
   }
 
-export const initializeAppCheck: () => Promise<FirebaseAppCheck> =
-  async () => {
-    const app = await getFirebaseApp()
+export const initializeAppCheck: () => FirebaseAppCheck =
+  () => {
+    const app = getFirebaseApp()
     return AppCheck.initializeAppCheck(
       app,
       {

@@ -1,6 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import {
+  createBrowserRouter,
+  RouterProvider
+} from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 
 import './main.css'
@@ -16,31 +19,50 @@ import TermsOfService from './containers/static/TermsOfService'
 import PrivacyPolicy from './containers/static/PrivacyPolicy'
 
 getFirebaseApp()
-  .catch(err => {
-    throw err
-  })
 initializeAppCheck()
-  .catch(err => {
-    throw err
-  })
+
+const router = createBrowserRouter([
+  {
+    children: [
+      {
+        path: '/',
+        element: <App />
+      },
+      {
+        path: 'tos',
+        element: <TermsOfService />
+      },
+      {
+        path: 'privacy-policy',
+        element: <PrivacyPolicy />
+      },
+      {
+        path: 'formTemplate',
+        element: <FormTemplate />
+      },
+      {
+        path: 'dashboardTemplate',
+        element: <DashboardTemplate />
+      },
+      {
+        path: 'events',
+        children: [
+          {
+            path: ':eventId',
+            element: <EventApplication />
+          }
+        ]
+      }
+    ]
+  }
+])
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
       <ResetStyle />
       <GlobalStyle />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />} />
-          <Route path="/tos" element={<TermsOfService />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-
-          <Route path="/formTemplate" element={<FormTemplate />} />
-          <Route path="/dashboardTemplate" element={<DashboardTemplate />} />
-
-          <Route path="/events/:eventId" element={<EventApplication />} />
-        </Routes>
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </HelmetProvider>
   </React.StrictMode>
 )

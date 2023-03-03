@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount } from 'sockbase'
 import type { IPaymentMethod } from './StepContainer'
 
+import useFirebaseError from '../../../../hooks/useFirebaseError'
+
 import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
@@ -12,17 +14,19 @@ interface Props {
   leader: SockbaseAccountSecure | undefined
   spaces: SockbaseEventSpace[]
   paymentMethods: IPaymentMethod[]
-  user: SockbaseAccount | null
+  userData: SockbaseAccount | null
 
   submitApplication: () => Promise<void>
   prevStep: () => void
   nextStep: () => void
 }
 const Step2: React.FC<Props> = (props) => {
+  const { parse: parseFirebaseError } = useFirebaseError()
+
   const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace | undefined>()
   const [paymentMethodInfo, setPaymentMethodInfo] = useState<IPaymentMethod | undefined>()
   const [isProgress, setProgress] = useState(false)
-  const [error, setError] = useState<Error | undefined>()
+  const [error, setError] = useState<Error | null | undefined>()
 
   const onChangeSpaceSelect: () => void =
     () => {
@@ -40,15 +44,19 @@ const Step2: React.FC<Props> = (props) => {
   const handleSubmit: () => void =
     () => {
       setProgress(true)
-      setError(undefined)
-      // props.submitApplication()
-      //   .then(() => props.nextStep())
-      //   .catch(err => {
-      //     setError(err)
-      //     throw err
-      //   })
-      //   .finally(() => setProgress(false))
-      props.nextStep()
+      setError(null)
+
+      props.submitApplication()
+        .then(() => {
+          props.nextStep()
+        })
+        .catch((err: Error) => {
+          setError(new Error(parseFirebaseError(err.message)))
+          throw err
+        })
+        .finally(() => {
+          setProgress(false)
+        })
     }
 
   return (
@@ -124,23 +132,23 @@ const Step2: React.FC<Props> = (props) => {
             <tbody>
               <tr>
                 <th>氏名</th>
-                <td>{props.user?.name ?? props.leader.name}</td>
+                <td>{props.userData?.name ?? props.leader.name}</td>
               </tr>
               <tr>
                 <th>生年月日</th>
-                <td>{new Date(props.user?.birthday ?? props.leader.birthday).toLocaleDateString()}</td>
+                <td>{new Date(props.userData?.birthday ?? props.leader.birthday).toLocaleDateString()}</td>
               </tr>
               <tr>
                 <th>郵便番号</th>
-                <td>{props.user?.postalCode ?? props.leader.postalCode}</td>
+                <td>{props.userData?.postalCode ?? props.leader.postalCode}</td>
               </tr>
               <tr>
                 <th>住所</th>
-                <td>{props.user?.address ?? props.leader.address}</td>
+                <td>{props.userData?.address ?? props.leader.address}</td>
               </tr>
               <tr>
                 <th>電話番号</th>
-                <td>{props.user?.telephone ?? props.leader.telephone}</td>
+                <td>{props.userData?.telephone ?? props.leader.telephone}</td>
               </tr>
             </tbody>
           </table>
@@ -182,10 +190,13 @@ const Step2: React.FC<Props> = (props) => {
             修正する場合は、「修正」ボタンを押してください。
           </p>
 
+          {error && <Alert type="danger" title="エラーが発生しました">{error.message}</Alert>}
+
           <FormSection>
             <FormItem>
               <FormButton color="default"
-                onClick={() => props.prevStep()}>
+                onClick={() => props.prevStep()}
+                disabled={isProgress}>
                 修正する
               </FormButton>
             </FormItem>
@@ -197,11 +208,6 @@ const Step2: React.FC<Props> = (props) => {
               </FormButton>
             </FormItem>
           </FormSection>
-
-          {error &&
-            <Alert type="danger" title="エラーが発生しました">
-              {error.name}({error.message})
-            </Alert>}
         </>
       }
     </>

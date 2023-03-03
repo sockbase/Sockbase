@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
+import { Link, ScrollRestoration } from 'react-router-dom'
 
 import useFirebase from '../hooks/useFirebase'
 import useFirebaseError from '../hooks/useFirebaseError'
 
 import DefaultLayout from '../components/Layout/Default/Default'
 import LoginSandboxComponent from '../components/pages/App/LoginSandbox'
-import { Link } from 'react-router-dom'
 
 export interface User {
   userId: string
@@ -45,15 +45,9 @@ const App: React.FC = () => {
       setError(undefined)
 
       firebase.logout()
-        .catch((e: Error) => {
-          const message = firebaseErrorParse(e.message)
-          setError({ title: 'ログアウトに失敗しました', content: message })
-          throw e
-        })
-        .finally(() => {
-          setProcessing(false)
-        })
+      setProcessing(false)
     }
+
   const onChangeLoggedInState: () => void =
     () => {
       if (!firebase.user) {
@@ -90,6 +84,12 @@ const App: React.FC = () => {
         user={user}
         error={error}
         isLoggedIn={isLoggedIn}
+      />
+
+      <ScrollRestoration
+        getKey={(location) => {
+          return location.pathname
+        }}
       />
     </DefaultLayout>)
 }

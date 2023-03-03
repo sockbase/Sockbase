@@ -4,13 +4,14 @@ import FormSection from '../../../Form/FormSection'
 import Alert from '../../../Parts/Alert'
 
 interface Props {
+  appHashId: string | undefined
   nextStep: () => void
 }
 const Step3: React.FC<Props> = (props) => {
-  return (
-    <>
-      <Alert type="info" title="申し込み情報の送信が完了しました">
-        申し込みIDは  です。
+  return (props.appHashId
+    ? <>
+      <Alert type="success" title="申し込み情報の送信が完了しました">
+        申し込みIDは {props.appHashId} です。
       </Alert>
       <p>
         お申し込みいただきましてありがとうございました。<br />
@@ -107,7 +108,7 @@ const Step3: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
     </>
-  )
+    : <></>)
 }
 
 export default Step3

@@ -50,6 +50,7 @@ export type CircleGenreType = ''
 export type SockbaseApplicationDocument = SockbaseApplication & {
   userId: string
   timestamp: number
+  hashId: string | null
 }
 
 export interface SockbaseAccount {

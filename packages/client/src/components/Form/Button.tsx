@@ -1,12 +1,14 @@
 import styled from 'styled-components'
 
-const FormButton = styled.button<{ color?: 'default' }>`
+const FormButton = styled.button<{ color?: 'default' | 'info' }>`
   width: 100%;
   padding: 10px;
   border-radius: 5px;
   border: none;
   font-size: 1rem;
   font-weight: bold;
+
+  color: #ffffff;
 
   cursor: pointer;
   transition: background-color 0.1s linear;
@@ -19,13 +21,19 @@ ${props => props.color === 'default'
         backgroundColor: '#b3b3b3'
       }
     }
-    : {
-      backgroundColor: '#ea6183',
-      color: '#ffffff',
-      '&:active': {
-        backgroundColor: '#99334c'
+    : props.color === 'info'
+      ? {
+        backgroundColor: '#20a0f0',
+        '&:active': {
+          backgroundColor: '#1080e0'
+        }
       }
-    }}
+      : {
+        backgroundColor: '#ea6183',
+        '&:active': {
+          backgroundColor: '#99334c'
+        }
+      }}
 
 ${props => props.disabled
     ? {

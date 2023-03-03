@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { type FirebaseError } from 'firebase/app'
 import {
   type Auth,
   type User,
@@ -6,6 +7,7 @@ import {
   getAuth as getFirebaseAuth,
   signInWithEmailAndPassword,
   signOut,
+  createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   onIdTokenChanged
 } from 'firebase/auth'
@@ -16,12 +18,11 @@ import { getFirebaseApp } from '../libs/FirebaseApp'
 interface IUseFirebase {
   isLoggedIn: boolean | undefined
   user: User | null | undefined
-
-  getAuth: () => Promise<Auth>
+  getAuth: () => Auth
   loginByEmail: (email: string, password: string) => Promise<UserCredential>
-  logout: () => Promise<void>
-  sendPasswordResetURL: (email: string) => Promise<void>
-
+  logout: () => void
+  createUser: (email: string, password: string) => Promise<User>
+  sendPasswordResetURL: (email: string) => void
   getFirestore: () => Firestore
   // TODO Cloud Storage接続情報
   //   getStorage: () => void
@@ -33,13 +34,13 @@ const useFirebase: () => IUseFirebase =
     const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>()
     const [user, setUser] = useState<User | null | undefined>()
 
-    const getAuth: () => Promise<Auth> =
-      async () => {
+    const getAuth: () => Auth =
+      () => {
         if (auth) {
           return auth
         }
 
-        const app = await getFirebaseApp()
+        const app = getFirebaseApp()
         const _auth = getFirebaseAuth(app)
 
         setAuth(_auth)
@@ -48,31 +49,43 @@ const useFirebase: () => IUseFirebase =
 
     const loginByEmail: (email: string, password: string) => Promise<UserCredential> =
       async (email, password) => {
-        const auth = await getAuth()
+        const auth = getAuth()
         const credential = await signInWithEmailAndPassword(auth, email, password)
-          .catch(e => {
-            throw e
+          .catch((err: FirebaseError) => {
+            throw err
           })
         return credential
       }
 
-    const logout: () => Promise<void> =
-      async () => {
-        const auth = await getAuth()
-        await signOut(auth)
-          .catch(e => {
-            throw e
+    const logout: () => void =
+      () => {
+        const auth = getAuth()
+        signOut(auth)
+          .then(() => {
+            setUser(null)
+            setLoggedIn(false)
           })
-        setUser(null)
-        setLoggedIn(false)
+          .catch((err: FirebaseError) => {
+            throw err
+          })
       }
 
-    const sendPasswordResetURL: (email: string) => Promise<void> =
-      async (email) => {
-        const auth = await getAuth()
-        await sendPasswordResetEmail(auth, email)
-          .catch(e => {
-            throw e
+    const createUser: (email: string, password: string) => Promise<User> =
+      async (email, password) => {
+        const auth = getAuth()
+        return await createUserWithEmailAndPassword(auth, email, password)
+          .then(cred => cred.user)
+          .catch(err => {
+            throw err
+          })
+      }
+
+    const sendPasswordResetURL: (email: string) => void =
+      (email) => {
+        const auth = getAuth()
+        sendPasswordResetEmail(auth, email)
+          .catch((err: FirebaseError) => {
+            throw err
           })
       }
 
@@ -83,14 +96,14 @@ const useFirebase: () => IUseFirebase =
       () => {
         const f: () => Promise<void> =
           async () => {
-            const auth = await getAuth()
+            const auth = getAuth()
             onIdTokenChanged(auth, (user) => {
               setUser(user)
               setLoggedIn(!!user)
             })
           }
-        f().catch(e => {
-          throw e
+        f().catch((err: FirebaseError) => {
+          throw err
         })
       }
     useEffect(onAuthenticationUpdated, [])
@@ -98,12 +111,11 @@ const useFirebase: () => IUseFirebase =
     return {
       isLoggedIn,
       user,
-
       getAuth,
       loginByEmail,
       logout,
+      createUser,
       sendPasswordResetURL,
-
       getFirestore
     }
   }
