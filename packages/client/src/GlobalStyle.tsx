@@ -42,6 +42,32 @@ h3 { font-size: 1em; }
 h4 { font-size: 0.9em; }
 h5 { font-size: 0.8em; }
 h6 { font-size: 0.7em; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  thead {
+    border-bottom: 2px solid #c0c0c0;
+    tr {
+      background-color: #ea6183;
+      color: #ffffff;
+    }
+  }
+  tr {
+    background-color: #e8e8e8;
+    &:nth-child(2n) {
+      background-color: #F8F8F8;
+    }
+  }
+  th, td {
+    padding: 10px;
+    text-align: left;
+
+    &:nth-child(2n) {
+      background-color: #ffffff40;
+    }
+  }
+}
 `
 
 export default GlobalStyle
