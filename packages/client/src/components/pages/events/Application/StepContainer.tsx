@@ -43,6 +43,8 @@ const StepContainer: React.FC<Props> = (props) => {
   const { submitApplicationAsync } = useEvent()
 
   const [step, setStep] = useState(0)
+  const [circleCutData, setCircleCutData] = useState<string>()
+  const [circleCutFile, setCircleCutFile] = useState<File>()
   const [app, setApp] = useState<SockbaseApplication>()
   const [leader, setLeader] = useState<SockbaseAccountSecure>()
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
@@ -50,9 +52,9 @@ const StepContainer: React.FC<Props> = (props) => {
   const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [appHashId, setAppHashId] = useState<string>()
 
-  const submitApplicationWithUserAsync: (user: User, eventId: string, app: SockbaseApplication) => Promise<string> =
-    async (user, eventId, app) => {
-      const createdAppHashId = await submitApplicationAsync(user, eventId, app)
+  const submitApplicationWithUserAsync: (user: User, eventId: string, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
+    async (user, eventId, app, circleCutFile) => {
+      const createdAppHashId = await submitApplicationAsync(user, eventId, app, circleCutFile)
         .catch(err => {
           throw err
         })
@@ -63,19 +65,19 @@ const StepContainer: React.FC<Props> = (props) => {
 
   const submitApplication: () => Promise<void> =
     async () => {
-      if (!app || !leader) return
+      if (!app || !leader || !circleCutFile) return
 
       if (!user) {
         const newUser = await createUser(leader.email, leader.password)
           .catch(err => {
             throw err
           })
-        const createdAppHashId = await submitApplicationWithUserAsync(newUser, props.eventId, app)
+        const createdAppHashId = await submitApplicationWithUserAsync(newUser, props.eventId, app, circleCutFile)
         setAppHashId(createdAppHashId)
         return
       }
 
-      const createdAppHashId = await submitApplicationWithUserAsync(user, props.eventId, app)
+      const createdAppHashId = await submitApplicationWithUserAsync(user, props.eventId, app, circleCutFile)
       setAppHashId(createdAppHashId)
     }
 
@@ -102,17 +104,21 @@ const StepContainer: React.FC<Props> = (props) => {
         <Step1 key="step1"
           app={app}
           leader={leader}
+          circleCutData={circleCutData}
           isLoggedIn={props.isLoggedIn} spaces={props.event.spaces}
           paymentMethods={paymentMethods}
           prevStep={() => setStep(0)}
-          nextStep={(app, leader) => {
+          nextStep={(app, leader, circleCutData, circleCutFile) => {
             setApp(app)
             setLeader(leader)
+            setCircleCutData(circleCutData)
+            setCircleCutFile(circleCutFile)
             setStep(2)
           }} />,
         <Step2 key="step2"
           app={app}
           leader={leader}
+          circleCutData={circleCutData}
           spaces={props.event.spaces}
           userData={userData}
           paymentMethods={paymentMethods}
@@ -125,7 +131,7 @@ const StepContainer: React.FC<Props> = (props) => {
         <Step4 key="step4" />
       ])
     }
-  useEffect(onInitialize, [props.isLoggedIn, app, leader, userData, appHashId])
+  useEffect(onInitialize, [props.isLoggedIn, app, leader, circleCutData, userData, appHashId])
 
   return (
     <>

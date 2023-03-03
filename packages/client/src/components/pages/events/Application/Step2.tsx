@@ -8,14 +8,15 @@ import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
 import Alert from '../../../Parts/Alert'
+import CircleCutImage from './CircleCutImage'
 
 interface Props {
   app: SockbaseApplication | undefined
   leader: SockbaseAccountSecure | undefined
+  circleCutData: string | undefined
   spaces: SockbaseEventSpace[]
   paymentMethods: IPaymentMethod[]
   userData: SockbaseAccount | null
-
   submitApplication: () => Promise<void>
   prevStep: () => void
   nextStep: () => void
@@ -66,6 +67,11 @@ const Step2: React.FC<Props> = (props) => {
           <h1>入力内容確認</h1>
 
           <h2>サークルカット</h2>
+          <FormSection>
+            <FormItem>
+              {props.circleCutData && <CircleCutImage src={props.circleCutData} />}
+            </FormItem>
+          </FormSection>
 
           <h2>サークル情報</h2>
           <table>

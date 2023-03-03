@@ -13,7 +13,7 @@ import {
   onIdTokenChanged
 } from 'firebase/auth'
 import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase/firestore'
-
+import { type FirebaseStorage, getStorage as getFirebaseStorage } from 'firebase/storage'
 import { getFirebaseApp } from '../libs/FirebaseApp'
 
 interface IUseFirebase {
@@ -25,8 +25,7 @@ interface IUseFirebase {
   createUser: (email: string, password: string) => Promise<User>
   sendPasswordResetURL: (email: string) => void
   getFirestore: () => Firestore
-  // TODO Cloud Storage接続情報
-  //   getStorage: () => void
+  getStorage: () => FirebaseStorage
 }
 
 const useFirebase: () => IUseFirebase =
@@ -93,6 +92,9 @@ const useFirebase: () => IUseFirebase =
     const getFirestore: () => Firestore =
       () => getFirebaseFirestore()
 
+    const getStorage: () => FirebaseStorage =
+      () => getFirebaseStorage()
+
     const onAuthenticationUpdated: () => Unsubscribe =
       () => {
         const auth = getAuth()
@@ -113,7 +115,8 @@ const useFirebase: () => IUseFirebase =
       logout,
       createUser,
       sendPasswordResetURL,
-      getFirestore
+      getFirestore,
+      getStorage
     }
   }
 

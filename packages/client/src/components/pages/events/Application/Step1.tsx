@@ -16,18 +16,28 @@ import FormButton from '../../../Form/Button'
 import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
 import useValidate from '../../../../hooks/useValidate'
+import useFile from '../../../../hooks/useFile'
+import CircleCutImage from './CircleCutImage'
 
 interface Props {
   app: SockbaseApplication | undefined
   leader: SockbaseAccountSecure | undefined
+  circleCutData: string | undefined
   spaces: SockbaseEventSpace[]
   paymentMethods: IPaymentMethod[]
   prevStep: () => void
-  nextStep: (app: SockbaseApplication, leader: SockbaseAccountSecure) => void
+  nextStep: (app: SockbaseApplication, leader: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
 }
 const Step1: React.FC<Props> = (props) => {
   const validator = useValidate()
+  const {
+    data: circleCutDataWithHook,
+    openAsDataURL: openCircleCut
+  } = useFile()
+
+  const [circleCutFile, setCircleCutFile] = useState<File | null>()
+  const [circleCutData, setCircleCutData] = useState<string>()
 
   const [app, setApp] = useState<SockbaseApplication>({
     spaceId: '',
@@ -77,6 +87,9 @@ const Step1: React.FC<Props> = (props) => {
       if (props.leader) {
         setLeader(props.leader)
       }
+      if (props.circleCutData) {
+        setCircleCutData(props.circleCutData)
+      }
       if (props.spaces) {
         setSpaceIds(props.spaces.map(i => i.id))
       }
@@ -84,7 +97,14 @@ const Step1: React.FC<Props> = (props) => {
         setPaymentMethodIds(props.paymentMethods.map(i => i.id))
       }
     }
-  useEffect(onInitialize, [props.app, props.leader, props.spaces, props.paymentMethods])
+  useEffect(onInitialize, [props.app, props.leader, props.circleCutData, props.spaces, props.paymentMethods])
+
+  const onChangeCircleCutFile: () => void =
+    () => {
+      if (!circleCutFile) return
+      openCircleCut(circleCutFile)
+    }
+  useEffect(onChangeCircleCutFile, [circleCutFile])
 
   const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace | undefined>()
   const onChangeSpaceSelect: () => void =
@@ -101,6 +121,7 @@ const Step1: React.FC<Props> = (props) => {
 
       const validators = [
         validator.isIn(app.spaceId, spaceIds),
+        !validator.isNull(circleCutData),
         !validator.isEmpty(app.circle.name),
         validator.isOnlyHiragana(app.circle.yomi),
         !validator.isEmpty(app.circle.penName),
@@ -149,6 +170,13 @@ const Step1: React.FC<Props> = (props) => {
     () => setLeader(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
   useEffect(onChangeBirthday, [displayBirthday])
 
+  const onChangeCircleCutData: () => void =
+    () => {
+      if (!circleCutDataWithHook) return
+      setCircleCutData(circleCutDataWithHook)
+    }
+  useEffect(onChangeCircleCutData, [circleCutDataWithHook])
+
   const setTestData: () => void =
     () => {
       setApp({
@@ -187,14 +215,12 @@ const Step1: React.FC<Props> = (props) => {
   const handleSubmit: () => void =
     () => {
       setError(undefined)
-
-      if (!isAllValid) {
+      if (!isAllValid || !circleCutData || !circleCutFile) {
         setError('入力内容に不備があります')
         return
       }
 
-      console.log(leader)
-      props.nextStep(app, leader)
+      props.nextStep(app, leader, circleCutData, circleCutFile)
     }
 
   return (
@@ -227,10 +253,22 @@ const Step1: React.FC<Props> = (props) => {
       </FormSection>
 
       <h2>サークルカット</h2>
+      <ul>
+        <li>サークルカットを提出する際は、テンプレートを使用する必要があります。</li>
+        <li>テンプレートは、下記URLからダウンロード可能です。</li>
+        <li>申し込み後でもサークルカットを差し替えることができます。</li>
+        <li>公序良俗に反する画像は使用できません。不特定多数の方の閲覧が可能なため、ご配慮をお願いいたします。</li>
+      </ul>
       <FormSection>
         <FormItem>
           <FormLabel>サークルカット</FormLabel>
-          <FormInput type="file" />
+          <FormInput
+            type="file"
+            accept="image/*"
+            onChange={e => setCircleCutFile(e.target.files?.[0])} />
+        </FormItem>
+        <FormItem>
+          {circleCutData && <CircleCutImage src={circleCutData} />}
         </FormItem>
       </FormSection>
 
