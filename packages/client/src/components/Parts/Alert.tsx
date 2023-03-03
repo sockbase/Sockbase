@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-type AlertType = 'info' | 'danger'
+type AlertType = 'success' | 'danger'
 
 interface Props {
   type?: AlertType
@@ -26,7 +26,7 @@ const AlertContainer = styled.div<{ type?: AlertType }>`
     margin-bottom: 0;
   }
 
-${props => props.type === 'info'
+${props => props.type === 'success'
     ? {
       borderLeft: '8px solid #44bf40'
     }

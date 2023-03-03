@@ -149,6 +149,41 @@ const Step1: React.FC<Props> = (props) => {
     () => setLeader(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
   useEffect(onChangeBirthday, [displayBirthday])
 
+  const setTestData: () => void =
+    () => {
+      setApp({
+        spaceId: props.spaces[0].id,
+        circle: {
+          name: 'test',
+          yomi: 'てすと',
+          penName: 'nirsmmy',
+          penNameYomi: 'そめみやねいろ',
+          hasAdult: false,
+          genre: 'あいうえお'
+        },
+        overview: {
+          description: 'ここには頒布物概要が入ります',
+          totalAmount: '123冊'
+        },
+        unionCircleId: '',
+        petitCode: '',
+        paymentMethod: 'online',
+        remarks: '備考'
+      })
+      setLeader({
+        name: '染宮ねいろ',
+        birthday: new Date('2002/03/29').getTime(),
+        postalCode: '133-0065',
+        address: '住所',
+        telephone: '08081656154',
+        email: 'nirsmmy@gmail.com',
+        password: 'password1234',
+        rePassword: 'password1234'
+      })
+      setDisplayBirthday('2002-03-29')
+      setAgreed(true)
+    }
+
   const handleSubmit: () => void =
     () => {
       setError(undefined)
@@ -166,7 +201,12 @@ const Step1: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton color="default" onClick={() => props.prevStep()}>申し込み説明画面へ戻る</FormButton>
+          <FormButton onClick={setTestData} color="info">テストデータ入力(開発用)</FormButton>
+        </FormItem>
+      </FormSection>
+      <FormSection>
+        <FormItem>
+          <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
         </FormItem>
       </FormSection>
       <h2>申込むスペース数</h2>
@@ -371,7 +411,8 @@ const Step1: React.FC<Props> = (props) => {
               <FormLabel>メールアドレス</FormLabel>
               <FormInput type="email"
                 value={leader.email}
-                onChange={e => setLeader(s => ({ ...s, email: e.target.value }))} />
+                onChange={e => setLeader(s => ({ ...s, email: e.target.value }))}
+                isError={!validator.isEmpty(leader.email) && !validator.isEmail(leader.email)} />
             </FormItem>
             <FormItem>
               <FormLabel>パスワード</FormLabel>

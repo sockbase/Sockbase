@@ -19,10 +19,10 @@ const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
   }
 }
 
-interface IUseUser {
+interface IUseUserData {
   getMyUserDataAsync: () => Promise<SockbaseAccount | null>
 }
-const useUser: () => IUseUser = () => {
+const useUserData: () => IUseUserData = () => {
   const { user, getFirestore } = useFirebase()
 
   const getMyUserDataAsync: () => Promise<SockbaseAccount | null> =
@@ -49,4 +49,4 @@ const useUser: () => IUseUser = () => {
   }
 }
 
-export default useUser
+export default useUserData

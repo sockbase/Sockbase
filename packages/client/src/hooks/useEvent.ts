@@ -1,5 +1,11 @@
-import useFirebase from './useFirebase'
+import { MD5, enc } from 'crypto-js'
+import dayjs from 'dayjs'
+
+import { type FirebaseError } from 'firebase/app'
+import { type User } from 'firebase/auth'
 import * as FirestoreDB from 'firebase/firestore'
+
+import useFirebase from './useFirebase'
 
 import type {
   SockbaseApplication,
@@ -9,7 +15,7 @@ import type {
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent>
-  submitApplicationAsync: (eventId: string, app: SockbaseApplication) => Promise<void>
+  submitApplicationAsync: (user: User, eventId: string, app: SockbaseApplication) => Promise<string>
 }
 
 const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
@@ -50,6 +56,7 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
 
 const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicationDocument> = {
   toFirestore: (app: SockbaseApplicationDocument): FirestoreDB.DocumentData => ({
+    hashId: app.hashId,
     userId: app.userId,
     spaceId: app.spaceId,
     circle: {
@@ -68,11 +75,12 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
     petitCode: app.petitCode,
     paymentMethod: app.paymentMethod,
     remarks: app.remarks,
-    timestamp: app.timestamp
+    timestamp: FirestoreDB.serverTimestamp()
   }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseApplicationDocument => {
     const app = snapshot.data()
     return {
+      hashId: app.hashId,
       userId: app.userId,
       spaceId: app.spaceId,
       circle: app.circle,
@@ -81,13 +89,13 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
       petitCode: app.petitCode,
       paymentMethod: app.paymentMethod,
       remarks: app.remarks,
-      timestamp: app.timestamp
+      timestamp: app.timestamp * 1000
     }
   }
 }
 
 const useEvent: () => IUseEvent = () => {
-  const { getFirestore, user } = useFirebase()
+  const { getFirestore } = useFirebase()
 
   const getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent> =
     async (eventId) => {
@@ -103,12 +111,8 @@ const useEvent: () => IUseEvent = () => {
       }
     }
 
-  const submitApplicationAsync: (eventId: string, app: SockbaseApplication) => Promise<void> =
-    async (eventId, app) => {
-      if (!user) {
-        throw new Error('no login')
-      }
-
+  const submitApplicationAsync: (user: User, eventId: string, app: SockbaseApplication) => Promise<string> =
+    async (user, eventId, app) => {
       const db = getFirestore()
       const applicationCol = FirestoreDB
         .collection(db, 'events', eventId, 'applications')
@@ -116,13 +120,40 @@ const useEvent: () => IUseEvent = () => {
       const appDoc: SockbaseApplicationDocument = {
         ...app,
         userId: user.uid,
-        timestamp: new Date().getTime()
+        timestamp: 0,
+        hashId: null
       }
-      const applicationRef = await FirestoreDB.addDoc(applicationCol, appDoc)
+      const createdAppDocRef = await FirestoreDB.addDoc(applicationCol, appDoc)
         .catch(err => {
           throw err
         })
-      alert(applicationRef)
+
+      // TODO Cloud Functionsに移植して、Cloud FunctionsからgeneratedHashIdを取ってこれるようにする
+      const generatedHashId = await generateHashId(eventId, createdAppDocRef)
+
+      // TODO generatedHashId使ってサークルカットアップロードする
+
+      console.log(generatedHashId)
+      return generatedHashId
+    }
+
+  // TODO Cloud Functionsに移植する
+  const generateHashId: (eventId: string, ref: FirestoreDB.DocumentReference) => Promise<string> =
+    async (eventId, ref) => {
+      const salt = 'sockbase-yogurt-koharurikka516'
+      const codeDigit = 8
+      const refHashId = MD5(`${eventId}.${ref.id}.${salt}`)
+        .toString(enc.Hex)
+        .slice(0, codeDigit)
+      const formatedDateTime = dayjs().format('YYYYMMDDHmmSSS')
+      const hashId = `${formatedDateTime}-${refHashId}`
+
+      await FirestoreDB.updateDoc(ref, { hashId })
+        .catch((err: FirebaseError) => {
+          throw err
+        })
+
+      return hashId
     }
 
   return {

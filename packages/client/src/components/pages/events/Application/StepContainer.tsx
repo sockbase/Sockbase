@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
+import { type User } from 'firebase/auth'
+
 import type { SockbaseAccount, SockbaseAccountSecure, SockbaseApplication, SockbaseEvent } from 'sockbase'
 
+import useFirebase from '../../../../hooks/useFirebase'
+import useUserData from '../../../../hooks/useUserData'
 import useEvent from '../../../../hooks/useEvent'
-import useUser from '../../../../hooks/useUser'
 
 import StepProgress from '../../../Parts/StepProgress'
 import Introduction from './Introduction'
@@ -35,33 +38,55 @@ interface Props {
   isLoggedIn: boolean
 }
 const StepContainer: React.FC<Props> = (props) => {
+  const { user, createUser } = useFirebase()
+  const { getMyUserDataAsync } = useUserData()
   const { submitApplicationAsync } = useEvent()
-  const { getMyUserDataAsync } = useUser()
 
   const [step, setStep] = useState(0)
   const [app, setApp] = useState<SockbaseApplication>()
   const [leader, setLeader] = useState<SockbaseAccountSecure>()
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
 
-  const [userData, setUserData] = useState<SockbaseAccount | null | undefined>()
+  const [userData, setUserData] = useState<SockbaseAccount | null>()
+  const [appHashId, setAppHashId] = useState<string>()
 
-  const submitApplication: () => Promise<void> =
-    async () => {
-      if (!app) return
-      await submitApplicationAsync(props.eventId, app)
+  const submitApplicationWithUserAsync: (user: User, eventId: string, app: SockbaseApplication) => Promise<string> =
+    async (user, eventId, app) => {
+      const createdAppHashId = await submitApplicationAsync(user, eventId, app)
         .catch(err => {
           throw err
         })
+      // TODO 決済管理情報作成(サーバ側でやったほうが良いかも)
+      // TODO 決済管理情報取得
+      return createdAppHashId
+    }
+
+  const submitApplication: () => Promise<void> =
+    async () => {
+      if (!app || !leader) return
+
+      if (!user) {
+        const newUser = await createUser(leader.email, leader.password)
+          .catch(err => {
+            throw err
+          })
+        const createdAppHashId = await submitApplicationWithUserAsync(newUser, props.eventId, app)
+        setAppHashId(createdAppHashId)
+        return
+      }
+
+      const createdAppHashId = await submitApplicationWithUserAsync(user, props.eventId, app)
+      setAppHashId(createdAppHashId)
     }
 
   const fetchUserData: () => void =
     () => {
-      const f: () => Promise<void> =
+      const fetchUserDataAsync: () => Promise<void> =
         async () => {
           const userData = await getMyUserDataAsync()
           setUserData(userData)
         }
-      f().catch(err => {
+      fetchUserDataAsync().catch(err => {
         throw err
       })
     }
@@ -89,16 +114,18 @@ const StepContainer: React.FC<Props> = (props) => {
           app={app}
           leader={leader}
           spaces={props.event.spaces}
-          user={userData}
+          userData={userData}
           paymentMethods={paymentMethods}
           submitApplication={submitApplication}
           prevStep={() => setStep(1)}
           nextStep={() => setStep(3)} />,
-        <Step3 key="step3" nextStep={() => setStep(4)} />,
+        <Step3 key="step3"
+          appHashId={appHashId}
+          nextStep={() => setStep(4)} />,
         <Step4 key="step4" />
       ])
     }
-  useEffect(onInitialize, [props.isLoggedIn, app, leader, userData])
+  useEffect(onInitialize, [props.isLoggedIn, app, leader, userData, appHashId])
 
   return (
     <>
