@@ -4,6 +4,7 @@ import {
   type Auth,
   type User,
   type UserCredential,
+  type Unsubscribe,
   getAuth as getFirebaseAuth,
   signInWithEmailAndPassword,
   signOut,
@@ -42,8 +43,8 @@ const useFirebase: () => IUseFirebase =
 
         const app = getFirebaseApp()
         const _auth = getFirebaseAuth(app)
-
         setAuth(_auth)
+
         return _auth
       }
 
@@ -92,19 +93,15 @@ const useFirebase: () => IUseFirebase =
     const getFirestore: () => Firestore =
       () => getFirebaseFirestore()
 
-    const onAuthenticationUpdated: () => void =
+    const onAuthenticationUpdated: () => Unsubscribe =
       () => {
-        const f: () => Promise<void> =
-          async () => {
-            const auth = getAuth()
-            onIdTokenChanged(auth, (user) => {
-              setUser(user)
-              setLoggedIn(!!user)
-            })
-          }
-        f().catch((err: FirebaseError) => {
-          throw err
+        const auth = getAuth()
+        const unSubscribe = onIdTokenChanged(auth, (user) => {
+          setUser(user)
+          setLoggedIn(!!user)
         })
+
+        return unSubscribe
       }
     useEffect(onAuthenticationUpdated, [])
 

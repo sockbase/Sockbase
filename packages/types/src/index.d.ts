@@ -66,3 +66,5 @@ export type SockbaseAccountSecure = SockbaseAccount & {
   password: string
   rePassword: string
 }
+
+export type valueOf<T> = T[keyof T]

@@ -1,9 +1,14 @@
 import styled from 'styled-components'
+import type { valueOf } from 'sockbase'
 
-type AlertType = 'success' | 'danger'
+const AlertType = {
+  Danger: 'danger',
+  Success: 'success'
+} as const
+type AlertTypes = valueOf<typeof AlertType>
 
 interface Props {
-  type?: AlertType
+  type?: AlertTypes
   title?: string
   children: React.ReactNode
 }
@@ -16,7 +21,7 @@ const Alert: React.FC<Props> = (props) => {
   )
 }
 
-const AlertContainer = styled.div<{ type?: AlertType }>`
+const AlertContainer = styled.div<{ type?: AlertTypes }>`
   margin-bottom: 10px;
   padding: 10px;
   background-color: #f0f0f0;

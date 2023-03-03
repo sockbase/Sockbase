@@ -14,24 +14,24 @@ export interface User {
 
 const App: React.FC = () => {
   const firebase = useFirebase()
-  const { parse: firebaseErrorParse } = useFirebaseError()
+  const { localize: localizeFirebaseError } = useFirebaseError()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isProccesing, setProcessing] = useState(false)
-  const [error, setError] = useState<{ title: string, content: string } | undefined>()
+  const [error, setError] = useState<{ title: string, content: string } | null>()
 
-  const [user, setUser] = useState<User | undefined>()
+  const [user, setUser] = useState<User | null>()
   const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>()
 
   const login: () => void =
     () => {
       setProcessing(true)
-      setError(undefined)
+      setError(null)
 
       firebase.loginByEmail(email, password)
         .catch((e: Error) => {
-          const message = firebaseErrorParse(e.message)
+          const message = localizeFirebaseError(e.message)
           setError({ title: 'ログインに失敗しました', content: message })
           throw e
         })
@@ -42,7 +42,7 @@ const App: React.FC = () => {
   const logout: () => void =
     () => {
       setProcessing(true)
-      setError(undefined)
+      setError(null)
 
       firebase.logout()
       setProcessing(false)
@@ -50,8 +50,9 @@ const App: React.FC = () => {
 
   const onChangeLoggedInState: () => void =
     () => {
-      if (!firebase.user) {
-        setUser(undefined)
+      if (firebase.user === undefined) return
+      if (firebase.user === null) {
+        setUser(null)
         setLoggedIn(false)
         return
       }
