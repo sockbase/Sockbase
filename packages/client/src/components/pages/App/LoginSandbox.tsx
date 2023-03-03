@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import type { User } from '../../../containers/App'
 
 import Form from '../../Form/Form'
@@ -17,13 +18,25 @@ interface Props {
   login: () => void
   logout: () => void
   isProccesing: boolean
-  error?: { title: string, content: string }
+  error?: { title: string, content: string } | null
 
-  user?: User
+  user?: User | null
   isLoggedIn?: boolean
 }
 
 const LoginSandbox: React.FC<Props> = (props) => {
+  const loggedInStatus: string =
+    useMemo(() => {
+      console.log('loggedInStatus', props.isLoggedIn)
+      if (props.isLoggedIn === undefined) {
+        return '認証中'
+      } else if (props.isLoggedIn) {
+        return 'ログイン中'
+      } else {
+        return '未ログイン'
+      }
+    }, [props.isLoggedIn])
+
   return (
     <>
       <h1>ログインサンドボックス</h1>
@@ -59,12 +72,12 @@ const LoginSandbox: React.FC<Props> = (props) => {
           <FormItem>
             <FormButton
               type="button"
-              onClick={() => props.login()}
+              onClick={props.login}
               disabled={props.isProccesing || props.isLoggedIn}>ログイン</FormButton>
           </FormItem>
           <FormItem>
             <FormButton type="button"
-              onClick={() => props.logout()}
+              onClick={props.logout}
               disabled={props.isProccesing || !props.isLoggedIn}>ログアウト</FormButton>
           </FormItem>
         </FormSection>
@@ -81,11 +94,7 @@ const LoginSandbox: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>ログイン状態</th>
-            <td>{props.isLoggedIn === undefined
-              ? '認証中'
-              : props.isLoggedIn
-                ? 'ログイン中'
-                : '未ログイン'}</td>
+            <td>{loggedInStatus}</td>
           </tr>
           <tr>
             <th>ユーザID</th>
