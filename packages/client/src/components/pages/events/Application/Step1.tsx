@@ -24,7 +24,7 @@ import CircleCutImage from './CircleCutImage'
 interface Props {
   app: SockbaseApplication | undefined
   leader: SockbaseAccountSecure | undefined
-  circleCutData: string | undefined
+  circleCutFile: File | null | undefined
   spaces: SockbaseEventSpace[]
   paymentMethods: IPaymentMethod[]
   prevStep: () => void
@@ -90,8 +90,8 @@ const Step1: React.FC<Props> = (props) => {
       if (props.leader) {
         setLeader(props.leader)
       }
-      if (props.circleCutData) {
-        setCircleCutData(props.circleCutData)
+      if (props.circleCutFile) {
+        setCircleCutFile(props.circleCutFile)
       }
       if (props.spaces) {
         setSpaceIds(props.spaces.map(i => i.id))
@@ -100,7 +100,7 @@ const Step1: React.FC<Props> = (props) => {
         setPaymentMethodIds(props.paymentMethods.map(i => i.id))
       }
     }
-  useEffect(onInitialize, [props.app, props.leader, props.circleCutData, props.spaces, props.paymentMethods])
+  useEffect(onInitialize, [props.app, props.leader, props.circleCutFile, props.spaces, props.paymentMethods])
 
   const onChangeCircleCutFile: () => void =
     () => {
@@ -243,11 +243,11 @@ const Step1: React.FC<Props> = (props) => {
 
   return (
     <>
-      {/* <FormSection>
+      <FormSection>
         <FormItem>
           <FormButton onClick={setTestData} color="info">テストデータ入力(開発用)</FormButton>
         </FormItem>
-      </FormSection> */}
+      </FormSection>
       <FormSection>
         <FormItem>
           <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
@@ -563,7 +563,6 @@ const Step1: React.FC<Props> = (props) => {
             {invalidFieldCount}個の入力項目に不備があります。
           </Alert>
         </FormItem>}
-        {error && <Alert type="danger">{error}</Alert>}
         <FormButton
           disabled={!isAgreed || !isAllValid}
           onClick={handleSubmit}>
