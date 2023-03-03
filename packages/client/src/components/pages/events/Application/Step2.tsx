@@ -21,7 +21,7 @@ interface Props {
   nextStep: () => void
 }
 const Step2: React.FC<Props> = (props) => {
-  const { parse: parseFirebaseError } = useFirebaseError()
+  const { localize: localizeFirebaseError } = useFirebaseError()
 
   const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace | undefined>()
   const [paymentMethodInfo, setPaymentMethodInfo] = useState<IPaymentMethod | undefined>()
@@ -51,7 +51,7 @@ const Step2: React.FC<Props> = (props) => {
           props.nextStep()
         })
         .catch((err: Error) => {
-          setError(new Error(parseFirebaseError(err.message)))
+          setError(new Error(localizeFirebaseError(err.message)))
           throw err
         })
         .finally(() => {
