@@ -5,6 +5,7 @@ import useFirebaseError from '../hooks/useFirebaseError'
 
 import DefaultLayout from '../components/Layout/Default/Default'
 import LoginSandboxComponent from '../components/pages/App/LoginSandbox'
+import { Link } from 'react-router-dom'
 
 export interface User {
   userId: string
@@ -70,7 +71,14 @@ const App: React.FC = () => {
   useEffect(onChangeLoggedInState, [firebase.user])
 
   return (
-    <DefaultLayout title="ログインサンドボックス">
+    <DefaultLayout title="@sockbase/developers Portal">
+      <h1>@sockbase/developers Portal</h1>
+
+      <h2>開発リンク</h2>
+      <ul>
+        <li><Link to="/events/sockbase1">サークル申し込み</Link></li>
+      </ul>
+
       <LoginSandboxComponent
         email={email}
         password={password}
