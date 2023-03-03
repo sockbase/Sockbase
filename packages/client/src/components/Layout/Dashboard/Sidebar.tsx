@@ -131,14 +131,14 @@ const menu: MenuSection[] = [
 const Sidebar: React.FC = (props) => {
   return (
     <StyledSidebarContainer>
-      {menu.map(i => <StyledSection key={i.sectionKey}>
-        {i.sectionName && <StyledSectionHeader>{i.sectionName}</StyledSectionHeader>}
+      {menu.map(sec => <StyledSection key={sec.sectionKey}>
+        {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
         <StyledMenu>
           {
-            i.items.map(i =>
-              <StyledMenuItem key={i.key} to={i.link}>
-                <StyledMenuItemIcon isImportant={i.isImportant}>{i.icon}</StyledMenuItemIcon>
-                <StyledMenuItemText isImportant={i.isImportant}>{i.text}</StyledMenuItemText>
+            sec.items.map(item =>
+              <StyledMenuItem key={item.key} to={item.link}>
+                <StyledMenuItemIcon isImportant={item.isImportant}>{item.icon}</StyledMenuItemIcon>
+                <StyledMenuItemText isImportant={item.isImportant}>{item.text}</StyledMenuItemText>
               </StyledMenuItem>
             )
           }
