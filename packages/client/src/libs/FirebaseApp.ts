@@ -1,8 +1,8 @@
 import type { FirebaseApp } from 'firebase/app'
 import * as fb from 'firebase/app'
 
-export const getFirebaseApp: () => Promise<FirebaseApp> =
-  async () => {
+export const getFirebaseApp: () => FirebaseApp =
+  () => {
     return fb.getApps().length === 0
       ? fb.initializeApp({
         apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
