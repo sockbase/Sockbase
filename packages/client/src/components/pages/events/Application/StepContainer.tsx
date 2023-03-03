@@ -94,6 +94,10 @@ const StepContainer: React.FC<Props> = (props) => {
     }
   useEffect(fetchUserData, [getMyUserDataAsync])
 
+  const onChangeStep: () => void =
+    () => window.scrollTo(0, 0)
+  useEffect(onChangeStep, [step])
+
   const onInitialize: () => void =
     () => {
       if (props.isLoggedIn === undefined) return

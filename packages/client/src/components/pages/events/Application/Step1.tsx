@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react'
 import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure } from 'sockbase'
 import { type IPaymentMethod } from './StepContainer'
 
+import usePostalCode from '../../../../hooks/usePostalCode'
+import useValidate from '../../../../hooks/useValidate'
+import useFile from '../../../../hooks/useFile'
+
 import FormSection from '../../../Form/FormSection'
 import FormLabel from '../../../Form/Label'
 import FormRadio from '../../../Form/Radio'
@@ -15,8 +19,6 @@ import Alert from '../../../Parts/Alert'
 import FormButton from '../../../Form/Button'
 import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
-import useValidate from '../../../../hooks/useValidate'
-import useFile from '../../../../hooks/useFile'
 import CircleCutImage from './CircleCutImage'
 
 interface Props {
@@ -31,6 +33,7 @@ interface Props {
 }
 const Step1: React.FC<Props> = (props) => {
   const validator = useValidate()
+  const { getAddressByPostalCode } = usePostalCode()
   const {
     data: circleCutDataWithHook,
     openAsDataURL: openCircleCut
@@ -223,6 +226,21 @@ const Step1: React.FC<Props> = (props) => {
       props.nextStep(app, leader, circleCutData, circleCutFile)
     }
 
+  const handleFilledPostalCode: (postalCode: string) => void =
+    (postalCode) => {
+      const sanitizedPostalCode = postalCode.replaceAll('-', '')
+
+      if (sanitizedPostalCode.length !== 7) return
+      getAddressByPostalCode(sanitizedPostalCode)
+        .then(address => setLeader(s => ({
+          ...s,
+          address
+        })))
+        .catch(err => {
+          throw err
+        })
+    }
+
   return (
     <>
       {/* <FormSection>
@@ -413,6 +431,7 @@ const Step1: React.FC<Props> = (props) => {
                 onChange={e => {
                   if (e.target.value.length > 8) return
                   const postal = e.target.value.match(/(\d{3})(\d{4})/)
+                  handleFilledPostalCode(e.target.value)
                   setLeader(s => ({
                     ...s,
                     postalCode:
