@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import { type FirebaseError } from 'firebase/app'
 import { type User } from 'firebase/auth'
 import * as FirestoreDB from 'firebase/firestore'
+import * as FirebaseStorage from 'firebase/storage'
 
 import useFirebase from './useFirebase'
 
@@ -15,7 +16,7 @@ import type {
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent>
-  submitApplicationAsync: (user: User, eventId: string, app: SockbaseApplication) => Promise<string>
+  submitApplicationAsync: (user: User, eventId: string, app: SockbaseApplication, circleCutFile: File) => Promise<string>
 }
 
 const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
@@ -95,7 +96,7 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
 }
 
 const useEvent: () => IUseEvent = () => {
-  const { getFirestore } = useFirebase()
+  const { getFirestore, getStorage } = useFirebase()
 
   const getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent> =
     async (eventId) => {
@@ -111,8 +112,8 @@ const useEvent: () => IUseEvent = () => {
       }
     }
 
-  const submitApplicationAsync: (user: User, eventId: string, app: SockbaseApplication) => Promise<string> =
-    async (user, eventId, app) => {
+  const submitApplicationAsync: (user: User, eventId: string, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
+    async (user, eventId, app, circleCutFile) => {
       const db = getFirestore()
       const applicationCol = FirestoreDB
         .collection(db, 'events', eventId, 'applications')
@@ -131,9 +132,10 @@ const useEvent: () => IUseEvent = () => {
       // TODO Cloud Functionsに移植して、Cloud FunctionsからgeneratedHashIdを取ってこれるようにする
       const generatedHashId = await generateHashId(eventId, createdAppDocRef)
 
-      // TODO generatedHashId使ってサークルカットアップロードする
+      const storage = getStorage()
+      const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${eventId}/${generatedHashId}`)
+      await FirebaseStorage.uploadBytes(circleCutRef, circleCutFile)
 
-      console.log(generatedHashId)
       return generatedHashId
     }
 
