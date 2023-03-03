@@ -1,9 +1,9 @@
 interface IUseFirebaseError {
-  parse: (errorMessage: string) => string
+  localize: (errorMessage: string) => string
 }
 const useFirebaseError: () => IUseFirebaseError =
   () => {
-    const parse: (errorMessage: string) => string =
+    const localize: (errorMessage: string) => string =
       (errorMessage) => {
         if (errorMessage.includes('auth/wrong-password') || errorMessage.includes('auth/user-not-found')) {
           return 'メールアドレスまたはパスワードが間違っています'
@@ -15,7 +15,7 @@ const useFirebaseError: () => IUseFirebaseError =
       }
 
     return {
-      parse
+      localize
     }
   }
 
