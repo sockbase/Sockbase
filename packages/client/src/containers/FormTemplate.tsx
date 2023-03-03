@@ -1,5 +1,3 @@
-import React from 'react'
-
 import DefaultLayout from '../components/Layout/Default/Default'
 import FormTemplateComponent from '../components/pages/FormTemplate/FormTemplate'
 

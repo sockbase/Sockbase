@@ -1,5 +1,3 @@
-import React from 'react'
-
 import StepProgress from '../../Parts/StepProgress'
 
 import FormItem from '../../Form/FormItem'

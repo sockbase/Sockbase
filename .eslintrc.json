@@ -21,7 +21,11 @@
     "project": "./tsconfig.json"
   },
   "rules": {
-    "@typescript-eslint/strict-boolean-expressions": "off"
+    "@typescript-eslint/strict-boolean-expressions": "off",
+    "multiline-ternary": [
+      "error",
+      "always-multiline"
+    ]
     // "semi": [
     //     "error",
     //     "never"
