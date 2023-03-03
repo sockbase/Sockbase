@@ -2,7 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {
   createBrowserRouter,
-  RouterProvider
+  Outlet,
+  RouterProvider,
+  ScrollRestoration
 } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 
@@ -21,11 +23,22 @@ import PrivacyPolicy from './containers/static/PrivacyPolicy'
 getFirebaseApp()
 initializeAppCheck()
 
+const Root: React.FC = () => {
+  return (
+    <>
+      <Outlet />
+      <ScrollRestoration />
+    </>
+  )
+}
+
 const router = createBrowserRouter([
   {
+    path: '/',
+    element: <Root />,
     children: [
       {
-        path: '/',
+        index: true,
         element: <App />
       },
       {
