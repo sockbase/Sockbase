@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	match /users/{userId} {
+    	allow read: if request.auth.uid == userId;
+      allow write: if request.auth.uid == userId;
+    }
+    
+  	match /events/{event} {
+    	allow read: if true;
+      
+      match /applications/{application} {
+        function isValidApplication(app) {
+        	return 'userId' in app && app.userId is string && app.userId != ''
+          	&& 'circle' in app && app.circle.size() == 6
+              && 'name' in app.circle && app.circle.name is string && app.circle.name != ''
+              && 'yomi' in app.circle && app.circle.yomi is string && app.circle.yomi != ''
+              && 'penName' in app.circle && app.circle.penName is string && app.circle.penName != ''
+              && 'penNameYomi' in app.circle && app.circle.penNameYomi is string && app.circle.penNameYomi != ''
+              && 'hasAdult' in app.circle && app.circle.hasAdult is bool
+            	&& 'genre' in app.circle && app.circle.genre is string && app.circle.genre != ''
+            && 'overview' in app && app.overview.size() == 2
+              && 'description' in app.overview && app.overview.description is string && app.overview.description != ''
+              && 'totalAmount' in app.overview && app.overview.totalAmount is string && app.overview.totalAmount != ''
+            && 'unionCircleId' in app && app.unionCircleId is string
+            && 'petitCode' in app && app.petitCode is string
+            && 'paymentMethod' in app && app.paymentMethod is string
+            	&& (app.paymentMethod == 'online' || app.paymentMethod == 'bankTransfer')
+            && 'remarks' in app && app.remarks is string;
+        }
+        
+      	allow read: if request.auth.uid == resource.data.userId;
+      	allow write: if request.auth != null && request.auth.uid == resource.data.userId
+        	&& isValidApplication(request.resource.data);
+        allow create: if request.auth != null
+          && isValidApplication(request.resource.data);
+      }
+    }
+    
+    // match /{document=**} {
+    //  allow read, write: if false;
+    // }
+  }
+}
