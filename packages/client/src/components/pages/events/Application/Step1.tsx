@@ -244,11 +244,11 @@ const Step1: React.FC<Props> = (props) => {
 
   return (
     <>
-      <FormSection>
+      {/* <FormSection>
         <FormItem>
           <FormButton onClick={setTestData} color="info">テストデータ入力(開発用)</FormButton>
         </FormItem>
-      </FormSection>
+      </FormSection> */}
       <FormSection>
         <FormItem>
           <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
