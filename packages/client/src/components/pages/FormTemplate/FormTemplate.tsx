@@ -87,7 +87,7 @@ const FormTemplate: React.FC = (props) => {
         <FormItem>
           <FormLabel>成人向け頒布物の有無</FormLabel>
           <FormSelect>
-            <option>成人向け頒布物の有無を選択してください</option>
+            <option>選択してください</option>
             <option>成人向け頒布物はありません</option>
             <option>成人向け頒布物があります</option>
           </FormSelect>
