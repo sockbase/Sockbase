@@ -21,7 +21,7 @@ const DefaultLayout: React.FC<Props> = (props) => {
 
 export default DefaultLayout
 
-const StyledLayout = styled.div({
+const StyledLayout = styled.section({
   display: 'grid',
   height: '100%',
   gridTemplateRows: '1fr auto'
