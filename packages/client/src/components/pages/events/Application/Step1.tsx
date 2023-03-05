@@ -120,11 +120,12 @@ const Step1: React.FC<Props> = (props) => {
 
   const onChangeForm: () => void =
     () => {
-      if (!spaceIds || !paymentMethodIds) return
+      if (!spaceIds || !paymentMethodIds || !circleCutData) return
 
       const validators = [
         validator.isIn(app.spaceId, spaceIds),
-        !validator.isNull(circleCutData),
+        !validator.isNull(circleCutFile),
+        !validator.isEmpty(circleCutData),
         !validator.isEmpty(app.circle.name),
         validator.isOnlyHiragana(app.circle.yomi),
         !validator.isEmpty(app.circle.penName),
@@ -167,7 +168,7 @@ const Step1: React.FC<Props> = (props) => {
       setInvalidFieldCount(invalidCount)
       setAllValid(!hasValidationError)
     }
-  useEffect(onChangeForm, [spaceIds, app, leader])
+  useEffect(onChangeForm, [spaceIds, app, leader, circleCutFile, circleCutData])
 
   const onChangeBirthday: () => void =
     () => setLeader(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
@@ -243,11 +244,11 @@ const Step1: React.FC<Props> = (props) => {
 
   return (
     <>
-      {/* <FormSection>
+      <FormSection>
         <FormItem>
           <FormButton onClick={setTestData} color="info">テストデータ入力(開発用)</FormButton>
         </FormItem>
-      </FormSection> */}
+      </FormSection>
       <FormSection>
         <FormItem>
           <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
