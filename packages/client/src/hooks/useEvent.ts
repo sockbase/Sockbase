@@ -16,7 +16,7 @@ import type {
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent>
-  submitApplicationAsync: (user: User, eventId: string, app: SockbaseApplication, circleCutFile: File) => Promise<string>
+  submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string>
 }
 
 const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
@@ -59,6 +59,7 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
   toFirestore: (app: SockbaseApplicationDocument): FirestoreDB.DocumentData => ({
     hashId: app.hashId,
     userId: app.userId,
+    eventId: app.eventId,
     spaceId: app.spaceId,
     circle: {
       name: app.circle.name,
@@ -83,6 +84,7 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
     return {
       hashId: app.hashId,
       userId: app.userId,
+      eventId: app.eventId,
       spaceId: app.spaceId,
       circle: app.circle,
       overview: app.overview,
@@ -112,11 +114,11 @@ const useEvent: () => IUseEvent = () => {
       }
     }
 
-  const submitApplicationAsync: (user: User, eventId: string, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
-    async (user, eventId, app, circleCutFile) => {
+  const submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
+    async (user, app, circleCutFile) => {
       const db = getFirestore()
       const applicationCol = FirestoreDB
-        .collection(db, 'events', eventId, 'applications')
+        .collection(db, 'applications')
         .withConverter(applicationConverter)
       const appDoc: SockbaseApplicationDocument = {
         ...app,
@@ -130,10 +132,10 @@ const useEvent: () => IUseEvent = () => {
         })
 
       // TODO Cloud Functionsに移植して、Cloud FunctionsからgeneratedHashIdを取ってこれるようにする
-      const generatedHashId = await generateHashId(eventId, createdAppDocRef)
+      const generatedHashId = await generateHashId(app.eventId, createdAppDocRef)
 
       const storage = getStorage()
-      const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${eventId}/${generatedHashId}`)
+      const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${generatedHashId}`)
       await FirebaseStorage.uploadBytes(circleCutRef, circleCutFile)
 
       return generatedHashId

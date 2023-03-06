@@ -52,9 +52,9 @@ const StepContainer: React.FC<Props> = (props) => {
   const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [appHashId, setAppHashId] = useState<string>()
 
-  const submitApplicationWithUserAsync: (user: User, eventId: string, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
-    async (user, eventId, app, circleCutFile) => {
-      const createdAppHashId = await submitApplicationAsync(user, eventId, app, circleCutFile)
+  const submitApplicationWithUserAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
+    async (user, app, circleCutFile) => {
+      const createdAppHashId = await submitApplicationAsync(user, app, circleCutFile)
         .catch(err => {
           throw err
         })
@@ -72,12 +72,12 @@ const StepContainer: React.FC<Props> = (props) => {
           .catch(err => {
             throw err
           })
-        const createdAppHashId = await submitApplicationWithUserAsync(newUser, props.eventId, app, circleCutFile)
+        const createdAppHashId = await submitApplicationWithUserAsync(newUser, app, circleCutFile)
         setAppHashId(createdAppHashId)
         return
       }
 
-      const createdAppHashId = await submitApplicationWithUserAsync(user, props.eventId, app, circleCutFile)
+      const createdAppHashId = await submitApplicationWithUserAsync(user, app, circleCutFile)
       setAppHashId(createdAppHashId)
     }
 
@@ -106,6 +106,7 @@ const StepContainer: React.FC<Props> = (props) => {
       setStepComponents([
         <Introduction key="introduction" nextStep={() => setStep(1)} event={props.event} />,
         <Step1 key="step1"
+          eventId={props.eventId}
           app={app}
           leader={leader}
           circleCutFile={circleCutFile}

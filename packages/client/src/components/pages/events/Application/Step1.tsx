@@ -22,6 +22,7 @@ import FormTextarea from '../../../Form/Textarea'
 import CircleCutImage from './CircleCutImage'
 
 interface Props {
+  eventId: string
   app: SockbaseApplication | undefined
   leader: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
@@ -43,6 +44,7 @@ const Step1: React.FC<Props> = (props) => {
   const [circleCutData, setCircleCutData] = useState<string>()
 
   const [app, setApp] = useState<SockbaseApplication>({
+    eventId: props.eventId,
     spaceId: '',
     circle: {
       name: '',
@@ -184,6 +186,7 @@ const Step1: React.FC<Props> = (props) => {
   const setTestData: () => void =
     () => {
       setApp({
+        eventId: props.eventId,
         spaceId: props.spaces[0].id,
         circle: {
           name: 'test',
@@ -244,11 +247,11 @@ const Step1: React.FC<Props> = (props) => {
 
   return (
     <>
-      {/* <FormSection>
+      <FormSection>
         <FormItem>
           <FormButton onClick={setTestData} color="info">テストデータ入力(開発用)</FormButton>
         </FormItem>
-      </FormSection> */}
+      </FormSection>
       <FormSection>
         <FormItem>
           <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>

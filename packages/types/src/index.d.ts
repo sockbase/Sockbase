@@ -28,6 +28,7 @@ export interface SockbaseOrganization {
 }
 
 export interface SockbaseApplication {
+  eventId: string
   spaceId: string
   circle: {
     name: string
