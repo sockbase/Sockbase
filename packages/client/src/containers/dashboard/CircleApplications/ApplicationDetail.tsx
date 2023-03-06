@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEvent } from 'sockbase'
 
@@ -8,8 +8,10 @@ import useEvent from '../../../hooks/useEvent'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import ApplicationDetail from '../../../components/pages/dashboard/CircleApplications/ApplicationDetail'
 import useUserData from '../../../hooks/useUserData'
+import useFirebase from '../../../hooks/useFirebase'
 
 const ApplicationDetailContainer: React.FC = () => {
+  const { user } = useFirebase()
   const { getApplicationByHashedIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserId } = useUserData()
@@ -17,20 +19,20 @@ const ApplicationDetailContainer: React.FC = () => {
   const { hashedAppId } = useParams()
   const [app, setApp] = useState<SockbaseApplicationDocument>()
   const [event, setEvent] = useState<SockbaseEvent>()
-  const [user, setUser] = useState<SockbaseAccount>()
+  const [userData, setUserData] = useState<SockbaseAccount>()
 
   const onInitialize: () => void =
     () => {
       const fetchApplicationAsync: () => Promise<void> =
         async () => {
-          if (!hashedAppId) return
+          if (!hashedAppId || !user) return
 
-          const fetchedApp = await getApplicationByHashedIdAsync(hashedAppId)
+          const fetchedApp = await getApplicationByHashedIdAsync(user.uid, hashedAppId)
           setApp(fetchedApp)
 
           const fetchedUser = await getUserDataByUserId(fetchedApp.userId)
           const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
-          setUser(fetchedUser)
+          setUserData(fetchedUser)
           setEvent(fetchedEvent)
         }
       fetchApplicationAsync()
@@ -38,11 +40,15 @@ const ApplicationDetailContainer: React.FC = () => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId])
+  useEffect(onInitialize, [hashedAppId, user])
 
+  const title = useMemo(() => {
+    if (!event) return ''
+    return `${event.eventName} 申し込み情報`
+  }, [event])
   return (
-    <DashboardLayout title="Hello Sockbase! 申し込み情報">
-      {app && event && user && <ApplicationDetail app={app} event={event} user={user} />}
+    <DashboardLayout title={title}>
+      {app && event && userData && <ApplicationDetail app={app} event={event} userData={userData} />}
     </DashboardLayout>
   )
 }

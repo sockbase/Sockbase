@@ -10,7 +10,7 @@ interface Props {
   spaceName: string
   app: SockbaseApplicationDocument
   event: SockbaseEvent
-  user: SockbaseAccount
+  userData: SockbaseAccount
 }
 const AdminDetail: React.FC<Props> = (props) => {
   return (
@@ -128,15 +128,15 @@ const AdminDetail: React.FC<Props> = (props) => {
             <tbody>
               <tr>
                 <th>申し込み責任者氏名</th>
-                <td>{props.user.name}</td>
+                <td>{props.userData.name}</td>
               </tr>
               <tr>
                 <th>メールアドレス</th>
-                <td>{props.user.email}</td>
+                <td>{props.userData.email}</td>
               </tr>
               <tr>
                 <th>メールアドレス確認状態</th>
-                <td>{props.user.isEmailVerified ? '確認済み' : '未確認'}</td>
+                <td>{props.userData.isEmailVerified ? '確認済み' : '未確認'}</td>
               </tr>
             </tbody>
           </table>

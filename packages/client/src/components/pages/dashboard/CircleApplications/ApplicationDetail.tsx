@@ -16,7 +16,7 @@ const isAdmin = true
 interface Props {
   app: SockbaseApplicationDocument
   event: SockbaseEvent
-  user: SockbaseAccount
+  userData: SockbaseAccount
 }
 const ApplicationDetail: React.FC<Props> = (props) => {
   const spaceName = useMemo(() => {
@@ -37,8 +37,8 @@ const ApplicationDetail: React.FC<Props> = (props) => {
         description="申し込み情報" />
 
       {isAdmin
-        ? <AdminDetail spaceName={spaceName} app={props.app} event={props.event} user={props.user} />
-        : <UserDetail spaceName={spaceName} app={props.app} event={props.event} user={props.user} />
+        ? <AdminDetail spaceName={spaceName} app={props.app} event={props.event} userData={props.userData} />
+        : <UserDetail spaceName={spaceName} app={props.app} event={props.event} userData={props.userData} />
       }
 
     </>
