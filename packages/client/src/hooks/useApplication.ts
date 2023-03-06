@@ -56,7 +56,7 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
 }
 
 interface IUseApplication {
-  getApplicationByHashedIdAsync: (hashedAppId: string) => Promise<SockbaseApplicationDocument>
+  getApplicationByHashedIdAsync: (userId: string, hashedAppId: string) => Promise<SockbaseApplicationDocument>
   getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]>
   submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string>
@@ -64,13 +64,16 @@ interface IUseApplication {
 const useApplication: () => IUseApplication = () => {
   const { getFirestore, getStorage } = useFirebase()
 
-  const getApplicationByHashedIdAsync: (hashedAppId: string) => Promise<SockbaseApplicationDocument> =
-    async (hashedAppId) => {
+  const getApplicationByHashedIdAsync: (userId: string, hashedAppId: string) => Promise<SockbaseApplicationDocument> =
+    async (userId, hashedAppId) => {
       const db = getFirestore()
       const appsRef = FirestoreDB.collection(db, 'applications')
         .withConverter(applicationConverter)
 
-      const appsQuery = FirestoreDB.query(appsRef, FirestoreDB.where('hashId', '==', hashedAppId))
+      const appsQuery = FirestoreDB.query(
+        appsRef,
+        FirestoreDB.where('userId', '==', userId),
+        FirestoreDB.where('hashId', '==', hashedAppId))
       const querySnapshot = await FirestoreDB.getDocs(appsQuery)
       const queryDocs = querySnapshot.docs
       if (queryDocs.length !== 1) {

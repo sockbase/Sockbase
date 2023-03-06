@@ -11,7 +11,7 @@ interface Props {
   spaceName: string
   app: SockbaseApplicationDocument
   event: SockbaseEvent
-  user: SockbaseAccount
+  userData: SockbaseAccount
 }
 const UserDetail: React.FC<Props> = (props) => {
   return (
