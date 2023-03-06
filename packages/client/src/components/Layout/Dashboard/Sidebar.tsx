@@ -74,7 +74,7 @@ const menu: MenuSection[] = [
         key: 'circleHistories',
         icon: <MdEditNote />,
         text: 'サークル申し込み履歴',
-        link: ''
+        link: '/dashboard/applications'
       },
       {
         key: 'paymentHistories',
@@ -116,7 +116,7 @@ const menu: MenuSection[] = [
         key: 'manageEvents',
         icon: <MdEditCalendar />,
         text: 'イベント管理',
-        link: ''
+        link: '/dashboard/events'
       },
       {
         key: 'manageStores',
