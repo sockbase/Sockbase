@@ -1,6 +1,14 @@
 import styled from 'styled-components'
+import type { valueOf } from 'sockbase'
 
-const FormButton = styled.button<{ color?: 'default' | 'info' }>`
+const ColorType = {
+  Default: 'default',
+  Info: 'info',
+  Danger: 'danger'
+} as const
+type ColorTypes = valueOf<typeof ColorType>
+
+const FormButton = styled.button<{ color?: ColorTypes }>`
   width: 100%;
   padding: 10px;
   border-radius: 5px;
@@ -28,12 +36,19 @@ ${props => props.color === 'default'
           backgroundColor: '#1080e0'
         }
       }
-      : {
-        backgroundColor: '#ea6183',
-        '&:active': {
-          backgroundColor: '#99334c'
+      : props.color === 'danger'
+        ? {
+          backgroundColor: '#bf4040',
+          '&:active': {
+            backgroundColor: '#9f2020'
+          }
         }
-      }}
+        : {
+          backgroundColor: '#ea6183',
+          '&:active': {
+            backgroundColor: '#99334c'
+          }
+        }}
 
 ${props => props.disabled
     ? {

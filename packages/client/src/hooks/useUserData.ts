@@ -11,6 +11,8 @@ const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
     const data = snapshot.data()
     return {
       name: data.name,
+      email: data.email,
+      isEmailVerified: data.isEmailVerified,
       birthday: new Date(data.birthday).getTime(),
       postalCode: data.postalCode,
       address: data.address,
@@ -21,6 +23,7 @@ const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
 
 interface IUseUserData {
   getMyUserDataAsync: () => Promise<SockbaseAccount | null>
+  getUserDataByUserId: (userId: string) => Promise<SockbaseAccount>
 }
 const useUserData: () => IUseUserData = () => {
   const { user, getFirestore } = useFirebase()
@@ -32,20 +35,33 @@ const useUserData: () => IUseUserData = () => {
       }
 
       const db = getFirestore()
-      const userDoc = FirestoreDB
+      const userRef = FirestoreDB
         .doc(db, 'users', user.uid)
         .withConverter(userConverter)
-      const snap = await FirestoreDB.getDoc(userDoc)
+      const snap = await FirestoreDB.getDoc(userRef)
       if (snap.exists()) {
-        console.log(snap.data())
         return snap.data()
       } else {
-        throw new Error('userId not found')
+        throw new Error('user not found')
       }
     }, [user])
 
+  const getUserDataByUserId: (userId: string) => Promise<SockbaseAccount> =
+    async (userId) => {
+      const db = getFirestore()
+      const userRef = FirestoreDB.doc(db, 'users', userId)
+        .withConverter(userConverter)
+      const userDoc = await FirestoreDB.getDoc(userRef)
+      if (userDoc.exists()) {
+        return userDoc.data()
+      } else {
+        throw new Error('user not found')
+      }
+    }
+
   return {
-    getMyUserDataAsync
+    getMyUserDataAsync,
+    getUserDataByUserId
   }
 }
 
