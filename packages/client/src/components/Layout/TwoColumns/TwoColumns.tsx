@@ -17,5 +17,12 @@ const StyledColumnContainer = styled.section`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+
+  @media screen and (max-width: 840px) {
+    display: block;
+    & > * {
+      margin-bottom: 20px;
+    }
+  }
 `
 const StyledColumnItem = styled.section``
