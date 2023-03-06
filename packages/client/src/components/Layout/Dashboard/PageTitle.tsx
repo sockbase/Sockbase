@@ -32,6 +32,7 @@ const StyledIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #ea6183;
 `
 const StyledTitle = styled.div`
   grid-column: 2;
@@ -41,6 +42,7 @@ const StyledTitle = styled.div`
 const StyledDescription = styled.div`
   grid-column: 2;
   grid-row: 2;
+  color: #404040;
 `
 
 export default PageTitle

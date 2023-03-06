@@ -16,9 +16,15 @@ import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 import App from './containers/App'
 import FormTemplate from './containers/FormTemplate'
 import DashboardTemplate from './containers/DashboardTemplate'
-import EventApplication from './containers/events/Application'
 import TermsOfService from './containers/static/TermsOfService'
 import PrivacyPolicy from './containers/static/PrivacyPolicy'
+
+import EventApplication from './containers/events/Application'
+
+import DashboardEventList from './containers/dashboard/Events/EventList'
+import DashboardEventApplications from './containers/dashboard/Events/EventApplications'
+import DashboardApplicationList from './containers/dashboard/CircleApplications/ApplicationList'
+import DashboardApplicationDetail from './containers/dashboard/CircleApplications/ApplicationDetail'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -63,6 +69,37 @@ const router = createBrowserRouter([
           {
             path: ':eventId',
             element: <EventApplication />
+          }
+        ]
+      },
+      {
+        path: 'dashboard',
+        children: [
+          {
+            path: 'events',
+            children: [
+              {
+                index: true,
+                element: <DashboardEventList />
+              },
+              {
+                path: ':eventId',
+                element: <DashboardEventApplications />
+              }
+            ]
+          },
+          {
+            path: 'applications',
+            children: [
+              {
+                index: true,
+                element: <DashboardApplicationList />
+              },
+              {
+                path: ':applicationId',
+                element: <DashboardApplicationDetail />
+              }
+            ]
           }
         ]
       }
