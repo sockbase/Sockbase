@@ -5,7 +5,6 @@ import type { SockbaseAccount, SockbaseAccountSecure, SockbaseApplication, Sockb
 
 import useFirebase from '../../../../hooks/useFirebase'
 import useUserData from '../../../../hooks/useUserData'
-import useEvent from '../../../../hooks/useEvent'
 
 import StepProgress from '../../../Parts/StepProgress'
 import Introduction from './Introduction'
@@ -13,6 +12,7 @@ import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import Step4 from './Step4'
+import useApplication from '../../../../hooks/useApplication'
 
 export interface IPaymentMethod {
   id: string
@@ -40,7 +40,7 @@ interface Props {
 const StepContainer: React.FC<Props> = (props) => {
   const { user, createUser } = useFirebase()
   const { getMyUserDataAsync } = useUserData()
-  const { submitApplicationAsync } = useEvent()
+  const { submitApplicationAsync } = useApplication()
 
   const [step, setStep] = useState(0)
   const [circleCutData, setCircleCutData] = useState<string>()

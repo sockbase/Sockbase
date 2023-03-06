@@ -96,7 +96,7 @@ const router = createBrowserRouter([
                 element: <DashboardApplicationList />
               },
               {
-                path: ':applicationId',
+                path: ':hashedAppId',
                 element: <DashboardApplicationDetail />
               }
             ]

@@ -56,6 +56,8 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
 
 export interface SockbaseAccount {
   name: string
+  email: string
+  isEmailVerified?: boolean
   birthday: number
   postalCode: string
   address: string
@@ -63,7 +65,6 @@ export interface SockbaseAccount {
 }
 
 export type SockbaseAccountSecure = SockbaseAccount & {
-  email: string
   password: string
   rePassword: string
 }
