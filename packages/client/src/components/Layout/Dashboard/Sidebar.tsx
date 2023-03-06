@@ -1,9 +1,11 @@
-import React from 'react'
-import styled from 'styled-components'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import styled, { css } from 'styled-components'
+
 import {
-  MdLogin,
-  MdMail,
-  MdDashboard,
+  MdMenu,
+  MdClose,
+  MdHome,
   MdLocalActivity,
   MdAccountBalanceWallet,
   MdEditNote,
@@ -14,7 +16,8 @@ import {
   MdEditCalendar,
   MdStore
 } from 'react-icons/md'
-import { Link } from 'react-router-dom'
+
+import useWindowDimension from '../../../hooks/useWindowDimension'
 
 interface MenuSection {
   sectionKey: string
@@ -27,48 +30,26 @@ interface MenuItem {
   text: string
   link: string
   isImportant?: boolean
+  isDisabled?: boolean
 }
 const menu: MenuSection[] = [
-  {
-    sectionKey: 'developments',
-    sectionName: '開発用',
-    items: [
-      {
-        key: 'firebaseLogin',
-        icon: <MdLogin />,
-        text: 'Firebaseログインテスト',
-        link: '/'
-      },
-      {
-        key: 'formTemplate',
-        icon: <MdMail />,
-        text: 'フォームテンプレート',
-        link: '/formTemplate'
-      },
-      {
-        key: 'dashboardTemplate',
-        icon: <MdDashboard />,
-        text: 'ダッシュボードテンプレート',
-        link: '/dashboardTemplate'
-      }
-    ]
-  },
   {
     sectionKey: 'mypage',
     sectionName: 'マイページ',
     items: [
       {
+        key: 'mypageHome',
+        icon: <MdHome />,
+        text: 'マイページホーム',
+        link: '/dashboard'
+      },
+      {
         key: 'myTickets',
         icon: <MdLocalActivity />,
         text: 'マイチケット',
         link: '',
-        isImportant: true
-      },
-      {
-        key: 'ticketHistories',
-        icon: <MdAccountBalanceWallet />,
-        text: 'チケット申し込み履歴',
-        link: ''
+        isImportant: true,
+        isDisabled: true
       },
       {
         key: 'circleHistories',
@@ -77,16 +58,25 @@ const menu: MenuSection[] = [
         link: '/dashboard/applications'
       },
       {
+        key: 'ticketHistories',
+        icon: <MdAccountBalanceWallet />,
+        text: 'チケット申し込み履歴',
+        link: '',
+        isDisabled: true
+      },
+      {
         key: 'paymentHistories',
         icon: <MdPayments />,
         text: '決済履歴',
-        link: ''
+        link: '',
+        isDisabled: true
       },
       {
         key: 'settings',
         icon: <MdSettings />,
         text: 'マイページ設定',
-        link: ''
+        link: '',
+        isDisabled: true
       }
     ]
   },
@@ -98,7 +88,8 @@ const menu: MenuSection[] = [
         key: 'terminal',
         icon: <MdQrCodeScanner />,
         text: 'チケット照会ターミナル',
-        link: ''
+        link: '',
+        isDisabled: true
       }
     ]
   },
@@ -110,7 +101,8 @@ const menu: MenuSection[] = [
         key: 'omnisearch',
         icon: <MdManageSearch />,
         text: '横断検索',
-        link: ''
+        link: '',
+        isDisabled: true
       },
       {
         key: 'manageEvents',
@@ -122,29 +114,53 @@ const menu: MenuSection[] = [
         key: 'manageStores',
         icon: <MdStore />,
         text: 'チケットストア管理',
-        link: ''
+        link: '',
+        isDisabled: true
       }
     ]
   }
 ]
 
 const Sidebar: React.FC = (props) => {
+  const { width } = useWindowDimension()
+  const [isActiveToggleMenu, setActiveToggleMenu] = useState(false)
+  const [isOpenMenu, setOpenMenu] = useState(false)
+
+  const onChangeWidth: () => void =
+    () => setActiveToggleMenu(width < 840)
+  useEffect(onChangeWidth, [width])
+
   return (
     <StyledSidebarContainer>
-      {menu.map(sec => <StyledSection key={sec.sectionKey}>
-        {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
-        <StyledMenu>
-          {
-            sec.items.map(item =>
-              <StyledMenuItem key={item.key} to={item.link}>
-                <StyledMenuItemIcon isImportant={item.isImportant}>{item.icon}</StyledMenuItemIcon>
-                <StyledMenuItemText isImportant={item.isImportant}>{item.text}</StyledMenuItemText>
-              </StyledMenuItem>
-            )
-          }
-        </StyledMenu>
-      </StyledSection>)}
-    </StyledSidebarContainer>
+      {isActiveToggleMenu && <StyledMenu>
+        {
+          !isOpenMenu
+            ? <StyledMenuItem onClick={() => setOpenMenu(true)}>
+              <StyledMenuItemIcon><MdMenu /></StyledMenuItemIcon>
+              <StyledMenuItemText>メニュー</StyledMenuItemText>
+            </StyledMenuItem>
+            : <StyledMenuItem onClick={() => setOpenMenu(false)}>
+              <StyledMenuItemIcon><MdClose /></StyledMenuItemIcon>
+              <StyledMenuItemText>閉じる</StyledMenuItemText>
+            </StyledMenuItem>
+        }
+      </StyledMenu>}
+      {
+        (!isActiveToggleMenu || (isActiveToggleMenu && isOpenMenu)) && menu.map(sec => <StyledSection key={sec.sectionKey}>
+          {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
+          <StyledMenu>
+            {
+              sec.items.map(item =>
+                <StyledMenuItemLink key={item.key} to={item.link}>
+                  <StyledMenuItemIcon isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
+                  <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>
+                </StyledMenuItemLink>
+              )
+            }
+          </StyledMenu>
+        </StyledSection>)
+      }
+    </StyledSidebarContainer >
   )
 }
 
@@ -168,20 +184,27 @@ const StyledSectionHeader = styled.h2`
   }
 `
 const StyledMenu = styled.section``
-const StyledMenuItem = styled(Link)`
-  display: grid;
-  grid-template-columns: 48px 1fr;
-  margin-bottom: 5px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-  &:hover {
-    text-decoration: none;
-  }
+const styledMenuItemStyle = css`
+display: grid;
+grid-template-columns: 48px 1fr;
+margin-bottom: 5px;
+&:last-child {
+  margin-bottom: 0;
+}
+&:hover {
+  text-decoration: none;
+}
 
-  cursor: pointer;
+cursor: pointer;
 `
-const StyledMenuItemIcon = styled.div<{ isImportant?: boolean }>`
+
+const StyledMenuItem = styled.span`
+  ${styledMenuItemStyle}
+`
+const StyledMenuItemLink = styled(Link)`
+  ${styledMenuItemStyle}
+`
+const StyledMenuItemIcon = styled.div<{ isImportant?: boolean, isDisabled?: boolean }>`
   padding: 10px;
   border-radius: 5px 0 0 5px;
   border-right: none;
@@ -193,34 +216,45 @@ const StyledMenuItemIcon = styled.div<{ isImportant?: boolean }>`
   align-items: center;
   justify-content: center;
 
-  ${props => props.isImportant
+  ${props => props.isDisabled
     ? {
-      backgroundColor: '#bf4040',
-      border: '2px solid #bf4040'
+      backgroundColor: '#808080',
+      border: '2px solid #808080'
     }
-    : {
-      backgroundColor: '#ea6183',
-      border: '2px solid #ea6183'
-    }
+    : props.isImportant
+      ? {
+        backgroundColor: '#bf4040',
+        border: '2px solid #bf4040'
+      }
+      : {
+        backgroundColor: '#ea6183',
+        border: '2px solid #ea6183'
+      }
   }
 `
-const StyledMenuItemText = styled.div<{ isImportant?: boolean }>`
+const StyledMenuItemText = styled.div<{ isImportant?: boolean, isDisabled?: boolean }>`
   padding: 10px;
   background-color: #f8f8f8;
   color: #000000;
   border-radius: 0 5px 5px 0;
   border-left: none;
 
-  ${props => props.isImportant
+  ${props => props.isDisabled
     ? {
-      backgroundColor: '#ffffff',
-      border: '2px solid #bf4040',
-      color: '#bf4040',
-      fontWeight: 'bold'
+      backgroundColor: '#c0c0c0',
+      border: '2px solid #808080',
+      color: '#808080'
     }
-    : {
-      border: '2px solid #ea6183'
-    }
+    : props.isImportant
+      ? {
+        backgroundColor: '#ffffff',
+        border: '2px solid #bf4040',
+        color: '#bf4040',
+        fontWeight: 'bold'
+      }
+      : {
+        border: '2px solid #ea6183'
+      }
   }
 `
 

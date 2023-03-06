@@ -25,6 +25,7 @@ import DashboardEventList from './containers/dashboard/Events/EventList'
 import DashboardEventApplications from './containers/dashboard/Events/EventApplications'
 import DashboardApplicationList from './containers/dashboard/CircleApplications/ApplicationList'
 import DashboardApplicationDetail from './containers/dashboard/CircleApplications/ApplicationDetail'
+import Dashboard from './containers/dashboard/Dashboard'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: 'dashboard',
         children: [
+          {
+            index: true,
+            element: <Dashboard />
+          },
           {
             path: 'events',
             children: [

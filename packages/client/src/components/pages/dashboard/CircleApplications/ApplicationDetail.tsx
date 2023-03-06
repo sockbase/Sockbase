@@ -11,7 +11,7 @@ import UserDetail from './Detail/User'
 
 import { useMemo } from 'react'
 
-const isAdmin = false
+const isAdmin = true
 
 interface Props {
   app: SockbaseApplicationDocument
@@ -27,7 +27,7 @@ const ApplicationDetail: React.FC<Props> = (props) => {
   return (
     <>
       <Breadcrumbs>
-        <li><Link to="/dashboard">ダッシュボード</Link></li>
+        <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/applications">サークル参加申し込み履歴</Link></li>
         {isAdmin && <li><Link to="/dashboard/events/sockbase1">{props.event.eventName}</Link></li>}
       </Breadcrumbs>

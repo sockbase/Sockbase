@@ -57,6 +57,8 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
 
 interface IUseApplication {
   getApplicationByHashedIdAsync: (hashedAppId: string) => Promise<SockbaseApplicationDocument>
+  getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
+  getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]>
   submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string>
 }
 const useApplication: () => IUseApplication = () => {
@@ -81,6 +83,36 @@ const useApplication: () => IUseApplication = () => {
       } else {
         throw new Error('application not found')
       }
+    }
+
+  const getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]> =
+    async (userId) => {
+      const db = getFirestore()
+      const appsRef = FirestoreDB.collection(db, 'applications')
+        .withConverter(applicationConverter)
+
+      const appsQuery = FirestoreDB.query(appsRef, FirestoreDB.where('userId', '==', userId))
+      const querySnapshot = await FirestoreDB.getDocs(appsQuery)
+      const queryDocs = querySnapshot.docs
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
+
+      return queryDocs
+    }
+
+  const getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]> =
+    async (eventId) => {
+      const db = getFirestore()
+      const appsRef = FirestoreDB.collection(db, 'applications')
+        .withConverter(applicationConverter)
+
+      const appsQuery = FirestoreDB.query(appsRef, FirestoreDB.where('eventId', '==', eventId))
+      const querySnapshot = await FirestoreDB.getDocs(appsQuery)
+      const queryDocs = querySnapshot.docs
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
+
+      return queryDocs
     }
 
   const submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
@@ -130,6 +162,8 @@ const useApplication: () => IUseApplication = () => {
 
   return {
     getApplicationByHashedIdAsync,
+    getApplicationsByUserIdAsync,
+    getApplicationsByEventIdAsync,
     submitApplicationAsync
   }
 }
