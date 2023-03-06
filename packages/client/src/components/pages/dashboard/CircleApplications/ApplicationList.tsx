@@ -1,14 +1,18 @@
+import type { SockbaseApplicationDocument } from 'sockbase'
 import { Link } from 'react-router-dom'
 
 import { MdEditNote } from 'react-icons/md'
 import PageTitle from '../../../Layout/Dashboard/PageTitle'
 import Breadcrumbs from '../../../Parts/Breadcrumbs'
 
-const ApplicationList: React.FC = () => {
+interface Props {
+  apps: SockbaseApplicationDocument[]
+}
+const ApplicationList: React.FC<Props> = (props) => {
   return (
     <>
       <Breadcrumbs>
-        <li><Link to="/dashboard">ダッシュボード</Link></li>
+        <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
         icon={<MdEditNote />}
@@ -16,7 +20,15 @@ const ApplicationList: React.FC = () => {
         description="今までに申し込んだイベントの一覧を表示中" />
 
       <ul>
-        <li><Link to="/dashboard/applications/:applicationId">Hello Sockbase! as ねくたりしょん</Link></li>
+        {
+          props.apps
+            .filter(app => !!app.hashId)
+            .map(app => (
+              app.hashId && <li key={app.hashId}>
+                <Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link>
+              </li>
+            ))
+        }
       </ul>
     </>
   )

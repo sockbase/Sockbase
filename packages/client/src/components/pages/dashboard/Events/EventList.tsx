@@ -7,7 +7,7 @@ const EventList: React.FC = () => {
   return (
     <>
       <Breadcrumbs>
-        <li><Link to="/dashboard">ダッシュボード</Link></li>
+        <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
         icon={<MdTableChart />}

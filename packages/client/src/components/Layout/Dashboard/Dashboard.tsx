@@ -41,6 +41,11 @@ const StyledContainer = styled.section`
   height: 100%;
   overflow-y: hidden;
   grid-template-columns: 25% 1fr;
+
+  @media screen and (max-width: 840px) {
+    display: block;
+    overflow-y: auto;
+  }
 `
 const StyledSidebar = styled.nav`
   padding: 10px;
