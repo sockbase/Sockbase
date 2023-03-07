@@ -73,6 +73,9 @@ const StyledSidebar = styled.nav`
 const StyledWrapMain = styled.main`
   padding: 20px;
   overflow-y: auto;
+  @media screen and (max-width: 840px) {
+    padding: 0;
+  }
 `
 const StyledMain = styled.div`
   padding: 20px;

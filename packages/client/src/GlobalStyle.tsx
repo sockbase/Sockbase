@@ -32,6 +32,7 @@ h2 {
   border-bottom: 4px solid var(--darkAccentColor);
   position: relative;
   display: inline;
+  z-index: 0;
   &::after {
     display: block;
     content: '';

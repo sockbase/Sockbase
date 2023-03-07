@@ -71,6 +71,7 @@ const useApplication: () => IUseApplication = () => {
         .withConverter(applicationConverter)
 
       const appsQuery = FirestoreDB.query(appsRef, FirestoreDB.where('hashId', '==', hashedAppId))
+      console.log(hashedAppId)
       const querySnapshot = await FirestoreDB.getDocs(appsQuery)
       const queryDocs = querySnapshot.docs
       if (queryDocs.length !== 1) {
