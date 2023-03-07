@@ -1,25 +1,43 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+
+import useFirebase from '../../../hooks/useFirebase'
 
 import HeadHelper from '../../../libs/Helmet'
 import LogotypeSVG from '../../../assets/logotype.svg'
 
 import Sidebar from './Sidebar'
+import RequiredLogin from '../../../libs/RequiredLogin'
 
 interface Props {
   children: React.ReactNode
   title: string
 }
 const DashboardLayout: React.FC<Props> = (props) => {
+  const firebase = useFirebase()
+  const navigate = useNavigate()
+
+  const logout: () => void =
+    () => {
+      firebase.logout()
+      navigate('/')
+    }
+
   return (
     <StyledLayout>
-      <HeadHelper title={props.title} />
-      <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
-      <StyledContainer>
-        <StyledSidebar>
-          <Sidebar />
-        </StyledSidebar>
-        <StyledMain>{props.children}</StyledMain>
-      </StyledContainer>
+      <RequiredLogin />
+      {firebase.isLoggedIn && firebase.user && <>
+        <HeadHelper title={props.title} />
+        <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
+        <StyledContainer>
+          <StyledSidebar>
+            <Sidebar logout={logout} user={firebase.user} />
+          </StyledSidebar>
+          <StyledWrapMain>
+            <StyledMain>{props.children}</StyledMain>
+          </StyledWrapMain>
+        </StyledContainer>
+      </>}
     </StyledLayout>
   )
 }
@@ -52,9 +70,16 @@ const StyledSidebar = styled.nav`
   background-color: #ffdede;
   overflow-y: auto;
 `
-const StyledMain = styled.main`
+const StyledWrapMain = styled.main`
   padding: 20px;
   overflow-y: auto;
+  @media screen and (max-width: 840px) {
+    padding: 0;
+  }
+`
+const StyledMain = styled.div`
+  padding: 20px;
+  background-color: #ffffff;
 `
 
 const Logotype = styled.img`

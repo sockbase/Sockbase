@@ -8,6 +8,10 @@ html, body {
   font-family: "Noto Sans JP", sans-serif;
   height: 100vh;
 }
+body {
+  background-image: url('/bg-pattern.png');
+  background-position: center;
+}
 input, select, textarea {
   font-family: "Noto Sans JP", sans-serif;
   font-size: 1rem;
@@ -28,6 +32,7 @@ h2 {
   border-bottom: 4px solid var(--darkAccentColor);
   position: relative;
   display: inline;
+  z-index: 0;
   &::after {
     display: block;
     content: '';

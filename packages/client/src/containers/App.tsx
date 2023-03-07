@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
-import { Link, ScrollRestoration } from 'react-router-dom'
+import { useState } from 'react'
+import { ScrollRestoration, useNavigate } from 'react-router-dom'
 
 import useFirebase from '../hooks/useFirebase'
 import useFirebaseError from '../hooks/useFirebaseError'
 
 import DefaultLayout from '../components/Layout/Default/Default'
-import LoginSandboxComponent from '../components/pages/App/LoginSandbox'
+import Login from '../components/pages/App/Login'
 
 export interface User {
   userId: string
@@ -13,6 +13,7 @@ export interface User {
 }
 
 const App: React.FC = () => {
+  const navigate = useNavigate()
   const firebase = useFirebase()
   const { localize: localizeFirebaseError } = useFirebaseError()
 
@@ -21,15 +22,13 @@ const App: React.FC = () => {
   const [isProccesing, setProcessing] = useState(false)
   const [error, setError] = useState<{ title: string, content: string } | null>()
 
-  const [user, setUser] = useState<User | null>()
-  const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>()
-
   const login: () => void =
     () => {
       setProcessing(true)
       setError(null)
 
       firebase.loginByEmail(email, password)
+        .then(() => navigate('/dashboard'))
         .catch((e: Error) => {
           const message = localizeFirebaseError(e.message)
           setError({ title: 'ログインに失敗しました', content: message })
@@ -39,53 +38,17 @@ const App: React.FC = () => {
           setProcessing(false)
         })
     }
-  const logout: () => void =
-    () => {
-      setProcessing(true)
-      setError(null)
-
-      firebase.logout()
-      setProcessing(false)
-    }
-
-  const onChangeLoggedInState: () => void =
-    () => {
-      if (firebase.user === undefined) return
-      if (firebase.user === null) {
-        setUser(null)
-        setLoggedIn(false)
-        return
-      }
-
-      setUser({
-        userId: firebase.user.uid,
-        email: firebase.user.email
-      })
-      setLoggedIn(true)
-    }
-  useEffect(onChangeLoggedInState, [firebase.user])
 
   return (
-    <DefaultLayout title="@sockbase/developers Portal">
-      <h1>@sockbase/developers Portal</h1>
-
-      <h2>開発リンク</h2>
-      <ul>
-        <li><Link to="/events/sockbase1">サークル申し込み</Link></li>
-      </ul>
-
-      <LoginSandboxComponent
+    <DefaultLayout>
+      <Login
         email={email}
         password={password}
-        setEmail={setEmail}
-        setPassword={setPassword}
+        setEmail={email => setEmail(email)}
+        setPassword={password => setPassword(password)}
         login={login}
-        logout={logout}
-        isProccesing={isProccesing}
-        user={user}
-        error={error}
-        isLoggedIn={isLoggedIn}
-      />
+        isProcessing={isProccesing}
+        error={error} />
 
       <ScrollRestoration
         getKey={(location) => {

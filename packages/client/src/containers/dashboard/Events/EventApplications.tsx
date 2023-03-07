@@ -7,6 +7,7 @@ import EventApplications from '../../../components/pages/dashboard/Events/EventA
 
 import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
+import Loading from '../../../components/Parts/Loading'
 
 const EventApplicationsContainer: React.FC = () => {
   const { eventId } = useParams()
@@ -34,14 +35,16 @@ const EventApplicationsContainer: React.FC = () => {
   useEffect(onChangeEventId, [eventId])
 
   const title = useMemo(() => {
-    if (!event) return ''
+    if (!event) return '申し込み一覧を読み込み中'
     return `${event.eventName} 申し込み一覧`
   }, [event])
 
   return (
     <>
       <DashboardLayout title={title}>
-        {event && apps && <EventApplications event={event} apps={apps} />}
+        {event && apps
+          ? <EventApplications event={event} apps={apps} />
+          : <Loading text="申し込み一覧" />}
       </DashboardLayout>
     </>
   )
