@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+
+import useFirebase from '../../../hooks/useFirebase'
 
 import HeadHelper from '../../../libs/Helmet'
 import LogotypeSVG from '../../../assets/logotype.svg'
@@ -10,14 +13,23 @@ interface Props {
   title: string
 }
 const DashboardLayout: React.FC<Props> = (props) => {
+  const firebase = useFirebase()
+  const navigate = useNavigate()
+
+  const logout: () => void =
+    () => {
+      firebase.logout()
+      navigate('/')
+    }
+
   return (
     <StyledLayout>
       <HeadHelper title={props.title} />
       <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
       <StyledContainer>
-        <StyledSidebar>
-          <Sidebar />
-        </StyledSidebar>
+        {firebase.user && <StyledSidebar>
+          <Sidebar logout={logout} user={firebase.user} />
+        </StyledSidebar>}
         <StyledMain>{props.children}</StyledMain>
       </StyledContainer>
     </StyledLayout>
@@ -53,8 +65,10 @@ const StyledSidebar = styled.nav`
   overflow-y: auto;
 `
 const StyledMain = styled.main`
+  margin: 20px;
   padding: 20px;
   overflow-y: auto;
+  background-color: #ffffff;
 `
 
 const Logotype = styled.img`

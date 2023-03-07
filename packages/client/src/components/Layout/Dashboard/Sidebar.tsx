@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+import { type User } from 'firebase/auth'
 
 import {
   MdMenu,
   MdClose,
+  MdLogout,
   MdHome,
   MdLocalActivity,
   MdAccountBalanceWallet,
@@ -121,7 +123,11 @@ const menu: MenuSection[] = [
   }
 ]
 
-const Sidebar: React.FC = (props) => {
+interface Props {
+  user: User
+  logout: () => void
+}
+const Sidebar: React.FC<Props> = (props) => {
   const { width } = useWindowDimension()
   const [isActiveToggleMenu, setActiveToggleMenu] = useState(false)
   const [isOpenMenu, setOpenMenu] = useState(false)
@@ -132,41 +138,56 @@ const Sidebar: React.FC = (props) => {
 
   return (
     <StyledSidebarContainer>
-      {isActiveToggleMenu && <StyledMenu>
-        {
-          !isOpenMenu
-            ? <StyledMenuItem onClick={() => setOpenMenu(true)}>
-              <StyledMenuItemIcon><MdMenu /></StyledMenuItemIcon>
-              <StyledMenuItemText>メニュー</StyledMenuItemText>
-            </StyledMenuItem>
-            : <StyledMenuItem onClick={() => setOpenMenu(false)}>
-              <StyledMenuItemIcon><MdClose /></StyledMenuItemIcon>
-              <StyledMenuItemText>閉じる</StyledMenuItemText>
-            </StyledMenuItem>
-        }
-      </StyledMenu>}
+      {isActiveToggleMenu && <StyledSection>
+        <StyledMenu>
+          {
+            !isOpenMenu
+              ? <StyledMenuItem onClick={() => setOpenMenu(true)}>
+                <StyledMenuItemIcon><MdMenu /></StyledMenuItemIcon>
+                <StyledMenuItemText>メニュー</StyledMenuItemText>
+              </StyledMenuItem>
+              : <StyledMenuItem onClick={() => setOpenMenu(false)}>
+                <StyledMenuItemIcon><MdClose /></StyledMenuItemIcon>
+                <StyledMenuItemText>閉じる</StyledMenuItemText>
+              </StyledMenuItem>
+          }
+        </StyledMenu>
+      </StyledSection>}
       {
-        (!isActiveToggleMenu || (isActiveToggleMenu && isOpenMenu)) && menu.map(sec => <StyledSection key={sec.sectionKey}>
-          {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
-          <StyledMenu>
-            {
-              sec.items.map(item =>
-                <StyledMenuItemLink key={item.key} to={item.link}>
-                  <StyledMenuItemIcon isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
-                  <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>
-                </StyledMenuItemLink>
-              )
-            }
-          </StyledMenu>
-        </StyledSection>)
-      }
+        (!isActiveToggleMenu || (isActiveToggleMenu && isOpenMenu)) && <>
+          <StyledStatePanel>
+            <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
+            <StyledStatePanelContent>{props.user.email}</StyledStatePanelContent>
+          </StyledStatePanel>
+          <StyledSection>
+            <StyledMenu>
+              <StyledMenuItem onClick={props.logout}>
+                <StyledMenuItemIcon><MdLogout /></StyledMenuItemIcon>
+                <StyledMenuItemText>ログアウト</StyledMenuItemText>
+              </StyledMenuItem>
+            </StyledMenu>
+          </StyledSection>
+          {menu.map(sec => <StyledSection key={sec.sectionKey}>
+            {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
+            <StyledMenu>
+              {
+                sec.items.map(item =>
+                  <StyledMenuItemLink key={item.key} to={item.link}>
+                    <StyledMenuItemIcon isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
+                    <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>
+                  </StyledMenuItemLink>
+                )
+              }
+            </StyledMenu>
+          </StyledSection>)}
+        </>}
     </StyledSidebarContainer >
   )
 }
 
 const StyledSidebarContainer = styled.nav``
 const StyledSection = styled.section`
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   &:last-child {
     margin-bottom: 0;
   }
@@ -183,19 +204,19 @@ const StyledSectionHeader = styled.h2`
     display: none;
   }
 `
-const StyledMenu = styled.section``
+const StyledMenu = styled.section`
+`
 const styledMenuItemStyle = css`
-display: grid;
-grid-template-columns: 48px 1fr;
-margin-bottom: 5px;
-&:last-child {
-  margin-bottom: 0;
-}
-&:hover {
-  text-decoration: none;
-}
-
-cursor: pointer;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  margin-bottom: 5px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &:hover {
+    text-decoration: none;
+  }
+  cursor: pointer;
 `
 
 const StyledMenuItem = styled.span`
@@ -257,5 +278,21 @@ const StyledMenuItemText = styled.div<{ isImportant?: boolean, isDisabled?: bool
       }
   }
 `
+const StyledStatePanel = styled.div`
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #ea6183;
+  color: #ffffff;
 
+  margin-bottom: 5px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+const StyledStatePanelTitle = styled.div`
+  font-size: 0.9em;
+`
+const StyledStatePanelContent = styled.div`
+  font-weight: bold;
+`
 export default Sidebar
