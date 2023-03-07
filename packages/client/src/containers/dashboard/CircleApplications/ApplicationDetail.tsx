@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEvent } from 'sockbase'
 
@@ -8,6 +8,7 @@ import useEvent from '../../../hooks/useEvent'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import ApplicationDetail from '../../../components/pages/dashboard/CircleApplications/ApplicationDetail'
 import useUserData from '../../../hooks/useUserData'
+import Loading from '../../../components/Parts/Loading'
 
 const ApplicationDetailContainer: React.FC = () => {
   const { getApplicationByHashedIdAsync } = useApplication()
@@ -40,9 +41,16 @@ const ApplicationDetailContainer: React.FC = () => {
     }
   useEffect(onInitialize, [hashedAppId])
 
+  const title = useMemo(() => {
+    if (!event) return '申し込み情報を読み込み中'
+    return `${event.eventName} 申し込み情報`
+  }, [event])
+
   return (
-    <DashboardLayout title="Hello Sockbase! 申し込み情報">
-      {app && event && user && <ApplicationDetail app={app} event={event} user={user} />}
+    <DashboardLayout title={title}>
+      {app && event && user
+        ? <ApplicationDetail app={app} event={event} user={user} />
+        : <Loading text={`申し込み情報 ${hashedAppId ?? ''}`} />}
     </DashboardLayout>
   )
 }

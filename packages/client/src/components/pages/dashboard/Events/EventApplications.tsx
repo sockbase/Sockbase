@@ -4,6 +4,7 @@ import type { SockbaseApplicationDocument, SockbaseEvent } from 'sockbase'
 import { MdEditCalendar } from 'react-icons/md'
 import PageTitle from '../../../Layout/Dashboard/PageTitle'
 import Breadcrumbs from '../../../Parts/Breadcrumbs'
+import Label from '../../../Parts/Label'
 
 interface Props {
   event: SockbaseEvent
@@ -22,17 +23,32 @@ const EventApplications: React.FC<Props> = (props) => {
         title={props.event.eventName}
         description="申し込みサークル一覧" />
 
-      <ul>
-        {
-          props.apps
-            .filter(app => !!app.hashId)
-            .map(app => (
-              app.hashId && <li key={app.hashId}>
-                <Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link>
-              </li>
-            ))
-        }
-      </ul>
+      <table>
+        <thead>
+          <tr>
+            <th>サークル名</th>
+            <th>ペンネーム</th>
+            <th>ステータス</th>
+            <th>申し込み日時</th>
+            <th>申し込みID</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            props.apps
+              .filter(app => !!app.hashId)
+              .map(app => (
+                app.hashId && <tr key={app.hashId}>
+                  <th><Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link></th>
+                  <td>{app.circle.penName}</td>
+                  <td><Label color="success">申し込み完了</Label></td>
+                  <td>{new Date(app.timestamp).toLocaleString()}</td>
+                  <td>{app.hashId}</td>
+                </tr>
+              ))
+          }
+        </tbody>
+      </table>
     </>
   )
 }

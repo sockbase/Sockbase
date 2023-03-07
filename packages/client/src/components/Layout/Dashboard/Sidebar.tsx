@@ -129,16 +129,16 @@ interface Props {
 }
 const Sidebar: React.FC<Props> = (props) => {
   const { width } = useWindowDimension()
-  const [isActiveToggleMenu, setActiveToggleMenu] = useState(false)
+  const [isHideToggleMenu, setHideToggleMenu] = useState(false)
   const [isOpenMenu, setOpenMenu] = useState(false)
 
   const onChangeWidth: () => void =
-    () => setActiveToggleMenu(width < 840)
+    () => setHideToggleMenu(width >= 840)
   useEffect(onChangeWidth, [width])
 
   return (
     <StyledSidebarContainer>
-      {isActiveToggleMenu && <StyledSection>
+      {!isHideToggleMenu && <StyledSection>
         <StyledMenu>
           {
             !isOpenMenu
@@ -154,7 +154,7 @@ const Sidebar: React.FC<Props> = (props) => {
         </StyledMenu>
       </StyledSection>}
       {
-        (!isActiveToggleMenu || (isActiveToggleMenu && isOpenMenu)) && <>
+        (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) && <>
           <StyledStatePanel>
             <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
             <StyledStatePanelContent>{props.user.email}</StyledStatePanelContent>
