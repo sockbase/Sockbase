@@ -21,6 +21,10 @@ service cloud.firestore {
   	match /events/{eventId} {
     	allow read: if true;
     }
+
+    match /applicationHashIds/{hashId} {
+      allow read: if request.auth != null;
+    }
     
     match /applications/{applicationId} {
       function isValidApplication(app) {
@@ -43,8 +47,9 @@ service cloud.firestore {
           && 'remarks' in app && app.remarks is string;
       }
       
-      allow read: if request.auth.uid == resource.data.userId
-        || isOrganizationAdmin(request.auth.uid, getEvent(resource.data.eventId).organization.id);
+      allow read;
+      // allow read: if request.auth.uid == resource.data.userId
+      //   || isOrganizationAdmin(request.auth.uid, getEvent(resource.data.eventId).organization.id);
       allow write: if request.auth != null && request.auth.uid == resource.data.userId
         && isValidApplication(request.resource.data);
       allow create: if request.auth != null

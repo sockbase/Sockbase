@@ -11,7 +11,6 @@ import useUserData from '../../../hooks/useUserData'
 import Loading from '../../../components/Parts/Loading'
 
 const ApplicationDetailContainer: React.FC = () => {
-  const { user } = useFirebase()
   const { getApplicationByHashedIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserId } = useUserData()
@@ -25,9 +24,9 @@ const ApplicationDetailContainer: React.FC = () => {
     () => {
       const fetchApplicationAsync: () => Promise<void> =
         async () => {
-          if (!hashedAppId || !user) return
+          if (!hashedAppId) return
 
-          const fetchedApp = await getApplicationByHashedIdAsync(user.uid, hashedAppId)
+          const fetchedApp = await getApplicationByHashedIdAsync(hashedAppId)
           setApp(fetchedApp)
 
           const fetchedUser = await getUserDataByUserId(fetchedApp.userId)
@@ -49,8 +48,8 @@ const ApplicationDetailContainer: React.FC = () => {
 
   return (
     <DashboardLayout title={title}>
-      {app && event && user
-        ? <ApplicationDetail app={app} event={event} user={user} />
+      {app && event && userData
+        ? <ApplicationDetail app={app} event={event} userData={userData} />
         : <Loading text={`申し込み情報 ${hashedAppId ?? ''}`} />}
     </DashboardLayout>
   )
