@@ -84,15 +84,12 @@ const useApplication: () => IUseApplication = () => {
       const db = getFirestore()
       const hashIdMVRef = FirestoreDB.doc(db, 'applicationHashIds', hashedAppId)
         .withConverter(applicationHashIdConverter)
-      console.log(hashedAppId)
       const hashIdMVDoc = await FirestoreDB.getDoc(hashIdMVRef)
       if (!hashIdMVDoc.exists()) {
         throw new Error('hashId not found')
       }
 
       const appId = hashIdMVDoc.data().applicationId
-      console.log(`/applications/${appId}`)
-
       const appRef = FirestoreDB.doc(db, 'applications', appId)
         .withConverter(applicationConverter)
 
