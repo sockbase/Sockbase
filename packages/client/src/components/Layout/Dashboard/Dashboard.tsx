@@ -7,6 +7,7 @@ import HeadHelper from '../../../libs/Helmet'
 import LogotypeSVG from '../../../assets/logotype.svg'
 
 import Sidebar from './Sidebar'
+import RequiredLogin from '../../../libs/RequiredLogin'
 
 interface Props {
   children: React.ReactNode
@@ -24,14 +25,19 @@ const DashboardLayout: React.FC<Props> = (props) => {
 
   return (
     <StyledLayout>
-      <HeadHelper title={props.title} />
-      <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
-      <StyledContainer>
-        {firebase.user && <StyledSidebar>
-          <Sidebar logout={logout} user={firebase.user} />
-        </StyledSidebar>}
-        <StyledMain>{props.children}</StyledMain>
-      </StyledContainer>
+      <RequiredLogin />
+      {firebase.isLoggedIn && firebase.user && <>
+        <HeadHelper title={props.title} />
+        <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
+        <StyledContainer>
+          <StyledSidebar>
+            <Sidebar logout={logout} user={firebase.user} />
+          </StyledSidebar>
+          <StyledWrapMain>
+            <StyledMain>{props.children}</StyledMain>
+          </StyledWrapMain>
+        </StyledContainer>
+      </>}
     </StyledLayout>
   )
 }
@@ -64,10 +70,12 @@ const StyledSidebar = styled.nav`
   background-color: #ffdede;
   overflow-y: auto;
 `
-const StyledMain = styled.main`
-  margin: 20px;
+const StyledWrapMain = styled.main`
   padding: 20px;
   overflow-y: auto;
+`
+const StyledMain = styled.div`
+  padding: 20px;
   background-color: #ffffff;
 `
 
