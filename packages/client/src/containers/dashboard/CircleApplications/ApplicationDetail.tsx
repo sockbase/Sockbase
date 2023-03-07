@@ -8,7 +8,7 @@ import useEvent from '../../../hooks/useEvent'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import ApplicationDetail from '../../../components/pages/dashboard/CircleApplications/ApplicationDetail'
 import useUserData from '../../../hooks/useUserData'
-import useFirebase from '../../../hooks/useFirebase'
+import Loading from '../../../components/Parts/Loading'
 
 const ApplicationDetailContainer: React.FC = () => {
   const { user } = useFirebase()
@@ -40,15 +40,18 @@ const ApplicationDetailContainer: React.FC = () => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId, user])
+  useEffect(onInitialize, [hashedAppId])
 
   const title = useMemo(() => {
-    if (!event) return ''
+    if (!event) return '申し込み情報を読み込み中'
     return `${event.eventName} 申し込み情報`
   }, [event])
+
   return (
     <DashboardLayout title={title}>
-      {app && event && userData && <ApplicationDetail app={app} event={event} userData={userData} />}
+      {app && event && user
+        ? <ApplicationDetail app={app} event={event} user={user} />
+        : <Loading text={`申し込み情報 ${hashedAppId ?? ''}`} />}
     </DashboardLayout>
   )
 }

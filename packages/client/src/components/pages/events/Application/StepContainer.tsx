@@ -131,9 +131,10 @@ const StepContainer: React.FC<Props> = (props) => {
           prevStep={() => setStep(1)}
           nextStep={() => setStep(3)} />,
         <Step3 key="step3"
-          appHashId={appHashId}
+          appHashId={appHashId ?? ''}
           nextStep={() => setStep(4)} />,
-        <Step4 key="step4" />
+        <Step4 key="step4"
+          appHashId={appHashId ?? ''} />
       ])
     }
   useEffect(onInitialize, [props.isLoggedIn, app, leader, circleCutData, userData, appHashId])
