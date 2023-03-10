@@ -17,6 +17,8 @@ export const onCreateApplication = functions.firestore
       .get()
     const event = eventDoc.data() as SockbaseEvent
 
+    // TODO: hashIdのTOODと合わせて申し込み作成関連周りひっくるめて対応する形でも良いかもしれない
+
     const webhookBody = {
       content: '',
       username: `Sockbase: ${event.eventName}`,
