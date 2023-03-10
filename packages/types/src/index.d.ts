@@ -25,6 +25,9 @@ export interface SockbaseEventSpace {
 export interface SockbaseOrganization {
   name: string
   contactUrl: string
+  config: {
+    discordWebhookURL: string
+  }
 }
 
 export interface SockbaseApplication {
