@@ -9,6 +9,7 @@ service cloud.firestore {
     	let isOrganizationAdmin = get(/databases/$(database)/documents/organizations/$(organizationId)/users/$(userId)).data.role == 2;
       return isOrganizationAdmin || isSystemAdmin(userId);
     }
+
     function getEvent(eventId) {
       return get(/databases/$(database)/documents/events/$(eventId)).data
     }
@@ -20,9 +21,14 @@ service cloud.firestore {
     
   	match /events/{eventId} {
     	allow read: if true;
+
+      match /_users/{userId} {
+        allow read:  if request.auth.uid == userId
+          || isOrganizationAdmin(request.auth.uid, resource.data.organization.id);
+      }
     }
 
-    match /applicationHashIds/{hashId} {
+    match /_applicationHashIds/{hashId} {
       allow read: if request.auth != null;
     }
     

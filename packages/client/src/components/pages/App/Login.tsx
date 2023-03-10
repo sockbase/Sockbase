@@ -50,12 +50,6 @@ const Login: React.FC<Props> = (props) => {
             </Alert>
           </FormItem>}
       </FormSection>
-
-      <h2>Sockbaseとは？</h2>
-      <h3>イベントへの申し込み方法</h3>
-      <p>
-        イベント主催者から提供されたURLを使用してください。
-      </p>
     </>
   )
 }

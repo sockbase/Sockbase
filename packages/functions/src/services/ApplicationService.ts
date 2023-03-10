@@ -1,4 +1,4 @@
-import type { SockbaseApplicationDocument } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument } from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
@@ -14,10 +14,19 @@ export const onChangeApplication = functions.firestore
     const app = change.after.data() as SockbaseApplicationDocument
     if (!app.hashId) return
 
+    const userDoc = await adminApp.firestore()
+      .doc(`/users/${app.userId}`)
+      .get()
+    const user = userDoc.data() as SockbaseAccount
+
     await adminApp.firestore()
-      .doc(`/applicationHashIds/${app.hashId}`)
+      .doc(`/_applicationHashIds/${app.hashId}`)
       .set({
         applicationId: appId,
         hashId: app.hashId
       })
+
+    await adminApp.firestore()
+      .doc(`/events/${app.eventId}/_users/${app.userId}`)
+      .set(user)
   })

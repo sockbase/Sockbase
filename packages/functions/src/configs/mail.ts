@@ -33,7 +33,7 @@ const templates = {
       '[イベント情報]',
       `イベント名: ${event.eventName}`,
       `日程: ${event.schedules.startEvent}〜${event.schedules.endEvent}`,
-      '場所: ', // TODO あとで追記
+      '場所: ', // TODO: あとで追記
       '',
       'もし、お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただけますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',

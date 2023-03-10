@@ -23,7 +23,7 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
       startEvent: event.schedules.startEvent,
       endEvent: event.schedules.endEvent
     },
-    organization: {
+    _organization: {
       id: event.organization.id,
       contactUrl: event.organization.contactUrl,
       name: event.organization.name
@@ -37,7 +37,7 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
       rules: event.rules,
       spaces: event.spaces,
       schedules: event.schedules,
-      organization: event.organization
+      organization: event._organization
     }
   }
 }
