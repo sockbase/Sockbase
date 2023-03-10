@@ -1,6 +1,9 @@
 {
   "hosting": {
     "public": "./packages/client/dist",
+    "predeploy": [
+      "yarn --cwd ./packages/client build"
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",
