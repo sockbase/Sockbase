@@ -1,8 +1,53 @@
-import type { SockbaseAccount, SockbaseApplicationDocument } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEvent, SockbaseOrganization } from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
+import fetch from 'node-fetch'
+
 import firebaseAdmin from '../libs/FirebaseAdmin'
+
+export const onCreateApplication = functions.firestore
+  .document('/applications/{applicationId}')
+  .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ applicationId: string }>) => {
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+
+    const app = snapshot.data() as SockbaseApplicationDocument
+    const eventDoc = await adminApp.firestore()
+      .doc(`/events/${app.eventId}`)
+      .get()
+    const event = eventDoc.data() as SockbaseEvent
+
+    const webhookBody = {
+      content: '',
+      username: `Sockbase: ${event.eventName}`,
+      embeds: [
+        {
+          title: 'サークル申し込みを受け付けました！',
+          url: '',
+          fields: [
+            {
+              name: 'サークル名',
+              value: app.circle.name
+            }
+          ]
+        }
+      ]
+    }
+
+    const organizationDoc = await adminApp.firestore()
+      .doc(`/organizations/${event.organization.id}`)
+      .get()
+    const organization = organizationDoc.data() as SockbaseOrganization
+
+    // TODO: libsに切り分ける
+    await fetch(organization.config.discordWebhookURL, {
+      method: 'POST',
+      body: JSON.stringify(webhookBody),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  })
 
 export const onChangeApplication = functions.firestore
   .document('/applications/{applicationId}')
