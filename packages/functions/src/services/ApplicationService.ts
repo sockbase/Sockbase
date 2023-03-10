@@ -10,6 +10,7 @@ export const onChangeApplication = functions.firestore
     if (!change.after.exists) return
 
     const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const appId = change.after.id
     const app = change.after.data() as SockbaseApplicationDocument
     if (!app.hashId) return
 
@@ -17,6 +18,13 @@ export const onChangeApplication = functions.firestore
       .doc(`/users/${app.userId}`)
       .get()
     const user = userDoc.data() as SockbaseAccount
+
+    await adminApp.firestore()
+      .doc(`/_applicationHashIds/${app.hashId}`)
+      .set({
+        applicationId: appId,
+        hashId: app.hashId
+      })
 
     await adminApp.firestore()
       .doc(`/events/${app.eventId}/_users/${app.userId}`)
