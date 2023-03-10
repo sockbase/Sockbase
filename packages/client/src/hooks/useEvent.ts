@@ -24,9 +24,9 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
       endEvent: event.schedules.endEvent
     },
     _organization: {
-      id: event.organization.id,
-      contactUrl: event.organization.contactUrl,
-      name: event.organization.name
+      id: event._organization.id,
+      contactUrl: event._organization.contactUrl,
+      name: event._organization.name
     }
   }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseEvent => {
@@ -37,7 +37,7 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
       rules: event.rules,
       spaces: event.spaces,
       schedules: event.schedules,
-      organization: event._organization
+      _organization: event._organization
     }
   }
 }

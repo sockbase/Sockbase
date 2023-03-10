@@ -16,7 +16,7 @@ const EventApplications: React.FC<Props> = (props) => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
-        <li>{props.event.organization.name}</li>
+        <li>{props.event._organization.name}</li>
       </Breadcrumbs>
       <PageTitle
         icon={<MdEditCalendar />}
