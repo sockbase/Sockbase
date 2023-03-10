@@ -22,7 +22,7 @@ const AdminDetail: React.FC<Props> = (props) => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
-        <li>{props.event.organization.name}</li>
+        <li>{props.event._organization.name}</li>
         <li><Link to="/dashboard/events/sockbase1">{props.event.eventName}</Link></li>
       </Breadcrumbs>
       <PageTitle

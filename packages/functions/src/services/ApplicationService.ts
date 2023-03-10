@@ -37,7 +37,7 @@ export const onCreateApplication = functions.firestore
     }
 
     const organizationDoc = await adminApp.firestore()
-      .doc(`/organizations/${event.organization.id}`)
+      .doc(`/organizations/${event._organization.id}`)
       .get()
     const organization = organizationDoc.data() as SockbaseOrganization
 

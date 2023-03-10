@@ -10,7 +10,7 @@ export interface SockbaseEvent {
     startEvent: number
     endEvent: number
   }
-  organization: SockbaseOrganization & {
+  _organization: SockbaseOrganization & {
     id: string
   }
 }
