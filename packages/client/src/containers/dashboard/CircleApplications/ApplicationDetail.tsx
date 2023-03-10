@@ -13,7 +13,7 @@ import Loading from '../../../components/Parts/Loading'
 const ApplicationDetailContainer: React.FC = () => {
   const { getApplicationByHashedIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
-  const { getUserDataByUserId } = useUserData()
+  const { getUserDataByUserIdAndEventIdAsync } = useUserData()
 
   const { hashedAppId } = useParams()
   const [app, setApp] = useState<SockbaseApplicationDocument>()
@@ -29,9 +29,10 @@ const ApplicationDetailContainer: React.FC = () => {
           const fetchedApp = await getApplicationByHashedIdAsync(hashedAppId)
           setApp(fetchedApp)
 
-          const fetchedUser = await getUserDataByUserId(fetchedApp.userId)
-          const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
+          const fetchedUser = await getUserDataByUserIdAndEventIdAsync(fetchedApp.userId, fetchedApp.eventId)
           setUserData(fetchedUser)
+
+          const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
           setEvent(fetchedEvent)
         }
       fetchApplicationAsync()
@@ -39,7 +40,7 @@ const ApplicationDetailContainer: React.FC = () => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId])
+  useEffect(onInitialize, [hashedAppId, getApplicationByHashedIdAsync])
 
   const title = useMemo(() => {
     if (!event) return '申し込み情報を読み込み中'

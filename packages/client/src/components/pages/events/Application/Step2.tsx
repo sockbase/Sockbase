@@ -12,7 +12,7 @@ import CircleCutImage from './CircleCutImage'
 
 interface Props {
   app: SockbaseApplication | undefined
-  leader: SockbaseAccountSecure | undefined
+  leaderUserData: SockbaseAccountSecure | undefined
   circleCutData: string | undefined
   spaces: SockbaseEventSpace[]
   paymentMethods: IPaymentMethod[]
@@ -63,7 +63,7 @@ const Step2: React.FC<Props> = (props) => {
   return (
     <>
       {
-        props.app && props.leader && <>
+        props.app && props.leaderUserData && <>
           <h1>入力内容確認</h1>
 
           <h2>サークルカット</h2>
@@ -138,23 +138,23 @@ const Step2: React.FC<Props> = (props) => {
             <tbody>
               <tr>
                 <th>氏名</th>
-                <td>{props.userData?.name ?? props.leader.name}</td>
+                <td>{props.userData?.name ?? props.leaderUserData.name}</td>
               </tr>
               <tr>
                 <th>生年月日</th>
-                <td>{new Date(props.userData?.birthday ?? props.leader.birthday).toLocaleDateString()}</td>
+                <td>{new Date(props.userData?.birthday ?? props.leaderUserData.birthday).toLocaleDateString()}</td>
               </tr>
               <tr>
                 <th>郵便番号</th>
-                <td>{props.userData?.postalCode ?? props.leader.postalCode}</td>
+                <td>{props.userData?.postalCode ?? props.leaderUserData.postalCode}</td>
               </tr>
               <tr>
                 <th>住所</th>
-                <td>{props.userData?.address ?? props.leader.address}</td>
+                <td>{props.userData?.address ?? props.leaderUserData.address}</td>
               </tr>
               <tr>
                 <th>電話番号</th>
-                <td>{props.userData?.telephone ?? props.leader.telephone}</td>
+                <td>{props.userData?.telephone ?? props.leaderUserData.telephone}</td>
               </tr>
             </tbody>
           </table>

@@ -29,7 +29,7 @@ export const acceptApplication = functions.firestore
 
     const template = mailConfig.templates.acceptApplication(event, app)
     await adminApp.firestore()
-      .collection('mail')
+      .collection('_mail')
       .add({
         to: user.email,
         message: {

@@ -12,21 +12,22 @@ import type {
   SockbaseApplication,
   SockbaseApplicationDocument
 } from 'sockbase'
+import { useCallback } from 'react'
 
-interface ApplicationHashIdDocument {
-  applicationId: string
-  hashId: string
-}
-const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<ApplicationHashIdDocument> = {
-  toFirestore: (app: ApplicationHashIdDocument): FirestoreDB.DocumentData => ({}),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): ApplicationHashIdDocument => {
-    const hashDoc = snapshot.data()
-    return {
-      applicationId: hashDoc.applicationId,
-      hashId: hashDoc.hashId
-    }
-  }
-}
+// interface ApplicationHashIdDocument {
+//   applicationId: string
+//   hashId: string
+// }
+// const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<ApplicationHashIdDocument> = {
+//   toFirestore: (app: ApplicationHashIdDocument): FirestoreDB.DocumentData => ({}),
+//   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): ApplicationHashIdDocument => {
+//     const hashDoc = snapshot.data()
+//     return {
+//       applicationId: hashDoc.applicationId,
+//       hashId: hashDoc.hashId
+//     }
+//   }
+// }
 
 const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicationDocument> = {
   toFirestore: (app: SockbaseApplicationDocument): FirestoreDB.DocumentData => ({
@@ -77,29 +78,36 @@ interface IUseApplication {
   submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string>
 }
 const useApplication: () => IUseApplication = () => {
-  const { getFirestore, getStorage } = useFirebase()
+  const { getFirestore, getStorage, user } = useFirebase()
 
   const getApplicationByHashedIdAsync: (hashedAppId: string) => Promise<SockbaseApplicationDocument> =
-    async (hashedAppId) => {
+    useCallback(async (hashedAppId) => {
+      if (!user) {
+        throw new Error('unauthorized')
+      }
+
       const db = getFirestore()
-      const hashIdMVRef = FirestoreDB.doc(db, 'applicationHashIds', hashedAppId)
-        .withConverter(applicationHashIdConverter)
-      const hashIdMVDoc = await FirestoreDB.getDoc(hashIdMVRef)
-      if (!hashIdMVDoc.exists()) {
+      const appRef = FirestoreDB.collection(db, 'applications')
+        .withConverter(applicationConverter)
+
+      const appQuery = FirestoreDB.query(
+        appRef,
+        FirestoreDB.where('userId', '==', user?.uid),
+        FirestoreDB.where('hashId', '==', hashedAppId)
+      )
+      const appSnapshot = await FirestoreDB.getDocs(appQuery)
+      if (appSnapshot.docs.length !== 1) {
+        alert(appSnapshot.docs.length)
         throw new Error('hashId not found')
       }
 
-      const appId = hashIdMVDoc.data().applicationId
-      const appRef = FirestoreDB.doc(db, 'applications', appId)
-        .withConverter(applicationConverter)
-
-      const appDoc = await FirestoreDB.getDoc(appRef)
+      const appDoc = appSnapshot.docs[0]
       if (appDoc.exists()) {
         return appDoc.data()
       } else {
         throw new Error('application not found')
       }
-    }
+    }, [user])
 
   const getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]> =
     async (userId) => {
@@ -147,7 +155,7 @@ const useApplication: () => IUseApplication = () => {
           throw err
         })
 
-      // TODO Cloud Functionsに移植して、Cloud FunctionsからgeneratedHashIdを取ってこれるようにする
+      // TODO: Cloud Functionsに移植して、Cloud FunctionsからgeneratedHashIdを取ってこれるようにする
       const generatedHashId = await generateHashId(app.eventId, createdAppDocRef)
 
       const storage = getStorage()
@@ -157,7 +165,7 @@ const useApplication: () => IUseApplication = () => {
       return generatedHashId
     }
 
-  // TODO Cloud Functionsに移植する
+  // TODO: Cloud Functionsに移植する
   const generateHashId: (eventId: string, ref: FirestoreDB.DocumentReference) => Promise<string> =
     async (eventId, ref) => {
       const salt = 'sockbase-yogurt-koharurikka516'

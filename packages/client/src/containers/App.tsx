@@ -1,11 +1,14 @@
 import { useState } from 'react'
-import { ScrollRestoration, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import useFirebase from '../hooks/useFirebase'
 import useFirebaseError from '../hooks/useFirebaseError'
 
 import DefaultLayout from '../components/Layout/Default/Default'
 import Login from '../components/pages/App/Login'
+import LinkButton from '../components/Parts/LinkButton'
+import FormSection from '../components/Form/FormSection'
+import FormItem from '../components/Form/FormItem'
 
 export interface User {
   userId: string
@@ -41,6 +44,14 @@ const App: React.FC = () => {
 
   return (
     <DefaultLayout>
+      {firebase.user && <FormSection>
+        <p>すでにログイン済みのようです。</p>
+        <FormItem>
+          <LinkButton to="/dashboard" color="default">マイページに進む</LinkButton>
+        </FormItem>
+      </FormSection>
+      }
+
       <Login
         email={email}
         password={password}
@@ -50,11 +61,11 @@ const App: React.FC = () => {
         isProcessing={isProccesing}
         error={error} />
 
-      <ScrollRestoration
-        getKey={(location) => {
-          return location.pathname
-        }}
-      />
+      <h2>Sockbaseとは？</h2>
+      <h3>イベントへの申し込み方法</h3>
+      <p>
+        イベント主催者から提供されたURLを使用してください。
+      </p>
     </DefaultLayout>)
 }
 

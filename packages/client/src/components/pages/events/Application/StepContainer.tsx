@@ -39,14 +39,14 @@ interface Props {
 }
 const StepContainer: React.FC<Props> = (props) => {
   const { user, createUser } = useFirebase()
-  const { getMyUserDataAsync } = useUserData()
+  const { updateUserDataAsync, getMyUserDataAsync } = useUserData()
   const { submitApplicationAsync } = useApplication()
 
   const [step, setStep] = useState(0)
   const [circleCutData, setCircleCutData] = useState<string>()
   const [circleCutFile, setCircleCutFile] = useState<File>()
   const [app, setApp] = useState<SockbaseApplication>()
-  const [leader, setLeader] = useState<SockbaseAccountSecure>()
+  const [leaderUserData, setleaderUserData] = useState<SockbaseAccountSecure>()
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
 
   const [userData, setUserData] = useState<SockbaseAccount | null>()
@@ -58,20 +58,22 @@ const StepContainer: React.FC<Props> = (props) => {
         .catch(err => {
           throw err
         })
-      // TODO 決済管理情報作成(サーバ側でやったほうが良いかも)
-      // TODO 決済管理情報取得
+      // TODO: 決済管理情報作成(サーバ側でやったほうが良いかも)
+      // TODO: 決済管理情報取得
       return createdAppHashId
     }
 
   const submitApplication: () => Promise<void> =
     async () => {
-      if (!app || !leader || !circleCutFile) return
+      if (!app || !leaderUserData || !circleCutFile) return
 
       if (!user) {
-        const newUser = await createUser(leader.email, leader.password)
+        const newUser = await createUser(leaderUserData.email, leaderUserData.password)
           .catch(err => {
             throw err
           })
+        await updateUserDataAsync(newUser.uid, leaderUserData)
+
         const createdAppHashId = await submitApplicationWithUserAsync(newUser, app, circleCutFile)
         setAppHashId(createdAppHashId)
         return
@@ -108,21 +110,21 @@ const StepContainer: React.FC<Props> = (props) => {
         <Step1 key="step1"
           eventId={props.eventId}
           app={app}
-          leader={leader}
+          leaderUserData={leaderUserData}
           circleCutFile={circleCutFile}
           isLoggedIn={props.isLoggedIn} spaces={props.event.spaces}
           paymentMethods={paymentMethods}
           prevStep={() => setStep(0)}
-          nextStep={(app, leader, circleCutData, circleCutFile) => {
+          nextStep={(app, leaderUserData, circleCutData, circleCutFile) => {
             setApp(app)
-            setLeader(leader)
+            setleaderUserData(leaderUserData)
             setCircleCutData(circleCutData)
             setCircleCutFile(circleCutFile)
             setStep(2)
           }} />,
         <Step2 key="step2"
           app={app}
-          leader={leader}
+          leaderUserData={leaderUserData}
           circleCutData={circleCutData}
           spaces={props.event.spaces}
           userData={userData}
@@ -137,7 +139,7 @@ const StepContainer: React.FC<Props> = (props) => {
           appHashId={appHashId ?? ''} />
       ])
     }
-  useEffect(onInitialize, [props.isLoggedIn, app, leader, circleCutData, userData, appHashId])
+  useEffect(onInitialize, [props.isLoggedIn, app, leaderUserData, circleCutData, userData, appHashId])
 
   return (
     <>
