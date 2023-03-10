@@ -27,6 +27,10 @@ service cloud.firestore {
           || isOrganizationAdmin(request.auth.uid, resource.data.organization.id);
       }
     }
+
+    match /_applicationHashIds/{hashId} {
+      allow read: if request.auth != null;
+    }
     
     match /applications/{applicationId} {
       function isValidApplication(app) {
