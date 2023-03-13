@@ -9,17 +9,20 @@ import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import ApplicationDetail from '../../../components/pages/dashboard/CircleApplications/ApplicationDetail'
 import useUserData from '../../../hooks/useUserData'
 import Loading from '../../../components/Parts/Loading'
+import usePermission from '../../../hooks/usePermission'
 
 const ApplicationDetailContainer: React.FC = () => {
   const { getApplicationByHashedIdAsync, getCircleCutURLByHashedIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
+  const { checkIsAdmin } = usePermission()
 
   const { hashedAppId } = useParams()
   const [app, setApp] = useState<SockbaseApplicationDocument>()
   const [event, setEvent] = useState<SockbaseEvent>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
+  const [isAdmin, setAdmin] = useState<boolean>()
 
   const onInitialize: () => void =
     () => {
@@ -38,13 +41,16 @@ const ApplicationDetailContainer: React.FC = () => {
 
           const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
           setEvent(fetchedEvent)
+
+          const fetchedIsAdmin = checkIsAdmin(fetchedEvent._organization.id)
+          setAdmin(fetchedIsAdmin)
         }
       fetchApplicationAsync()
         .catch(err => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId, getApplicationByHashedIdAsync])
+  useEffect(onInitialize, [hashedAppId, getApplicationByHashedIdAsync, checkIsAdmin])
 
   const title = useMemo(() => {
     if (!event) return '申し込み情報を読み込み中'
@@ -53,8 +59,8 @@ const ApplicationDetailContainer: React.FC = () => {
 
   return (
     <DashboardLayout title={title}>
-      {app && event && userData && circleCutURL
-        ? <ApplicationDetail app={app} event={event} userData={userData} circleCutURL={circleCutURL} />
+      {app && event && userData && circleCutURL && isAdmin !== undefined
+        ? <ApplicationDetail app={app} event={event} userData={userData} circleCutURL={circleCutURL} isAdmin={isAdmin} />
         : <Loading text={`申し込み情報 ${hashedAppId ?? ''}`} />}
     </DashboardLayout>
   )
