@@ -5,13 +5,12 @@ import UserDetail from './Detail/User'
 
 import { useMemo } from 'react'
 
-const isAdmin = true
-
 interface Props {
   app: SockbaseApplicationDocument
   event: SockbaseEvent
   userData: SockbaseAccount
   circleCutURL: string
+  isAdmin: boolean
 }
 const ApplicationDetail: React.FC<Props> = (props) => {
   const spaceName = useMemo(() => {
@@ -21,7 +20,7 @@ const ApplicationDetail: React.FC<Props> = (props) => {
 
   return (
     <>
-      {isAdmin
+      {props.isAdmin
         ? <AdminDetail spaceName={spaceName} app={props.app} event={props.event} userData={props.userData} circleCutURL={props.circleCutURL} />
         : <UserDetail spaceName={spaceName} app={props.app} event={props.event} userData={props.userData} circleCutURL={props.circleCutURL} />
       }
