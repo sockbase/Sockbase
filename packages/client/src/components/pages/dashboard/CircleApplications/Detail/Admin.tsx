@@ -9,12 +9,14 @@ import FormItem from '../../../../Form/FormItem'
 import FormButton from '../../../../Form/Button'
 import CopyToClipboard from '../../../../Parts/CopyToClipboard'
 import Breadcrumbs from '../../../../Parts/Breadcrumbs'
+import CircleCutImage from '../../../../Parts/CircleCutImage'
 
 interface Props {
   spaceName: string
   app: SockbaseApplicationDocument
   event: SockbaseEvent
   userData: SockbaseAccount
+  circleCutURL: string
 }
 const AdminDetail: React.FC<Props> = (props) => {
   return (
@@ -51,6 +53,7 @@ const AdminDetail: React.FC<Props> = (props) => {
           <p>
             提出されました
           </p>
+          {props.circleCutURL && <CircleCutImage src={props.circleCutURL} />}
 
           <h3>ステータス</h3>
           <table>

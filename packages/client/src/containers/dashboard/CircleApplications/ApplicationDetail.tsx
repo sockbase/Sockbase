@@ -11,7 +11,7 @@ import useUserData from '../../../hooks/useUserData'
 import Loading from '../../../components/Parts/Loading'
 
 const ApplicationDetailContainer: React.FC = () => {
-  const { getApplicationByHashedIdAsync } = useApplication()
+  const { getApplicationByHashedIdAsync, getCircleCutURLByHashedIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
 
@@ -19,6 +19,7 @@ const ApplicationDetailContainer: React.FC = () => {
   const [app, setApp] = useState<SockbaseApplicationDocument>()
   const [event, setEvent] = useState<SockbaseEvent>()
   const [userData, setUserData] = useState<SockbaseAccount>()
+  const [circleCutURL, setCircleCutURL] = useState<string>()
 
   const onInitialize: () => void =
     () => {
@@ -28,6 +29,9 @@ const ApplicationDetailContainer: React.FC = () => {
 
           const fetchedApp = await getApplicationByHashedIdAsync(hashedAppId)
           setApp(fetchedApp)
+
+          const fetchedCircleCutURL = await getCircleCutURLByHashedIdAsync(hashedAppId)
+          setCircleCutURL(fetchedCircleCutURL)
 
           const fetchedUser = await getUserDataByUserIdAndEventIdAsync(fetchedApp.userId, fetchedApp.eventId)
           setUserData(fetchedUser)
@@ -49,8 +53,8 @@ const ApplicationDetailContainer: React.FC = () => {
 
   return (
     <DashboardLayout title={title}>
-      {app && event && userData
-        ? <ApplicationDetail app={app} event={event} userData={userData} />
+      {app && event && userData && circleCutURL
+        ? <ApplicationDetail app={app} event={event} userData={userData} circleCutURL={circleCutURL} />
         : <Loading text={`申し込み情報 ${hashedAppId ?? ''}`} />}
     </DashboardLayout>
   )

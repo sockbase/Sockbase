@@ -11,6 +11,7 @@ interface Props {
   app: SockbaseApplicationDocument
   event: SockbaseEvent
   userData: SockbaseAccount
+  circleCutURL: string
 }
 const ApplicationDetail: React.FC<Props> = (props) => {
   const spaceName = useMemo(() => {
@@ -21,8 +22,8 @@ const ApplicationDetail: React.FC<Props> = (props) => {
   return (
     <>
       {isAdmin
-        ? <AdminDetail spaceName={spaceName} app={props.app} event={props.event} userData={props.userData} />
-        : <UserDetail spaceName={spaceName} app={props.app} event={props.event} userData={props.userData} />
+        ? <AdminDetail spaceName={spaceName} app={props.app} event={props.event} userData={props.userData} circleCutURL={props.circleCutURL} />
+        : <UserDetail spaceName={spaceName} app={props.app} event={props.event} userData={props.userData} circleCutURL={props.circleCutURL} />
       }
     </>
   )

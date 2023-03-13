@@ -8,7 +8,7 @@ import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
 import Alert from '../../../Parts/Alert'
-import CircleCutImage from './CircleCutImage'
+import CircleCutImage from '../../../Parts/CircleCutImage'
 
 interface Props {
   app: SockbaseApplication | undefined

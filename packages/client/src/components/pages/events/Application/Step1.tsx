@@ -19,7 +19,7 @@ import Alert from '../../../Parts/Alert'
 import FormButton from '../../../Form/Button'
 import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
-import CircleCutImage from './CircleCutImage'
+import CircleCutImage from '../../../Parts/CircleCutImage'
 
 interface Props {
   eventId: string
