@@ -16,6 +16,7 @@ interface Props {
   app: SockbaseApplicationDocument
   event: SockbaseEvent
   userData: SockbaseAccount
+  circleCutURL: string
 }
 const UserDetail: React.FC<Props> = (props) => {
   return (

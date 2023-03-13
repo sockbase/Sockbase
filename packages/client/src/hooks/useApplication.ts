@@ -75,6 +75,7 @@ interface IUseApplication {
   getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]>
   submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string>
+  getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
 }
 const useApplication: () => IUseApplication = () => {
   const { getFirestore, getStorage } = useFirebase()
@@ -157,6 +158,14 @@ const useApplication: () => IUseApplication = () => {
       return generatedHashId
     }
 
+  const getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string> =
+    async (hashedAppId) => {
+      const storage = getStorage()
+      const circleCutRef = FirebaseStorage.ref(storage, `/circleCuts/${hashedAppId}`)
+      const circleCutURL = await FirebaseStorage.getDownloadURL(circleCutRef)
+      return circleCutURL
+    }
+
   // TODO Cloud Functionsに移植する
   const generateHashId: (eventId: string, ref: FirestoreDB.DocumentReference) => Promise<string> =
     async (eventId, ref) => {
@@ -180,7 +189,8 @@ const useApplication: () => IUseApplication = () => {
     getApplicationByHashedIdAsync,
     getApplicationsByUserIdAsync,
     getApplicationsByEventIdAsync,
-    submitApplicationAsync
+    submitApplicationAsync,
+    getCircleCutURLByHashedIdAsync
   }
 }
 
