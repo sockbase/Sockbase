@@ -32,7 +32,6 @@ const ApplicationDetailContainer: React.FC = () => {
 
           const fetchedApp = await getApplicationByHashedIdAsync(hashedAppId)
           setApp(fetchedApp)
-          console.log(fetchedApp)
 
           const fetchedCircleCutURL = await getCircleCutURLByHashedIdAsync(hashedAppId)
           setCircleCutURL(fetchedCircleCutURL)
