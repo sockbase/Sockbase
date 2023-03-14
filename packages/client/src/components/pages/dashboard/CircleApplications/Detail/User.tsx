@@ -10,6 +10,7 @@ import FormButton from '../../../../Form/Button'
 import Alert from '../../../../Parts/Alert'
 import CopyToClipboard from '../../../../Parts/CopyToClipboard'
 import Breadcrumbs from '../../../../Parts/Breadcrumbs'
+import CircleCutImage from 'packages/client/src/components/Parts/CircleCutImage'
 
 interface Props {
   spaceName: string
@@ -53,6 +54,7 @@ const UserDetail: React.FC<Props> = (props) => {
           <p>
             提出されました
           </p>
+          {props.circleCutURL && <CircleCutImage src={props.circleCutURL} />}
 
           <h3>スペース</h3>
           <table>
