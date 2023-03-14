@@ -16,6 +16,6 @@ export interface PostalCodeResult {
 
 declare module 'firebase/auth' {
   interface ParsedToken {
-    roles: Record<string, number>
+    roles: Record<string, number> | undefined
   }
 }

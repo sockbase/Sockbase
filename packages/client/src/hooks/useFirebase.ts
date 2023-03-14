@@ -20,7 +20,7 @@ import { getFirebaseApp } from '../libs/FirebaseApp'
 interface IUseFirebase {
   isLoggedIn: boolean | undefined
   user: User | null | undefined
-  roles: Record<string, number> | undefined
+  roles: Record<string, number> | null | undefined
   getAuth: () => Auth
   loginByEmail: (email: string, password: string) => Promise<UserCredential>
   logout: () => void
@@ -35,7 +35,7 @@ const useFirebase: () => IUseFirebase =
     const [auth, setAuth] = useState<Auth | undefined>()
     const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>()
     const [user, setUser] = useState<User | null | undefined>()
-    const [roles, setRoles] = useState<Record<string, number>>()
+    const [roles, setRoles] = useState<Record<string, number> | null>()
 
     const getAuth: () => Auth =
       () => {
@@ -109,6 +109,10 @@ const useFirebase: () => IUseFirebase =
 
           user.getIdTokenResult(true)
             .then((result: IdTokenResult) => {
+              if (result.claims.roles === undefined) {
+                setRoles(null)
+                return
+              }
               setRoles(result.claims.roles)
             })
             .catch((err) => {
