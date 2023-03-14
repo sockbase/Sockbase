@@ -26,6 +26,7 @@ import DashboardEventApplications from './containers/dashboard/Events/EventAppli
 import DashboardApplicationList from './containers/dashboard/CircleApplications/ApplicationList'
 import DashboardApplicationDetail from './containers/dashboard/CircleApplications/ApplicationDetail'
 import Dashboard from './containers/dashboard/Dashboard'
+import DebugDashboard from './containers/dashboard/Debug'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <Dashboard />
+          },
+          {
+            path: 'debug',
+            element: <DebugDashboard />
           },
           {
             path: 'events',

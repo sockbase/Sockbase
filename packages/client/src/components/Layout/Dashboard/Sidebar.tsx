@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { type User } from 'firebase/auth'
 
 import {
+  MdCottage,
   MdMenu,
   MdClose,
   MdLogout,
@@ -35,6 +36,18 @@ interface MenuItem {
   isDisabled?: boolean
 }
 const menu: MenuSection[] = [
+  {
+    sectionKey: 'debug',
+    sectionName: 'デバッグ情報',
+    items: [
+      {
+        key: 'debug',
+        icon: <MdCottage />,
+        text: 'デバッグダッシュボード',
+        link: '/dashboard/debug'
+      }
+    ]
+  },
   {
     sectionKey: 'mypage',
     sectionName: 'マイページ',
