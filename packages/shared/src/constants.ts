@@ -1,5 +1,8 @@
 const constants = {
-  hello: 'helloworld'
+  hello: 'helloworld',
+  organization: {
+    systemOrganizationId: 'system'
+  }
 } as const
 
 export default constants

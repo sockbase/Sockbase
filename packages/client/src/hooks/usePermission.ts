@@ -1,7 +1,9 @@
 import { useCallback } from 'react'
+import SockbaseShared from '@sockbase/shared'
+
 import useFirebase from './useFirebase'
 
-const systemManagerOrganizationId = 'system'
+const systemManagerOrganizationId = SockbaseShared.constants.organization.systemOrganizationId
 
 const PermissionRoles = {
   User: 0,
