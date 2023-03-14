@@ -10,7 +10,8 @@ import FormButton from '../../../../Form/Button'
 import Alert from '../../../../Parts/Alert'
 import CopyToClipboard from '../../../../Parts/CopyToClipboard'
 import Breadcrumbs from '../../../../Parts/Breadcrumbs'
-import CircleCutImage from 'packages/client/src/components/Parts/CircleCutImage'
+
+import CircleCutImage from '../../../../Parts/CircleCutImage'
 
 interface Props {
   spaceName: string
