@@ -9,13 +9,13 @@ import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import ApplicationDetail from '../../../components/pages/dashboard/CircleApplications/ApplicationDetail'
 import useUserData from '../../../hooks/useUserData'
 import Loading from '../../../components/Parts/Loading'
-import usePermission from '../../../hooks/usePermission'
+import useRole from '../../../hooks/useRole'
 
 const ApplicationDetailContainer: React.FC = () => {
   const { getApplicationByHashedIdAsync, getCircleCutURLByHashedIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
-  const { checkIsAdmin } = usePermission()
+  const { checkIsAdmin } = useRole()
 
   const { hashedAppId } = useParams()
   const [app, setApp] = useState<SockbaseApplicationDocument>()
@@ -32,6 +32,7 @@ const ApplicationDetailContainer: React.FC = () => {
 
           const fetchedApp = await getApplicationByHashedIdAsync(hashedAppId)
           setApp(fetchedApp)
+          console.log(fetchedApp)
 
           const fetchedCircleCutURL = await getCircleCutURLByHashedIdAsync(hashedAppId)
           setCircleCutURL(fetchedCircleCutURL)
@@ -50,7 +51,7 @@ const ApplicationDetailContainer: React.FC = () => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId, getApplicationByHashedIdAsync, checkIsAdmin])
+  useEffect(onInitialize, [hashedAppId, checkIsAdmin])
 
   const title = useMemo(() => {
     if (!event) return '申し込み情報を読み込み中'
