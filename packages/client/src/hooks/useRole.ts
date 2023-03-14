@@ -20,7 +20,8 @@ const useRole: () => IUseRole =
 
     const checkIsAdmin: (organizationId: string) => boolean | undefined =
       useCallback((organizationId) => {
-        if (!roles) return
+        if (roles === undefined) return
+        if (roles === null) return false
 
         const systemRole = Object.entries(roles)
           .filter(([o]) => o === systemManagerOrganizationId)
