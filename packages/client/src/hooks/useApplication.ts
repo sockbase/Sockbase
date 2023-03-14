@@ -174,7 +174,7 @@ const useApplication: () => IUseApplication = () => {
       const refHashId = MD5(`${eventId}.${ref.id}.${salt}`)
         .toString(enc.Hex)
         .slice(0, codeDigit)
-      const formatedDateTime = dayjs().format('YYYYMMDDHmmSSS')
+      const formatedDateTime = dayjs().format('YYYYMMDDHmmssSSS')
       const hashId = `${formatedDateTime}-${refHashId}`
 
       await FirestoreDB.updateDoc(ref, { hashId })
