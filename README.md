@@ -2,6 +2,12 @@
 
 ### 環境構築
 
+#### 推奨ツール
+
+- VSCode
+  - VSCode拡張
+    - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+
 #### 処理系バージョン
 
 | | |
@@ -20,14 +26,12 @@ firebase use <Firebase環境名>
 
 ```bash
 cd packages/client
-yarn install
 ```
 
 #### Cloud Funcitons
 
 ```bash
 cd packages/functions
-yarn install
 ```
 
 ### 開発
