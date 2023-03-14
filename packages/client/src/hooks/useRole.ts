@@ -11,39 +11,37 @@ const PermissionRoles = {
   Admin: 2
 } as const
 
-interface IUsePermission {
+interface IUseRole {
   checkIsAdmin: (organizationId: string) => boolean | undefined
 }
-const usePermission: () => IUsePermission =
+const useRole: () => IUseRole =
   () => {
-    const { claims } = useFirebase()
+    const { roles } = useFirebase()
 
     const checkIsAdmin: (organizationId: string) => boolean | undefined =
       useCallback((organizationId) => {
-        if (!claims) return
+        if (!roles) return
 
-        const permissions = claims.permissions
-
-        const systemPermission = Object.entries(permissions)
+        const systemRole = Object.entries(roles)
           .filter(([o]) => o === systemManagerOrganizationId)
           .map(([_, r]) => (r))
-        if (systemPermission && systemPermission[0] === PermissionRoles.Admin) {
+        if (systemRole && systemRole[0] === PermissionRoles.Admin) {
           return true
         }
 
-        const organizationPermission = Object.entries(permissions)
+        const organizationRole = Object.entries(roles)
           .filter(([o]) => o === organizationId)
           .map(([_, r]) => (r))
-        if (organizationPermission && organizationPermission[0] === PermissionRoles.Admin) {
+        if (organizationRole && organizationRole[0] === PermissionRoles.Admin) {
           return true
         }
 
         return false
-      }, [claims])
+      }, [roles])
 
     return {
       checkIsAdmin
     }
   }
 
-export default usePermission
+export default useRole
