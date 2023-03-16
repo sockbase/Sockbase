@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { type User } from 'firebase/auth'
+import type { User } from 'firebase/auth'
+import type { SockbaseRole } from 'sockbase'
+import sockbaseShared from '@sockbase/shared'
 
 import {
   MdCottage,
@@ -21,11 +23,13 @@ import {
 } from 'react-icons/md'
 
 import useWindowDimension from '../../../hooks/useWindowDimension'
+import useRole from '../../../hooks/useRole'
 
 interface MenuSection {
   sectionKey: string
   sectionName: string
   items: MenuItem[]
+  requiredRole?: SockbaseRole
 }
 interface MenuItem {
   key: string
@@ -34,6 +38,7 @@ interface MenuItem {
   link: string
   isImportant?: boolean
   isDisabled?: boolean
+  requiredRole?: SockbaseRole
 }
 const menu: MenuSection[] = [
   {
@@ -98,6 +103,7 @@ const menu: MenuSection[] = [
   {
     sectionKey: 'support',
     sectionName: 'イベント開催支援',
+    requiredRole: sockbaseShared.enumerations.user.permissionRoles.staff,
     items: [
       {
         key: 'terminal',
@@ -111,6 +117,7 @@ const menu: MenuSection[] = [
   {
     sectionKey: 'system',
     sectionName: 'システム操作',
+    requiredRole: sockbaseShared.enumerations.user.permissionRoles.admin,
     items: [
       {
         key: 'omnisearch',
@@ -142,12 +149,21 @@ interface Props {
 }
 const Sidebar: React.FC<Props> = (props) => {
   const { width } = useWindowDimension()
+  const { commonRole } = useRole()
+
   const [isHideToggleMenu, setHideToggleMenu] = useState(false)
   const [isOpenMenu, setOpenMenu] = useState(false)
 
   const onChangeWidth: () => void =
     () => setHideToggleMenu(width >= 840)
   useEffect(onChangeWidth, [width])
+
+  const role = useMemo(() => {
+    if (commonRole === undefined || commonRole === null) {
+      return null
+    }
+    return commonRole
+  }, [commonRole])
 
   return (
     <StyledSidebarContainer>
@@ -167,10 +183,11 @@ const Sidebar: React.FC<Props> = (props) => {
         </StyledMenu>
       </StyledSection>}
       {
-        (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) && <>
+        (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) && role !== null &&
+        <>
           <StyledStatePanel>
             <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
-            <StyledStatePanelContent>{props.user.email}</StyledStatePanelContent>
+            <StyledStatePanelContent>{props.user.email}({sockbaseShared.constants.user.roleText[role]})</StyledStatePanelContent>
           </StyledStatePanel>
           <StyledSection>
             <StyledMenu>
@@ -180,19 +197,23 @@ const Sidebar: React.FC<Props> = (props) => {
               </StyledMenuItem>
             </StyledMenu>
           </StyledSection>
-          {menu.map(sec => <StyledSection key={sec.sectionKey}>
-            {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
-            <StyledMenu>
-              {
-                sec.items.map(item =>
-                  <StyledMenuItemLink key={item.key} to={item.link}>
-                    <StyledMenuItemIcon isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
-                    <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>
-                  </StyledMenuItemLink>
-                )
-              }
-            </StyledMenu>
-          </StyledSection>)}
+          {menu
+            .filter(m => !m.requiredRole || m.requiredRole <= role)
+            .map(sec => <StyledSection key={sec.sectionKey}>
+              {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
+              <StyledMenu>
+                {
+                  sec.items
+                    .filter(item => !item.requiredRole || item.requiredRole <= role)
+                    .map(item =>
+                      <StyledMenuItemLink key={item.key} to={item.link}>
+                        <StyledMenuItemIcon isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
+                        <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>
+                      </StyledMenuItemLink>
+                    )
+                }
+              </StyledMenu>
+            </StyledSection>)}
         </>}
     </StyledSidebarContainer >
   )

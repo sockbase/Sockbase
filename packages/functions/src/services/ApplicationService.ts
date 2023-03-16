@@ -19,6 +19,12 @@ export const onCreateApplication = functions.firestore
 
     // TODO: hashIdのTOODと合わせて申し込み作成関連周りひっくるめて対応する形でも良いかもしれない
 
+    await adminApp.firestore()
+      .doc(`/applications/${context.params.applicationId}/private/meta`)
+      .set({
+        applicationStatus: 0
+      })
+
     const webhookBody = {
       content: '',
       username: `Sockbase: ${event.eventName}`,

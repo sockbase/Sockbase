@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom'
-import type { SockbaseApplicationDocument, SockbaseEvent } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
+import sockbaseShared from '@sockbase/shared'
 
 import { MdEditNote } from 'react-icons/md'
 import PageTitle from '../../../Layout/Dashboard/PageTitle'
 import Breadcrumbs from '../../../Parts/Breadcrumbs'
 
 interface Props {
-  apps: SockbaseApplicationDocument[]
+  apps: Record<string, SockbaseApplicationDocument>
+  metas: Record<string, SockbaseApplicationMeta>
   events: Record<string, SockbaseEvent>
 }
 const ApplicationList: React.FC<Props> = (props) => {
@@ -32,12 +34,12 @@ const ApplicationList: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {
-            props.apps
-              .filter(app => !!app.hashId)
-              .map(app => (
+            Object.entries(props.apps)
+              .filter(([_, app]) => !!app.hashId)
+              .map(([appId, app]) => (
                 app.hashId && <tr key={app.hashId}>
                   <th><Link to={`/dashboard/applications/${app.hashId}`}>{props.events[app.eventId].eventName}</Link></th>
-                  <td>申し込み完了</td>
+                  <td>{sockbaseShared.constants.application.statusText[props.metas[appId].applicationStatus]}</td>
                   <td>{app.circle.name}</td>
                   <td>{app.circle.penName}</td>
                   <td>{new Date(app.timestamp).toLocaleString()}</td>

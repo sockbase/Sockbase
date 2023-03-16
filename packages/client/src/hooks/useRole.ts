@@ -1,47 +1,67 @@
-import { useCallback } from 'react'
-import SockbaseShared from '@sockbase/shared'
+import { useCallback, useMemo } from 'react'
+import sockbaseShared from '@sockbase/shared'
 
 import useFirebase from './useFirebase'
+import type { SockbaseRole } from 'sockbase'
 
-const systemManagerOrganizationId = SockbaseShared.constants.organization.systemOrganizationId
-
-const PermissionRoles = {
-  User: 0,
-  Staff: 1,
-  Admin: 2
-} as const
+const systemManagerOrganizationId = sockbaseShared.constants.organization.systemOrganizationId
 
 interface IUseRole {
-  checkIsAdmin: (organizationId: string) => boolean | undefined
+  checkIsAdminByOrganizationId: (organizationId: string) => boolean | null | undefined
+  isAdminByAnyOrganization: boolean | null | undefined
+  commonRole: SockbaseRole | null | undefined
 }
+
 const useRole: () => IUseRole =
   () => {
     const { roles } = useFirebase()
 
-    const checkIsAdmin: (organizationId: string) => boolean | undefined =
+    const checkIsAdminByOrganizationId: (organizationId: string) => boolean | null | undefined =
       useCallback((organizationId) => {
-        if (roles === undefined) return
-        if (roles === null) return false
+        if (roles === undefined) return undefined
+        if (roles === null) return null
 
         const systemRole = Object.entries(roles)
           .filter(([o]) => o === systemManagerOrganizationId)
           .map(([_, r]) => (r))
-        if (systemRole && systemRole[0] === PermissionRoles.Admin) {
+        if (systemRole && systemRole[0] === sockbaseShared.enumerations.user.permissionRoles.admin) {
           return true
         }
 
         const organizationRole = Object.entries(roles)
           .filter(([o]) => o === organizationId)
           .map(([_, r]) => (r))
-        if (organizationRole && organizationRole[0] === PermissionRoles.Admin) {
+        if (organizationRole && organizationRole[0] === sockbaseShared.enumerations.user.permissionRoles.admin) {
           return true
         }
 
         return false
       }, [roles])
 
+    const isAdminByAnyOrganization: boolean | null | undefined =
+      useMemo(() => {
+        if (roles === undefined) return undefined
+        if (roles === null) return null
+
+        const isAnyAdmin = Object.values(roles)
+          .filter(r => r === sockbaseShared.enumerations.user.permissionRoles.admin)
+          .length > 0
+        return isAnyAdmin
+      }, [roles])
+
+    const commonRole: SockbaseRole | null | undefined =
+      useMemo(() => {
+        if (roles === undefined) return undefined
+        if (roles === null) return sockbaseShared.enumerations.user.permissionRoles.user
+
+        const maxRole = Math.max(...Object.values(roles))
+        return maxRole as SockbaseRole
+      }, [roles])
+
     return {
-      checkIsAdmin
+      checkIsAdminByOrganizationId,
+      isAdminByAnyOrganization,
+      commonRole
     }
   }
 

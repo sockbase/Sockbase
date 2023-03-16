@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom'
-import type { SockbaseApplicationDocument, SockbaseEvent } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
+import sockbaseShared from '@sockbase/shared'
 
 import { MdEditCalendar } from 'react-icons/md'
 import PageTitle from '../../../Layout/Dashboard/PageTitle'
 import Breadcrumbs from '../../../Parts/Breadcrumbs'
-import Label from '../../../Parts/Label'
+// import Label from '../../../Parts/Label'
 
 interface Props {
   event: SockbaseEvent
-  apps: SockbaseApplicationDocument[]
+  apps: Record<string, SockbaseApplicationDocument>
+  metas: Record<string, SockbaseApplicationMeta>
 }
 const EventApplications: React.FC<Props> = (props) => {
   return (
@@ -35,13 +37,14 @@ const EventApplications: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {
-            props.apps
-              .filter(app => !!app.hashId)
-              .map(app => (
+            Object.entries(props.apps)
+              .filter(([_, app]) => !!app.hashId)
+              .map(([appId, app]) => (
                 app.hashId && <tr key={app.hashId}>
                   <th><Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link></th>
                   <td>{app.circle.penName}</td>
-                  <td><Label color="success">申し込み完了</Label></td>
+                  <td>{sockbaseShared.constants.application.statusText[props.metas[appId].applicationStatus]}</td>
+                  {/* <td> TODO: 申し込み関連ステータスのラベル コンポーネント化する <Label color="success">申し込み完了</Label></td> */}
                   <td>{new Date(app.timestamp).toLocaleString()}</td>
                   <td>{app.hashId}</td>
                 </tr>
