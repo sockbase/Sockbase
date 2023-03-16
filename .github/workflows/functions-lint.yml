@@ -2,7 +2,6 @@ name: "💅 Lint functions"
 on:
   push:
     path:
-      - ".github/workflows/**"
       - "packages/functions/**"
 jobs:
   lint:
