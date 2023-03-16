@@ -19,7 +19,7 @@ interface Props {
   event: SockbaseEvent
   userData: SockbaseAccount
   circleCutURL: string
-  isAdmin: boolean
+  isAdmin: boolean | null
   handleChangeStatus: (status: SockbaseApplicationStatus) => void
 }
 const ApplicationDetail: React.FC<Props> = (props) => {
