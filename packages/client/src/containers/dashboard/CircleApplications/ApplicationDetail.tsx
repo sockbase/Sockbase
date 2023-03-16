@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseApplicationStatus, SockbaseEvent } from 'sockbase'
 
 import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
@@ -14,17 +14,17 @@ import useRole from '../../../hooks/useRole'
 const ApplicationDetailContainer: React.FC = () => {
   const {
     getApplicationIdByHashedIdAsync,
-    getApplicationById,
-    getApplicationMetaById,
-    getCircleCutURLByHashedIdAsync
+    getApplicationByIdAsync,
+    getCircleCutURLByHashedIdAsync,
+    updateApplicationStatusByIdAsync
   } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
-  const { checkIsAdmin } = useRole()
+  const { checkIsAdminByOrganizationId } = useRole()
 
   const { hashedAppId } = useParams()
-  const [app, setApp] = useState<SockbaseApplicationDocument>()
-  const [meta, setMeta] = useState<SockbaseApplicationMeta>()
+  const [app, setApp] = useState<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>()
+  const [appId, setAppId] = useState<string>()
   const [event, setEvent] = useState<SockbaseEvent>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
@@ -37,11 +37,10 @@ const ApplicationDetailContainer: React.FC = () => {
           if (!hashedAppId) return
 
           const fetchedAppId = await getApplicationIdByHashedIdAsync(hashedAppId)
-          const fetchedApp = await getApplicationById(fetchedAppId)
-          setApp(fetchedApp)
+          setAppId(fetchedAppId)
 
-          const fetchedMeta = await getApplicationMetaById(fetchedAppId)
-          setMeta(fetchedMeta)
+          const fetchedApp = await getApplicationByIdAsync(fetchedAppId)
+          setApp(fetchedApp)
 
           const fetchedCircleCutURL = await getCircleCutURLByHashedIdAsync(hashedAppId)
           setCircleCutURL(fetchedCircleCutURL)
@@ -52,7 +51,7 @@ const ApplicationDetailContainer: React.FC = () => {
           const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
           setEvent(fetchedEvent)
 
-          const fetchedIsAdmin = checkIsAdmin(fetchedEvent._organization.id)
+          const fetchedIsAdmin = checkIsAdminByOrganizationId(fetchedEvent._organization.id)
           setAdmin(fetchedIsAdmin)
         }
       fetchApplicationAsync()
@@ -60,7 +59,23 @@ const ApplicationDetailContainer: React.FC = () => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId, checkIsAdmin])
+  useEffect(onInitialize, [hashedAppId, checkIsAdminByOrganizationId])
+
+  const handleChangeStatus: (status: SockbaseApplicationStatus) => void =
+    (status) => {
+      if (!appId) return
+      updateApplicationStatusByIdAsync(appId, status)
+        .then(() => {
+          alert('ステータスの変更に成功しました。')
+          setApp(s => {
+            if (!s) return
+            return { ...s, meta: { ...s.meta, applicationStatus: status } }
+          })
+        })
+        .catch(err => {
+          throw err
+        })
+    }
 
   const title = useMemo(() => {
     if (!event) return '申し込み情報を読み込み中'
@@ -69,8 +84,14 @@ const ApplicationDetailContainer: React.FC = () => {
 
   return (
     <DashboardLayout title={title}>
-      {app && meta && event && userData && circleCutURL && isAdmin !== undefined
-        ? <ApplicationDetail app={app} meta={meta} event={event} userData={userData} circleCutURL={circleCutURL} isAdmin={isAdmin} />
+      {app && event && userData && circleCutURL && isAdmin !== undefined
+        ? <ApplicationDetail
+          app={app}
+          event={event}
+          userData={userData}
+          circleCutURL={circleCutURL}
+          isAdmin={isAdmin}
+          handleChangeStatus={handleChangeStatus} />
         : <Loading text={`申し込み情報 ${hashedAppId ?? ''}`} />}
     </DashboardLayout>
   )

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseApplicationStatus, SockbaseEvent } from 'sockbase'
+import sockbaseShared from '@sockbase/shared'
 
 import { MdEdit } from 'react-icons/md'
 
@@ -13,15 +14,13 @@ import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
 
-import shared from '@sockbase/shared'
-
 interface Props {
-  app: SockbaseApplicationDocument
-  meta: SockbaseApplicationMeta
+  app: SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }
   event: SockbaseEvent
   userData: SockbaseAccount
   circleCutURL: string
   isAdmin: boolean
+  handleChangeStatus: (status: SockbaseApplicationStatus) => void
 }
 const ApplicationDetail: React.FC<Props> = (props) => {
   const spaceName = useMemo(() => {
@@ -59,18 +58,12 @@ const ApplicationDetail: React.FC<Props> = (props) => {
             </tbody>
           </table>
 
-          <h3>サークルカット</h3>
-          <p>
-            提出されました
-          </p>
-          {props.circleCutURL && <CircleCutImage src={props.circleCutURL} />}
-
           <h3>ステータス</h3>
           <table>
             <tbody>
               <tr>
                 <th>申し込みステータス</th>
-                <td>{shared.constants.application.status[props.meta.applicationStatus]}</td>
+                <td>{sockbaseShared.constants.application.statusText[props.app.meta.applicationStatus]}</td>
               </tr>
               <tr>
                 <th>決済</th>
@@ -96,6 +89,12 @@ const ApplicationDetail: React.FC<Props> = (props) => {
               </tr>
             </tbody>
           </table>
+
+          <h3>サークルカット</h3>
+          <p>
+            提出されました
+          </p>
+          {props.circleCutURL && <CircleCutImage src={props.circleCutURL} />}
 
           <h3>サークル情報</h3>
           <table>
@@ -212,15 +211,29 @@ const ApplicationDetail: React.FC<Props> = (props) => {
             </FormItem>
           </FormSection>
 
-          <h3>操作</h3>
-          <FormSection>
-            <FormItem>
-              <FormButton color="danger">申し込みをキャンセルする</FormButton>
-            </FormItem>
-            <FormItem>
-              <FormButton color="default">仮申し込み状態に戻す</FormButton>
-            </FormItem>
-          </FormSection>
+          {props.isAdmin && <>
+            <h3>操作</h3>
+            <FormSection>
+              {props.app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.provisional &&
+                <FormItem>
+                  <FormButton
+                    color="default"
+                    onClick={() => props.handleChangeStatus(sockbaseShared.enumerations.application.status.provisional)}>仮申し込み状態にする</FormButton>
+                </FormItem>}
+              {props.app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.confirmed &&
+                <FormItem>
+                  <FormButton
+                    color="info"
+                    onClick={() => props.handleChangeStatus(sockbaseShared.enumerations.application.status.confirmed)}>申し込み確定状態にする</FormButton>
+                </FormItem>}
+              {props.app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.canceled &&
+                <FormItem>
+                  <FormButton
+                    color="danger"
+                    onClick={() => props.handleChangeStatus(sockbaseShared.enumerations.application.status.canceled)}>キャンセル状態にする</FormButton>
+                </FormItem>}
+            </FormSection>
+          </>}
         </>
       </TwoColumnsLayout>
     </>

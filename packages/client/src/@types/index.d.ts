@@ -1,3 +1,5 @@
+import type { SockbaseRole } from 'sockbase'
+
 // https://zipcloud.ibsnet.co.jp/api/search
 export interface PostalCodeResult {
   message: string | null
@@ -16,6 +18,6 @@ export interface PostalCodeResult {
 
 declare module 'firebase/auth' {
   interface ParsedToken {
-    roles: Record<string, number> | undefined
+    roles: Record<string, SockbaseRole> | undefined
   }
 }

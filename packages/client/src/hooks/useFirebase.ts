@@ -17,6 +17,9 @@ import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase/f
 import { type FirebaseStorage, getStorage as getFirebaseStorage } from 'firebase/storage'
 import { getFirebaseApp } from '../libs/FirebaseApp'
 
+import { useAtom } from 'jotai'
+import rolesAtom from '../atoms/roles'
+
 interface IUseFirebase {
   isLoggedIn: boolean | undefined
   user: User | null | undefined
@@ -35,7 +38,7 @@ const useFirebase: () => IUseFirebase =
     const [auth, setAuth] = useState<Auth | undefined>()
     const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>()
     const [user, setUser] = useState<User | null | undefined>()
-    const [roles, setRoles] = useState<Record<string, number> | null>()
+    const [roles, setRoles] = useAtom(rolesAtom)
 
     const getAuth: () => Auth =
       () => {
@@ -67,6 +70,7 @@ const useFirebase: () => IUseFirebase =
           .then(() => {
             setUser(null)
             setLoggedIn(false)
+            setRoles(null)
           })
           .catch((err: FirebaseError) => {
             throw err
@@ -105,9 +109,14 @@ const useFirebase: () => IUseFirebase =
           setUser(user)
           setLoggedIn(!!user)
 
-          if (!user) return
+          if (!user) {
+            setRoles(undefined)
+            return unSubscribe
+          }
 
-          user.getIdTokenResult(true)
+          if (roles) return unSubscribe
+
+          user.getIdTokenResult()
             .then((result: IdTokenResult) => {
               if (result.claims.roles === undefined) {
                 setRoles(null)
@@ -119,7 +128,6 @@ const useFirebase: () => IUseFirebase =
               throw err
             })
         })
-
         return unSubscribe
       }
     useEffect(onAuthenticationUpdated, [])
