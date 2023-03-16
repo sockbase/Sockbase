@@ -65,8 +65,8 @@ service cloud.firestore {
 
       match /private/meta {
         allow read: if getApplication(applicationId).userId == request.auth.uid
-          || isOrganizationAdmin(getEvent(getApplication(applicationId).eventId)._organization.id);
-        allow write: if isOrganizationAdmin(getEvent(getApplication(applicationId).eventId)._organization.id);
+          || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
+        allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
       }
     }
     
