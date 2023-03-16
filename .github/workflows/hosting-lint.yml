@@ -1,0 +1,25 @@
+# name: "💅 Lint client"
+# on:
+#   push:
+#     path:
+#       - ".github/workflows/**"
+#       - "packages/client/**"
+# jobs:
+#   lint:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: ./packages/client
+
+#     steps:
+#       - uses: actions/checkout@v2
+
+#       - name: Install monorepo packages
+#         working-directory: ./
+#         run: yarn install
+
+#       - name: Install packages for client
+#         run: yarn install
+
+#       - name: Lint client
+#         run: yarn lint

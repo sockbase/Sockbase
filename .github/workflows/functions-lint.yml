@@ -1,0 +1,25 @@
+name: "💅 Lint functions"
+on:
+  push:
+    path:
+      - ".github/workflows/**"
+      - "packages/functions/**"
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/functions
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install monorepo packages
+        working-directory: ./
+        run: yarn install
+
+      - name: Install packages for functions
+        run: yarn install
+
+      - name: Lint functions
+        run: yarn lint
