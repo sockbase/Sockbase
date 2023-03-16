@@ -28,7 +28,7 @@ const ApplicationDetailContainer: React.FC = () => {
   const [event, setEvent] = useState<SockbaseEvent>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
-  const [isAdmin, setAdmin] = useState<boolean>()
+  const [isAdmin, setAdmin] = useState<boolean | null>()
 
   const onInitialize: () => void =
     () => {
