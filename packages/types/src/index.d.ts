@@ -50,12 +50,18 @@ export interface SockbaseApplication {
   paymentMethod: string
   remarks: string
 }
+
 export type CircleGenreType = ''
 export type SockbaseApplicationDocument = SockbaseApplication & {
   userId: string
   timestamp: number
   hashId: string | null
 }
+
+export interface SockbaseApplicationMeta {
+  applicationStatus: SockbaseApplicationStatus
+}
+export type SockbaseApplicationStatus = 0 | 1 | 2
 
 export interface SockbaseAccount {
   name: string

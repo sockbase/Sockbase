@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEvent } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
 
 import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
@@ -12,13 +12,19 @@ import Loading from '../../../components/Parts/Loading'
 import useRole from '../../../hooks/useRole'
 
 const ApplicationDetailContainer: React.FC = () => {
-  const { getApplicationByHashedIdAsync, getCircleCutURLByHashedIdAsync } = useApplication()
+  const {
+    getApplicationIdByHashedIdAsync,
+    getApplicationById,
+    getApplicationMetaById,
+    getCircleCutURLByHashedIdAsync
+  } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const { checkIsAdmin } = useRole()
 
   const { hashedAppId } = useParams()
   const [app, setApp] = useState<SockbaseApplicationDocument>()
+  const [meta, setMeta] = useState<SockbaseApplicationMeta>()
   const [event, setEvent] = useState<SockbaseEvent>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
@@ -30,8 +36,12 @@ const ApplicationDetailContainer: React.FC = () => {
         async () => {
           if (!hashedAppId) return
 
-          const fetchedApp = await getApplicationByHashedIdAsync(hashedAppId)
+          const fetchedAppId = await getApplicationIdByHashedIdAsync(hashedAppId)
+          const fetchedApp = await getApplicationById(fetchedAppId)
           setApp(fetchedApp)
+
+          const fetchedMeta = await getApplicationMetaById(fetchedAppId)
+          setMeta(fetchedMeta)
 
           const fetchedCircleCutURL = await getCircleCutURLByHashedIdAsync(hashedAppId)
           setCircleCutURL(fetchedCircleCutURL)
@@ -59,8 +69,8 @@ const ApplicationDetailContainer: React.FC = () => {
 
   return (
     <DashboardLayout title={title}>
-      {app && event && userData && circleCutURL && isAdmin !== undefined
-        ? <ApplicationDetail app={app} event={event} userData={userData} circleCutURL={circleCutURL} isAdmin={isAdmin} />
+      {app && meta && event && userData && circleCutURL && isAdmin !== undefined
+        ? <ApplicationDetail app={app} meta={meta} event={event} userData={userData} circleCutURL={circleCutURL} isAdmin={isAdmin} />
         : <Loading text={`申し込み情報 ${hashedAppId ?? ''}`} />}
     </DashboardLayout>
   )

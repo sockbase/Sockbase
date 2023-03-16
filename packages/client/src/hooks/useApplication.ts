@@ -10,7 +10,8 @@ import useFirebase from './useFirebase'
 
 import type {
   SockbaseApplication,
-  SockbaseApplicationDocument
+  SockbaseApplicationDocument,
+  SockbaseApplicationMeta
 } from 'sockbase'
 
 interface ApplicationHashIdDocument {
@@ -30,7 +31,6 @@ const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<Application
 
 const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicationDocument> = {
   toFirestore: (app: SockbaseApplicationDocument): FirestoreDB.DocumentData => ({
-    hashId: app.hashId,
     userId: app.userId,
     eventId: app.eventId,
     spaceId: app.spaceId,
@@ -70,36 +70,52 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
   }
 }
 
+const applicationMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicationMeta> = {
+  toFirestore: (meta: SockbaseApplicationMeta) => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseApplicationMeta => {
+    const meta = snapshot.data()
+    return {
+      applicationStatus: meta.applicationStatus
+    }
+  }
+}
+
 interface IUseApplication {
-  getApplicationByHashedIdAsync: (hashedAppId: string) => Promise<SockbaseApplicationDocument>
+  getApplicationIdByHashedIdAsync: (hashedAppId: string) => Promise<string>
+  getApplicationById: (appId: string) => Promise<SockbaseApplicationDocument>
   getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]>
+  getApplicationMetaById: (appId: string) => Promise<SockbaseApplicationMeta>
   submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string>
   getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
 }
 const useApplication: () => IUseApplication = () => {
   const { getFirestore, getStorage } = useFirebase()
 
-  const getApplicationByHashedIdAsync: (hashedAppId: string) => Promise<SockbaseApplicationDocument> =
+  const getApplicationIdByHashedIdAsync: (hashedAppId: string) => Promise<string> =
     async (hashedAppId) => {
       const db = getFirestore()
       const hashIdMVRef = FirestoreDB.doc(db, '_applicationHashIds', hashedAppId)
         .withConverter(applicationHashIdConverter)
+
       const hashIdMVDoc = await FirestoreDB.getDoc(hashIdMVRef)
       if (!hashIdMVDoc.exists()) {
         throw new Error('hashId not found')
       }
+      return hashIdMVDoc.data().applicationId
+    }
 
-      const appId = hashIdMVDoc.data().applicationId
+  const getApplicationById: (appId: string) => Promise<SockbaseApplicationDocument> =
+    async (appId) => {
+      const db = getFirestore()
       const appRef = FirestoreDB.doc(db, 'applications', appId)
         .withConverter(applicationConverter)
 
       const appDoc = await FirestoreDB.getDoc(appRef)
-      if (appDoc.exists()) {
-        return appDoc.data()
-      } else {
+      if (!appDoc.exists()) {
         throw new Error('application not found')
       }
+      return appDoc.data()
     }
 
   const getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]> =
@@ -130,6 +146,19 @@ const useApplication: () => IUseApplication = () => {
         .map(doc => doc.data())
 
       return queryDocs
+    }
+
+  const getApplicationMetaById: (appId: string) => Promise<SockbaseApplicationMeta> =
+    async (appId) => {
+      const db = getFirestore()
+      const metaRef = FirestoreDB.doc(db, 'applications', appId, 'private', 'meta')
+        .withConverter(applicationMetaConverter)
+      const metaDoc = await FirestoreDB.getDoc(metaRef)
+      if (!metaDoc.exists()) {
+        throw new Error('meta not found')
+      }
+
+      return metaDoc.data()
     }
 
   const submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
@@ -186,9 +215,11 @@ const useApplication: () => IUseApplication = () => {
     }
 
   return {
-    getApplicationByHashedIdAsync,
+    getApplicationIdByHashedIdAsync,
+    getApplicationById,
     getApplicationsByUserIdAsync,
     getApplicationsByEventIdAsync,
+    getApplicationMetaById,
     submitApplicationAsync,
     getCircleCutURLByHashedIdAsync
   }
