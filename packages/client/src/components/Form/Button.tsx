@@ -13,27 +13,31 @@ const FormButton = styled.button<{ color?: 'default' | 'info' }>`
   cursor: pointer;
   transition: background-color 0.1s linear;
 
-${props => props.color === 'default'
-    ? {
-      backgroundColor: '#e0e0e0',
-      color: '#000000',
-      '&:active': {
-        backgroundColor: '#b3b3b3'
+${props => {
+    if (props.color === 'default') {
+      return {
+        backgroundColor: '#e0e0e0',
+        color: '#000000',
+        '&:active': {
+          backgroundColor: '#b3b3b3'
+        }
       }
-    }
-    : props.color === 'info'
-      ? {
+    } else if (props.color === 'info') {
+      return {
         backgroundColor: '#20a0f0',
         '&:active': {
           backgroundColor: '#1080e0'
         }
       }
-      : {
+    } else {
+      return {
         backgroundColor: '#ea6183',
         '&:active': {
           backgroundColor: '#99334c'
         }
-      }}
+      }
+    }
+  }}
 
 ${props => props.disabled
     ? {
