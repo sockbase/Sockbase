@@ -49,7 +49,8 @@ const menu: MenuSection[] = [
         key: 'debug',
         icon: <MdCottage />,
         text: 'デバッグダッシュボード',
-        link: '/dashboard/debug'
+        link: '/dashboard/debug',
+        isImportant: true
       }
     ]
   },
@@ -259,42 +260,42 @@ const StyledMenuItem = styled.span`
 const StyledMenuItemLink = styled(Link)`
   ${styledMenuItemStyle}
 `
-const StyledMenuItemIcon = styled.div<{ isImportant?: boolean, isDisabled?: boolean }>`
+const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
   padding: 10px;
   border-radius: 5px 0 0 5px;
   border-right: none;
   color: #ffffff;
   text-align: center;
   font-size: 24px;
-
+  
   display: flex;
   align-items: center;
   justify-content: center;
 
   ${props => props.isDisabled
     ? {
-      backgroundColor: '#808080',
-      border: '2px solid #808080'
+      backgroundColor: '#808080'
     }
     : props.isImportant
       ? {
-        backgroundColor: '#bf4040',
-        border: '2px solid #bf4040'
+        backgroundColor: '#bf4040'
       }
       : {
-        backgroundColor: '#ea6183',
-        border: '2px solid #ea6183'
+        backgroundColor: '#ea6183'
       }
   }
 `
-const StyledMenuItemText = styled.div<{ isImportant?: boolean, isDisabled?: boolean }>`
+const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
   padding: 10px;
   background-color: #f8f8f8;
-  color: #000000;
   border-radius: 0 5px 5px 0;
   border-left: none;
 
-  ${props => props.isDisabled
+  // Webkitで閲読済みリンクに意図しない枠線が入る対策
+  // https://stackoverflow.com/questions/11207857/border-appearing-the-text-color-of-an-anchor-on-google-chrome
+  &,
+  *:visited & {
+    ${props => props.isDisabled
     ? {
       backgroundColor: '#c0c0c0',
       border: '2px solid #808080',
@@ -308,8 +309,10 @@ const StyledMenuItemText = styled.div<{ isImportant?: boolean, isDisabled?: bool
         fontWeight: 'bold'
       }
       : {
-        border: '2px solid #ea6183'
+        border: '2px solid #ea6183',
+        color: '#000000'
       }
+  }
   }
 `
 const StyledStatePanel = styled.div`
