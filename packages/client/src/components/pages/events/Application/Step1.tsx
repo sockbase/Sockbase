@@ -305,7 +305,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             value={app.circle.yomi}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, yomi: e.target.value } }))}
-            isError={!validator.isEmpty(app.circle.yomi) && !validator.isOnlyHiragana(app.circle.yomi)} />
+            hasError={!validator.isEmpty(app.circle.yomi) && !validator.isOnlyHiragana(app.circle.yomi)} />
           <FormHelp>
             ひらがなのみで入力してください
           </FormHelp>
@@ -323,7 +323,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             value={app.circle.penNameYomi}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, penNameYomi: e.target.value } }))}
-            isError={!validator.isEmpty(app.circle.penNameYomi) && !validator.isOnlyHiragana(app.circle.penNameYomi)} />
+            hasError={!validator.isEmpty(app.circle.penNameYomi) && !validator.isOnlyHiragana(app.circle.penNameYomi)} />
           <FormHelp>
             ひらがなのみで入力してください
           </FormHelp>
@@ -441,7 +441,7 @@ const Step1: React.FC<Props> = (props) => {
                         : e.target.value
                   }))
                 }}
-                isError={!validator.isEmpty(leader.postalCode) && !validator.isPostalCode(leader.postalCode)} />
+                hasError={!validator.isEmpty(leader.postalCode) && !validator.isPostalCode(leader.postalCode)} />
               <FormHelp>
                 ハイフンは自動で入力されます
               </FormHelp>
@@ -470,7 +470,7 @@ const Step1: React.FC<Props> = (props) => {
               <FormInput type="email"
                 value={leader.email}
                 onChange={e => setLeader(s => ({ ...s, email: e.target.value }))}
-                isError={!validator.isEmpty(leader.email) && !validator.isEmail(leader.email)} />
+                hasError={!validator.isEmpty(leader.email) && !validator.isEmail(leader.email)} />
             </FormItem>
             <FormItem>
               <FormLabel>パスワード</FormLabel>
@@ -483,7 +483,7 @@ const Step1: React.FC<Props> = (props) => {
               <FormInput type="password"
                 value={leader.rePassword}
                 onChange={e => setLeader(s => ({ ...s, rePassword: e.target.value }))}
-                isError={!validator.isEmpty(leader.rePassword) && leader.password !== leader.rePassword} />
+                hasError={!validator.isEmpty(leader.rePassword) && leader.password !== leader.rePassword} />
               {!validator.isEmpty(leader.rePassword) && leader.password !== leader.rePassword &&
                 <FormHelp>パスワードの入力が間違っています</FormHelp>}
             </FormItem>
