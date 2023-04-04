@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 const FormSelect = styled.select`
-  width: auto;
+  width: 100%;
   padding: 10px;
   border: 2px solid #a0a0a0;
   border-radius: 5px 5px 0 0;

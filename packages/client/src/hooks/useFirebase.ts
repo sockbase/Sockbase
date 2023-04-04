@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { type FirebaseError } from 'firebase/app'
 import {
   type Auth,
   type User,
@@ -7,23 +8,24 @@ import {
   getAuth as getFirebaseAuth,
   signInWithEmailAndPassword,
   signOut,
+  createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   onIdTokenChanged
 } from 'firebase/auth'
+import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase/firestore'
+import { type FirebaseStorage, getStorage as getFirebaseStorage } from 'firebase/storage'
 import { getFirebaseApp } from '../libs/FirebaseApp'
 
 interface IUseFirebase {
   isLoggedIn: boolean | undefined
   user: User | null | undefined
-
   getAuth: () => Auth
   loginByEmail: (email: string, password: string) => Promise<UserCredential>
-  logout: () => Promise<void>
+  logout: () => void
+  createUser: (email: string, password: string) => Promise<User>
   sendPasswordResetURL: (email: string) => void
-  // TODO Firestore接続情報
-  //   getFirestore: () => void
-  // TODO Cloud Storage接続情報
-  //   getStorage: () => void
+  getFirestore: () => Firestore
+  getStorage: () => FirebaseStorage
 }
 
 const useFirebase: () => IUseFirebase =
@@ -49,33 +51,49 @@ const useFirebase: () => IUseFirebase =
       async (email, password) => {
         const auth = getAuth()
         const credential = await signInWithEmailAndPassword(auth, email, password)
-          .catch(e => {
-            throw e
-            // TODO 例外処理書く
+          .catch((err: FirebaseError) => {
+            throw err
           })
         return credential
       }
 
-    const logout: () => Promise<void> =
-      async () => {
+    const logout: () => void =
+      () => {
         const auth = getAuth()
-        await signOut(auth)
-          .catch(e => {
-            throw e
-            // TODO 例外処理書く
+        signOut(auth)
+          .then(() => {
+            setUser(null)
+            setLoggedIn(false)
           })
-        setUser(null)
-        setLoggedIn(false)
+          .catch((err: FirebaseError) => {
+            throw err
+          })
+      }
+
+    const createUser: (email: string, password: string) => Promise<User> =
+      async (email, password) => {
+        const auth = getAuth()
+        return await createUserWithEmailAndPassword(auth, email, password)
+          .then(cred => cred.user)
+          .catch(err => {
+            throw err
+          })
       }
 
     const sendPasswordResetURL: (email: string) => void =
       (email) => {
         const auth = getAuth()
         sendPasswordResetEmail(auth, email)
-          .catch(e => {
-            throw e
+          .catch((err: FirebaseError) => {
+            throw err
           })
       }
+
+    const getFirestore: () => Firestore =
+      () => getFirebaseFirestore()
+
+    const getStorage: () => FirebaseStorage =
+      () => getFirebaseStorage()
 
     const onAuthenticationUpdated: () => Unsubscribe =
       () => {
@@ -95,7 +113,10 @@ const useFirebase: () => IUseFirebase =
       getAuth,
       loginByEmail,
       logout,
-      sendPasswordResetURL
+      createUser,
+      sendPasswordResetURL,
+      getFirestore,
+      getStorage
     }
   }
 

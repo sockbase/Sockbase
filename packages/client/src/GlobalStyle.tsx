@@ -8,7 +8,7 @@ html, body {
   font-family: "Noto Sans JP", sans-serif;
   height: 100vh;
 }
-input, select {
+input, select, textarea {
   font-family: "Noto Sans JP", sans-serif;
   font-size: 1rem;
 }
@@ -38,24 +38,25 @@ h2 {
     margin-bottom: 20px;
   }
 }
-h3 { font-size: 1em; }
+h3 {
+  font-size: 1em;
+  color: var(--darkAccentColor);
+}
 h4 { font-size: 0.9em; }
 h5 { font-size: 0.8em; }
 h6 { font-size: 0.7em; }
 
 table {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
   width: 100%;
   border-collapse: collapse;
-  thead {
-    border-bottom: 2px solid #c0c0c0;
-    tr {
-      background-color: #ea6183;
-      color: #ffffff;
-    }
-  }
   tr {
     background-color: #e8e8e8;
-    &:nth-child(2n) {
+    &:nth-child(2n + 1) {
       background-color: #F8F8F8;
     }
   }
@@ -65,6 +66,22 @@ table {
 
     &:nth-child(2n) {
       background-color: #ffffff40;
+    }
+  }
+
+  thead {
+    border-bottom: 2px solid #c0c0c0;
+    tr {
+      background-color: #ea6183 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  tbody {
+    tr {
+      th {
+        width: 30%;
+      }
     }
   }
 }

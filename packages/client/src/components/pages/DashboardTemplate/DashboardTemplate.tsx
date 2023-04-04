@@ -14,7 +14,7 @@ const DashboardTemplate: React.FC = (props) => {
       <PageTitle
         icon={<MdEditNote />}
         title="ねくたりしょん / Nectarition"
-        description="サークル申込み情報照会" />
+        description="サークル申し込み情報照会" />
 
       <Alert type="danger" title="決済が完了していません！">
         サークル参加費のお支払いが確認できておりません。<br />

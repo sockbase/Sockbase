@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link, ScrollRestoration } from 'react-router-dom'
 
 import useFirebase from '../hooks/useFirebase'
 import useFirebaseError from '../hooks/useFirebaseError'
@@ -44,15 +45,9 @@ const App: React.FC = () => {
       setError(null)
 
       firebase.logout()
-        .catch((e: Error) => {
-          const message = localizeFirebaseError(e.message)
-          setError({ title: 'ログアウトに失敗しました', content: message })
-          throw e
-        })
-        .finally(() => {
-          setProcessing(false)
-        })
+      setProcessing(false)
     }
+
   const onChangeLoggedInState: () => void =
     () => {
       if (firebase.user === undefined) return
@@ -71,7 +66,14 @@ const App: React.FC = () => {
   useEffect(onChangeLoggedInState, [firebase.user])
 
   return (
-    <DefaultLayout title="ログインサンドボックス">
+    <DefaultLayout title="@sockbase/developers Portal">
+      <h1>@sockbase/developers Portal</h1>
+
+      <h2>開発リンク</h2>
+      <ul>
+        <li><Link to="/events/sockbase1">サークル申し込み</Link></li>
+      </ul>
+
       <LoginSandboxComponent
         email={email}
         password={password}
@@ -83,6 +85,12 @@ const App: React.FC = () => {
         user={user}
         error={error}
         isLoggedIn={isLoggedIn}
+      />
+
+      <ScrollRestoration
+        getKey={(location) => {
+          return location.pathname
+        }}
       />
     </DefaultLayout>)
 }
