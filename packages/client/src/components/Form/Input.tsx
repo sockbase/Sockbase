@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const FormInput = styled.input<{ isError?: boolean }>`
+const FormInput = styled.input<{ hasError?: boolean }>`
   width: 100%;
   padding: 10px;
   border: 2px solid #a0a0a0;
@@ -18,7 +18,7 @@ const FormInput = styled.input<{ isError?: boolean }>`
   border-radius: 5px;
   }
 
-  ${props => props.isError && {
+  ${props => props.hasError && {
     border: '2px solid #ff2222',
     boxShadow: '0 2px 5px #ff222288'
   }}
