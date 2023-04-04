@@ -67,13 +67,13 @@ const menu: MenuSection[] = [
       {
         key: 'ticketHistories',
         icon: <MdAccountBalanceWallet />,
-        text: 'チケット申込み履歴',
+        text: 'チケット申し込み履歴',
         link: ''
       },
       {
         key: 'circleHistories',
         icon: <MdEditNote />,
-        text: 'サークル申込み履歴',
+        text: 'サークル申し込み履歴',
         link: ''
       },
       {

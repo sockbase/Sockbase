@@ -12,7 +12,7 @@ import FormSection from '../../Form/FormSection'
 const FormTemplate: React.FC = (props) => {
   return (
     <>
-      <h1>第二回しおばな祭 サークル申込み受付</h1>
+      <h1>第二回しおばな祭 サークル申し込み受付</h1>
       <p>ここにお好きなテキストを入力してください。テキストを入力した後は合成ボタンをクリックしてください。</p>
 
       <StepProgress steps={
@@ -36,23 +36,27 @@ const FormTemplate: React.FC = (props) => {
         ]
       } />
 
-      <h2>申込みスペース数</h2>
+      <h2>申し込みスペース数</h2>
       <p>ここにお好きなテキストを入力してください。テキストを入力した後は合成ボタンをクリックしてください。</p>
       <FormSection>
         <FormItem>
           <FormLabel>スペース数</FormLabel>
-          <FormRadio key='space' values={[
-            {
-              text: '1スペース',
-              value: '1',
-              checked: true
-            },
-            {
-              text: '2スペース',
-              value: '2',
-              checked: false
-            }
-          ]} />
+          <FormRadio
+            name="space"
+            values={[
+              {
+                text: '1スペース',
+                value: '1',
+                checked: true
+              },
+              {
+                text: '2スペース',
+                value: '2',
+                checked: false
+              }
+            ]}
+            onChange={e => alert(e)}
+            value="" />
         </FormItem>
       </FormSection>
 
@@ -103,10 +107,10 @@ const FormTemplate: React.FC = (props) => {
         </FormItem>
       </FormSection>
 
-      <h2>申込み責任者情報</h2>
+      <h2>申し込み責任者情報</h2>
       <FormSection>
         <FormItem>
-          <FormLabel>申込み責任者氏名</FormLabel>
+          <FormLabel>申し込み責任者氏名</FormLabel>
           <FormInput />
         </FormItem>
 

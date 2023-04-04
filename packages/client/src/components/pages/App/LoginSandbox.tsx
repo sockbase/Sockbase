@@ -39,9 +39,9 @@ const LoginSandbox: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1>ログインサンドボックス</h1>
+      <h2>ログインサンドボックス</h2>
 
-      <h2>ログイン</h2>
+      <h3>ログイン</h3>
       {
         props.error &&
         <Alert
@@ -83,7 +83,7 @@ const LoginSandbox: React.FC<Props> = (props) => {
         </FormSection>
       </Form>
 
-      <h2>ログイン状態</h2>
+      <h3>ログイン状態</h3>
       <table>
         <thead>
           <tr>

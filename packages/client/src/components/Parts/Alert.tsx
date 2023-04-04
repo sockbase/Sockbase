@@ -2,7 +2,8 @@ import styled from 'styled-components'
 import type { valueOf } from 'sockbase'
 
 const AlertType = {
-  Danger: 'danger'
+  Danger: 'danger',
+  Success: 'success'
 } as const
 type AlertTypes = valueOf<typeof AlertType>
 
@@ -30,11 +31,17 @@ const AlertContainer = styled.div<{ type?: AlertTypes }>`
     margin-bottom: 0;
   }
 
-${props => props.type === 'danger'
-    ? {
-      borderLeft: '8px solid #bf4040'
+${props => {
+    if (props.type === 'success') {
+      return {
+        borderLeft: '8px solid #44bf40'
+      }
+    } else if (props.type === 'danger') {
+      return {
+        borderLeft: '8px solid #bf4040'
+      }
     }
-    : {}}
+  }}
 `
 const AlertTitle = styled.div`
   font-weight: bold;
