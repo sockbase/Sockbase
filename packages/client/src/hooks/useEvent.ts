@@ -56,11 +56,11 @@ const useEvent: () => IUseEvent = () => {
         .withConverter(eventConverter)
 
       const eventDoc = await FirestoreDB.getDoc(eventRef)
-      if (eventDoc.exists()) {
-        return eventDoc.data()
-      } else {
+      if (!eventDoc.exists()) {
         throw new Error('event not found')
       }
+
+      return eventDoc.data()
     }
 
   return {

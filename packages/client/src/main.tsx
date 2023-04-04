@@ -20,6 +20,7 @@ import TermsOfService from './containers/static/TermsOfService'
 import PrivacyPolicy from './containers/static/PrivacyPolicy'
 
 import EventApplication from './containers/events/Application'
+import TicketApplication from './containers/stores/Application'
 
 import DashboardEventList from './containers/dashboard/Events/EventList'
 import DashboardEventApplications from './containers/dashboard/Events/EventApplications'
@@ -71,6 +72,15 @@ const router = createBrowserRouter([
           {
             path: ':eventId',
             element: <EventApplication />
+          }
+        ]
+      },
+      {
+        path: 'stores',
+        children: [
+          {
+            path: ':storeId',
+            element: <TicketApplication />
           }
         ]
       },
