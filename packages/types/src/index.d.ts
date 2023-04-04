@@ -22,6 +22,29 @@ export interface SockbaseEventSpace {
   price: number
 }
 
+export interface SockbaseStore {
+  storeName: string
+  descriptions: string[]
+  rules: string[]
+  types: SockbaseStoreType[]
+  schedules: {
+    startApplication: number
+    endApplication: number
+    startEvent: number
+    endEvent: number
+  }
+  _organization: SockbaseOrganization & {
+    id: string
+  }
+}
+
+export interface SockbaseStoreType {
+  id: string
+  name: string
+  description: string
+  price: number
+}
+
 export interface SockbaseOrganization {
   name: string
   contactUrl: string
