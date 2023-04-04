@@ -16,20 +16,20 @@ const getUser: (userId: string) => Promise<UserRecord> =
   }
 
 export const acceptApplication = functions.firestore
-  .document('/events/{eventId}/applications/{applicationId}')
-  .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ eventId: string, applicationId: string }>) => {
+  .document('/applications/{applicationId}')
+  .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ applicationId: string }>) => {
     const adminApp = firebaseAdmin.getFirebaseAdmin()
     const app = snapshot.data() as SockbaseApplicationDocument
     const user = await getUser(app.userId)
 
     const eventDoc = await adminApp.firestore()
-      .doc(`/events/${context.params.eventId}`)
+      .doc(`/events/${app.eventId}`)
       .get()
     const event = eventDoc.data() as SockbaseEvent
 
     const template = mailConfig.templates.acceptApplication(event, app)
     await adminApp.firestore()
-      .collection('mail')
+      .collection('_mail')
       .add({
         to: user.email,
         message: {

@@ -8,7 +8,7 @@ const DashboardTemplate: React.FC = (props) => {
   return (
     <>
       <Breadcrumbs>
-        <li><a href="">ダッシュボード</a></li>
+        <li><a href="">マイページ</a></li>
         <li>第二回しおばな祭</li>
       </Breadcrumbs>
       <PageTitle
@@ -24,7 +24,7 @@ const DashboardTemplate: React.FC = (props) => {
         サークル参加登録受付を円滑に進めるため、頒布物情報の事前入力(頒布物情報デジタル提出)へのご協力をお願いいたします。
       </Alert>
 
-      <p>ここに何らかのダッシュボードコンテンツが入ります</p>
+      <p>ここに何らかのマイページコンテンツが入ります</p>
     </>
   )
 }

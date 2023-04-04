@@ -10,7 +10,7 @@ export interface SockbaseEvent {
     startEvent: number
     endEvent: number
   }
-  organization: SockbaseOrganization & {
+  _organization: SockbaseOrganization & {
     id: string
   }
 }
@@ -25,9 +25,13 @@ export interface SockbaseEventSpace {
 export interface SockbaseOrganization {
   name: string
   contactUrl: string
+  config: {
+    discordWebhookURL: string
+  }
 }
 
 export interface SockbaseApplication {
+  eventId: string
   spaceId: string
   circle: {
     name: string
@@ -46,6 +50,7 @@ export interface SockbaseApplication {
   paymentMethod: string
   remarks: string
 }
+
 export type CircleGenreType = ''
 export type SockbaseApplicationDocument = SockbaseApplication & {
   userId: string
@@ -53,8 +58,15 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
   hashId: string | null
 }
 
+export interface SockbaseApplicationMeta {
+  applicationStatus: SockbaseApplicationStatus
+}
+export type SockbaseApplicationStatus = 0 | 1 | 2
+
 export interface SockbaseAccount {
   name: string
+  email: string
+  isEmailVerified?: boolean
   birthday: number
   postalCode: string
   address: string
@@ -62,9 +74,10 @@ export interface SockbaseAccount {
 }
 
 export type SockbaseAccountSecure = SockbaseAccount & {
-  email: string
   password: string
   rePassword: string
 }
+
+export type SockbaseRole = 0 | 1 | 2
 
 export type valueOf<T> = T[keyof T]

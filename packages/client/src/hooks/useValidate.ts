@@ -26,7 +26,7 @@ const useValidate: () => IUseValidate =
       (value) => value === null
 
     const isOnlyHiragana: (value: string) => boolean =
-      (value) => isMatchRegex(value, /^[ぁ-ん]+$/)
+      (value) => isMatchRegex(value, /^[ぁ-んー]+$/)
 
     const isPostalCode: (value: string) => boolean =
       (value) => isMatchRegex(value, /^\d{3}-\d{4}$/)

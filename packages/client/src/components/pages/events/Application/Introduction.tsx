@@ -128,14 +128,14 @@ const Introduction: React.FC<Props> = (props) => {
       <h2>申し込み管理システムについて</h2>
       <p>
         今回のイベントは、<a href="https://nectarition.jp">ねくたりしょん</a>が運用する「Sockbase」を利用しています。<br />
-        イベントの内容に関するご質問は、イベント主催である「<a href={props.event.organization.contactUrl}>{props.event.organization.name}</a>」へ直接お問い合わせください。
+        イベントの内容に関するご質問は、イベント主催である「<a href={props.event._organization.contactUrl}>{props.event._organization.name}</a>」へ直接お問い合わせください。
       </p>
-      {import.meta.env.VITE_SOCKBASE_MANAGE_ORGANIZATION_ID === props.event.organization.id
+      {import.meta.env.VITE_SOCKBASE_MANAGE_ORGANIZATION_ID === props.event._organization.id
         ? <p>
           申し込み情報はプライバシーポリシーに則って管理いたします。
         </p>
         : <p>
-          申し込み情報はねくたりしょんが保管し、イベント主催である「{props.event.organization.name}」に提供いたします。
+          申し込み情報はねくたりしょんが保管し、イベント主催である「{props.event._organization.name}」に提供いたします。
         </p>}
       <p>
         詳しくは<Link to="/privacy-policy">プライバシーポリシー</Link>をご確認ください。

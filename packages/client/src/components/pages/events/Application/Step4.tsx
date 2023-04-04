@@ -1,8 +1,11 @@
-import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
+import LinkButton from '../../../Parts/LinkButton'
 
-const Step4: React.FC = (props) => {
+interface Props {
+  appHashId: string
+}
+const Step4: React.FC<Props> = (props) => {
   return (
     <>
       <h2>申し込みが完了しました</h2>
@@ -19,10 +22,10 @@ const Step4: React.FC = (props) => {
       </p>
       <FormSection>
         <FormItem>
-          <FormButton color="default">マイページを開く</FormButton>
+          <LinkButton color="default" to={`/dashboard/applications/${props.appHashId}`}>マイページを開く</LinkButton>
         </FormItem>
         <FormItem>
-          <FormButton>イベントサイトへ戻る</FormButton>
+          <LinkButton to="">イベントサイトへ戻る</LinkButton>
         </FormItem>
       </FormSection>
     </>

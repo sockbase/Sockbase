@@ -19,16 +19,17 @@ import Alert from '../../../Parts/Alert'
 import FormButton from '../../../Form/Button'
 import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
-import CircleCutImage from './CircleCutImage'
+import CircleCutImage from '../../../Parts/CircleCutImage'
 
 interface Props {
+  eventId: string
   app: SockbaseApplication | undefined
-  leader: SockbaseAccountSecure | undefined
+  leaderUserData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
   spaces: SockbaseEventSpace[]
   paymentMethods: IPaymentMethod[]
   prevStep: () => void
-  nextStep: (app: SockbaseApplication, leader: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
+  nextStep: (app: SockbaseApplication, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
 }
 const Step1: React.FC<Props> = (props) => {
@@ -43,6 +44,7 @@ const Step1: React.FC<Props> = (props) => {
   const [circleCutData, setCircleCutData] = useState<string>()
 
   const [app, setApp] = useState<SockbaseApplication>({
+    eventId: props.eventId,
     spaceId: '',
     circle: {
       name: '',
@@ -61,7 +63,7 @@ const Step1: React.FC<Props> = (props) => {
     paymentMethod: '',
     remarks: ''
   })
-  const [leader, setLeader] = useState({
+  const [leaderUserData, setleaderUserData] = useState({
     name: '',
     birthday: 0,
     postalCode: '',
@@ -87,8 +89,8 @@ const Step1: React.FC<Props> = (props) => {
       if (props.app) {
         setApp(props.app)
       }
-      if (props.leader) {
-        setLeader(props.leader)
+      if (props.leaderUserData) {
+        setleaderUserData(props.leaderUserData)
       }
       if (props.circleCutFile) {
         setCircleCutFile(props.circleCutFile)
@@ -100,7 +102,7 @@ const Step1: React.FC<Props> = (props) => {
         setPaymentMethodIds(props.paymentMethods.map(i => i.id))
       }
     }
-  useEffect(onInitialize, [props.app, props.leader, props.circleCutFile, props.spaces, props.paymentMethods])
+  useEffect(onInitialize, [props.app, props.leaderUserData, props.circleCutFile, props.spaces, props.paymentMethods])
 
   const onChangeCircleCutFile: () => void =
     () => {
@@ -145,13 +147,13 @@ const Step1: React.FC<Props> = (props) => {
 
       if (!props.isLoggedIn) {
         const accountValidators = [
-          !validator.isEmpty(leader.name),
-          // validator.isDate(leader.birthday),
-          validator.isPostalCode(leader.postalCode),
-          validator.isEmail(leader.email),
-          !validator.isEmpty(leader.password),
-          !validator.isEmpty(leader.rePassword),
-          validator.equals(leader.password, leader.rePassword)
+          !validator.isEmpty(leaderUserData.name),
+          // validator.isDate(leaderUserData.birthday),
+          validator.isPostalCode(leaderUserData.postalCode),
+          validator.isEmail(leaderUserData.email),
+          !validator.isEmpty(leaderUserData.password),
+          !validator.isEmpty(leaderUserData.rePassword),
+          validator.equals(leaderUserData.password, leaderUserData.rePassword)
         ]
         const accountInvalidFieldCount = accountValidators
           .filter(i => !i)
@@ -168,10 +170,10 @@ const Step1: React.FC<Props> = (props) => {
       setInvalidFieldCount(invalidCount)
       setAllValid(!hasValidationError)
     }
-  useEffect(onChangeForm, [spaceIds, app, leader, circleCutFile, circleCutData])
+  useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData])
 
   const onChangeBirthday: () => void =
-    () => setLeader(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
+    () => setleaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
   useEffect(onChangeBirthday, [displayBirthday])
 
   const onChangeCircleCutData: () => void =
@@ -184,6 +186,7 @@ const Step1: React.FC<Props> = (props) => {
   const setTestData: () => void =
     () => {
       setApp({
+        eventId: props.eventId,
         spaceId: props.spaces[0].id,
         circle: {
           name: 'test',
@@ -202,7 +205,7 @@ const Step1: React.FC<Props> = (props) => {
         paymentMethod: 'online',
         remarks: '備考'
       })
-      setLeader({
+      setleaderUserData({
         name: '染宮ねいろ',
         birthday: new Date('2002/03/29').getTime(),
         postalCode: '133-0065',
@@ -224,7 +227,7 @@ const Step1: React.FC<Props> = (props) => {
         return
       }
 
-      props.nextStep(app, leader, circleCutData, circleCutFile)
+      props.nextStep(app, leaderUserData, circleCutData, circleCutFile)
     }
 
   const handleFilledPostalCode: (postalCode: string) => void =
@@ -233,7 +236,7 @@ const Step1: React.FC<Props> = (props) => {
 
       if (sanitizedPostalCode.length !== 7) return
       getAddressByPostalCode(sanitizedPostalCode)
-        .then(address => setLeader(s => ({
+        .then(address => setleaderUserData(s => ({
           ...s,
           address
         })))
@@ -244,11 +247,13 @@ const Step1: React.FC<Props> = (props) => {
 
   return (
     <>
-      {/* <FormSection>
-        <FormItem>
-          <FormButton onClick={setTestData} color="info">テストデータ入力(開発用)</FormButton>
-        </FormItem>
-      </FormSection> */}
+      {import.meta.env.DEV &&
+        <FormSection>
+          <FormItem>
+            <FormButton onClick={setTestData} color="info">テストデータ入力(開発用)</FormButton>
+          </FormItem>
+        </FormSection>
+      }
       <FormSection>
         <FormItem>
           <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
@@ -414,8 +419,8 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>氏名</FormLabel>
               <FormInput
-                value={leader.name}
-                onChange={e => setLeader(s => ({ ...s, name: e.target.value }))} />
+                value={leaderUserData.name}
+                onChange={e => setleaderUserData(s => ({ ...s, name: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>生年月日</FormLabel>
@@ -428,12 +433,12 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>郵便番号</FormLabel>
               <FormInput
-                value={leader.postalCode}
+                value={leaderUserData.postalCode}
                 onChange={e => {
                   if (e.target.value.length > 8) return
                   const postal = e.target.value.match(/(\d{3})(\d{4})/)
                   handleFilledPostalCode(e.target.value)
-                  setLeader(s => ({
+                  setleaderUserData(s => ({
                     ...s,
                     postalCode:
                       postal?.length === 3
@@ -441,7 +446,7 @@ const Step1: React.FC<Props> = (props) => {
                         : e.target.value
                   }))
                 }}
-                hasError={!validator.isEmpty(leader.postalCode) && !validator.isPostalCode(leader.postalCode)} />
+                hasError={!validator.isEmpty(leaderUserData.postalCode) && !validator.isPostalCode(leaderUserData.postalCode)} />
               <FormHelp>
                 ハイフンは自動で入力されます
               </FormHelp>
@@ -449,14 +454,14 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>住所</FormLabel>
               <FormInput
-                value={leader.address}
-                onChange={e => setLeader(s => ({ ...s, address: e.target.value }))} />
+                value={leaderUserData.address}
+                onChange={e => setleaderUserData(s => ({ ...s, address: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
-                value={leader.telephone}
-                onChange={e => setLeader(s => ({ ...s, telephone: e.target.value }))} />
+                value={leaderUserData.telephone}
+                onChange={e => setleaderUserData(s => ({ ...s, telephone: e.target.value }))} />
             </FormItem>
           </FormSection>
 
@@ -468,23 +473,23 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>メールアドレス</FormLabel>
               <FormInput type="email"
-                value={leader.email}
-                onChange={e => setLeader(s => ({ ...s, email: e.target.value }))}
-                hasError={!validator.isEmpty(leader.email) && !validator.isEmail(leader.email)} />
+                value={leaderUserData.email}
+                onChange={e => setleaderUserData(s => ({ ...s, email: e.target.value }))}
+                hasError={!validator.isEmpty(leaderUserData.email) && !validator.isEmail(leaderUserData.email)} />
             </FormItem>
             <FormItem>
               <FormLabel>パスワード</FormLabel>
               <FormInput type="password"
-                value={leader.password}
-                onChange={e => setLeader(s => ({ ...s, password: e.target.value }))} />
+                value={leaderUserData.password}
+                onChange={e => setleaderUserData(s => ({ ...s, password: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>パスワード(確認)</FormLabel>
               <FormInput type="password"
-                value={leader.rePassword}
-                onChange={e => setLeader(s => ({ ...s, rePassword: e.target.value }))}
-                hasError={!validator.isEmpty(leader.rePassword) && leader.password !== leader.rePassword} />
-              {!validator.isEmpty(leader.rePassword) && leader.password !== leader.rePassword &&
+                value={leaderUserData.rePassword}
+                onChange={e => setleaderUserData(s => ({ ...s, rePassword: e.target.value }))}
+                hasError={!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword} />
+              {!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword &&
                 <FormHelp>パスワードの入力が間違っています</FormHelp>}
             </FormItem>
           </FormSection>

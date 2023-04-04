@@ -3,7 +3,7 @@ import DashboardTemplateComponent from '../components/pages/DashboardTemplate/Da
 
 const DashboardTemplate: React.FC = () => {
   return (
-    <DashboardLayout title="ダッシュボード">
+    <DashboardLayout title="マイページ">
       <DashboardTemplateComponent />
     </DashboardLayout>
   )

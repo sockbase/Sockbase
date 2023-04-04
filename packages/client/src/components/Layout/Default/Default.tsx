@@ -24,14 +24,18 @@ const DefaultLayout: React.FC<Props> = (props) => {
 export default DefaultLayout
 
 const StyledLayout = styled.section`
-  display: 'grid';
-  height: '100%';
+  display: grid;
+  height: 100%;
   grid-template-rows: auto 1fr auto;
 `
 const StyledContainer = styled.main`
-  padding: 40px 25%;
+  margin: 40px 25%;
+  padding: 40px;
+  background-color: #ffffff;
+  justify-items: start;
 
   @media screen and (max-width: 840px) {
+    margin: 0;
     padding: 20px;
   }
 `
