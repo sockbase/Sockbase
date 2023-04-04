@@ -13,16 +13,16 @@ interface Props {
 const FormRadio: React.FC<Props> = (props) => {
   return (
     <>
-      {props.values.map(i => <StyledRadioItem key={`${props.name}-${i.value}`}>
+      {props.values.map(opt => <StyledRadioItem key={`${props.name}-${opt.value}`}>
         <StyledRadio
           name={props.name}
-          id={`${props.name}-${i.value}`}
+          id={`${props.name}-${opt.value}`}
 
-          value={i.value}
+          value={opt.value}
           onChange={e => props.onChange(e.target.value)}
-          checked={props.value === i.value}
-          defaultChecked={i.checked} />
-        <StyledRadioLabel htmlFor={`${props.name}-${i.value}`}>{i.text}</StyledRadioLabel>
+          checked={props.value === opt.value}
+          defaultChecked={opt.checked} />
+        <StyledRadioLabel htmlFor={`${props.name}-${opt.value}`}>{opt.text}</StyledRadioLabel>
       </StyledRadioItem>)}
     </>
   )

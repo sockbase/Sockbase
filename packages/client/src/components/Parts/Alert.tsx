@@ -31,15 +31,17 @@ const AlertContainer = styled.div<{ type?: AlertTypes }>`
     margin-bottom: 0;
   }
 
-${props => props.type === 'success'
-    ? {
-      borderLeft: '8px solid #44bf40'
-    }
-    : props.type === 'danger'
-      ? {
+${props => {
+    if (props.type === 'success') {
+      return {
+        borderLeft: '8px solid #44bf40'
+      }
+    } else if (props.type === 'danger') {
+      return {
         borderLeft: '8px solid #bf4040'
       }
-      : {}}
+    }
+  }}
 `
 const AlertTitle = styled.div`
   font-weight: bold;

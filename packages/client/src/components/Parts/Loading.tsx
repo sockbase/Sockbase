@@ -15,7 +15,7 @@ const Loading: React.FC<Props> = (props) => {
   )
 }
 
-const BlinkKeyframe = keyframes`
+const blinkKeyframe = keyframes`
   0% {
     background-color: #ea618320;
   }
@@ -35,7 +35,7 @@ const Container = styled.div`
   }
   border-radius: 5px;
   
-  animation: ${BlinkKeyframe} 0.5s ease-in-out alternate infinite;
+  animation: ${blinkKeyframe} 0.5s ease-in-out alternate infinite;
 `
 const Icon = styled.div`
   grid-row: 1 / 3;
