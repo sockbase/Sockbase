@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@sockbase/shared": "../shared",
     "@types/crypto-js": "^4.1.1",
     "@types/node": "^18.14.2",
     "@types/styled-components": "^5.1.26",
