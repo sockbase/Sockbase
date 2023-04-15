@@ -80,4 +80,17 @@ export type SockbaseAccountSecure = SockbaseAccount & {
 
 export type SockbaseRole = 0 | 1 | 2
 
+export interface Payment {
+  userId: string
+  paymentType: number
+  paymentId: string
+  bankTransferCode: string
+  paymentAmount: number
+  status: number
+  applicationId: string
+  ticketId: string
+  createdAt: number
+  updatedAt: number
+}
+
 export type valueOf<T> = T[keyof T]
