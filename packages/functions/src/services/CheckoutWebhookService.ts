@@ -3,12 +3,12 @@ import { type DocumentData } from 'firebase-admin/firestore'
 import { type Stripe } from 'stripe'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 
-const online = 1
-const bankTransfer = 2
-const paid = 1
-const pending = 0
-const paymentFailure = 3
-const refunded = 2
+enum Status {
+  Pending = 0,
+  Paid = 1,
+  Refunded = 2,
+  PaymentFailure = 3
+}
 
 const firestore = FirebaseAdmin.getFirebaseAdmin().firestore()
 
@@ -21,9 +21,8 @@ const updateStatus = async (
   const itemMap = new Map<string, Stripe.LineItem>();
   (items ?? []).forEach((x: Stripe.LineItem) => itemMap.set(x.id, x))
   for (const payment of payments) {
-    const paymentRef = firestore.collection('_payments').doc(payment.id)
-    if (itemMap.get(payment.id) !== undefined) {
-      await paymentRef.update({
+    if (itemMap.get(payment.itemId) !== undefined) {
+      await payment.ref.update({
         status,
         updatedAt: now.getTime()
       })
@@ -40,73 +39,68 @@ const collectPayments = async (userId: string, status: number): Promise<Document
   return results
 }
 
+const getUser = async (email: string): Promise<DocumentData | undefined> => {
+  const users = await firestore.collection('users').where('email', '==', email).get()
+  const results: DocumentData[] = []
+  users.forEach(x => results.push(x))
+  return results.length === 0 ? undefined : results[0]
+}
+
+const TREATABLE_EVENTS = [
+  'checkout.session.completed',
+  'checkout.session.async_payment_succeeded',
+  'checkout.session.async_payment_failed',
+  'charge.refunded'
+]
+
 export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, res) => {
   const event = req.body
+  // 扱うイベント以外は即returnする
+  if (!TREATABLE_EVENTS.includes(event.type)) {
+    res.send({})
+    return
+  }
   const now = new Date()
-
+  const session = event.data.object as Stripe.Checkout.Session
+  const email = session.customer_details?.email ?? ''
+  if (email === '') {
+    res.status(400).send({ error: 'EmailIsMissing', detail: 'email is missing' })
+    return
+  }
+  const userId = (await getUser(email))?.id as string ?? ''
+  if (userId === '') {
+    res.status(404).send({ error: 'NotFound', detail: `user(${email}) is not found` })
+    return
+  }
   switch (event.type) {
     case 'checkout.session.completed': {
-      const session = event.data.object as Stripe.Checkout.Session
-      // クレカなどの即決済時
-      if (session.payment_status === 'paid') {
-        for (const item of (session.line_items?.data ?? [])) {
-          const applicationId = item.id === process.env.CIRCLE_PARCHASE_ID ? item.id : undefined
-          const ticketId = item.id === process.env.TICKET_PARCHASE_ID ? item.id : undefined
-          await firestore.collection('_payments').add({
-            userId: 'なんかID',
-            paymentType: online,
-            paymentId: 'なんかID',
-            bankTransferCode: undefined,
-            paymentAmount: item.amount_total,
-            status: paid,
-            applicationId,
-            ticketId,
-            createdAt: now.getTime(),
-            updatedAt: now.getTime()
-          })
-        }
+      const payments = await collectPayments(userId, Status.Pending)
+      // クレカなどの即決済時のみ処理する
+      // 銀行振り込みなどの遅延決済時はなにも処理しない
+      if (session.payment_status !== 'paid') {
         break
       }
-      // 銀行振り込みなどの遅延決済時
-      for (const item of (session.line_items?.data ?? [])) {
-        const applicationId = item.id === process.env.CIRCLE_PARCHASE_ID ? item.id : undefined
-        const ticketId = item.id === process.env.TICKET_PARCHASE_ID ? item.id : undefined
-        await firestore.collection('_payments').add({
-          userId: 'なんかID',
-          paymentType: bankTransfer,
-          paymentId: undefined,
-          bankTransferCode: 'なんかID',
-          paymentAmount: item.amount_total,
-          status: pending,
-          applicationId,
-          ticketId,
-          createdAt: now.getTime(),
-          updatedAt: now.getTime()
-        })
-      }
+      await updateStatus(payments, session.line_items?.data, Status.Paid, now)
       break
     }
 
     case 'checkout.session.async_payment_succeeded': {
-      const session = event.data.object as Stripe.Checkout.Session
-      const payments = await collectPayments('どうにかして取得したuserId', pending)
-      await updateStatus(payments, session.line_items?.data, paid, now)
+      const payments = await collectPayments(userId, Status.Pending)
+      await updateStatus(payments, session.line_items?.data, Status.Paid, now)
       break
     }
 
     case 'checkout.session.async_payment_failed': {
-      const session = event.data.object as Stripe.Checkout.Session
-      const payments = await collectPayments('どうにかして取得したuserId', pending)
-      await updateStatus(payments, session.line_items?.data, paymentFailure, now)
+      const payments = await collectPayments(userId, Status.Pending)
+      await updateStatus(payments, session.line_items?.data, Status.PaymentFailure, now)
       break
     }
 
     case 'charge.refunded': {
-      const session = event.data.object
-      const payments = await collectPayments('どうにかして取得したuserId', paymentFailure)
-      await updateStatus(payments, session.line_items?.data, refunded, now)
+      const payments = await collectPayments(userId, Status.PaymentFailure)
+      await updateStatus(payments, session.line_items?.data, Status.Refunded, now)
       break
     }
   }
-  res.send(event.data.object)
+  res.send({})
 })
