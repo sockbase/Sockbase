@@ -84,6 +84,7 @@ export interface Payment {
   userId: string
   paymentType: number
   paymentId: string
+  itemId: string
   bankTransferCode: string
   paymentAmount: number
   status: number
