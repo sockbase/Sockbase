@@ -48,6 +48,7 @@ export interface SockbaseApplication {
   unionCircleId: string
   petitCode: string
   paymentMethod: string
+  paymentProductId?: string
   remarks: string
 }
 
