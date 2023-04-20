@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure } from 'sockbase'
-import { type IPaymentMethod } from './StepContainer'
+import sockbaseShared from '@sockbase/shared'
 
 import usePostalCode from '../../../../hooks/usePostalCode'
 import useValidate from '../../../../hooks/useValidate'
@@ -27,7 +27,6 @@ interface Props {
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
   spaces: SockbaseEventSpace[]
-  paymentMethods: IPaymentMethod[]
   prevStep: () => void
   nextStep: (app: SockbaseApplication, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
@@ -98,11 +97,10 @@ const Step1: React.FC<Props> = (props) => {
       if (props.spaces) {
         setSpaceIds(props.spaces.map(i => i.id))
       }
-      if (props.paymentMethods) {
-        setPaymentMethodIds(props.paymentMethods.map(i => i.id))
-      }
+
+      setPaymentMethodIds(sockbaseShared.constants.payment.methods.map(i => i.id))
     }
-  useEffect(onInitialize, [props.app, props.leaderUserData, props.circleCutFile, props.spaces, props.paymentMethods])
+  useEffect(onInitialize, [props.app, props.leaderUserData, props.circleCutFile, props.spaces])
 
   const onChangeCircleCutFile: () => void =
     () => {
@@ -254,11 +252,13 @@ const Step1: React.FC<Props> = (props) => {
           </FormItem>
         </FormSection>
       }
+
       <FormSection>
         <FormItem>
           <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
         </FormItem>
       </FormSection>
+
       <h2>申込むスペース数</h2>
       <FormSection>
         <FormItem>
@@ -521,7 +521,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormRadio
                 name="paymentMethod"
-                values={props.paymentMethods.map(i => ({
+                values={sockbaseShared.constants.payment.methods.map(i => ({
                   text: i.description,
                   value: i.id
                 }))}

@@ -3,6 +3,7 @@ import type { SockbaseStore } from 'sockbase'
 
 import StepProgress from '../../../Parts/StepProgress'
 import Introduction from './Introduction'
+import Step1 from './Step1'
 
 export interface IPaymentMethod {
   id: string
@@ -29,7 +30,8 @@ const StepContainer: React.FC<Props> = (props) => {
       if (props.isLoggedIn === undefined) return
 
       setStepComponents([
-        <Introduction key="introduction" nextStep={() => setStep(1)} store={props.store} />
+        <Introduction key="introduction" nextStep={() => setStep(1)} store={props.store} />,
+        <Step1 key="step1" prevStep={() => setStep(0)} store={props.store} />
       ])
     }
   useEffect(onInitialize, [props.isLoggedIn])
