@@ -30,7 +30,7 @@ const StepContainer: React.FC<Props> = (props) => {
   const [circleCutData, setCircleCutData] = useState<string>()
   const [circleCutFile, setCircleCutFile] = useState<File>()
   const [app, setApp] = useState<SockbaseApplication>()
-  const [leaderUserData, setleaderUserData] = useState<SockbaseAccountSecure>()
+  const [leaderUserData, setLeaderUserData] = useState<SockbaseAccountSecure>()
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
 
   const [userData, setUserData] = useState<SockbaseAccount | null>()
@@ -100,7 +100,7 @@ const StepContainer: React.FC<Props> = (props) => {
           prevStep={() => setStep(0)}
           nextStep={(app, leaderUserData, circleCutData, circleCutFile) => {
             setApp(app)
-            setleaderUserData(leaderUserData)
+            setLeaderUserData(leaderUserData)
             setCircleCutData(circleCutData)
             setCircleCutFile(circleCutFile)
             setStep(2)

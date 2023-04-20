@@ -4,23 +4,22 @@ import FormSection from '../../../Form/FormSection'
 import Alert from '../../../Parts/Alert'
 
 interface Props {
-  appHashId: string
   nextStep: () => void
 }
 const Step3: React.FC<Props> = (props) => {
   return (
     <>
       <Alert type="success" title="申し込み情報の送信が完了しました">
-        申し込みIDは {props.appHashId} です。
+        申し込みIDは aaa です。
       </Alert>
       <p>
-        お申し込みいただきましてありがとうございました。<br />
-        申し込み内容の控えを入力していただいたメールアドレスに送信しましたのでご確認ください。
+        お申し込みいただきましてありがとうございますした。<br />
+        申込内容の控えを入力していただいたメールアドレスに送信しましたのでご確認ください。
       </p>
 
-      <h1>サークル参加費のお支払い</h1>
+      <h1>参加費のお支払い</h1>
       <p>
-        ここに支払金額の情報(スペースのアレ)
+        金額情報とか出す
       </p>
       <p>
         paymentMethodでswitchする。
@@ -33,7 +32,7 @@ const Step3: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      <h2>銀行振込でのお支払い</h2>
+      <h2>銀行振込でお支払い</h2>
       <p>
         までに以下の口座へ所定の金額のお振込みをお願いいたします。
       </p>
@@ -97,6 +96,7 @@ const Step3: React.FC<Props> = (props) => {
           </tr>
         </tbody>
       </table>
+
       <Alert>
         ※払込みにかかる手数料は、サークル様のご負担となります。<br />
       </Alert>
