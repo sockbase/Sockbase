@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+
 import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount } from 'sockbase'
-import type { IPaymentMethod } from './StepContainer'
+import sockbaseShared from '@sockbase/shared'
 
 import useFirebaseError from '../../../../hooks/useFirebaseError'
 
@@ -15,7 +16,6 @@ interface Props {
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutData: string | undefined
   spaces: SockbaseEventSpace[]
-  paymentMethods: IPaymentMethod[]
   userData: SockbaseAccount | null
   submitApplication: () => Promise<void>
   prevStep: () => void
@@ -25,18 +25,18 @@ const Step2: React.FC<Props> = (props) => {
   const { localize: localizeFirebaseError } = useFirebaseError()
 
   const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace | undefined>()
-  const [paymentMethodInfo, setPaymentMethodInfo] = useState<IPaymentMethod | undefined>()
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState<{ id: string, description: string } | undefined>()
   const [isProgress, setProgress] = useState(false)
   const [error, setError] = useState<Error | null | undefined>()
 
   const onChangeSpaceSelect: () => void =
     () => {
-      if (!props.app || !props.spaces || !props.paymentMethods) return
+      if (!props.app || !props.spaces) return
       const space = props.spaces
         .filter(i => i.id === props.app?.spaceId)[0]
       setSpaceInfo(space)
 
-      const paymentMethod = props.paymentMethods
+      const paymentMethod = sockbaseShared.constants.payment.methods
         .filter(i => i.id === props.app?.paymentMethod)[0]
       setPaymentMethodInfo(paymentMethod)
     }

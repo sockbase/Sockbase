@@ -14,23 +14,7 @@ import Step3 from './Step3'
 import Step4 from './Step4'
 import useApplication from '../../../../hooks/useApplication'
 
-export interface IPaymentMethod {
-  id: string
-  description: string
-}
-
 const stepProgresses = ['入力', '確認', '決済', '完了']
-const paymentMethods: IPaymentMethod[] =
-  [
-    {
-      id: 'online',
-      description: 'クレジットカード決済(推奨)'
-    },
-    {
-      id: 'bankTransfer',
-      description: '銀行振込'
-    }
-  ]
 
 interface Props {
   eventId: string
@@ -113,7 +97,6 @@ const StepContainer: React.FC<Props> = (props) => {
           leaderUserData={leaderUserData}
           circleCutFile={circleCutFile}
           isLoggedIn={props.isLoggedIn} spaces={props.event.spaces}
-          paymentMethods={paymentMethods}
           prevStep={() => setStep(0)}
           nextStep={(app, leaderUserData, circleCutData, circleCutFile) => {
             setApp(app)
@@ -128,7 +111,6 @@ const StepContainer: React.FC<Props> = (props) => {
           circleCutData={circleCutData}
           spaces={props.event.spaces}
           userData={userData}
-          paymentMethods={paymentMethods}
           submitApplication={submitApplication}
           prevStep={() => setStep(1)}
           nextStep={() => setStep(3)} />,
