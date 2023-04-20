@@ -87,6 +87,19 @@ export interface SockbaseApplicationMeta {
 }
 export type SockbaseApplicationStatus = 0 | 1 | 2
 
+export interface SockbaseTicketApplication {
+  storeId: string
+  typeId: string
+  paymentMethod: string
+  paymentProductId?: string
+  remarks: string
+}
+export type SockbaseTicketApplicaitonDocument = SockbaseTicketApplication & {
+  userId: string
+  timestamp: number
+  hashId: string | null
+}
+
 export interface SockbaseAccount {
   name: string
   email: string

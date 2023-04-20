@@ -193,7 +193,7 @@ const Step2: React.FC<Props> = (props) => {
             上記の内容で正しければ「決済に進む(申し込み情報送信)」ボタンを押してください。
           </p>
           <p>
-            修正する場合は、「修正」ボタンを押してください。
+            修正する場合は「修正」ボタンを押してください。
           </p>
 
           {error && <Alert type="danger" title="エラーが発生しました">{error.message}</Alert>}
