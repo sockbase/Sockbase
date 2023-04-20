@@ -1,7 +1,6 @@
 import styled from 'styled-components'
-import { buttonStyle, type ColorTypes } from '../mixins/button'
 
-const FormButton = styled.button<{ color?: 'default' | 'info' }>`
+const FormButton = styled.button<{ color?: 'default' | 'info' | 'danger' }>`
   width: 100%;
   padding: 10px;
   border-radius: 5px;
