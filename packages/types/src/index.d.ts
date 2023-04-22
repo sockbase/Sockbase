@@ -80,16 +80,16 @@ export type SockbaseAccountSecure = SockbaseAccount & {
 
 export type SockbaseRole = 0 | 1 | 2
 
-export interface Payment {
+export interface SockbasePaymentDocument {
   userId: string
+  paymentProductId: string
   paymentType: number
-  paymentId: string
-  itemId: string
-  bankTransferCode: string
+  paymentId?: string
+  bankTransferCode?: string
   paymentAmount: number
   status: number
-  applicationId: string
-  ticketId: string
+  applicationId?: string
+  ticketId?: string
   createdAt: number
   updatedAt: number
 }

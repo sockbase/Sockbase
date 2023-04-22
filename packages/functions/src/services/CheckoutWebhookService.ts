@@ -21,7 +21,7 @@ const updateStatus = async (
   const itemMap = new Map<string, Stripe.LineItem>();
   (items ?? []).forEach((x: Stripe.LineItem) => itemMap.set(x.id, x))
   for (const payment of payments) {
-    if (itemMap.get(payment.itemId) !== undefined) {
+    if (itemMap.get(payment.paymentProductId) !== undefined) {
       await payment.ref.update({
         status,
         updatedAt: now.getTime()
