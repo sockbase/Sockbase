@@ -19,9 +19,9 @@ const Step4: React.FC = () => {
       </p>
 
       <FormSection>
-        {/* <FormItem>
-          <LinkButton color="default" to={`/dashboard/applications/${props.appHashId}`}>マイページを開く</LinkButton>
-        </FormItem> */}
+        <FormItem>
+          <LinkButton color="default" to="/dashboard/tickets">マイページを開く</LinkButton>
+        </FormItem>
         <FormItem>
           <LinkButton to="">イベントサイトへ戻る</LinkButton>
         </FormItem>
