@@ -20,7 +20,7 @@ const updateStatus = async (
   now: Date
 ): Promise<void> => {
   const itemIds = new Array<string>();
-  (items ?? []).forEach((x: Stripe.LineItem) => { 
+  (items ?? []).forEach((x: Stripe.LineItem) => {
     if (x.price !== undefined) {
       itemIds.push(x.price?.id as string)
     }
@@ -55,7 +55,7 @@ const getUser = async (email: string): Promise<DocumentData | undefined> => {
 const TREATABLE_EVENTS = [
   'checkout.session.completed',
   'checkout.session.async_payment_succeeded',
-  'checkout.session.async_payment_failed',
+  'checkout.session.async_payment_failed'
 ]
 
 export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, res) => {
