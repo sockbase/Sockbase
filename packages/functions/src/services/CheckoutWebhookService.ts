@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '20
 enum Status {
   Pending = 0,
   Paid = 1,
-  PaymentFailure = 2
+  PaymentFailure = 3
 }
 
 const firestore = FirebaseAdmin.getFirebaseAdmin().firestore()
