@@ -78,20 +78,32 @@ export type SockbaseAccountSecure = SockbaseAccount & {
   rePassword: string
 }
 
+export type SockbaseAccountDocument = SockbaseAccount & {
+  id: string
+}
+
 export type SockbaseRole = 0 | 1 | 2
 
-export interface SockbasePaymentDocument {
+export type PaymentType = 1 | 2
+
+export type PaymentStatus = 0 | 1 | 2 | 3
+
+export interface SockbasePayment {
   userId: string
   paymentProductId: string
-  paymentType: number
+  paymentType: PaymentType
   paymentId?: string
   bankTransferCode?: string
   paymentAmount: number
-  status: number
+  status: PaymentStatus
   applicationId?: string
   ticketId?: string
   createdAt: number
   updatedAt: number
+}
+
+export type SockbasePaymentDocument = SockbasePayment & {
+  id: string
 }
 
 export type valueOf<T> = T[keyof T]

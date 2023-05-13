@@ -1,7 +1,8 @@
 import * as functions from 'firebase-functions'
-import { type DocumentData } from 'firebase-admin/firestore'
 import { Stripe } from 'stripe'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
+import { paymentConverter, userConverter } from '../libs/converters'
+import type * as types from 'packages/types/src'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2022-11-15' })
 
@@ -14,42 +15,35 @@ enum Status {
 const firestore = FirebaseAdmin.getFirebaseAdmin().firestore()
 
 const updateStatus = async (
-  payments: DocumentData[],
+  payments: types.SockbasePaymentDocument[],
   items: Stripe.LineItem[] | undefined,
   status: number,
   now: Date
 ): Promise<void> => {
-  const itemIds = new Array<string>();
-  (items ?? []).forEach((x: Stripe.LineItem) => {
-    if (x.price !== undefined) {
-      itemIds.push(x.price?.id as string)
-    }
-  })
+  const itemIds = (items ?? []).filter(x => x.price !== undefined).map(x => x.price?.id as string)
   for (const payment of payments) {
-    const paymentData = payment.data()
-    if (itemIds.includes(paymentData.paymentProductId)) {
-      await payment.ref.update({
+    if (itemIds.includes(payment.paymentProductId)) {
+      await firestore.doc(`/_payments/${payment.id}`).set({
         status,
         updatedAt: now
-      })
+      }, { merge: true })
     }
   }
 }
 
-const collectPayments = async (userId: string, status: number): Promise<DocumentData[]> => {
-  const payments = await firestore.collection('_payments')
+const collectPayments = async (userId: string, status: number): Promise<types.SockbasePaymentDocument[]> => {
+  const paymentSnapshot = await firestore.collection('_payments')
     .where('userId', '==', userId)
-    .where('status', '==', status).get()
-  const results: DocumentData[] = []
-  payments.forEach(x => results.push(x))
-  return results
+    .where('status', '==', status)
+    .withConverter(paymentConverter)
+    .get()
+  return paymentSnapshot.docs.map(x => x.data())
 }
 
-const getUser = async (email: string): Promise<DocumentData | undefined> => {
-  const users = await firestore.collection('users').where('email', '==', email).get()
-  const results: DocumentData[] = []
-  users.forEach(x => results.push(x))
-  return results.length === 0 ? undefined : results[0]
+const getUser = async (email: string): Promise<types.SockbaseAccountDocument | null> => {
+  const userSnapshot = await firestore.collection('users').where('email', '==', email).withConverter(userConverter).get()
+  const users = userSnapshot.docs.map(x => x.data())
+  return users.length === 0 ? null : users[0]
 }
 
 const TREATABLE_EVENTS = [
