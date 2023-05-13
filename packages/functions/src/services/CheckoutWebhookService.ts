@@ -46,35 +46,39 @@ const getUser = async (email: string): Promise<types.SockbaseAccountDocument | n
   return users.length === 0 ? null : users[0]
 }
 
-const TREATABLE_EVENTS = [
-  'checkout.session.completed',
-  'checkout.session.async_payment_succeeded',
-  'checkout.session.async_payment_failed'
-]
+const TREATABLE_EVENTS = {
+  checkoutCompleted: 'checkout.session.completed',
+  asyncPaymentSuccessed: 'checkout.session.async_payment_succeeded',
+  asyncPaymentFailed: 'checkout.session.async_payment_failed'
+}
 
 export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, res) => {
   const event = req.body
   // 扱うイベント以外は即returnする
-  if (!TREATABLE_EVENTS.includes(event.type)) {
+  if (!Object.values(TREATABLE_EVENTS).includes(event.type)) {
     res.send({})
     return
   }
   const now = new Date()
   const session = event.data.object as Stripe.Checkout.Session
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
-  const email = session.customer_details?.email ?? ''
-  if (email === '') {
+  if (session.customer_details === null) {
+    res.status(404).send({ error: 'NotFound', detail: 'custome is missing' })
+    return
+  }
+  const email = session.customer_details.email
+  if (email === null) {
     res.status(400).send({ error: 'EmailIsMissing', detail: 'email is missing' })
     return
   }
-  const userId = (await getUser(email))?.id as string ?? ''
-  if (userId === '') {
+  const user = await getUser(email)
+  if (user === null) {
     res.status(404).send({ error: 'NotFound', detail: `user(${email}) is not found` })
     return
   }
   switch (event.type) {
-    case 'checkout.session.completed': {
-      const payments = await collectPayments(userId, Status.Pending)
+    case TREATABLE_EVENTS.checkoutCompleted: {
+      const payments = await collectPayments(user.id, Status.Pending)
       // クレカなどの即決済時のみ処理する
       // 銀行振り込みなどの遅延決済時はなにも処理しない
       if (session.payment_status !== 'paid') {
@@ -84,14 +88,14 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
       break
     }
 
-    case 'checkout.session.async_payment_succeeded': {
-      const payments = await collectPayments(userId, Status.Pending)
+    case TREATABLE_EVENTS.asyncPaymentSuccessed: {
+      const payments = await collectPayments(user.id, Status.Pending)
       await updateStatus(payments, lineItems.data, Status.Paid, now)
       break
     }
 
-    case 'checkout.session.async_payment_failed': {
-      const payments = await collectPayments(userId, Status.Pending)
+    case TREATABLE_EVENTS.asyncPaymentFailed: {
+      const payments = await collectPayments(user.id, Status.Pending)
       await updateStatus(payments, lineItems.data, Status.PaymentFailure, now)
       break
     }
