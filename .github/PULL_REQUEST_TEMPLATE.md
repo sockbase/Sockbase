@@ -5,11 +5,11 @@
 ## このPRで含めるもの
 
 - [ ] タスク１
-  - Resolve #
-  - Resolve #
+  - [ ] Resolve #
+  - [ ] Resolve #
 - [ ] タスク２
-  - Resolve #
-  - Resolve #
+  - [ ] Resolve #
+  - [ ] Resolve #
 
 ## このPRで含めないもの
 
