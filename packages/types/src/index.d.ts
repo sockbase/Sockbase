@@ -84,8 +84,22 @@ export type SockbaseAccountDocument = SockbaseAccount & {
 
 export type SockbaseRole = 0 | 1 | 2
 
+/**
+ * PaymentType
+ *
+ * online: 1
+ * bankTransfer: 2
+ */
 export type PaymentType = 1 | 2
 
+/**
+ * PaymentStatus
+ *
+ * pending: 0
+ * paid: 1
+ * refunded: 2
+ * paymentFailure: 3
+ */
 export type PaymentStatus = 0 | 1 | 2 | 3
 
 export interface SockbasePayment {
