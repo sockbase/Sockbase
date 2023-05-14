@@ -46,7 +46,7 @@ const getUser = async (email: string): Promise<types.SockbaseAccountDocument | n
   return users.length === 0 ? null : users[0]
 }
 
-const TREATABLE_EVENTS = {
+const HANDLEABLE_EVENTS = {
   checkoutCompleted: 'checkout.session.completed',
   asyncPaymentSuccessed: 'checkout.session.async_payment_succeeded',
   asyncPaymentFailed: 'checkout.session.async_payment_failed'
@@ -55,7 +55,7 @@ const TREATABLE_EVENTS = {
 export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, res) => {
   const event = req.body
   // 扱うイベント以外は即returnする
-  if (!Object.values(TREATABLE_EVENTS).includes(event.type)) {
+  if (!Object.values(HANDLEABLE_EVENTS).includes(event.type)) {
     res.send({})
     return
   }
@@ -77,7 +77,7 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     return
   }
   switch (event.type) {
-    case TREATABLE_EVENTS.checkoutCompleted: {
+    case HANDLEABLE_EVENTS.checkoutCompleted: {
       const payments = await collectPayments(user.id, Status.Pending)
       // クレカなどの即決済時のみ処理する
       // 銀行振り込みなどの遅延決済時はなにも処理しない
@@ -88,13 +88,13 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
       break
     }
 
-    case TREATABLE_EVENTS.asyncPaymentSuccessed: {
+    case HANDLEABLE_EVENTS.asyncPaymentSuccessed: {
       const payments = await collectPayments(user.id, Status.Pending)
       await updateStatus(payments, lineItems.data, Status.Paid, now)
       break
     }
 
-    case TREATABLE_EVENTS.asyncPaymentFailed: {
+    case HANDLEABLE_EVENTS.asyncPaymentFailed: {
       const payments = await collectPayments(user.id, Status.Pending)
       await updateStatus(payments, lineItems.data, Status.PaymentFailure, now)
       break
