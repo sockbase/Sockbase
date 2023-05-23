@@ -1,8 +1,9 @@
 import type * as types from 'packages/types/src'
 import type * as firestore from 'firebase-admin/firestore'
+import * as admin from 'firebase-admin'
 
 export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePaymentDocument> = {
-  toFirestore (payment: types.SockbasePaymentDocument): firestore.DocumentData {
+  toFirestore: (payment: types.SockbasePaymentDocument): firestore.DocumentData => {
     // SockbasePaymentDocumentはIDを含むので、それを除いた分をDocumentDataとする
     return {
       userId: payment.userId,
@@ -18,9 +19,7 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
       updatedAt: payment.updatedAt
     }
   },
-  fromFirestore (
-    snapshot: firestore.QueryDocumentSnapshot<types.SockbasePaymentDocument>
-  ): types.SockbasePaymentDocument {
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot<types.SockbasePaymentDocument>): types.SockbasePaymentDocument => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -40,7 +39,7 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
 }
 
 export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccountDocument> = {
-  toFirestore (account: types.SockbaseAccountDocument): firestore.DocumentData {
+  toFirestore: (account: types.SockbaseAccountDocument): firestore.DocumentData => {
     // SockbaseAccountDocumentはIDを含むので、それを除いた分をDocumentDataとする
     return {
       name: account.name,
@@ -52,9 +51,9 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
       telephone: account.telephone
     }
   },
-  fromFirestore (
+  fromFirestore: (
     snapshot: firestore.QueryDocumentSnapshot<types.SockbaseAccountDocument>
-  ): types.SockbaseAccountDocument {
+  ): types.SockbaseAccountDocument => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -65,6 +64,47 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
       postalCode: data.postalCode,
       address: data.address,
       telephone: data.telephone
+    }
+  }
+}
+
+export const applicationConverter: firestore.FirestoreDataConverter<types.SockbaseApplicationDocument> = {
+  toFirestore: (app: types.SockbaseApplicationDocument): firestore.DocumentData => ({
+    userId: app.userId,
+    eventId: app.eventId,
+    spaceId: app.spaceId,
+    circle: {
+      name: app.circle.name,
+      yomi: app.circle.yomi,
+      penName: app.circle.penName,
+      penNameYomi: app.circle.penNameYomi,
+      hasAdult: app.circle.hasAdult,
+      genre: app.circle.genre
+    },
+    overview: {
+      description: app.overview.description,
+      totalAmount: app.overview.totalAmount
+    },
+    unionCircleId: app.unionCircleId,
+    petitCode: app.petitCode,
+    paymentMethod: app.paymentMethod,
+    remarks: app.remarks,
+    timestamp: admin.firestore.FieldValue.serverTimestamp()
+  }),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseApplicationDocument => {
+    const app = snapshot.data()
+    return {
+      hashId: app.hashId,
+      userId: app.userId,
+      eventId: app.eventId,
+      spaceId: app.spaceId,
+      circle: app.circle,
+      overview: app.overview,
+      unionCircleId: app.unionCircleId,
+      petitCode: app.petitCode,
+      paymentMethod: app.paymentMethod,
+      remarks: app.remarks,
+      timestamp: app.timestamp.toDate().getTime()
     }
   }
 }

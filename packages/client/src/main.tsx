@@ -14,8 +14,10 @@ import GlobalStyle from './GlobalStyle'
 import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 
 import App from './pages/App'
+
 import FormTemplate from './pages/FormTemplate'
 import DashboardTemplate from './pages/DashboardTemplate'
+
 import TermsOfService from './pages/static/TermsOfService'
 import PrivacyPolicy from './pages/static/PrivacyPolicy'
 

@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react'
-import { type User } from 'firebase/auth'
-
-import type { SockbaseAccount, SockbaseAccountSecure, SockbaseApplication, SockbaseEvent } from 'sockbase'
+import type { SockbaseApplicationAddedResult, SockbaseAccount, SockbaseAccountSecure, SockbaseApplication, SockbaseEvent } from 'sockbase'
 
 import useFirebase from '../../../../hooks/useFirebase'
 import useUserData from '../../../../hooks/useUserData'
@@ -34,17 +32,17 @@ const StepContainer: React.FC<Props> = (props) => {
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
 
   const [userData, setUserData] = useState<SockbaseAccount | null>()
-  const [appHashId, setAppHashId] = useState<string>()
+  const [appResult, setAppResult] = useState<SockbaseApplicationAddedResult>()
 
-  const submitApplicationWithUserAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
-    async (user, app, circleCutFile) => {
-      const createdAppHashId = await submitApplicationAsync(user, app, circleCutFile)
+  const submitApplicationWithUserAsync: (app: SockbaseApplication, circleCutFile: File) => Promise<SockbaseApplicationAddedResult> =
+    async (app, circleCutFile) => {
+      const createdAppResult = await submitApplicationAsync(app, circleCutFile)
         .catch(err => {
           throw err
         })
-      // TODO: 決済管理情報作成(サーバ側でやったほうが良いかも)
-      // TODO: 決済管理情報取得
-      return createdAppHashId
+
+      // TODO: submitApplicationAsyncを叩くと申込みハッシュIdと銀行振込用コードが取れるので、それをいい感じする。
+      return createdAppResult
     }
 
   const submitApplication: () => Promise<void> =
@@ -56,15 +54,12 @@ const StepContainer: React.FC<Props> = (props) => {
           .catch(err => {
             throw err
           })
-        await updateUserDataAsync(newUser.uid, leaderUserData)
 
-        const createdAppHashId = await submitApplicationWithUserAsync(newUser, app, circleCutFile)
-        setAppHashId(createdAppHashId)
-        return
+        await updateUserDataAsync(newUser.uid, leaderUserData)
       }
 
-      const createdAppHashId = await submitApplicationWithUserAsync(user, app, circleCutFile)
-      setAppHashId(createdAppHashId)
+      const createdAppResult = await submitApplicationWithUserAsync(app, circleCutFile)
+      setAppResult(createdAppResult)
     }
 
   const fetchUserData: () => void =
@@ -115,13 +110,13 @@ const StepContainer: React.FC<Props> = (props) => {
           prevStep={() => setStep(1)}
           nextStep={() => setStep(3)} />,
         <Step3 key="step3"
-          appHashId={appHashId ?? ''}
+          appResult={appResult}
           nextStep={() => setStep(4)} />,
         <Step4 key="step4"
-          appHashId={appHashId ?? ''} />
+          appResult={appResult} />
       ])
     }
-  useEffect(onInitialize, [props.isLoggedIn, app, leaderUserData, circleCutData, userData, appHashId])
+  useEffect(onInitialize, [props.isLoggedIn, app, leaderUserData, circleCutData, userData, appResult])
 
   return (
     <>

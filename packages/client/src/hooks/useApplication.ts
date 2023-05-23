@@ -1,15 +1,12 @@
-import { MD5, enc } from 'crypto-js'
-import dayjs from 'dayjs'
-
-import { type FirebaseError } from 'firebase/app'
-import { type User } from 'firebase/auth'
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseStorage from 'firebase/storage'
+import * as FirebaseFunctions from 'firebase/functions'
 
 import useFirebase from './useFirebase'
 
 import type {
   SockbaseApplication,
+  SockbaseApplicationAddedResult,
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
   SockbaseApplicationStatus
@@ -89,13 +86,13 @@ interface IUseApplication {
   getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
   getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, SockbaseApplicationDocument>>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]>
-  submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string>
+  submitApplicationAsync: (app: SockbaseApplication, circleCutFile: File) => Promise<SockbaseApplicationAddedResult>
   getApplicationMetaByIdAsync: (appId: string) => Promise<SockbaseApplicationMeta>
   updateApplicationStatusByIdAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void>
   getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
 }
 const useApplication: () => IUseApplication = () => {
-  const { getFirestore, getStorage } = useFirebase()
+  const { getFirestore, getStorage, getFunctions } = useFirebase()
 
   const getApplicationIdByHashedIdAsync: (hashedAppId: string) => Promise<string> =
     async (hashedAppId) => {
@@ -192,30 +189,20 @@ const useApplication: () => IUseApplication = () => {
       return metaDoc.data()
     }
 
-  const submitApplicationAsync: (user: User, app: SockbaseApplication, circleCutFile: File) => Promise<string> =
-    async (user, app, circleCutFile) => {
-      const db = getFirestore()
-      const appCol = FirestoreDB.collection(db, 'applications')
-        .withConverter(applicationConverter)
-      const appDoc: SockbaseApplicationDocument = {
-        ...app,
-        userId: user.uid,
-        timestamp: 0,
-        hashId: null
-      }
-      const createdAppDocRef = await FirestoreDB.addDoc(appCol, appDoc)
-        .catch(err => {
-          throw err
-        })
+  const submitApplicationAsync: (app: SockbaseApplication, circleCutFile: File) => Promise<SockbaseApplicationAddedResult> =
+    async (app, circleCutFile) => {
+      const functions = getFunctions()
+      const createApplicationFunction = FirebaseFunctions
+        .httpsCallable<SockbaseApplication, SockbaseApplicationAddedResult>(functions, 'default-ApplicationService-createApplication')
 
-      // TODO Cloud Functionsに移植して、Cloud FunctionsからgeneratedHashIdを取ってこれるようにする
-      const generatedHashId = await generateHashId(app.eventId, createdAppDocRef)
+      const appResult = await createApplicationFunction(app)
+      const hashId = appResult.data.hashId
 
       const storage = getStorage()
-      const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${generatedHashId}`)
+      const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${hashId}`)
       await FirebaseStorage.uploadBytes(circleCutRef, circleCutFile)
 
-      return generatedHashId
+      return appResult.data
     }
 
   const updateApplicationStatusByIdAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void> =
@@ -238,25 +225,6 @@ const useApplication: () => IUseApplication = () => {
       const circleCutRef = FirebaseStorage.ref(storage, `/circleCuts/${hashedAppId}`)
       const circleCutURL = await FirebaseStorage.getDownloadURL(circleCutRef)
       return circleCutURL
-    }
-
-  // TODO Cloud Functionsに移植する
-  const generateHashId: (eventId: string, ref: FirestoreDB.DocumentReference) => Promise<string> =
-    async (eventId, ref) => {
-      const salt = 'sockbase-yogurt-koharurikka516'
-      const codeDigit = 8
-      const refHashId = MD5(`${eventId}.${ref.id}.${salt}`)
-        .toString(enc.Hex)
-        .slice(0, codeDigit)
-      const formatedDateTime = dayjs().format('YYYYMMDDHmmssSSS')
-      const hashId = `${formatedDateTime}-${refHashId}`
-
-      await FirestoreDB.updateDoc(ref, { hashId })
-        .catch((err: FirebaseError) => {
-          throw err
-        })
-
-      return hashId
     }
 
   return {
