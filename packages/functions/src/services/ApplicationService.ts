@@ -101,12 +101,21 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   }
 
   const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const addResult = await adminApp.firestore()
+  const firestore = adminApp.firestore()
+
+  const addResult = await firestore
     .collection('applications')
     .withConverter(applicationConverter)
     .add(appDoc)
+  const appId = addResult.id
 
   const hashId = await generateHashId(app.eventId, addResult.id)
+  await firestore
+    .doc(`/applications/${appId}`)
+    .set(
+      { hashId },
+      { merge: true }
+    )
 
   // TODO: onCreateApplicationの処理を入れ込む。細かくメソッド化して呼び出す形にする。
 
