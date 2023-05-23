@@ -1,65 +1,14 @@
 import { MD5, enc } from 'crypto-js'
 import dayjs from 'dayjs'
 
-import type { SockbaseAccount, SockbaseApplication, SockbaseApplicationAddedResult, SockbaseApplicationDocument, SockbaseEvent, SockbaseOrganization } from 'sockbase'
+import type { PaymentMethod, SockbaseAccount, SockbaseApplication, SockbaseApplicationAddedResult, SockbaseApplicationDocument, SockbaseEvent, SockbaseOrganization, SockbasePaymentDocument } from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
 import fetch from 'node-fetch'
 
 import firebaseAdmin from '../libs/FirebaseAdmin'
-import { applicationConverter } from '../libs/converters'
-
-export const onCreateApplication = functions.firestore
-  .document('/applications/{applicationId}')
-  .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ applicationId: string }>) => {
-    const adminApp = firebaseAdmin.getFirebaseAdmin()
-
-    const app = snapshot.data() as SockbaseApplicationDocument
-    const eventDoc = await adminApp.firestore()
-      .doc(`/events/${app.eventId}`)
-      .get()
-    const event = eventDoc.data() as SockbaseEvent
-
-    // TODO: hashIdのTOODと合わせて申し込み作成関連周りひっくるめて対応する形でも良いかもしれない
-
-    await adminApp.firestore()
-      .doc(`/applications/${context.params.applicationId}/private/meta`)
-      .set({
-        applicationStatus: 0
-      })
-
-    const webhookBody = {
-      content: '',
-      username: `Sockbase: ${event.eventName}`,
-      embeds: [
-        {
-          title: 'サークル申し込みを受け付けました！',
-          url: '',
-          fields: [
-            {
-              name: 'サークル名',
-              value: app.circle.name
-            }
-          ]
-        }
-      ]
-    }
-
-    const organizationDoc = await adminApp.firestore()
-      .doc(`/organizations/${event._organization.id}`)
-      .get()
-    const organization = organizationDoc.data() as SockbaseOrganization
-
-    // TODO: libsに切り分ける
-    await fetch(organization.config.discordWebhookURL, {
-      method: 'POST',
-      body: JSON.stringify(webhookBody),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  })
+import { applicationConverter, paymentConverter } from '../libs/converters'
 
 export const onChangeApplication = functions.firestore
   .document('/applications/{applicationId}')
@@ -67,23 +16,25 @@ export const onChangeApplication = functions.firestore
     if (!change.after.exists) return
 
     const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
     const appId = change.after.id
     const app = change.after.data() as SockbaseApplicationDocument
     if (!app.hashId) return
 
-    const userDoc = await adminApp.firestore()
+    const userDoc = await firestore
       .doc(`/users/${app.userId}`)
       .get()
     const user = userDoc.data() as SockbaseAccount
 
-    await adminApp.firestore()
+    await firestore
       .doc(`/_applicationHashIds/${app.hashId}`)
       .set({
         applicationId: appId,
         hashId: app.hashId
       })
 
-    await adminApp.firestore()
+    await firestore
       .doc(`/events/${app.eventId}/_users/${app.userId}`)
       .set(user)
   })
@@ -93,17 +44,26 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     throw new functions.https.HttpsError('permission-denied', 'Auth Error')
   }
 
-  const appDoc: SockbaseApplicationDocument = {
-    ...app,
-    userId: context.auth.uid,
-    timestamp: 0,
-    hashId: null
-  }
-
-  // TODO: トランザクション組む
+  const userId = context.auth.uid
 
   const adminApp = firebaseAdmin.getFirebaseAdmin()
   const firestore = adminApp.firestore()
+
+  const eventId = app.eventId
+  const eventDoc = await firestore
+    .doc(`/events/${eventId}`)
+    .get()
+  const event = eventDoc.data() as SockbaseEvent | undefined
+  if (!event) {
+    throw new functions.https.HttpsError('not-found', 'Event')
+  }
+
+  const appDoc: SockbaseApplicationDocument = {
+    ...app,
+    userId,
+    timestamp: 0,
+    hashId: null
+  }
 
   const addResult = await firestore
     .collection('applications')
@@ -111,7 +71,7 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     .add(appDoc)
   const appId = addResult.id
 
-  const hashId = await generateHashId(app.eventId, addResult.id)
+  const hashId = await generateHashId(eventId, appId)
   await firestore
     .doc(`/applications/${appId}`)
     .withConverter(applicationConverter)
@@ -120,11 +80,49 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
       { merge: true }
     )
 
-  // TODO: onCreateApplicationの処理を入れ込む。細かくメソッド化して呼び出す形にする。
+  await firestore
+    .doc(`/applications/${appId}/private/meta`)
+    .set({ applicationStatus: 0 })
+
+  const space = event.spaces
+    .filter(s => s.id === app.spaceId)[0]
 
   const bankTransferCode = generateBankTransferCode()
-  // TODO: 決済情報をここで作る。
-  // TODO: 銀行振込なら銀行振込コードを決済情報に載せる
+  await createPayment(
+    userId,
+    app.paymentMethod === 'online' ? 1 : 2,
+    space.paymentProductId,
+    space.price,
+    'circle',
+    appId,
+    bankTransferCode
+  )
+
+  const webhookBody = {
+    content: '',
+    username: `Sockbase: ${event.eventName}`,
+    embeds: [
+      {
+        title: 'サークル申し込みを受け付けました！',
+        url: '',
+        fields: [
+          {
+            name: 'イベント名',
+            value: event.eventName
+          },
+          {
+            name: 'サークル名',
+            value: app.circle.name
+          },
+          {
+            name: '申し込みID',
+            value: hashId
+          }
+        ]
+      }
+    ]
+  }
+  await sendMessageToDiscord(event._organization.id, webhookBody)
 
   const result: SockbaseApplicationAddedResult = {
     hashId,
@@ -132,6 +130,34 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   }
   return result
 })
+
+const sendMessageToDiscord: (organizationId: string, messageBody: {
+  content: string
+  username: string
+  embeds: Array<{
+    title: string
+    url: string
+    fields: Array<{
+      name: string
+      value: string
+    }>
+  }>
+}) => Promise<void> =
+  async (organizationId, messageBody) => {
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const organizationDoc = await adminApp.firestore()
+      .doc(`/organizations/${organizationId}`)
+      .get()
+    const organization = organizationDoc.data() as SockbaseOrganization
+
+    await fetch(organization.config.discordWebhookURL, {
+      method: 'POST',
+      body: JSON.stringify(messageBody),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  }
 
 const generateHashId: (eventId: string, refId: string) => Promise<string> =
   async (eventId, refId) => {
@@ -148,3 +174,41 @@ const generateHashId: (eventId: string, refId: string) => Promise<string> =
 
 const generateBankTransferCode: () => string =
   () => dayjs().format('DDHmm')
+
+const createPayment: (
+  userId: string,
+  paymentMethod: PaymentMethod,
+  paymentProductId: string,
+  paymentAmount: number,
+  targetType: 'circle' | 'ticket',
+  targetId: string,
+  bankTransferCode: string
+) => Promise<void> =
+  async (
+    userId,
+    paymentMethod,
+    paymentProductId,
+    paymentAmount,
+    bankTransferCode,
+    targetType,
+    targetId
+  ) => {
+    const payment: SockbasePaymentDocument = {
+      userId,
+      paymentProductId,
+      paymentAmount,
+      paymentMethod,
+      bankTransferCode,
+      applicationId: targetType === 'circle' ? targetId : undefined,
+      ticketId: targetType === 'ticket' ? targetId : undefined,
+      id: ''
+    }
+
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    await firestore
+      .collection('_payments')
+      .withConverter(paymentConverter)
+      .add(payment)
+  }
