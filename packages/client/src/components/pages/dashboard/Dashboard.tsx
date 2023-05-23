@@ -8,6 +8,9 @@ const Dashboard: React.FC = () => {
         icon={<MdHome />}
         title="マイページ ホーム"
         description="Sockbaseマイページへようこそ！" />
+      <p>
+        行いたい操作をメニューから選んでください。
+      </p>
     </>
   )
 }
