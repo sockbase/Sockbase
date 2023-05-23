@@ -74,7 +74,6 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   const hashId = await generateHashId(eventId, appId)
   await firestore
     .doc(`/applications/${appId}`)
-    .withConverter(applicationConverter)
     .set(
       { hashId },
       { merge: true }
@@ -88,15 +87,17 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     .filter(s => s.id === app.spaceId)[0]
 
   const bankTransferCode = generateBankTransferCode()
-  await createPayment(
-    userId,
-    app.paymentMethod === 'online' ? 1 : 2,
-    space.paymentProductId,
-    space.price,
-    'circle',
-    appId,
-    bankTransferCode
-  )
+  if (space.paymentProductId) {
+    await createPayment(
+      userId,
+      app.paymentMethod === 'online' ? 1 : 2,
+      bankTransferCode,
+      space.paymentProductId,
+      space.price,
+      'circle',
+      appId
+    )
+  }
 
   const webhookBody = {
     content: '',
@@ -178,18 +179,18 @@ const generateBankTransferCode: () => string =
 const createPayment: (
   userId: string,
   paymentMethod: PaymentMethod,
+  bankTransferCode: string,
   paymentProductId: string,
   paymentAmount: number,
   targetType: 'circle' | 'ticket',
-  targetId: string,
-  bankTransferCode: string
+  targetId: string
 ) => Promise<void> =
   async (
     userId,
     paymentMethod,
+    bankTransferCode,
     paymentProductId,
     paymentAmount,
-    bankTransferCode,
     targetType,
     targetId
   ) => {
@@ -199,9 +200,13 @@ const createPayment: (
       paymentAmount,
       paymentMethod,
       bankTransferCode,
-      applicationId: targetType === 'circle' ? targetId : undefined,
-      ticketId: targetType === 'ticket' ? targetId : undefined,
-      id: ''
+      applicationId: targetType === 'circle' ? targetId : null,
+      ticketId: targetType === 'ticket' ? targetId : null,
+      id: '',
+      paymentId: '',
+      status: 0,
+      createdAt: 0,
+      updatedAt: 0
     }
 
     const adminApp = firebaseAdmin.getFirebaseAdmin()

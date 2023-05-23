@@ -48,6 +48,7 @@ const StepContainer: React.FC<Props> = (props) => {
       }
 
       const createdAppResult = await submitApplicationAsync(app, circleCutFile)
+      console.log(createdAppResult)
       setAppResult(createdAppResult)
     }
 

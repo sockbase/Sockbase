@@ -20,7 +20,7 @@ export interface SockbaseEventSpace {
   name: string
   description: string
   price: number
-  paymentProductId: string
+  paymentProductId?: string
 }
 
 export interface SockbaseStore {
@@ -44,7 +44,7 @@ export interface SockbaseStoreType {
   name: string
   description: string
   price: number
-  paymentProductId: string
+  paymentProductId?: string
 }
 
 export interface SockbaseOrganization {
@@ -150,18 +150,18 @@ export interface SockbasePayment {
   userId: string
   paymentProductId: string
   paymentMethod: PaymentMethod
-  paymentId?: string
   paymentAmount: number
-  bankTransferCode?: string
-  applicationId?: string
-  ticketId?: string
+  bankTransferCode: string | null
+  applicationId: string | null
+  ticketId: string | null
 }
 
 export type SockbasePaymentDocument = SockbasePayment & {
   id: string
-  createdAt?: number
-  updatedAt?: number
-  status?: PaymentStatus
+  paymentId: string
+  status: PaymentStatus
+  createdAt: number
+  updatedAt: number
 }
 
 export type valueOf<T> = T[keyof T]
