@@ -8,7 +8,7 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
     return {
       userId: payment.userId,
       paymentProductId: payment.paymentProductId,
-      paymentType: payment.paymentType,
+      paymentMethod: payment.paymentMethod,
       paymentId: payment.paymentId,
       bankTransferCode: payment.bankTransferCode,
       paymentAmount: payment.paymentAmount,
@@ -25,7 +25,7 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
       id: snapshot.id,
       userId: data.userId,
       paymentProductId: data.paymentProductId,
-      paymentType: data.paymentType,
+      paymentMethod: data.paymentMethod,
       paymentId: data.paymentId,
       bankTransferCode: data.bankTransferCode,
       paymentAmount: data.paymentAmount,

@@ -34,17 +34,6 @@ const StepContainer: React.FC<Props> = (props) => {
   const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [appResult, setAppResult] = useState<SockbaseApplicationAddedResult>()
 
-  const submitApplicationWithUserAsync: (app: SockbaseApplication, circleCutFile: File) => Promise<SockbaseApplicationAddedResult> =
-    async (app, circleCutFile) => {
-      const createdAppResult = await submitApplicationAsync(app, circleCutFile)
-        .catch(err => {
-          throw err
-        })
-
-      // TODO: submitApplicationAsyncを叩くと申込みハッシュIdと銀行振込用コードが取れるので、それをいい感じする。
-      return createdAppResult
-    }
-
   const submitApplication: () => Promise<void> =
     async () => {
       if (!app || !leaderUserData || !circleCutFile) return
@@ -58,7 +47,7 @@ const StepContainer: React.FC<Props> = (props) => {
         await updateUserDataAsync(newUser.uid, leaderUserData)
       }
 
-      const createdAppResult = await submitApplicationWithUserAsync(app, circleCutFile)
+      const createdAppResult = await submitApplicationAsync(app, circleCutFile)
       setAppResult(createdAppResult)
     }
 
