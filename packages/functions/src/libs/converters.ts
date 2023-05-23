@@ -3,22 +3,19 @@ import type * as firestore from 'firebase-admin/firestore'
 import * as admin from 'firebase-admin'
 
 export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePaymentDocument> = {
-  toFirestore: (payment: types.SockbasePaymentDocument): firestore.DocumentData => {
-    // SockbasePaymentDocumentはIDを含むので、それを除いた分をDocumentDataとする
-    return {
-      userId: payment.userId,
-      paymentProductId: payment.paymentProductId,
-      paymentMethod: payment.paymentMethod,
-      paymentId: payment.paymentId,
-      bankTransferCode: payment.bankTransferCode,
-      paymentAmount: payment.paymentAmount,
-      status: payment.status,
-      applicationId: payment.applicationId,
-      ticketId: payment.ticketId,
-      createdAt: payment.createdAt,
-      updatedAt: payment.updatedAt
-    }
-  },
+  toFirestore: (payment: types.SockbasePaymentDocument): firestore.DocumentData => ({
+    userId: payment.userId,
+    paymentProductId: payment.paymentProductId,
+    paymentMethod: payment.paymentMethod,
+    paymentId: payment.paymentId,
+    bankTransferCode: payment.bankTransferCode,
+    paymentAmount: payment.paymentAmount,
+    status: payment.status,
+    applicationId: payment.applicationId,
+    ticketId: payment.ticketId,
+    createdAt: payment.createdAt,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  }),
   fromFirestore: (snapshot: firestore.QueryDocumentSnapshot<types.SockbasePaymentDocument>): types.SockbasePaymentDocument => {
     const data = snapshot.data()
     return {
@@ -70,6 +67,7 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
 
 export const applicationConverter: firestore.FirestoreDataConverter<types.SockbaseApplicationDocument> = {
   toFirestore: (app: types.SockbaseApplicationDocument): firestore.DocumentData => ({
+    hashId: app.hashId,
     userId: app.userId,
     eventId: app.eventId,
     spaceId: app.spaceId,
@@ -98,8 +96,18 @@ export const applicationConverter: firestore.FirestoreDataConverter<types.Sockba
       userId: app.userId,
       eventId: app.eventId,
       spaceId: app.spaceId,
-      circle: app.circle,
-      overview: app.overview,
+      circle: {
+        name: app.circle.name,
+        yomi: app.circle.yomi,
+        penName: app.circle.penName,
+        penNameYomi: app.circle.penNameYomi,
+        hasAdult: app.hasAdult,
+        genre: app.genre
+      },
+      overview: {
+        description: app.overview.description,
+        totalAmount: app.overview.totalAmount
+      },
       unionCircleId: app.unionCircleId,
       petitCode: app.petitCode,
       paymentMethod: app.paymentMethod,
