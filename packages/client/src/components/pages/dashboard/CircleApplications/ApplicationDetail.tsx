@@ -32,9 +32,16 @@ const ApplicationDetail: React.FC<Props> = (props) => {
     <>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/events">管理イベント</Link></li>
-        <li>{props.event._organization.name}</li>
-        <li><Link to="/dashboard/events/sockbase1">{props.event.eventName}</Link></li>
+        {props.isAdmin
+          ? <>
+            <li><Link to="/dashboard/events">管理イベント</Link></li>
+            <li>{props.event._organization.name}</li>
+            <li><Link to="/dashboard/events/sockbase1">{props.event.eventName}</Link></li>
+          </>
+          : <>
+            <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
+            <li>{props.event.eventName}</li>
+          </>}
       </Breadcrumbs>
       <PageTitle
         icon={<MdEdit />}
