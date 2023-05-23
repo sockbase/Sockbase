@@ -100,6 +100,8 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     hashId: null
   }
 
+  // TODO: トランザクション組む
+
   const adminApp = firebaseAdmin.getFirebaseAdmin()
   const firestore = adminApp.firestore()
 
@@ -112,6 +114,7 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   const hashId = await generateHashId(app.eventId, addResult.id)
   await firestore
     .doc(`/applications/${appId}`)
+    .withConverter(applicationConverter)
     .set(
       { hashId },
       { merge: true }
@@ -119,10 +122,9 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
 
   // TODO: onCreateApplicationの処理を入れ込む。細かくメソッド化して呼び出す形にする。
 
-  // TODO: 銀行振込の場合、決済情報をここで作る。
-  // TODO: 銀行振込用コードを生成して、レスポンスに乗っける。
-
-  const bankTransferCode = ''
+  const bankTransferCode = generateBankTransferCode()
+  // TODO: 決済情報をここで作る。
+  // TODO: 銀行振込なら銀行振込コードを決済情報に載せる
 
   const result: SockbaseApplicationAddedResult = {
     hashId,
@@ -141,10 +143,8 @@ const generateHashId: (eventId: string, refId: string) => Promise<string> =
     const formatedDateTime = dayjs().format('YYYYMMDDHmmssSSS')
     const hashId = `${formatedDateTime}-${refHashId}`
 
-    // await FirestoreDB.updateDoc(ref, { hashId })
-    //   .catch((err: FirebaseError) => {
-    //     throw err
-    //   })
-
     return hashId
   }
+
+const generateBankTransferCode: () => string =
+  () => dayjs().format('DDHmm')
