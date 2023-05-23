@@ -82,6 +82,11 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
   hashId: string | null
 }
 
+export interface SockbaseApplicationAddedResult {
+  hashId: string
+  bankTransferCode?: string
+}
+
 export interface SockbaseApplicationMeta {
   applicationStatus: SockbaseApplicationStatus
 }

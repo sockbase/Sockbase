@@ -1,10 +1,14 @@
-import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEvent, SockbaseOrganization } from 'sockbase'
+import { MD5, enc } from 'crypto-js'
+import dayjs from 'dayjs'
+
+import type { SockbaseAccount, SockbaseApplication, SockbaseApplicationAddedResult, SockbaseApplicationDocument, SockbaseEvent, SockbaseOrganization } from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
 import fetch from 'node-fetch'
 
 import firebaseAdmin from '../libs/FirebaseAdmin'
+import { applicationConverter } from '../libs/converters'
 
 export const onCreateApplication = functions.firestore
   .document('/applications/{applicationId}')
@@ -83,3 +87,55 @@ export const onChangeApplication = functions.firestore
       .doc(`/events/${app.eventId}/_users/${app.userId}`)
       .set(user)
   })
+
+export const createApplication = functions.https.onCall(async (app: SockbaseApplication, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('permission-denied', 'Auth Error')
+  }
+
+  const appDoc: SockbaseApplicationDocument = {
+    ...app,
+    userId: context.auth.uid,
+    timestamp: 0,
+    hashId: null
+  }
+
+  const adminApp = firebaseAdmin.getFirebaseAdmin()
+  const addResult = await adminApp.firestore()
+    .collection('applications')
+    .withConverter(applicationConverter)
+    .add(appDoc)
+
+  const hashId = await generateHashId(app.eventId, addResult.id)
+
+  // TODO: onCreateApplicationの処理を入れ込む。細かくメソッド化して呼び出す形にする。
+
+  // TODO: 銀行振込の場合、決済情報をここで作る。
+  // TODO: 銀行振込用コードを生成して、レスポンスに乗っける。
+
+  const bankTransferCode = ''
+
+  const result: SockbaseApplicationAddedResult = {
+    hashId,
+    bankTransferCode
+  }
+  return result
+})
+
+const generateHashId: (eventId: string, refId: string) => Promise<string> =
+  async (eventId, refId) => {
+    const salt = 'sockbase-yogurt-koharurikka516'
+    const codeDigit = 8
+    const refHashId = MD5(`${eventId}.${refId}.${salt}`)
+      .toString(enc.Hex)
+      .slice(0, codeDigit)
+    const formatedDateTime = dayjs().format('YYYYMMDDHmmssSSS')
+    const hashId = `${formatedDateTime}-${refHashId}`
+
+    // await FirestoreDB.updateDoc(ref, { hashId })
+    //   .catch((err: FirebaseError) => {
+    //     throw err
+    //   })
+
+    return hashId
+  }
