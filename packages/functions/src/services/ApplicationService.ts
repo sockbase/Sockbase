@@ -20,7 +20,7 @@ import firebaseAdmin from '../libs/FirebaseAdmin'
 import { applicationConverter, paymentConverter } from '../libs/converters'
 
 export const onChangeApplication = functions.firestore
-  .document('/applications/{applicationId}')
+  .document('/_applications/{applicationId}')
   .onUpdate(async (change: functions.Change<QueryDocumentSnapshot>, context: functions.EventContext<{ applicationId: string }>) => {
     if (!change.after.exists) return
 
@@ -75,33 +75,33 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   }
 
   const addResult = await firestore
-    .collection('applications')
+    .collection('_applications')
     .withConverter(applicationConverter)
     .add(appDoc)
   const appId = addResult.id
 
   const hashId = await generateHashId(eventId, appId)
   await firestore
-    .doc(`/applications/${appId}`)
+    .doc(`/_applications/${appId}`)
     .set(
       { hashId },
       { merge: true }
     )
 
   await firestore
-    .doc(`/applications/${appId}/private/meta`)
+    .doc(`/_applications/${appId}/private/meta`)
     .set({ applicationStatus: 0 })
 
   const space = event.spaces
     .filter(s => s.id === app.spaceId)[0]
 
   const bankTransferCode = generateBankTransferCode()
-  if (space.paymentProductId) {
+  if (space.productInfo) {
     await createPayment(
       userId,
       app.paymentMethod === 'online' ? 1 : 2,
       bankTransferCode,
-      space.paymentProductId,
+      space.productInfo.productId,
       space.price,
       'circle',
       appId
@@ -178,7 +178,7 @@ const generateHashId: (eventId: string, refId: string) => Promise<string> =
     const refHashId = MD5(`${eventId}.${refId}.${salt}`)
       .toString(enc.Hex)
       .slice(0, codeDigit)
-    const formatedDateTime = dayjs().tz().format('YYYYMMDDHmmssSSS')
+    const formatedDateTime = dayjs().tz().format('YYYYMMDDHHmmssSSS')
     const hashId = `${formatedDateTime}-${refHashId}`
 
     return hashId

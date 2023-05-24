@@ -17,7 +17,7 @@ const getUser: (userId: string) => Promise<UserRecord> =
   }
 
 export const acceptApplication = functions.firestore
-  .document('/applications/{applicationId}')
+  .document('/_applications/{applicationId}')
   .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ applicationId: string }>) => {
     const adminApp = firebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
@@ -70,13 +70,37 @@ export const requestPayment = functions.firestore
       })
   })
 
+export const acceptPayment = functions.firestore
+  .document('/_payments/{paymentId}')
+  .onUpdate(async (change: functions.Change<QueryDocumentSnapshot>, context: functions.EventContext<{ paymentId: string }>) => {
+    if (!change.after) return
+
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const payment = change.after.data() as SockbasePaymentDocument
+    const user = await getUser(payment.userId)
+
+    if (payment.status !== 1) return
+
+    const template = mailConfig.templates.acceptPayment(payment)
+    await firestore.collection('_mail')
+      .add({
+        to: user.email,
+        message: {
+          subject: template.subject,
+          text: template.body.join('\n')
+        }
+      })
+  })
+
 const requestCirclePaymentAsync =
   async (appId: string, payment: SockbasePaymentDocument): Promise<{ subject: string, body: string[] }> => {
     const adminApp = firebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
     const appDoc = await firestore
-      .doc(`/applications/${appId}`)
+      .doc(`/_applications/${appId}`)
       .withConverter(applicationConverter)
       .get()
     const app = appDoc.data()

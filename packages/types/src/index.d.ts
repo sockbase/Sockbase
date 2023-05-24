@@ -20,7 +20,10 @@ export interface SockbaseEventSpace {
   name: string
   description: string
   price: number
-  paymentProductId?: string
+  productInfo: {
+    productId: string
+    paymentURL: string
+  } | null
 }
 
 export interface SockbaseStore {
@@ -44,7 +47,10 @@ export interface SockbaseStoreType {
   name: string
   description: string
   price: number
-  paymentProductId?: string
+  productInfo: {
+    productId: string
+    paymentURL: string
+  } | null
 }
 
 export interface SockbaseOrganization {
@@ -75,7 +81,7 @@ export interface SockbaseApplication {
   }
   unionCircleId: string
   petitCode: string
-  paymentMethod: string
+  paymentMethod: PaymentMethodType
   paymentProductId?: string
   remarks: string
 }
@@ -89,7 +95,7 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
 
 export interface SockbaseApplicationAddedResult {
   hashId: string
-  bankTransferCode?: string
+  bankTransferCode: string
 }
 
 export interface SockbaseApplicationMeta {
@@ -138,6 +144,7 @@ export type SockbaseRole = 0 | 1 | 2
  * bankTransfer: 2
  */
 export type PaymentMethod = 1 | 2
+export type PaymentMethodType = 'online' | 'bankTransfer'
 
 /**
  * PaymentStatus

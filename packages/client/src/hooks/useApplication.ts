@@ -111,7 +111,7 @@ const useApplication: () => IUseApplication = () => {
     async (appId) => {
       const db = getFirestore()
 
-      const appRef = FirestoreDB.doc(db, 'applications', appId)
+      const appRef = FirestoreDB.doc(db, '_applications', appId)
         .withConverter(applicationConverter)
       const appDoc = await FirestoreDB.getDoc(appRef)
       if (!appDoc.exists()) {
@@ -119,7 +119,7 @@ const useApplication: () => IUseApplication = () => {
       }
       const app = appDoc.data()
 
-      const metaRef = FirestoreDB.doc(db, 'applications', appId, 'private', 'meta')
+      const metaRef = FirestoreDB.doc(db, '_applications', appId, 'private', 'meta')
         .withConverter(applicationMetaConverter)
       const metaDoc = await FirestoreDB.getDoc(metaRef)
       if (!metaDoc.exists()) {
@@ -134,7 +134,7 @@ const useApplication: () => IUseApplication = () => {
   const getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]> =
     async (userId) => {
       const db = getFirestore()
-      const appsRef = FirestoreDB.collection(db, 'applications')
+      const appsRef = FirestoreDB.collection(db, '_applications')
         .withConverter(applicationConverter)
 
       const appsQuery = FirestoreDB.query(appsRef, FirestoreDB.where('userId', '==', userId))
@@ -149,7 +149,7 @@ const useApplication: () => IUseApplication = () => {
   const getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, SockbaseApplicationDocument>> =
     async (userId) => {
       const db = getFirestore()
-      const appsRef = FirestoreDB.collection(db, 'applications')
+      const appsRef = FirestoreDB.collection(db, '_applications')
         .withConverter(applicationConverter)
 
       const appsQuery = FirestoreDB.query(appsRef, FirestoreDB.where('userId', '==', userId))
@@ -164,7 +164,7 @@ const useApplication: () => IUseApplication = () => {
   const getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]> =
     async (eventId) => {
       const db = getFirestore()
-      const appsRef = FirestoreDB.collection(db, 'applications')
+      const appsRef = FirestoreDB.collection(db, '_applications')
         .withConverter(applicationConverter)
 
       const appsQuery = FirestoreDB.query(appsRef, FirestoreDB.where('eventId', '==', eventId))
@@ -179,7 +179,7 @@ const useApplication: () => IUseApplication = () => {
   const getApplicationMetaByIdAsync: (appId: string) => Promise<SockbaseApplicationMeta> =
     async (appId) => {
       const db = getFirestore()
-      const metaRef = FirestoreDB.doc(db, 'applications', appId, 'private', 'meta')
+      const metaRef = FirestoreDB.doc(db, '_applications', appId, 'private', 'meta')
         .withConverter(applicationMetaConverter)
       const metaDoc = await FirestoreDB.getDoc(metaRef)
       if (!metaDoc.exists()) {
@@ -208,7 +208,7 @@ const useApplication: () => IUseApplication = () => {
   const updateApplicationStatusByIdAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void> =
     async (appId, status) => {
       const db = getFirestore()
-      const metaRef = FirestoreDB.doc(db, 'applications', appId, 'private', 'meta')
+      const metaRef = FirestoreDB.doc(db, '_applications', appId, 'private', 'meta')
         .withConverter(applicationMetaConverter)
 
       FirestoreDB.setDoc(metaRef, {

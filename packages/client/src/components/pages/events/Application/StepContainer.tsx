@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react'
-import type { SockbaseApplicationAddedResult, SockbaseAccount, SockbaseAccountSecure, SockbaseApplication, SockbaseEvent } from 'sockbase'
+import type {
+  SockbaseApplicationAddedResult,
+  SockbaseAccount,
+  SockbaseAccountSecure,
+  SockbaseApplication,
+  SockbaseEvent
+} from 'sockbase'
 
 import useFirebase from '../../../../hooks/useFirebase'
 import useUserData from '../../../../hooks/useUserData'
@@ -48,7 +54,6 @@ const StepContainer: React.FC<Props> = (props) => {
       }
 
       const createdAppResult = await submitApplicationAsync(app, circleCutFile)
-      console.log(createdAppResult)
       setAppResult(createdAppResult)
     }
 
@@ -81,7 +86,8 @@ const StepContainer: React.FC<Props> = (props) => {
           app={app}
           leaderUserData={leaderUserData}
           circleCutFile={circleCutFile}
-          isLoggedIn={props.isLoggedIn} spaces={props.event.spaces}
+          isLoggedIn={props.isLoggedIn}
+          spaces={props.event.spaces}
           prevStep={() => setStep(0)}
           nextStep={(app, leaderUserData, circleCutData, circleCutFile) => {
             setApp(app)
@@ -101,6 +107,8 @@ const StepContainer: React.FC<Props> = (props) => {
           nextStep={() => setStep(3)} />,
         <Step3 key="step3"
           appResult={appResult}
+          app={app}
+          event={props.event}
           nextStep={() => setStep(4)} />,
         <Step4 key="step4"
           appResult={appResult} />
