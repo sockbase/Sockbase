@@ -17,6 +17,7 @@ const firestore = firebaseAdmin.getFirebaseAdmin().firestore()
 const updateStatus = async (
   payments: types.SockbasePaymentDocument[],
   items: Stripe.LineItem[],
+  paymentId: string,
   status: types.PaymentStatus,
   now: Date
 ): Promise<void> => {
@@ -31,6 +32,7 @@ const updateStatus = async (
 
   await firestore.doc(`/_payments/${payment.id}`)
     .set({
+      paymentId,
       status,
       updateStatus: now
     }, { merge: true })
@@ -92,7 +94,18 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     return
   }
 
+  const paymentId = session.payment_intent
+  if (!paymentId) {
+    res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
+    return
+  }
+  else if (typeof paymentId !== 'string') {
+    res.status(500).send({ error: 'MissingType', detail: 'paymentId tyoe is missing' })
+    return
+  }
+
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
+  const payments = await collectPayments(user.id, Status.Pending)
 
   switch (event.type) {
     case HANDLEABLE_EVENTS.checkoutCompleted: {
@@ -100,23 +113,20 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
       // 銀行振り込みなどの遅延決済時はなにも処理しない
       if (session.payment_status !== 'paid') break
 
-      const payments = await collectPayments(user.id, Status.Pending)
-      await updateStatus(payments, lineItems.data, Status.Paid, now)
+      await updateStatus(payments, lineItems.data, paymentId, Status.Paid, now)
       break
     }
 
     case HANDLEABLE_EVENTS.asyncPaymentSuccessed: {
-      const payments = await collectPayments(user.id, Status.Pending)
-      await updateStatus(payments, lineItems.data, Status.Paid, now)
+      await updateStatus(payments, lineItems.data, paymentId, Status.Paid, now)
       break
     }
 
     case HANDLEABLE_EVENTS.asyncPaymentFailed: {
-      const payments = await collectPayments(user.id, Status.Pending)
-      await updateStatus(payments, lineItems.data, Status.PaymentFailure, now)
+      await updateStatus(payments, lineItems.data, paymentId, Status.PaymentFailure, now)
       break
     }
   }
 
-  res.send({})
+  res.send({ success: true })
 })

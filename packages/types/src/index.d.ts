@@ -81,7 +81,7 @@ export interface SockbaseApplication {
   }
   unionCircleId: string
   petitCode: string
-  paymentMethod: PaymentMethodType
+  paymentMethod: string
   paymentProductId?: string
   remarks: string
 }
@@ -144,7 +144,6 @@ export type SockbaseRole = 0 | 1 | 2
  * bankTransfer: 2
  */
 export type PaymentMethod = 1 | 2
-export type PaymentMethodType = 'online' | 'bankTransfer'
 
 /**
  * PaymentStatus

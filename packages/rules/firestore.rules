@@ -57,7 +57,7 @@ service cloud.firestore {
           && 'remarks' in app && app.remarks is string;
       }
       function getApplication(appId) {
-        return get(/databases/$(database)/documents/applications/$(appId)).data
+        return get(/databases/$(database)/documents/_applications/$(appId)).data
       }
       
       allow read: if request.auth.uid == resource.data.userId
