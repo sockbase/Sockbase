@@ -65,7 +65,11 @@ const ApplicationDetail: React.FC<Props> = (props) => {
               </tr>
               <tr>
                 <th>お支払い状況</th>
-                <td>{(props.payment?.status !== undefined && <PaymentStatusLabel status={props.payment.status} />) ?? '-'}</td>
+                <td>
+                  <Link to="/dashboard/payments">
+                    {(props.payment?.status !== undefined && <PaymentStatusLabel status={props.payment.status} />) ?? '-'}
+                  </Link>
+                </td>
               </tr>
               {/* <tr>
                 <th>通行証発券</th>

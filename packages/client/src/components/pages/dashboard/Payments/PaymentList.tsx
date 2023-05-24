@@ -3,6 +3,7 @@ import type {
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
   SockbaseEvent,
+  SockbaseEventSpace,
   SockbasePaymentDocument
 } from 'sockbase'
 import { Link } from 'react-router-dom'
@@ -32,13 +33,13 @@ const PaymentList: React.FC<Props> = (props) => {
       return ''
     }
 
-  const eventName: (appId: string | null) => string =
+  const getEventByAppId: (appId: string | null) => SockbaseEvent | null =
     (appId) => {
-      if (!appId) return ''
+      if (!appId) return null
 
       const app = props.apps[appId]
       const event = props.events[app.eventId]
-      return event.eventName ?? ''
+      return event
     }
 
   const paymentMethod: (method: PaymentMethod) => string =
@@ -50,6 +51,17 @@ const PaymentList: React.FC<Props> = (props) => {
         case 2:
           return '銀行振込'
       }
+    }
+
+  const getSpaceByAppId: (appId: string | null) => SockbaseEventSpace | null =
+    (appId) => {
+      if (!appId) return null
+
+      const app = props.apps[appId]
+      const event = props.events[app.eventId]
+      const space = event.spaces
+        .filter(s => s.id === app.spaceId)[0]
+      return space
     }
 
   return (
@@ -66,10 +78,12 @@ const PaymentList: React.FC<Props> = (props) => {
         <thead>
           <tr>
             <th>お支払い先</th>
-            <th>補助番号</th>
+            <th>お支払い金額</th>
             <th>お支払い方法</th>
+            <th>補助番号</th>
             <th>決済状態</th>
             <th>状態更新日時</th>
+            <th>操作</th>
           </tr>
         </thead>
         <tbody>
@@ -77,14 +91,20 @@ const PaymentList: React.FC<Props> = (props) => {
             ? props.payments
               .sort((a, b) => ((b.createdAt?.getTime()) ?? 9) - ((a.createdAt?.getTime()) ?? 0))
               .map(p => <tr key={p.id}>
-                <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{eventName(p.applicationId)}</Link></th>
-                <td>{p.bankTransferCode}</td>
+                <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getEventByAppId(p.applicationId)?.eventName}</Link></th>
+                <td>{p.paymentAmount.toLocaleString()}円</td>
                 <td>{paymentMethod(p.paymentMethod)}</td>
+                <td>{p.bankTransferCode}</td>
                 <td><PaymentStatusLabel status={p.status} /></td>
                 <td>{p.updatedAt?.toLocaleString() ?? '-'}</td>
+                <td>
+                  {p.status === 0 && p.paymentMethod === 1 && <a href={getSpaceByAppId(p.applicationId)?.productInfo?.paymentURL} target="_blank" rel="noreferrer">お支払いはこちら</a>}
+                </td>
               </tr>)
             : <tr>
               <th>決済情報はありません</th>
+              <td></td>
+              <td></td>
               <td></td>
               <td></td>
               <td></td>
