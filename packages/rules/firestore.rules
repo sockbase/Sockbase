@@ -31,8 +31,12 @@ service cloud.firestore {
     	allow read: if true;
 
       match /_users/{userId} {
-        allow read:  if request.auth.uid == userId
-          || isOrganizationAdmin(request.auth.uid, resource.data._organization.id);
+        allow read: if request.auth.uid == userId
+          || isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+      }
+
+      match /_applications/{applicationId} {
+        allow read: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
       }
     }
 

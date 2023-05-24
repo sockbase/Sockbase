@@ -27,22 +27,14 @@ export const onChangeApplication = functions.firestore
     const adminApp = firebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
-    const appId = change.after.id
     const app = change.after.data() as SockbaseApplicationDocument
-    if (!app.hashId) return
 
     const userDoc = await firestore
       .doc(`/users/${app.userId}`)
       .get()
+    if (!userDoc.exists) return
+
     const user = userDoc.data() as SockbaseAccount
-
-    await firestore
-      .doc(`/_applicationHashIds/${app.hashId}`)
-      .set({
-        applicationId: appId,
-        hashId: app.hashId
-      })
-
     await firestore
       .doc(`/events/${app.eventId}/_users/${app.userId}`)
       .set(user)
@@ -83,14 +75,6 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     .add(appDoc)
   const appId = addResult.id
 
-  const hashId = await generateHashId(eventId, appId, now)
-  await firestore
-    .doc(`/_applications/${appId}`)
-    .set(
-      { hashId },
-      { merge: true }
-    )
-
   await firestore
     .doc(`/_applications/${appId}/private/meta`)
     .set({ applicationStatus: 0 })
@@ -99,8 +83,8 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     .filter(s => s.id === app.spaceId)[0]
 
   const bankTransferCode = generateBankTransferCode(now)
-  if (space.productInfo) {
-    await createPayment(
+  const paymentId = space.productInfo
+    ? await createPayment(
       userId,
       app.paymentMethod === 'online' ? 1 : 2,
       bankTransferCode,
@@ -109,7 +93,25 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
       'circle',
       appId
     )
-  }
+    : null
+
+  const hashId = await generateHashId(eventId, appId, now)
+  await firestore
+    .doc(`/_applications/${appId}`)
+    .set(
+      { hashId },
+      { merge: true }
+    )
+  await firestore
+    .doc(`/_applicationHashIds/${hashId}`)
+    .set(
+      {
+        hashId,
+        applicationId: appId,
+        paymentId
+      },
+      { merge: true }
+    )
 
   const webhookBody = {
     content: '',
@@ -129,7 +131,7 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
             value: app.circle.name
           },
           {
-            name: '申し込みID',
+            name: '申し込みハッシュID',
             value: hashId
           }
         ]
@@ -198,7 +200,7 @@ const createPayment: (
   paymentAmount: number,
   targetType: 'circle' | 'ticket',
   targetId: string
-) => Promise<void> =
+) => Promise<string> =
   async (
     userId,
     paymentMethod,
@@ -228,8 +230,10 @@ const createPayment: (
     const adminApp = firebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
-    await firestore
+    const result = await firestore
       .collection('_payments')
       .withConverter(paymentConverter)
       .add(payment)
+
+    return result.id
   }
