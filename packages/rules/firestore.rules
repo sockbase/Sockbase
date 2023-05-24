@@ -13,6 +13,10 @@ service cloud.firestore {
     function getEvent(eventId) {
       return get(/databases/$(database)/documents/events/$(eventId)).data
     }
+
+    function getApplication(appId) {
+      return get(/databases/$(database)/documents/_applications/$(appId)).data
+    }
     
   	match /users/{userId} {
     	allow read: if request.auth.uid == userId;
@@ -56,9 +60,6 @@ service cloud.firestore {
             && (app.paymentMethod == 'online' || app.paymentMethod == 'bankTransfer')
           && 'remarks' in app && app.remarks is string;
       }
-      function getApplication(appId) {
-        return get(/databases/$(database)/documents/_applications/$(appId)).data
-      }
       
       allow read: if request.auth.uid == resource.data.userId
         || isOrganizationAdmin(request.auth.uid, getEvent(resource.data.eventId)._organization.id);
@@ -72,6 +73,12 @@ service cloud.firestore {
           || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
         allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
       }
+    }
+
+    match /_payments/{paymentId} {
+      allow read: if request.auth.uid == resource.data.userId
+        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resouce.data.applicationId).eventId)._organization.id);
+      allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resouce.data.applicationId).eventId)._organization.id);
     }
     
     // match /{document=**} {

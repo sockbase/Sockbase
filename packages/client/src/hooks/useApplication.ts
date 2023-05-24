@@ -28,28 +28,7 @@ const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<Application
 }
 
 const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicationDocument> = {
-  toFirestore: (app: SockbaseApplicationDocument): FirestoreDB.DocumentData => ({
-    userId: app.userId,
-    eventId: app.eventId,
-    spaceId: app.spaceId,
-    circle: {
-      name: app.circle.name,
-      yomi: app.circle.yomi,
-      penName: app.circle.penName,
-      penNameYomi: app.circle.penNameYomi,
-      hasAdult: app.circle.hasAdult,
-      genre: app.circle.genre
-    },
-    overview: {
-      description: app.overview.description,
-      totalAmount: app.overview.totalAmount
-    },
-    unionCircleId: app.unionCircleId,
-    petitCode: app.petitCode,
-    paymentMethod: app.paymentMethod,
-    remarks: app.remarks,
-    timestamp: FirestoreDB.serverTimestamp()
-  }),
+  toFirestore: (app: SockbaseApplicationDocument): FirestoreDB.DocumentData => ({}),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseApplicationDocument => {
     const app = snapshot.data()
     return {
@@ -63,7 +42,8 @@ const applicationConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicati
       petitCode: app.petitCode,
       paymentMethod: app.paymentMethod,
       remarks: app.remarks,
-      timestamp: app.timestamp.toDate().getTime()
+      createdAt: app.createdAt ? new Date(app.createdAt.seconds * 1000) : null,
+      updatedAt: app.updatedAt ? new Date(app.updatedAt.seconds * 1000) : null
     }
   }
 }

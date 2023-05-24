@@ -1,6 +1,5 @@
 import type * as types from 'packages/types/src'
 import type * as firestore from 'firebase-admin/firestore'
-import * as admin from 'firebase-admin'
 
 export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePaymentDocument> = {
   toFirestore: (payment: types.SockbasePaymentDocument): firestore.DocumentData => ({
@@ -14,7 +13,7 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
     applicationId: payment.applicationId,
     ticketId: payment.ticketId,
     createdAt: payment.createdAt,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    updatedAt: payment.updatedAt
   }),
   fromFirestore: (snapshot: firestore.QueryDocumentSnapshot<types.SockbasePaymentDocument>): types.SockbasePaymentDocument => {
     const data = snapshot.data()
@@ -29,8 +28,8 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
       status: data.status,
       applicationId: data.applicationId,
       ticketId: data.ticketId,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt
+      createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
+      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null
     }
   }
 }
@@ -84,7 +83,8 @@ export const applicationConverter: firestore.FirestoreDataConverter<types.Sockba
     petitCode: app.petitCode,
     paymentMethod: app.paymentMethod,
     remarks: app.remarks,
-    timestamp: admin.firestore.FieldValue.serverTimestamp()
+    createdAt: app.createdAt,
+    updatedAt: app.updatedAt
   }),
   fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseApplicationDocument => {
     const app = snapshot.data()
@@ -109,7 +109,8 @@ export const applicationConverter: firestore.FirestoreDataConverter<types.Sockba
       petitCode: app.petitCode,
       paymentMethod: app.paymentMethod,
       remarks: app.remarks,
-      timestamp: app.timestamp.toDate().getTime()
+      createdAt: app.createdAt ? new Date(app.createdAt.seconds * 1000) : null,
+      updatedAt: app.updatedAt ? new Date(app.updatedAt.seconds * 1000) : null
     }
   }
 }

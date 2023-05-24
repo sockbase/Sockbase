@@ -45,7 +45,7 @@ const EventApplications: React.FC<Props> = (props) => {
                   <td>{app.circle.penName}</td>
                   <td>{sockbaseShared.constants.application.statusText[props.metas[appId].applicationStatus]}</td>
                   {/* <td> TODO: 申し込み関連ステータスのラベル コンポーネント化する <Label color="success">申し込み完了</Label></td> */}
-                  <td>{new Date(app.timestamp).toLocaleString()}</td>
+                  <td>{app.createdAt?.toLocaleString() ?? '-'}</td>
                   <td>{app.hashId}</td>
                 </tr>
               ))

@@ -61,8 +61,7 @@ const menu: MenuSection[] = [
         key: 'paymentHistories',
         icon: <MdPayments />,
         text: '決済履歴',
-        link: '',
-        isDisabled: true
+        link: '/dashboard/payments'
       },
       {
         key: 'settings',

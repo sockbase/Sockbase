@@ -89,7 +89,8 @@ export interface SockbaseApplication {
 export type CircleGenreType = ''
 export type SockbaseApplicationDocument = SockbaseApplication & {
   userId: string
-  timestamp: number
+  createdAt: Date | null
+  updatedAt: Date | null
   hashId: string | null
 }
 
@@ -112,7 +113,8 @@ export interface SockbaseTicketApplication {
 }
 export type SockbaseTicketApplicaitonDocument = SockbaseTicketApplication & {
   userId: string
-  timestamp: number
+  createdAt: Date | null
+  updatedAt: Date | null
   hashId: string | null
 }
 
@@ -169,8 +171,8 @@ export type SockbasePaymentDocument = SockbasePayment & {
   id: string
   paymentId: string
   status: PaymentStatus
-  createdAt: number
-  updatedAt: number
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type valueOf<T> = T[keyof T]

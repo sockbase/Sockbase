@@ -1,30 +1,92 @@
+import * as FirestoreDB from 'firebase/firestore'
 import type { SockbasePaymentDocument } from 'sockbase'
+
+import useFirebase from './useFirebase'
+import { useCallback } from 'react'
+
+const paymentConverter: FirestoreDB.FirestoreDataConverter<SockbasePaymentDocument> = {
+  toFirestore: (payment: SockbasePaymentDocument): FirestoreDB.DocumentData => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbasePaymentDocument => {
+    const payment = snapshot.data()
+    return {
+      userId: payment.userId,
+      paymentProductId: payment.paymentProductId,
+      paymentMethod: payment.paymentMethod,
+      paymentAmount: payment.paymentAmount,
+      bankTransferCode: payment.bankTransferCode,
+      applicationId: payment.applicationId,
+      ticketId: payment.ticketId,
+      id: snapshot.id,
+      paymentId: payment.paymentId,
+      status: payment.status,
+      createdAt: payment.createdAt ? new Date(payment.createdAt.seconds * 1000) : null,
+      updatedAt: payment.updatedAt ? new Date(payment.updatedAt.seconds * 1000) : null
+    }
+  }
+}
+
 interface IUsePayment {
   getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]>
+  getPayment: (paymentId: string) => Promise<SockbasePaymentDocument>
+  getPaymentByApplicationId: (appId: string) => Promise<SockbasePaymentDocument | null>
 }
 const usePayment: () => IUsePayment =
   () => {
+    const { getFirestore, user } = useFirebase()
+
     const getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]> =
       async (userId) => {
-        const result: SockbasePaymentDocument[] = [{
-          id: '0',
-          paymentId: '1',
-          paymentProductId: 'a',
-          paymentMethod: 1,
-          paymentAmount: 10,
-          bankTransferCode: '123456',
-          applicationId: 'a',
-          ticketId: null,
-          status: 0,
-          createdAt: 0,
-          updatedAt: 0,
-          userId: 'abcdefg'
-        }]
-        return result
+        const db = getFirestore()
+        const paymentsRef = FirestoreDB.collection(db, '_payments')
+          .withConverter(paymentConverter)
+
+        const paymentsQuery = FirestoreDB.query(paymentsRef, FirestoreDB.where('userId', '==', userId))
+        const querySnapshot = await FirestoreDB.getDocs(paymentsQuery)
+        const queryDocs = querySnapshot.docs
+          .filter(doc => doc.exists())
+          .map(doc => doc.data())
+
+        return queryDocs
       }
 
+    const getPayment: (paymentId: string) => Promise<SockbasePaymentDocument> =
+      async (paymentId) => {
+        const db = getFirestore()
+        const paymentRef = FirestoreDB.doc(db, `/_payments/${paymentId}`)
+          .withConverter(paymentConverter)
+        const paymentDoc = await FirestoreDB.getDoc(paymentRef)
+        if (!paymentDoc.exists()) {
+          throw new Error('payment not found')
+        }
+
+        const payment = paymentDoc.data()
+        return payment
+      }
+
+    const getPaymentByApplicationId: (appId: string) => Promise<SockbasePaymentDocument | null> =
+      useCallback(async (appId) => {
+        if (!user) return null
+
+        const db = getFirestore()
+        const paymentsRef = FirestoreDB.collection(db, '_payments')
+          .withConverter(paymentConverter)
+
+        const paymentsQuery = FirestoreDB.query(paymentsRef,
+          FirestoreDB.where('userId', '==', user.uid),
+          FirestoreDB.where('applicationId', '==', appId)
+        )
+        const querySnapshot = await FirestoreDB.getDocs(paymentsQuery)
+        const queryDocs = querySnapshot.docs
+          .filter(doc => doc.exists())
+          .map(doc => doc.data())
+
+        return queryDocs.length === 1 ? queryDocs[0] : null
+      }, [user])
+
     return {
-      getPaymentsByUserId
+      getPaymentsByUserId,
+      getPayment,
+      getPaymentByApplicationId
     }
   }
 

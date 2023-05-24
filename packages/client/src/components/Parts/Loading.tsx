@@ -3,7 +3,6 @@ import { MdCloudDownload } from 'react-icons/md'
 
 interface Props {
   text?: string
-  children?: React.ReactNode
 }
 const Loading: React.FC<Props> = (props) => {
   return (
