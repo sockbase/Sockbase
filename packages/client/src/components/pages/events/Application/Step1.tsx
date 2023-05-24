@@ -351,8 +351,8 @@ const Step1: React.FC<Props> = (props) => {
               }
             }))}>
             <option value="none">選択してください</option>
-            <option value="yes">成人向け頒布物はありません</option>
-            <option value="no">成人向け頒布物があります</option>
+            <option value="no">成人向け頒布物はありません</option>
+            <option value="yes">成人向け頒布物があります</option>
           </FormSelect>
         </FormItem>
         <FormItem>
