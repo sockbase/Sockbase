@@ -67,10 +67,13 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     throw new functions.https.HttpsError('not-found', 'Event')
   }
 
+  const now = new Date()
+
   const appDoc: SockbaseApplicationDocument = {
     ...app,
     userId,
-    timestamp: 0,
+    createdAt: now,
+    updatedAt: null,
     hashId: null
   }
 
@@ -80,7 +83,7 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     .add(appDoc)
   const appId = addResult.id
 
-  const hashId = await generateHashId(eventId, appId)
+  const hashId = await generateHashId(eventId, appId, now)
   await firestore
     .doc(`/_applications/${appId}`)
     .set(
@@ -95,7 +98,7 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   const space = event.spaces
     .filter(s => s.id === app.spaceId)[0]
 
-  const bankTransferCode = generateBankTransferCode()
+  const bankTransferCode = generateBankTransferCode(now)
   if (space.productInfo) {
     await createPayment(
       userId,
@@ -171,21 +174,21 @@ const sendMessageToDiscord: (organizationId: string, messageBody: {
     })
   }
 
-const generateHashId: (eventId: string, refId: string) => Promise<string> =
-  async (eventId, refId) => {
+const generateHashId: (eventId: string, refId: string, now: Date) => Promise<string> =
+  async (eventId, refId, now) => {
     const salt = 'sockbase-yogurt-koharurikka516'
     const codeDigit = 8
     const refHashId = MD5(`${eventId}.${refId}.${salt}`)
       .toString(enc.Hex)
       .slice(0, codeDigit)
-    const formatedDateTime = dayjs().tz().format('YYYYMMDDHHmmssSSS')
+    const formatedDateTime = dayjs(now).tz().format('YYYYMMDDHHmmssSSS')
     const hashId = `${formatedDateTime}-${refHashId}`
 
     return hashId
   }
 
-const generateBankTransferCode: () => string =
-  () => dayjs().tz().format('DDHHmm')
+const generateBankTransferCode: (now: Date) => string =
+  (now) => dayjs(now).tz().format('DDHHmm')
 
 const createPayment: (
   userId: string,
@@ -205,6 +208,8 @@ const createPayment: (
     targetType,
     targetId
   ) => {
+    const now = new Date()
+
     const payment: SockbasePaymentDocument = {
       userId,
       paymentProductId,
@@ -213,11 +218,11 @@ const createPayment: (
       bankTransferCode,
       applicationId: targetType === 'circle' ? targetId : null,
       ticketId: targetType === 'ticket' ? targetId : null,
+      createdAt: now,
+      updatedAt: null,
       id: '',
       paymentId: '',
-      status: 0,
-      createdAt: 0,
-      updatedAt: 0
+      status: 0
     }
 
     const adminApp = firebaseAdmin.getFirebaseAdmin()

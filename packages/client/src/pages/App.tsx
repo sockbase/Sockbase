@@ -9,6 +9,7 @@ import Login from '../components/pages/App/Login'
 import LinkButton from '../components/Parts/LinkButton'
 import FormSection from '../components/Form/FormSection'
 import FormItem from '../components/Form/FormItem'
+import Loading from '../components/Parts/Loading'
 
 export interface User {
   userId: string
@@ -44,22 +45,24 @@ const App: React.FC = () => {
 
   return (
     <DefaultLayout>
-      {firebase.user && <FormSection>
-        <p>すでにログイン済みのようです。</p>
-        <FormItem>
-          <LinkButton to="/dashboard" color="default">マイページに進む</LinkButton>
-        </FormItem>
-      </FormSection>
+      {firebase.user === undefined
+        ? <Loading text='認証情報' />
+        : firebase.user === null
+          ?
+          <Login
+            email={email}
+            password={password}
+            setEmail={email => setEmail(email)}
+            setPassword={password => setPassword(password)}
+            login={login}
+            isProcessing={isProccesing}
+            error={error} />
+          : <FormSection>
+            <FormItem>
+              <LinkButton to="/dashboard" color="default">マイページに進む</LinkButton>
+            </FormItem>
+          </FormSection>
       }
-
-      <Login
-        email={email}
-        password={password}
-        setEmail={email => setEmail(email)}
-        setPassword={password => setPassword(password)}
-        login={login}
-        isProcessing={isProccesing}
-        error={error} />
 
       <h2>Sockbaseとは？</h2>
       <h3>イベントへの申し込み方法</h3>

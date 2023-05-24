@@ -34,7 +34,7 @@ const updateStatus = async (
     .set({
       paymentId,
       status,
-      updateStatus: now
+      updatedAt: now
     }, { merge: true })
 }
 

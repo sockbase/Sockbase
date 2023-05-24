@@ -1,16 +1,18 @@
 import { useMemo } from 'react'
-import type { SockbaseApplication, SockbaseApplicationAddedResult, SockbaseEvent } from 'sockbase'
+import type { SockbaseAccountSecure, SockbaseApplication, SockbaseApplicationAddedResult, SockbaseEvent } from 'sockbase'
 
 import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
 import Alert from '../../../Parts/Alert'
 import AnchorButton from '../../../Parts/AnchorButton'
+import CopyToClipboard from '../../../Parts/CopyToClipboard'
 
 interface Props {
   appResult?: SockbaseApplicationAddedResult
   app: SockbaseApplication | undefined
   event: SockbaseEvent
+  userData: SockbaseAccountSecure | undefined
   nextStep: () => void
 }
 const Step3: React.FC<Props> = (props) => {
@@ -22,7 +24,7 @@ const Step3: React.FC<Props> = (props) => {
   }, [props.event, props.app])
 
   return (
-    props.appResult && props.app && props.event && space
+    props.appResult && props.app && props.event && space && props.userData
       ? <>
         <Alert type="success" title="申し込み情報の送信が完了しました">
           申し込みIDは {props.appResult.hashId} です。
@@ -69,8 +71,12 @@ const Step3: React.FC<Props> = (props) => {
             {props.app.paymentMethod === 'online'
               ? <>
                 <h2>オンライン決済でのお支払い</h2>
+                <Alert>
+                  決済で使用するメールアドレスは必ず「<b>{props.userData.email}</b> <CopyToClipboard content={props.userData.email} />」にしてください。<br />
+                  別のメールアドレスを入力すると、お支払いの確認までお時間をいただく場合がございます。
+                </Alert>
                 <p>
-                  下のボタンより決済を行ってください。
+                  「決済画面を開く」より決済を行ってください。
                 </p>
                 <FormSection>
                   <FormItem>
@@ -133,7 +139,7 @@ const Step3: React.FC<Props> = (props) => {
 
             <FormSection>
               <FormItem>
-                <FormButton onClick={() => props.nextStep()}>次へ進む</FormButton>
+                <FormButton color='default' onClick={() => props.nextStep()}>次へ進む</FormButton>
               </FormItem>
             </FormSection>
           </>
