@@ -11,7 +11,7 @@ import Loading from '../../../components/Parts/Loading'
 
 const EventApplicationsContainer: React.FC = () => {
   const { eventId } = useParams()
-  const { getApplicationsByUserIdWithIdAsync, getApplicationMetaByIdAsync } = useApplication()
+  const { getApplicationsByEventIdAsync, getApplicationMetaByIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
 
   const [event, setEvent] = useState<SockbaseEvent>()
@@ -26,7 +26,7 @@ const EventApplicationsContainer: React.FC = () => {
           const fetchedEvent = await getEventByIdAsync(eventId)
           setEvent(fetchedEvent)
 
-          const fetchedApps = await getApplicationsByUserIdWithIdAsync(eventId)
+          const fetchedApps = await getApplicationsByEventIdAsync(eventId)
           setApps(fetchedApps)
           const appIds = Object.keys(fetchedApps)
           const fetchedMetas = await Promise.all(

@@ -26,7 +26,7 @@ const ApplicationDetailContainer: React.FC = () => {
     getCircleCutURLByHashedIdAsync,
     updateApplicationStatusByIdAsync
   } = useApplication()
-  const { getPaymentByApplicationId } = usePayment()
+  const { getPaymentIdByHashId, getPayment } = usePayment()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const { checkIsAdminByOrganizationId } = useRole()
@@ -48,7 +48,8 @@ const ApplicationDetailContainer: React.FC = () => {
 
           const fetchedAppId = await getApplicationIdByHashedIdAsync(hashedAppId)
           const fetchedApp = await getApplicationByIdAsync(fetchedAppId)
-          const fetchedPayment = await getPaymentByApplicationId(fetchedAppId)
+          const fetchedPaymentId = await getPaymentIdByHashId(hashedAppId)
+          const fetchedPayment = await getPayment(fetchedPaymentId)
           const fetchedCircleCutURL = await getCircleCutURLByHashedIdAsync(hashedAppId)
           const fetchedUser = await getUserDataByUserIdAndEventIdAsync(fetchedApp.userId, fetchedApp.eventId)
           const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
@@ -67,7 +68,7 @@ const ApplicationDetailContainer: React.FC = () => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId, checkIsAdminByOrganizationId, getPaymentByApplicationId])
+  useEffect(onInitialize, [hashedAppId, checkIsAdminByOrganizationId])
 
   const handleChangeStatus: (status: SockbaseApplicationStatus) => void =
     (status) => {

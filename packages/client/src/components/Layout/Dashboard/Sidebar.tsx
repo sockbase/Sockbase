@@ -187,7 +187,9 @@ const Sidebar: React.FC<Props> = (props) => {
         <>
           <StyledStatePanel>
             <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
-            <StyledStatePanelContent>{props.user.email}({sockbaseShared.constants.user.roleText[role]})</StyledStatePanelContent>
+            <StyledStatePanelContent>
+              {props.user.email}{role !== sockbaseShared.enumerations.user.permissionRoles.user && `(${sockbaseShared.constants.user.roleText[role]})`}
+            </StyledStatePanelContent>
           </StyledStatePanel>
           <StyledSection>
             <StyledMenu>

@@ -15,6 +15,7 @@ import type {
 interface ApplicationHashIdDocument {
   applicationId: string
   hashId: string
+  paymentId: string
 }
 const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<ApplicationHashIdDocument> = {
   toFirestore: (app: ApplicationHashIdDocument): FirestoreDB.DocumentData => ({}),
@@ -22,7 +23,8 @@ const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<Application
     const hashDoc = snapshot.data()
     return {
       applicationId: hashDoc.applicationId,
-      hashId: hashDoc.hashId
+      hashId: hashDoc.hashId,
+      paymentId: hashDoc.paymentId
     }
   }
 }
@@ -65,7 +67,7 @@ interface IUseApplication {
   getApplicationByIdAsync: (appId: string) => Promise<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
   getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
   getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, SockbaseApplicationDocument>>
-  getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]>
+  getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, SockbaseApplicationDocument>>
   submitApplicationAsync: (app: SockbaseApplication, circleCutFile: File) => Promise<SockbaseApplicationAddedResult>
   getApplicationMetaByIdAsync: (appId: string) => Promise<SockbaseApplicationMeta>
   updateApplicationStatusByIdAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void>
@@ -141,7 +143,7 @@ const useApplication: () => IUseApplication = () => {
       return queryDocs
     }
 
-  const getApplicationsByEventIdAsync: (eventId: string) => Promise<SockbaseApplicationDocument[]> =
+  const getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, SockbaseApplicationDocument>> =
     async (eventId) => {
       const db = getFirestore()
       const appsRef = FirestoreDB.collection(db, '_applications')
@@ -151,7 +153,7 @@ const useApplication: () => IUseApplication = () => {
       const querySnapshot = await FirestoreDB.getDocs(appsQuery)
       const queryDocs = querySnapshot.docs
         .filter(doc => doc.exists())
-        .map(doc => doc.data())
+        .reduce<Record<string, SockbaseApplicationDocument>>((p, c) => ({ ...p, [c.id]: c.data() }), {})
 
       return queryDocs
     }

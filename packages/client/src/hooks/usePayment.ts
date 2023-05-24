@@ -2,7 +2,23 @@ import * as FirestoreDB from 'firebase/firestore'
 import type { SockbasePaymentDocument } from 'sockbase'
 
 import useFirebase from './useFirebase'
-import { useCallback } from 'react'
+
+interface ApplicationHashIdDocument {
+  applicationId: string
+  hashId: string
+  paymentId: string
+}
+const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<ApplicationHashIdDocument> = {
+  toFirestore: (app: ApplicationHashIdDocument): FirestoreDB.DocumentData => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): ApplicationHashIdDocument => {
+    const hashDoc = snapshot.data()
+    return {
+      applicationId: hashDoc.applicationId,
+      hashId: hashDoc.hashId,
+      paymentId: hashDoc.paymentId
+    }
+  }
+}
 
 const paymentConverter: FirestoreDB.FirestoreDataConverter<SockbasePaymentDocument> = {
   toFirestore: (payment: SockbasePaymentDocument): FirestoreDB.DocumentData => ({}),
@@ -26,13 +42,28 @@ const paymentConverter: FirestoreDB.FirestoreDataConverter<SockbasePaymentDocume
 }
 
 interface IUsePayment {
+  getPaymentIdByHashId: (hashId: string) => Promise<string>
   getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]>
   getPayment: (paymentId: string) => Promise<SockbasePaymentDocument>
-  getPaymentByApplicationId: (appId: string) => Promise<SockbasePaymentDocument | null | undefined>
 }
 const usePayment: () => IUsePayment =
   () => {
-    const { getFirestore, user } = useFirebase()
+    const { getFirestore } = useFirebase()
+
+    const getPaymentIdByHashId: (hashId: string) => Promise<string> =
+      async (hashId) => {
+        const db = getFirestore()
+        const hashRef = FirestoreDB.doc(db, `/_applicationHashIds/${hashId}`)
+          .withConverter(applicationHashIdConverter)
+        const hashDoc = await FirestoreDB.getDoc(hashRef)
+
+        const hash = hashDoc.data()
+        if (!hash) {
+          throw new Error('hash not found')
+        }
+
+        return hash.paymentId
+      }
 
     const getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]> =
       async (userId) => {
@@ -63,30 +94,10 @@ const usePayment: () => IUsePayment =
         return payment
       }
 
-    const getPaymentByApplicationId: (appId: string) => Promise<SockbasePaymentDocument | null | undefined> =
-      useCallback(async (appId) => {
-        if (!user) return undefined
-
-        const db = getFirestore()
-        const paymentsRef = FirestoreDB.collection(db, '_payments')
-          .withConverter(paymentConverter)
-
-        const paymentsQuery = FirestoreDB.query(paymentsRef,
-          FirestoreDB.where('userId', '==', user.uid),
-          FirestoreDB.where('applicationId', '==', appId)
-        )
-        const querySnapshot = await FirestoreDB.getDocs(paymentsQuery)
-        const queryDocs = querySnapshot.docs
-          .filter(doc => doc.exists())
-          .map(doc => doc.data())
-
-        return queryDocs.length === 1 ? queryDocs[0] : null
-      }, [user])
-
     return {
+      getPaymentIdByHashId,
       getPaymentsByUserId,
-      getPayment,
-      getPaymentByApplicationId
+      getPayment
     }
   }
 
