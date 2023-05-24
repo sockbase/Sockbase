@@ -20,8 +20,10 @@ const updateStatus = async (
   status: types.PaymentStatus,
   now: Date
 ): Promise<void> => {
+  console.log(items)
+
   const itemIds = items
-    .filter(x => !x.price)
+    .filter(x => x.price)
     .map(x => x.price?.id)
 
   const payment = payments

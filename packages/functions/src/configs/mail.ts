@@ -87,6 +87,21 @@ const templates = {
   requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketApplicaitonDocument, store: SockbaseStore) => ({
     subject: `[${store.storeName}] お支払いのお願い`,
     body: []
+  }),
+  acceptPayment: (payment: SockbasePaymentDocument) => ({
+    subject: '[Sockbase] お支払い完了のお知らせ',
+    body: [
+      '以下の通り、お支払いを受け付けました。',
+      'ご利用ありがとうございました。',
+      '',
+      '[決済情報]',
+      `お支払い方法: ${payment.paymentMethod === 1 ? 'オンライン決済' : '銀行振込'}`,
+      `お支払い代金: ${payment.paymentAmount.toLocaleString()}円`,
+      '',
+      '※プロモーションコード等を使用した場合、実際の決済額と異なって表示される場合がございます。',
+      '※オンライン決済の場合、領収書はメールにて別途送付いたします。',
+      ...suffix
+    ]
   })
 }
 

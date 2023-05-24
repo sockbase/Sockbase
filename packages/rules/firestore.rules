@@ -36,7 +36,7 @@ service cloud.firestore {
       allow read: if request.auth != null;
     }
     
-    match /applications/{applicationId} {
+    match /_applications/{applicationId} {
       function isValidApplication(app) {
         return 'userId' in app && app.userId is string && app.userId != ''
           && 'eventId' in app && app.eventId is string && exists(/databases/$(database)/documents/events/$(app.eventId))
