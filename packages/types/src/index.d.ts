@@ -50,6 +50,9 @@ export interface SockbaseStoreType {
 export interface SockbaseOrganization {
   name: string
   contactUrl: string
+}
+
+export type SockbaseOrganizationWithMeta = SockbaseOrganization & {
   config: {
     discordWebhookURL: string
   }
@@ -151,7 +154,7 @@ export interface SockbasePayment {
   paymentProductId: string
   paymentMethod: PaymentMethod
   paymentAmount: number
-  bankTransferCode: string | null
+  bankTransferCode: string
   applicationId: string | null
   ticketId: string | null
 }

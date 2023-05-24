@@ -1,11 +1,12 @@
 import { type UserRecord, getAuth } from 'firebase-admin/auth'
-import type { SockbaseApplicationDocument, SockbaseEvent } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbasePaymentDocument } from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
 import firebaseAdmin from '../libs/FirebaseAdmin'
 
 import mailConfig from '../configs/mail'
+import { applicationConverter, eventConverter } from '../libs/converters'
 
 const getUser: (userId: string) => Promise<UserRecord> =
   async (userId) => {
@@ -19,17 +20,25 @@ export const acceptApplication = functions.firestore
   .document('/applications/{applicationId}')
   .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ applicationId: string }>) => {
     const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
     const app = snapshot.data() as SockbaseApplicationDocument
     const user = await getUser(app.userId)
 
-    const eventDoc = await adminApp.firestore()
+    const eventDoc = await firestore
       .doc(`/events/${app.eventId}`)
+      .withConverter(eventConverter)
       .get()
-    const event = eventDoc.data() as SockbaseEvent
+    const event = eventDoc.data()
+    if (!event) {
+      throw new Error('event not found')
+    }
 
-    const template = mailConfig.templates.acceptApplication(event, app)
-    await adminApp.firestore()
-      .collection('_mail')
+    const space = event.spaces
+      .filter(s => s.id === app.spaceId)[0]
+
+    const template = mailConfig.templates.acceptApplication(event, app, space)
+    await firestore.collection('_mail')
       .add({
         to: user.email,
         message: {
@@ -38,3 +47,54 @@ export const acceptApplication = functions.firestore
         }
       })
   })
+
+export const requestPayment = functions.firestore
+  .document('/_payments/{paymentId}')
+  .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ paymentId: string }>) => {
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const payment = snapshot.data() as SockbasePaymentDocument
+    const user = await getUser(payment.userId)
+
+    if (!payment.applicationId) return
+
+    const template = await requestCirclePaymentAsync(payment.applicationId, payment)
+    await firestore.collection('_mail')
+      .add({
+        to: user.email,
+        message: {
+          subject: template.subject,
+          text: template.body.join('\n')
+        }
+      })
+  })
+
+const requestCirclePaymentAsync =
+  async (appId: string, payment: SockbasePaymentDocument): Promise<{ subject: string, body: string[] }> => {
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const appDoc = await firestore
+      .doc(`/applications/${appId}`)
+      .withConverter(applicationConverter)
+      .get()
+    const app = appDoc.data()
+    if (!app) {
+      throw new Error('application not found')
+    }
+
+    const eventDoc = await firestore
+      .doc(`/events/${app.eventId}`)
+      .withConverter(eventConverter)
+      .get()
+    const event = eventDoc.data()
+    if (!event) {
+      throw new Error('event not found')
+    }
+
+    const space = event.spaces
+      .filter(s => s.id === app.spaceId)[0]
+
+    return mailConfig.templates.requestCirclePayment(payment, app, event, space)
+  }

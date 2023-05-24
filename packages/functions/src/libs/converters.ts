@@ -36,18 +36,15 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
 }
 
 export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccountDocument> = {
-  toFirestore: (account: types.SockbaseAccountDocument): firestore.DocumentData => {
-    // SockbaseAccountDocumentはIDを含むので、それを除いた分をDocumentDataとする
-    return {
-      name: account.name,
-      email: account.email,
-      isEmailVerified: account.isEmailVerified,
-      birthday: account.birthday,
-      postalCode: account.postalCode,
-      address: account.address,
-      telephone: account.telephone
-    }
-  },
+  toFirestore: (account: types.SockbaseAccountDocument): firestore.DocumentData => ({
+    name: account.name,
+    email: account.email,
+    isEmailVerified: account.isEmailVerified,
+    birthday: account.birthday,
+    postalCode: account.postalCode,
+    address: account.address,
+    telephone: account.telephone
+  }),
   fromFirestore: (
     snapshot: firestore.QueryDocumentSnapshot<types.SockbaseAccountDocument>
   ): types.SockbaseAccountDocument => {
@@ -113,6 +110,31 @@ export const applicationConverter: firestore.FirestoreDataConverter<types.Sockba
       paymentMethod: app.paymentMethod,
       remarks: app.remarks,
       timestamp: app.timestamp.toDate().getTime()
+    }
+  }
+}
+
+export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEvent> = {
+  toFirestore: (event: types.SockbaseEvent): firestore.DocumentData => ({}),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseEvent => {
+    const event = snapshot.data()
+    return {
+      eventName: event.eventName,
+      descriptions: event.descriptions,
+      rules: event.rules,
+      spaces: event.spaces,
+      schedules: {
+        startApplication: event.schedules.startApplication,
+        endApplication: event.schedules.endApplication,
+        publishSpaces: event.schedules.publishSpaces,
+        startEvent: event.schedules.startEvent,
+        endEvent: event.schedules.endEvent
+      },
+      _organization: {
+        id: event._organization.id,
+        name: '',
+        contactUrl: ''
+      }
     }
   }
 }
