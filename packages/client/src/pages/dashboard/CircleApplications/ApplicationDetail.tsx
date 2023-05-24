@@ -67,7 +67,7 @@ const ApplicationDetailContainer: React.FC = () => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId, checkIsAdminByOrganizationId])
+  useEffect(onInitialize, [hashedAppId, checkIsAdminByOrganizationId, getPaymentByApplicationId])
 
   const handleChangeStatus: (status: SockbaseApplicationStatus) => void =
     (status) => {
