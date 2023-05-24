@@ -28,7 +28,7 @@ const paymentConverter: FirestoreDB.FirestoreDataConverter<SockbasePaymentDocume
 interface IUsePayment {
   getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]>
   getPayment: (paymentId: string) => Promise<SockbasePaymentDocument>
-  getPaymentByApplicationId: (appId: string) => Promise<SockbasePaymentDocument | null>
+  getPaymentByApplicationId: (appId: string) => Promise<SockbasePaymentDocument | null | undefined>
 }
 const usePayment: () => IUsePayment =
   () => {
@@ -63,9 +63,9 @@ const usePayment: () => IUsePayment =
         return payment
       }
 
-    const getPaymentByApplicationId: (appId: string) => Promise<SockbasePaymentDocument | null> =
+    const getPaymentByApplicationId: (appId: string) => Promise<SockbasePaymentDocument | null | undefined> =
       useCallback(async (appId) => {
-        if (!user) return null
+        if (!user) return undefined
 
         const db = getFirestore()
         const paymentsRef = FirestoreDB.collection(db, '_payments')
