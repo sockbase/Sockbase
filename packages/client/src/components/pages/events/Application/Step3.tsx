@@ -47,15 +47,11 @@ const Step3: React.FC<Props> = (props) => {
         <table>
           <tbody>
             <tr>
-              <th>振込先銀行</th>
-              <td>ゆうちょ銀行(金融機関コード9900)</td>
-            </tr>
-            <tr>
               <th>加入者名</th>
               <td>ノートセンディング</td>
             </tr>
             <tr>
-              <th>口座記号･口座番号</th>
+              <th>口座記号・口座番号</th>
               <td>10740-30814531</td>
             </tr>
             <tr>
