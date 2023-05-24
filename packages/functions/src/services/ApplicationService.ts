@@ -115,6 +115,7 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
       {
         title: 'サークル申し込みを受け付けました！',
         url: '',
+        color: 65280,
         fields: [
           {
             name: 'イベント名',
@@ -147,6 +148,7 @@ const sendMessageToDiscord: (organizationId: string, messageBody: {
   embeds: Array<{
     title: string
     url: string
+    color: number
     fields: Array<{
       name: string
       value: string
