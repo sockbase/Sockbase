@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { SockbaseAccountSecure, SockbaseApplication, SockbaseApplicationAddedResult, SockbaseEvent } from 'sockbase'
+import type { SockbaseApplication, SockbaseApplicationAddedResult, SockbaseEvent } from 'sockbase'
 
 import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'
@@ -12,7 +12,7 @@ interface Props {
   appResult?: SockbaseApplicationAddedResult
   app: SockbaseApplication | undefined
   event: SockbaseEvent
-  userData: SockbaseAccountSecure | undefined
+  email: string | undefined
   nextStep: () => void
 }
 const Step3: React.FC<Props> = (props) => {
@@ -24,7 +24,7 @@ const Step3: React.FC<Props> = (props) => {
   }, [props.event, props.app])
 
   return (
-    props.appResult && props.app && props.event && space && props.userData
+    props.appResult && props.app && props.event && space && props.email
       ? <>
         <Alert type="success" title="申し込み情報の送信が完了しました">
           申し込みIDは {props.appResult.hashId} です。
@@ -72,7 +72,7 @@ const Step3: React.FC<Props> = (props) => {
               ? <>
                 <h2>オンライン決済でのお支払い</h2>
                 <Alert>
-                  決済で使用するメールアドレスは必ず「<b>{props.userData.email}</b> <CopyToClipboard content={props.userData.email} />」にしてください。<br />
+                  決済で使用するメールアドレスは必ず「<b>{props.email}</b> <CopyToClipboard content={props.email} />」にしてください。<br />
                   別のメールアドレスを入力すると、お支払いの確認までお時間をいただく場合がございます。
                 </Alert>
                 <p>

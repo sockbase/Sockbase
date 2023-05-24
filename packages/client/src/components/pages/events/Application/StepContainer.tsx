@@ -109,7 +109,7 @@ const StepContainer: React.FC<Props> = (props) => {
           appResult={appResult}
           app={app}
           event={props.event}
-          userData={leaderUserData}
+          email={userData?.email ?? leaderUserData?.email}
           nextStep={() => setStep(4)} />,
         <Step4 key="step4"
           appResult={appResult} />
