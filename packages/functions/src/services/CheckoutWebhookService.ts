@@ -21,8 +21,6 @@ const updateStatus = async (
   status: types.PaymentStatus,
   now: Date
 ): Promise<void> => {
-  console.log(items)
-
   const itemIds = items
     .filter(x => x.price)
     .map(x => x.price?.id)
@@ -43,6 +41,7 @@ const collectPayments = async (userId: string, status: number): Promise<types.So
     .withConverter(paymentConverter)
     .where('userId', '==', userId)
     .where('status', '==', status)
+    .where('paymentMethod', '==', 1)
     .get()
 
   return paymentSnapshot.docs
