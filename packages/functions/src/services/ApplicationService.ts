@@ -1,7 +1,16 @@
 import { MD5, enc } from 'crypto-js'
-import dayjs from 'dayjs'
+import dayjs from '../helpers/dayjs'
 
-import type { PaymentMethod, SockbaseAccount, SockbaseApplication, SockbaseApplicationAddedResult, SockbaseApplicationDocument, SockbaseEvent, SockbaseOrganization, SockbasePaymentDocument } from 'sockbase'
+import type {
+  PaymentMethod,
+  SockbaseAccount,
+  SockbaseApplication,
+  SockbaseApplicationAddedResult,
+  SockbaseApplicationDocument,
+  SockbaseEvent,
+  SockbaseOrganizationWithMeta,
+  SockbasePaymentDocument
+} from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
@@ -149,7 +158,7 @@ const sendMessageToDiscord: (organizationId: string, messageBody: {
     const organizationDoc = await adminApp.firestore()
       .doc(`/organizations/${organizationId}`)
       .get()
-    const organization = organizationDoc.data() as SockbaseOrganization
+    const organization = organizationDoc.data() as SockbaseOrganizationWithMeta
 
     await fetch(organization.config.discordWebhookURL, {
       method: 'POST',
@@ -167,14 +176,14 @@ const generateHashId: (eventId: string, refId: string) => Promise<string> =
     const refHashId = MD5(`${eventId}.${refId}.${salt}`)
       .toString(enc.Hex)
       .slice(0, codeDigit)
-    const formatedDateTime = dayjs().format('YYYYMMDDHmmssSSS')
+    const formatedDateTime = dayjs().tz().format('YYYYMMDDHmmssSSS')
     const hashId = `${formatedDateTime}-${refHashId}`
 
     return hashId
   }
 
 const generateBankTransferCode: () => string =
-  () => dayjs().format('DDHmm')
+  () => dayjs().tz().format('DDHHmm')
 
 const createPayment: (
   userId: string,
