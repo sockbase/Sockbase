@@ -28,8 +28,8 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
       status: data.status,
       applicationId: data.applicationId,
       ticketId: data.ticketId,
-      createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
-      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt
     }
   }
 }
