@@ -100,7 +100,7 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     return
   }
   else if (typeof paymentId !== 'string') {
-    res.status(500).send({ error: 'MissingType', detail: 'paymentId tyoe is missing' })
+    res.status(500).send({ error: 'MissingType', detail: 'paymentId type is missing' })
     return
   }
 
