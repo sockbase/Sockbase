@@ -134,7 +134,7 @@ const Step1: React.FC<Props> = (props) => {
         !validator.isEmpty(app.circle.penName),
         validator.isOnlyHiragana(app.circle.penNameYomi),
         !validator.isNull(app.circle.hasAdult),
-        validator.isIn(app.circle.genre, ['あいうえお']),
+        validator.isIn(app.circle.genre, genres.map(g => g.id)),
         !validator.isEmpty(app.overview.description),
         !validator.isEmpty(app.overview.totalAmount),
         validator.isIn(app.paymentMethod, paymentMethodIds)
