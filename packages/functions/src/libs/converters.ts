@@ -139,3 +139,13 @@ export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEven
     }
   }
 }
+
+export const roleConverter: firestore.FirestoreDataConverter<{ role: number }> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot) => {
+    const data = snapshot.data()
+    return {
+      role: data.role
+    }
+  }
+}
