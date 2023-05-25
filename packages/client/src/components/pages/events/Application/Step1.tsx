@@ -21,6 +21,13 @@ import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
 import CircleCutImage from '../../../Parts/CircleCutImage'
 
+const genres = [
+  {
+    id: 'aiueo1',
+    value: 'あいうえお１'
+  }
+]
+
 interface Props {
   eventId: string
   app: SockbaseApplication | undefined
@@ -360,12 +367,8 @@ const Step1: React.FC<Props> = (props) => {
           <FormSelect
             value={app.circle.genre}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}>
-            <option>選択してください</option>
-            <option>あいうえお</option>
-            <option>あいうえお</option>
-            <option>あいうえお</option>
-            <option>あいうえお</option>
-            <option>あいうえお</option>
+            <option value="">選択してください</option>
+            {genres.map(g => <option key={g.id} value={g.id}>{g.value}</option>)}
           </FormSelect>
           <FormHelp>
             頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
