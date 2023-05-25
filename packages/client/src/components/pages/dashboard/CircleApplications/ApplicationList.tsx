@@ -37,6 +37,7 @@ const ApplicationList: React.FC<Props> = (props) => {
             Object.entries(props.apps).length !== 0
               ? Object.entries(props.apps)
                 .filter(([_, app]) => !!app.hashId)
+                .sort(([_a, a], [_b, b]) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
                 .map(([appId, app]) => (
                   app.hashId && <tr key={app.hashId}>
                     <th><Link to={`/dashboard/applications/${app.hashId}`}>{props.events[app.eventId].eventName}</Link></th>

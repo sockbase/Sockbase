@@ -89,7 +89,7 @@ const PaymentList: React.FC<Props> = (props) => {
         <tbody>
           {props.payments.length !== 0
             ? props.payments
-              .sort((a, b) => ((b.createdAt?.getTime()) ?? 9) - ((a.createdAt?.getTime()) ?? 0))
+              .sort((a, b) => (b.updatedAt?.getTime() ?? 9) - (a.updatedAt?.getTime() ?? 0))
               .map(p => <tr key={p.id}>
                 <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getEventByAppId(p.applicationId)?.eventName}</Link></th>
                 <td>{p.paymentAmount.toLocaleString()}円</td>
