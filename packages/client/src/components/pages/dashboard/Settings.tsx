@@ -63,7 +63,7 @@ const DashboardSettings: React.FC<Props> = (props) => {
           </FormSection>
           <FormSection>
             <FormItem>
-              <FormButton onClick={() => props.updateUserData()}>保存</FormButton>
+              <FormButton onClick={() => props.updateUserData()}>情報を更新する</FormButton>
             </FormItem>
           </FormSection>
         </>
