@@ -304,6 +304,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>サークル名</FormLabel>
           <FormInput
+            placeholder='サークル名'
             value={app.circle.name}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, name: e.target.value } }))} />
         </FormItem>
@@ -311,6 +312,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>サークル名(よみ)</FormLabel>
           <FormInput
+            placeholder='さーくるめい'
             value={app.circle.yomi}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, yomi: e.target.value } }))}
             hasError={!validator.isEmpty(app.circle.yomi) && !validator.isOnlyHiragana(app.circle.yomi)} />
@@ -322,6 +324,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>ペンネーム</FormLabel>
           <FormInput
+            placeholder='ペンネーム'
             value={app.circle.penName}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, penName: e.target.value } }))} />
         </FormItem>
@@ -329,6 +332,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>ペンネーム(よみ)</FormLabel>
           <FormInput
+            placeholder='ぺんねーむ'
             value={app.circle.penNameYomi}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, penNameYomi: e.target.value } }))}
             hasError={!validator.isEmpty(app.circle.penNameYomi) && !validator.isOnlyHiragana(app.circle.penNameYomi)} />
@@ -377,6 +381,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>頒布物概要</FormLabel>
           <FormTextarea
+            placeholder='◯◯◯◯と△△△△のシリアス系合同誌(小説, 漫画)を頒布する予定。その他グッズや既刊あり。'
             value={app.overview.description}
             onChange={e => setApp(s => ({ ...s, overview: { ...s.overview, description: e.target.value } }))} />
           <FormHelp>
@@ -386,7 +391,8 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
         <FormItem>
           <FormLabel>総搬入量</FormLabel>
-          <FormInput
+          <FormTextarea
+            placeholder='合同誌: 1種1,000冊, 既刊: 5種合計500冊, グッズ: 3種合計30個'
             value={app.overview.totalAmount}
             onChange={e => setApp(s => ({ ...s, overview: { ...s.overview, totalAmount: e.target.value } }))} />
           <FormHelp>単位まで入力してください。</FormHelp>
@@ -398,6 +404,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>合体希望サークル 合体申し込みID</FormLabel>
           <FormInput
+            placeholder='20231231235959123-abc0def1'
             value={app.unionCircleId}
             onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value }))} />
           <FormHelp>先に申し込んだ方から提供された合体申し込みIDを入力してください。</FormHelp>
@@ -405,6 +412,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>プチオンリーコード</FormLabel>
           <FormInput
+            placeholder='marukaku00'
             value={app.petitCode}
             onChange={e => setApp(s => ({ ...s, petitCode: e.target.value }))} />
           <FormHelp>プチオンリー主催から入力を指示された場合のみ入力してください。</FormHelp>
@@ -418,6 +426,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>氏名</FormLabel>
               <FormInput
+                placeholder='速部 すみれ'
                 value={leaderUserData.name}
                 onChange={e => setLeaderUserData(s => ({ ...s, name: e.target.value }))} />
             </FormItem>
@@ -432,6 +441,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>郵便番号</FormLabel>
               <FormInput
+                placeholder='000-0000'
                 value={leaderUserData.postalCode}
                 onChange={e => {
                   if (e.target.value.length > 8) return
@@ -453,12 +463,14 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>住所</FormLabel>
               <FormInput
+                placeholder='東京都千代田区外神田9-9-9'
                 value={leaderUserData.address}
                 onChange={e => setLeaderUserData(s => ({ ...s, address: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
+                placeholder='070-0123-4567'
                 value={leaderUserData.telephone}
                 onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value }))} />
             </FormItem>
@@ -472,6 +484,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>メールアドレス</FormLabel>
               <FormInput type="email"
+                placeholder='sumire@sockbase.net'
                 value={leaderUserData.email}
                 onChange={e => setLeaderUserData(s => ({ ...s, email: e.target.value }))}
                 hasError={!validator.isEmpty(leaderUserData.email) && !validator.isEmail(leaderUserData.email)} />
@@ -479,12 +492,14 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>パスワード</FormLabel>
               <FormInput type="password"
+                placeholder='●●●●●●●●●●●●'
                 value={leaderUserData.password}
                 onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>パスワード(確認)</FormLabel>
               <FormInput type="password"
+                placeholder='●●●●●●●●●●●●'
                 value={leaderUserData.rePassword}
                 onChange={e => setLeaderUserData(s => ({ ...s, rePassword: e.target.value }))}
                 hasError={!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword} />
@@ -541,6 +556,7 @@ const Step1: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormTextarea
+            placeholder='成人向け作品を頒布するサークルとは離れた場所に配置をお願いします。'
             value={app.remarks}
             onChange={e => setApp(s => ({ ...s, remarks: e.target.value }))}
           ></FormTextarea>
