@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 
-import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure } from 'sockbase'
+import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure, SockbaseEventGenre } from 'sockbase'
 import sockbaseShared from '@sockbase/shared'
 
 import usePostalCode from '../../../../hooks/usePostalCode'
@@ -21,19 +21,13 @@ import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
 import CircleCutImage from '../../../Parts/CircleCutImage'
 
-const genres = [
-  {
-    id: 'aiueo1',
-    value: 'あいうえお１'
-  }
-]
-
 interface Props {
   eventId: string
   app: SockbaseApplication | undefined
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
   spaces: SockbaseEventSpace[]
+  genres: SockbaseEventGenre[]
   prevStep: () => void
   nextStep: (app: SockbaseApplication, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
@@ -134,7 +128,7 @@ const Step1: React.FC<Props> = (props) => {
         !validator.isEmpty(app.circle.penName),
         validator.isOnlyHiragana(app.circle.penNameYomi),
         !validator.isNull(app.circle.hasAdult),
-        validator.isIn(app.circle.genre, genres.map(g => g.id)),
+        validator.isIn(app.circle.genre, props.genres.map(g => g.id)),
         !validator.isEmpty(app.overview.description),
         !validator.isEmpty(app.overview.totalAmount),
         validator.isIn(app.paymentMethod, paymentMethodIds)
@@ -171,7 +165,7 @@ const Step1: React.FC<Props> = (props) => {
       setInvalidFieldCount(invalidCount)
       setAllValid(!hasValidationError)
     }
-  useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData])
+  useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData, props.genres])
 
   const onChangeBirthday: () => void =
     () => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
@@ -372,7 +366,7 @@ const Step1: React.FC<Props> = (props) => {
             value={app.circle.genre}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}>
             <option value="">選択してください</option>
-            {genres.map(g => <option key={g.id} value={g.id}>{g.value}</option>)}
+            {props.genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
           </FormSelect>
           <FormHelp>
             頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。

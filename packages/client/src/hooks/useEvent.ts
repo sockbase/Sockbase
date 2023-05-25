@@ -36,6 +36,7 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
       descriptions: event.descriptions,
       rules: event.rules,
       spaces: event.spaces,
+      genres: event.genres,
       schedules: event.schedules,
       _organization: event._organization
     }
