@@ -1,17 +1,9 @@
-import { FieldValue, type FirestoreDataConverter, type QueryDocumentSnapshot } from 'firebase-admin/firestore'
+import { FieldValue, type QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 import { type Change } from 'firebase-functions'
-import FirebaseAdmin from '../libs/FirebaseAdmin'
 
-const roleConverter: FirestoreDataConverter<{ role: number }> = {
-  toFirestore: () => ({}),
-  fromFirestore: (snapshot: QueryDocumentSnapshot) => {
-    const data = snapshot.data()
-    return {
-      role: data.role
-    }
-  }
-}
+import FirebaseAdmin from '../libs/FirebaseAdmin'
+import { roleConverter } from '../libs/converters'
 
 export const onChangeOrganizationRoles = functions.firestore
   .document('/organizations/{organizationId}/users/{userId}')

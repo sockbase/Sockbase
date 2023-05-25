@@ -1,7 +1,9 @@
 import * as functions from 'firebase-functions'
+import type { UserRecord } from 'firebase-admin/auth'
 import { Stripe } from 'stripe'
-import { paymentConverter, userConverter } from '../libs/converters'
 import type * as types from 'sockbase'
+
+import { paymentConverter } from '../libs/converters'
 import firebaseAdmin from '../libs/FirebaseAdmin'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2022-11-15' })
@@ -12,7 +14,9 @@ enum Status {
   PaymentFailure = 3
 }
 
-const firestore = firebaseAdmin.getFirebaseAdmin().firestore()
+const adminApp = firebaseAdmin.getFirebaseAdmin()
+const firestore = adminApp.firestore()
+const auth = adminApp.auth()
 
 const updateStatus = async (
   payments: types.SockbasePaymentDocument[],
@@ -48,15 +52,9 @@ const collectPayments = async (userId: string, status: number): Promise<types.So
     .map(x => x.data())
 }
 
-const getUser = async (email: string): Promise<types.SockbaseAccountDocument | null> => {
-  const userSnapshot = await firestore.collection('users')
-    .withConverter(userConverter)
-    .where('email', '==', email)
-    .get()
-  const users = userSnapshot.docs
-    .map(x => x.data())
-
-  return users.length === 1 ? users[0] : null
+const getUser = async (email: string): Promise<UserRecord> => {
+  const user = await auth.getUserByEmail(email)
+  return user
 }
 
 const HANDLEABLE_EVENTS = {
@@ -104,7 +102,7 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
   }
 
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
-  const payments = await collectPayments(user.id, Status.Pending)
+  const payments = await collectPayments(user.uid, Status.Pending)
 
   switch (event.type) {
     case HANDLEABLE_EVENTS.checkoutCompleted: {
