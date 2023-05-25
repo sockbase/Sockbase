@@ -195,7 +195,7 @@ const Step1: React.FC<Props> = (props) => {
           penName: 'nirsmmy',
           penNameYomi: 'そめみやねいろ',
           hasAdult: false,
-          genre: 'あいうえお'
+          genre: 'aiueo1'
         },
         overview: {
           description: 'ここには頒布物概要が入ります',
