@@ -19,18 +19,19 @@ const firestore = adminApp.firestore()
 const auth = adminApp.auth()
 
 const updateStatus = async (
-  payments: types.SockbasePaymentDocument[],
-  items: Stripe.LineItem[],
+  payment: types.SockbasePaymentDocument,
+  productItems: Stripe.LineItem[],
   paymentId: string,
   status: types.PaymentStatus,
   now: Date
-): Promise<void> => {
-  const itemIds = items
-    .filter(x => x.price)
-    .map(x => x.price?.id)
+): Promise<boolean> => {
+  const productItemIds = productItems
+    .filter(p => p.price)
+    .map(p => p.price?.id)
 
-  const payment = payments
-    .filter(p => itemIds.includes(p.paymentProductId))[0]
+  if (!productItemIds.includes(payment.paymentProductId)) {
+    return false
+  }
 
   await firestore.doc(`/_payments/${payment.id}`)
     .set({
@@ -38,18 +39,21 @@ const updateStatus = async (
       status,
       updatedAt: now
     }, { merge: true })
+
+  return true
 }
 
-const collectPayments = async (userId: string, status: number): Promise<types.SockbasePaymentDocument[]> => {
+const collectPayments = async (userId: string, status: number): Promise<types.SockbasePaymentDocument | null> => {
   const paymentSnapshot = await firestore.collection('_payments')
     .withConverter(paymentConverter)
     .where('userId', '==', userId)
     .where('status', '==', status)
     .where('paymentMethod', '==', 1)
     .get()
+  const payments = paymentSnapshot.docs
+    .map(p => p.data())
 
-  return paymentSnapshot.docs
-    .map(x => x.data())
+  return payments.length === 1 ? payments[0] : null
 }
 
 const getUser = async (email: string): Promise<UserRecord> => {
@@ -101,29 +105,46 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     return
   }
 
-  const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
-  const payments = await collectPayments(user.uid, Status.Pending)
+  const payment = await collectPayments(user.uid, Status.Pending)
+  if (!payment) {
+    res.status(404).send({ error: 'NotFound', detail: 'required payment is not found' })
+    return
+  }
 
+  const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
   switch (event.type) {
     case HANDLEABLE_EVENTS.checkoutCompleted: {
       // クレカなどの即決済時のみ処理する
       // 銀行振り込みなどの遅延決済時はなにも処理しない
       if (session.payment_status !== 'paid') break
 
-      await updateStatus(payments, lineItems.data, paymentId, Status.Paid, now)
+      if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
+        res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
+        return
+      }
       break
     }
 
     case HANDLEABLE_EVENTS.asyncPaymentSuccessed: {
-      await updateStatus(payments, lineItems.data, paymentId, Status.Paid, now)
+      if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
+        res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
+        return
+      }
       break
     }
 
     case HANDLEABLE_EVENTS.asyncPaymentFailed: {
-      await updateStatus(payments, lineItems.data, paymentId, Status.PaymentFailure, now)
+      if (!await updateStatus(payment, lineItems.data, paymentId, Status.PaymentFailure, now)) {
+        res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
+        return
+      }
       break
     }
   }
 
-  res.send({ success: true })
+  res.send({
+    success: true,
+    userId: user.uid,
+    paymentId: payment.id
+  })
 })

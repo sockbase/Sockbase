@@ -9,6 +9,7 @@ interface IUseValidate {
   isPostalCode: (value: string) => boolean
   isDate: (value: string) => boolean
   isEmail: (value: string) => boolean
+  isApplicationHashId: (value: string) => boolean
   equals: (value1: string, value2: string) => boolean
 }
 const useValidate: () => IUseValidate =
@@ -37,6 +38,9 @@ const useValidate: () => IUseValidate =
     const isEmail: (value: string) => boolean =
       (value) => validator.isEmail(value)
 
+    const isApplicationHashId: (value: string) => boolean =
+      (value) => isMatchRegex(value, /^\d{17}-[0-9a-f]{8}$/)
+
     const equals: (value1: string, value2: string) => boolean =
       (value1, value2) => value1 === value2
 
@@ -49,6 +53,7 @@ const useValidate: () => IUseValidate =
       isPostalCode,
       isDate,
       isEmail,
+      isApplicationHashId,
       equals
     }
   }
