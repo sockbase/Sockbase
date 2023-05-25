@@ -77,6 +77,7 @@ const templates = {
       `サークル名: ${app.circle.name}`,
       `ペンネーム: ${app.circle.penName}`,
       `スペース: ${space.name}`,
+      `申込みID: ${app.hashId ?? ''}`,
       '',
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただけますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',
@@ -88,7 +89,7 @@ const templates = {
     subject: `[${store.storeName}] お支払いのお願い`,
     body: []
   }),
-  acceptPayment: (payment: SockbasePaymentDocument) => ({
+  acceptCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace) => ({
     subject: '[Sockbase] お支払い完了のお知らせ',
     body: [
       '以下の通り、お支払いを受け付けました。',
@@ -100,6 +101,13 @@ const templates = {
       '',
       '※プロモーションコード等を使用した場合、実際の決済額と異なって表示される場合がございます。',
       '※オンライン決済の場合、領収書はメールにて別途送付いたします。',
+      '',
+      '[申し込み情報]',
+      `イベント: ${event.eventName}`,
+      `サークル名: ${app.circle.name}`,
+      `ペンネーム: ${app.circle.penName}`,
+      `スペース: ${space.name}`,
+      `申込みID: ${app.hashId ?? ''}`,
       ...suffix
     ]
   })
