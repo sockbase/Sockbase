@@ -26,13 +26,13 @@ interface Props {
 }
 const ApplicationDetail: React.FC<Props> = (props) => {
   const spaceName = useMemo(() => {
-    const spaceData = props.event.spaces.filter(s => s.id === props.app.spaceId)[0]
-    return spaceData.name
+    const spaceInfo = props.event.spaces.filter(s => s.id === props.app.spaceId)[0]
+    return spaceInfo.name
   }, [])
 
   const genreName = useMemo(() => {
-    const genreData = props.event.genres.filter(g => g.id === props.app.circle.genre)[0]
-    return genreData.name
+    const genreInfo = props.event.genres.filter(g => g.id === props.app.circle.genre)[0]
+    return genreInfo.name
   }, [])
 
   return (
