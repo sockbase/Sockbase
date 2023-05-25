@@ -27,7 +27,7 @@ const Step3: React.FC<Props> = (props) => {
     props.appResult && props.app && props.event && space && props.email
       ? <>
         <Alert type="success" title="申し込み情報の送信が完了しました">
-          申し込みIDは {props.appResult.hashId} です。
+          申し込みIDは「<b>{props.appResult.hashId}</b> <CopyToClipboard content={props.appResult.hashId} />」です。
         </Alert>
         <p>
           お申し込みいただきましてありがとうございました。<br />

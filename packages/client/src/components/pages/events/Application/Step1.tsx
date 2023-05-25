@@ -131,7 +131,8 @@ const Step1: React.FC<Props> = (props) => {
         validator.isIn(app.circle.genre, props.genres.map(g => g.id)),
         !validator.isEmpty(app.overview.description),
         !validator.isEmpty(app.overview.totalAmount),
-        validator.isIn(app.paymentMethod, paymentMethodIds)
+        validator.isIn(app.paymentMethod, paymentMethodIds),
+        (!app.unionCircleId || validator.isApplicationHashId(app.unionCircleId))
       ]
       const invalidCount = validators
         .filter(i => !i)
@@ -400,7 +401,8 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             placeholder='20231231235959123-abc0def1'
             value={app.unionCircleId}
-            onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value }))} />
+            onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value }))}
+            hasError={!validator.isEmpty(app.unionCircleId) && !validator.isApplicationHashId(app.unionCircleId)} />
           <FormHelp>先に申し込んだ方から提供された合体申し込みIDを入力してください。</FormHelp>
         </FormItem>
         <FormItem>
