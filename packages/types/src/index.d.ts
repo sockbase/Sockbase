@@ -3,6 +3,7 @@ export interface SockbaseEvent {
   descriptions: string[]
   rules: string[]
   spaces: SockbaseEventSpace[]
+  genres: SockbaseEventGenre[]
   schedules: {
     startApplication: number
     endApplication: number
@@ -24,6 +25,11 @@ export interface SockbaseEventSpace {
     productId: string
     paymentURL: string
   } | null
+}
+
+export interface SockbaseEventGenre {
+  id: string
+  name: string
 }
 
 export interface SockbaseStore {

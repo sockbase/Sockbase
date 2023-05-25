@@ -26,8 +26,13 @@ interface Props {
 }
 const ApplicationDetail: React.FC<Props> = (props) => {
   const spaceName = useMemo(() => {
-    const spaceData = props.event.spaces.filter(i => i.id === props.app.spaceId)[0]
+    const spaceData = props.event.spaces.filter(s => s.id === props.app.spaceId)[0]
     return spaceData.name
+  }, [])
+
+  const genreName = useMemo(() => {
+    const genreData = props.event.genres.filter(g => g.id === props.app.circle.genre)[0]
+    return genreData.name
   }, [])
 
   return (
@@ -116,7 +121,7 @@ const ApplicationDetail: React.FC<Props> = (props) => {
               </tr>
               <tr>
                 <th>頒布物のジャンル</th>
-                <td>{props.app.circle.genre}</td>
+                <td>{genreName}</td>
               </tr>
               <tr>
                 <th>頒布物概要</th>

@@ -88,6 +88,7 @@ const StepContainer: React.FC<Props> = (props) => {
           circleCutFile={circleCutFile}
           isLoggedIn={props.isLoggedIn}
           spaces={props.event.spaces}
+          genres={props.event.genres}
           prevStep={() => setStep(0)}
           nextStep={(app, leaderUserData, circleCutData, circleCutFile) => {
             setApp(app)
@@ -101,6 +102,7 @@ const StepContainer: React.FC<Props> = (props) => {
           leaderUserData={leaderUserData}
           circleCutData={circleCutData}
           spaces={props.event.spaces}
+          genres={props.event.genres}
           userData={userData}
           submitApplication={submitApplication}
           prevStep={() => setStep(1)}

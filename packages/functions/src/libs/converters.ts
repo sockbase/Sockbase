@@ -124,6 +124,7 @@ export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEven
       descriptions: event.descriptions,
       rules: event.rules,
       spaces: event.spaces,
+      genres: event.genres,
       schedules: {
         startApplication: event.schedules.startApplication,
         endApplication: event.schedules.endApplication,
