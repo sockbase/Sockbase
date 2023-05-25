@@ -82,7 +82,10 @@ export const onChangeUser = functions.firestore
       const adminApp = FirebaseAdmin.getFirebaseAdmin()
       const auth = adminApp.auth()
 
-      auth.updateUser(context.params.userId, { email: data.email })
+      auth.updateUser(context.params.userId, {
+        email: data.email,
+        emailVerified: false
+      })
         .catch(err => { throw err })
     }
   )
