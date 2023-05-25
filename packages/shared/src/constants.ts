@@ -8,6 +8,18 @@ const constants = {
   },
   user: {
     roleText: ['ユーザ', 'スタッフ', '管理者']
+  },
+  payment: {
+    methods: [
+      {
+        id: 'online',
+        description: 'クレジットカード決済(推奨)'
+      },
+      {
+        id: 'bankTransfer',
+        description: '銀行振込'
+      }
+    ]
   }
 } as const
 

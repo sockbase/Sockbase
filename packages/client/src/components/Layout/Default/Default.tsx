@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import HeadHelper from '../../../libs/Helmet'
 
-import Header from './Header'
+// import Header from './Header'
 import Footer from './Footer'
 
 interface Props {
@@ -14,7 +14,7 @@ const DefaultLayout: React.FC<Props> = (props) => {
   return (
     <StyledLayout>
       <HeadHelper title={props.title} />
-      <Header />
+      {/* <Header /> */}
       <StyledContainer>{props.children}</StyledContainer>
       <Footer />
     </StyledLayout>
@@ -26,7 +26,8 @@ export default DefaultLayout
 const StyledLayout = styled.section`
   display: grid;
   height: 100%;
-  grid-template-rows: auto 1fr auto;
+  /* grid-template-rows: auto 1fr auto; */
+  grid-template-rows: 1fr auto;
 `
 const StyledContainer = styled.main`
   margin: 40px 25%;

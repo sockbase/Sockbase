@@ -21,9 +21,10 @@ export const onChangeOrganizationRoles = functions.firestore
       context: functions.EventContext<{ organizationId: string, userId: string }>
     ) => {
       const adminApp = FirebaseAdmin.getFirebaseAdmin()
+      const firestore = adminApp.firestore()
 
       if (!snapshot.after.exists) {
-        adminApp.firestore()
+        firestore
           .doc(`/users/${context.params.userId}/_roles/${context.params.organizationId}`)
           .set({
             role: FieldValue.delete()
@@ -34,7 +35,7 @@ export const onChangeOrganizationRoles = functions.firestore
         return
       }
 
-      adminApp.firestore()
+      firestore
         .doc(`/users/${context.params.userId}/_roles/${context.params.organizationId}`)
         .set({
           role: snapshot.after.data().role

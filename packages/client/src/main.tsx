@@ -13,20 +13,24 @@ import ResetStyle from './ResetStyle'
 import GlobalStyle from './GlobalStyle'
 import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 
-import App from './containers/App'
-import FormTemplate from './containers/FormTemplate'
-import DashboardTemplate from './containers/DashboardTemplate'
-import TermsOfService from './containers/static/TermsOfService'
-import PrivacyPolicy from './containers/static/PrivacyPolicy'
+import App from './pages/App'
 
-import EventApplication from './containers/events/Application'
+import FormTemplate from './pages/FormTemplate'
+import DashboardTemplate from './pages/DashboardTemplate'
 
-import DashboardEventList from './containers/dashboard/Events/EventList'
-import DashboardEventApplications from './containers/dashboard/Events/EventApplications'
-import DashboardApplicationList from './containers/dashboard/CircleApplications/ApplicationList'
-import DashboardApplicationDetail from './containers/dashboard/CircleApplications/ApplicationDetail'
-import Dashboard from './containers/dashboard/Dashboard'
-import DebugDashboard from './containers/dashboard/Debug'
+import TermsOfService from './pages/static/TermsOfService'
+import PrivacyPolicy from './pages/static/PrivacyPolicy'
+
+import EventApplication from './pages/events/Application'
+import TicketApplication from './pages/stores/Application'
+
+import DashboardEventList from './pages/dashboard/Events/EventList'
+import DashboardEventApplications from './pages/dashboard/Events/EventApplications'
+import DashboardApplicationList from './pages/dashboard/CircleApplications/ApplicationList'
+import DashboardApplicationDetail from './pages/dashboard/CircleApplications/ApplicationDetail'
+import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
+import Dashboard from './pages/dashboard/Dashboard'
+import DebugDashboard from './pages/dashboard/Debug'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -75,6 +79,15 @@ const router = createBrowserRouter([
         ]
       },
       {
+        path: 'stores',
+        children: [
+          {
+            path: ':storeId',
+            element: <TicketApplication />
+          }
+        ]
+      },
+      {
         path: 'dashboard',
         children: [
           {
@@ -108,6 +121,15 @@ const router = createBrowserRouter([
               {
                 path: ':hashedAppId',
                 element: <DashboardApplicationDetail />
+              }
+            ]
+          },
+          {
+            path: 'payments',
+            children: [
+              {
+                index: true,
+                element: <DashboardPaymentList />
               }
             ]
           }

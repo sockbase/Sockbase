@@ -20,11 +20,45 @@ export interface SockbaseEventSpace {
   name: string
   description: string
   price: number
+  productInfo: {
+    productId: string
+    paymentURL: string
+  } | null
+}
+
+export interface SockbaseStore {
+  storeName: string
+  descriptions: string[]
+  rules: string[]
+  types: SockbaseStoreType[]
+  schedules: {
+    startApplication: number
+    endApplication: number
+    startEvent: number
+    endEvent: number
+  }
+  _organization: SockbaseOrganization & {
+    id: string
+  }
+}
+
+export interface SockbaseStoreType {
+  id: string
+  name: string
+  description: string
+  price: number
+  productInfo: {
+    productId: string
+    paymentURL: string
+  } | null
 }
 
 export interface SockbaseOrganization {
   name: string
   contactUrl: string
+}
+
+export type SockbaseOrganizationWithMeta = SockbaseOrganization & {
   config: {
     discordWebhookURL: string
   }
@@ -55,14 +89,34 @@ export interface SockbaseApplication {
 export type CircleGenreType = ''
 export type SockbaseApplicationDocument = SockbaseApplication & {
   userId: string
-  timestamp: number
+  createdAt: Date | null
+  updatedAt: Date | null
   hashId: string | null
+}
+
+export interface SockbaseApplicationAddedResult {
+  hashId: string
+  bankTransferCode: string
 }
 
 export interface SockbaseApplicationMeta {
   applicationStatus: SockbaseApplicationStatus
 }
 export type SockbaseApplicationStatus = 0 | 1 | 2
+
+export interface SockbaseTicketApplication {
+  storeId: string
+  typeId: string
+  paymentMethod: string
+  paymentProductId?: string
+  remarks: string
+}
+export type SockbaseTicketApplicaitonDocument = SockbaseTicketApplication & {
+  userId: string
+  createdAt: Date | null
+  updatedAt: Date | null
+  hashId: string | null
+}
 
 export interface SockbaseAccount {
   name: string
@@ -91,7 +145,7 @@ export type SockbaseRole = 0 | 1 | 2
  * online: 1
  * bankTransfer: 2
  */
-export type PaymentType = 1 | 2
+export type PaymentMethod = 1 | 2
 
 /**
  * PaymentStatus
@@ -106,19 +160,19 @@ export type PaymentStatus = 0 | 1 | 2 | 3
 export interface SockbasePayment {
   userId: string
   paymentProductId: string
-  paymentType: PaymentType
-  paymentId?: string
-  bankTransferCode?: string
+  paymentMethod: PaymentMethod
   paymentAmount: number
-  status: PaymentStatus
-  applicationId?: string
-  ticketId?: string
-  createdAt: number
-  updatedAt: number
+  bankTransferCode: string
+  applicationId: string | null
+  ticketId: string | null
 }
 
 export type SockbasePaymentDocument = SockbasePayment & {
   id: string
+  paymentId: string
+  status: PaymentStatus
+  createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type valueOf<T> = T[keyof T]
