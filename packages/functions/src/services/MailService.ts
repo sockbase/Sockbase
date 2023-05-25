@@ -82,8 +82,24 @@ export const acceptPayment = functions.firestore
     const user = await getUser(payment.userId)
 
     if (payment.status !== 1) return
+    if (!payment.applicationId) return
 
-    const template = mailConfig.templates.acceptPayment(payment)
+    const appDoc = await firestore.doc(`/_applications/${payment.applicationId}`)
+      .withConverter(applicationConverter)
+      .get()
+    const app = appDoc.data()
+    if (!app) return
+
+    const eventDoc = await firestore.doc(`/_events/${app.eventId}`)
+      .withConverter(eventConverter)
+      .get()
+    const event = eventDoc.data()
+    if (!event) return
+
+    const space = event.spaces
+      .filter(s => s.id === app.spaceId)[0]
+
+    const template = mailConfig.templates.acceptCirclePayment(payment, app, event, space)
     await firestore.collection('_mail')
       .add({
         to: user.email,
