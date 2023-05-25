@@ -38,7 +38,7 @@ export const acceptApplication = functions.firestore
       .filter(s => s.id === app.spaceId)[0]
 
     const template = mailConfig.templates.acceptApplication(event, app, space)
-    await firestore.collection('_mail')
+    await firestore.collection('_mails')
       .add({
         to: user.email,
         message: {
@@ -60,7 +60,7 @@ export const requestPayment = functions.firestore
     if (!payment.applicationId) return
 
     const template = await requestCirclePaymentAsync(payment.applicationId, payment)
-    await firestore.collection('_mail')
+    await firestore.collection('_mails')
       .add({
         to: user.email,
         message: {
