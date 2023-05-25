@@ -13,7 +13,7 @@ const DashboardContainer: React.FC = () => {
 
   const updateUserData: () => void =
     () => {
-      alert('hello world!')
+      alert('更新は現在準備中です')
     }
 
   const onInitialize: () => void =
