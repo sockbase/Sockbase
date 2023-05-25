@@ -67,8 +67,7 @@ const menu: MenuSection[] = [
         key: 'settings',
         icon: <MdSettings />,
         text: 'マイページ設定',
-        link: '',
-        isDisabled: true
+        link: '/dashboard/settings'
       }
     ]
   },

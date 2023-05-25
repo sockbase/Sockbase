@@ -31,6 +31,7 @@ import DashboardApplicationDetail from './pages/dashboard/CircleApplications/App
 import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
 import Dashboard from './pages/dashboard/Dashboard'
 import DebugDashboard from './pages/dashboard/Debug'
+import DashboardSettings from './pages/dashboard/Settings'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -98,6 +99,15 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <Dashboard />
+          },
+          {
+            path: 'settings',
+            children: [
+              {
+                index: true,
+                element: <DashboardSettings />
+              }
+            ]
           },
           {
             path: 'events',
