@@ -34,17 +34,25 @@ const ApplicationList: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {
-            Object.entries(props.apps)
-              .filter(([_, app]) => !!app.hashId)
-              .map(([appId, app]) => (
-                app.hashId && <tr key={app.hashId}>
-                  <th><Link to={`/dashboard/applications/${app.hashId}`}>{props.events[app.eventId].eventName}</Link></th>
-                  <td>{sockbaseShared.constants.application.statusText[props.metas[appId].applicationStatus]}</td>
-                  <td>{app.circle.name}</td>
-                  <td>{app.circle.penName}</td>
-                  <td>{new Date(app.timestamp).toLocaleString()}</td>
-                </tr>
-              ))
+            Object.entries(props.apps).length !== 0
+              ? Object.entries(props.apps)
+                .filter(([_, app]) => !!app.hashId)
+                .map(([appId, app]) => (
+                  app.hashId && <tr key={app.hashId}>
+                    <th><Link to={`/dashboard/applications/${app.hashId}`}>{props.events[app.eventId].eventName}</Link></th>
+                    <td>{sockbaseShared.constants.application.statusText[props.metas[appId].applicationStatus]}</td>
+                    <td>{app.circle.name}</td>
+                    <td>{app.circle.penName}</td>
+                    <td>{app.createdAt?.toLocaleString() ?? '-'}</td>
+                  </tr>
+                ))
+              : <tr>
+                <th>申し込み情報はありません</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
           }
         </tbody>
       </table>

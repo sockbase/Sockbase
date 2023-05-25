@@ -13,18 +13,30 @@ service cloud.firestore {
     function getEvent(eventId) {
       return get(/databases/$(database)/documents/events/$(eventId)).data
     }
+
+    function getApplication(appId) {
+      return get(/databases/$(database)/documents/_applications/$(appId)).data
+    }
     
   	match /users/{userId} {
     	allow read: if request.auth.uid == userId;
       allow write: if request.auth.uid == userId;
     }
     
+    match /stores/{storeId} {
+      allow read: if true;
+    }
+    
   	match /events/{eventId} {
     	allow read: if true;
 
       match /_users/{userId} {
-        allow read:  if request.auth.uid == userId
-          || isOrganizationAdmin(request.auth.uid, resource.data._organization.id);
+        allow read: if request.auth.uid == userId
+          || isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+      }
+
+      match /_applications/{applicationId} {
+        allow read: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
       }
     }
 
@@ -32,7 +44,7 @@ service cloud.firestore {
       allow read: if request.auth != null;
     }
     
-    match /applications/{applicationId} {
+    match /_applications/{applicationId} {
       function isValidApplication(app) {
         return 'userId' in app && app.userId is string && app.userId != ''
           && 'eventId' in app && app.eventId is string && exists(/databases/$(database)/documents/events/$(app.eventId))
@@ -52,9 +64,6 @@ service cloud.firestore {
             && (app.paymentMethod == 'online' || app.paymentMethod == 'bankTransfer')
           && 'remarks' in app && app.remarks is string;
       }
-      function getApplication(appId) {
-        return get(/databases/$(database)/documents/applications/$(appId)).data
-      }
       
       allow read: if request.auth.uid == resource.data.userId
         || isOrganizationAdmin(request.auth.uid, getEvent(resource.data.eventId)._organization.id);
@@ -68,6 +77,12 @@ service cloud.firestore {
           || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
         allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
       }
+    }
+
+    match /_payments/{paymentId} {
+      allow read: if request.auth.uid == resource.data.userId
+        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resouce.data.applicationId).eventId)._organization.id);
+      allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resouce.data.applicationId).eventId)._organization.id);
     }
     
     // match /{document=**} {

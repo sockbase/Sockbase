@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseApplicationStatus, SockbaseEvent } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseApplicationStatus, SockbaseEvent, SockbasePaymentDocument } from 'sockbase'
 import sockbaseShared from '@sockbase/shared'
 
 import { MdEdit } from 'react-icons/md'
@@ -13,10 +13,12 @@ import CircleCutImage from '../../../Parts/CircleCutImage'
 import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
+import PaymentStatusLabel from '../../../Parts/PaymentStatusLabel'
 
 interface Props {
   app: SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }
   event: SockbaseEvent
+  payment: SockbasePaymentDocument | null
   userData: SockbaseAccount
   circleCutURL: string
   isAdmin: boolean | null
@@ -32,9 +34,16 @@ const ApplicationDetail: React.FC<Props> = (props) => {
     <>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/events">管理イベント</Link></li>
-        <li>{props.event._organization.name}</li>
-        <li><Link to="/dashboard/events/sockbase1">{props.event.eventName}</Link></li>
+        {props.isAdmin
+          ? <>
+            <li><Link to="/dashboard/events">管理イベント</Link></li>
+            <li>{props.event._organization.name}</li>
+            <li><Link to="/dashboard/events/sockbase1">{props.event.eventName}</Link></li>
+          </>
+          : <>
+            <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
+            <li>{props.event.eventName}</li>
+          </>}
       </Breadcrumbs>
       <PageTitle
         icon={<MdEdit />}
@@ -43,40 +52,7 @@ const ApplicationDetail: React.FC<Props> = (props) => {
 
       <TwoColumnsLayout>
         <>
-          <h3>申し込み情報</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>申し込みID</th>
-                <td>{props.app.hashId} {props.app.hashId && <CopyToClipboard content={props.app.hashId} />}
-                </td>
-              </tr>
-              <tr>
-                <th>申し込み日時</th>
-                <td>{new Date(props.app.timestamp).toLocaleString()}</td>
-              </tr>
-            </tbody>
-          </table>
-
           <h3>ステータス</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>申し込みステータス</th>
-                <td>{sockbaseShared.constants.application.statusText[props.app.meta.applicationStatus]}</td>
-              </tr>
-              <tr>
-                <th>決済</th>
-                <td>- TBD -</td>
-              </tr>
-              <tr>
-                <th>通行証発券</th>
-                <td>- TBD -</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3>スペース</h3>
           <table>
             <tbody>
               <tr>
@@ -84,16 +60,29 @@ const ApplicationDetail: React.FC<Props> = (props) => {
                 <td>{spaceName}</td>
               </tr>
               <tr>
+                <th>申し込み状況</th>
+                <td>{sockbaseShared.constants.application.statusText[props.app.meta.applicationStatus]}</td>
+              </tr>
+              <tr>
+                <th>お支払い状況</th>
+                <td>
+                  <Link to="/dashboard/payments">
+                    {(props.payment?.status !== undefined && <PaymentStatusLabel status={props.payment.status} />) ?? '-'}
+                  </Link>
+                </td>
+              </tr>
+              {/* <tr>
+                <th>通行証発券</th>
+                <td>- TBD -</td>
+              </tr> */}
+              {/* <tr>
                 <th>スペース配置</th>
                 <td>- TBD -</td>
-              </tr>
+              </tr> */}
             </tbody>
           </table>
 
           <h3>サークルカット</h3>
-          <p>
-            提出されました
-          </p>
           {props.circleCutURL && <CircleCutImage src={props.circleCutURL} />}
 
           <h3>サークル情報</h3>
@@ -171,10 +160,25 @@ const ApplicationDetail: React.FC<Props> = (props) => {
               </tr>
             </tbody>
           </table>
+
+          <h3>申し込み情報</h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>申し込みID</th>
+                <td>{props.app.hashId} {props.app.hashId && <CopyToClipboard content={props.app.hashId} />}
+                </td>
+              </tr>
+              <tr>
+                <th>申し込み日時</th>
+                <td>{props.app.createdAt?.toLocaleString() ?? '-'}</td>
+              </tr>
+            </tbody>
+          </table>
         </>
 
         <>
-          <h3>頒布物情報デジタル提出</h3>
+          {/* <h3>頒布物情報デジタル提出</h3>
           <p>
             入力されていません
           </p>
@@ -209,7 +213,7 @@ const ApplicationDetail: React.FC<Props> = (props) => {
             <FormItem>
               <FormButton color="default">サークル広報情報を編集</FormButton>
             </FormItem>
-          </FormSection>
+          </FormSection> */}
 
           {props.isAdmin && <>
             <h3>操作</h3>

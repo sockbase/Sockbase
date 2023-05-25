@@ -9,6 +9,8 @@ const useFirebaseError: () => IUseFirebaseError =
           return 'メールアドレスまたはパスワードが間違っています'
         } else if (errorMessage.includes('auth/email-already-in-use')) {
           return 'メールアドレスが既に使われています'
+        } else if (errorMessage.includes('internal') || errorMessage.includes('INTERNAL')) {
+          return '内部エラーが発生しました'
         } else {
           return errorMessage
         }

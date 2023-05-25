@@ -42,19 +42,6 @@ interface MenuItem {
 }
 const menu: MenuSection[] = [
   {
-    sectionKey: 'debug',
-    sectionName: 'デバッグ情報',
-    items: [
-      {
-        key: 'debug',
-        icon: <MdCottage />,
-        text: 'デバッグダッシュボード',
-        link: '/dashboard/debug',
-        isImportant: true
-      }
-    ]
-  },
-  {
     sectionKey: 'mypage',
     sectionName: 'マイページ',
     items: [
@@ -65,32 +52,16 @@ const menu: MenuSection[] = [
         link: '/dashboard'
       },
       {
-        key: 'myTickets',
-        icon: <MdLocalActivity />,
-        text: 'マイチケット',
-        link: '',
-        isImportant: true,
-        isDisabled: true
-      },
-      {
         key: 'circleHistories',
         icon: <MdEditNote />,
         text: 'サークル申し込み履歴',
         link: '/dashboard/applications'
       },
       {
-        key: 'ticketHistories',
-        icon: <MdAccountBalanceWallet />,
-        text: 'チケット申し込み履歴',
-        link: '',
-        isDisabled: true
-      },
-      {
         key: 'paymentHistories',
         icon: <MdPayments />,
         text: '決済履歴',
-        link: '',
-        isDisabled: true
+        link: '/dashboard/payments'
       },
       {
         key: 'settings',
@@ -105,15 +76,7 @@ const menu: MenuSection[] = [
     sectionKey: 'support',
     sectionName: 'イベント開催支援',
     requiredRole: sockbaseShared.enumerations.user.permissionRoles.staff,
-    items: [
-      {
-        key: 'terminal',
-        icon: <MdQrCodeScanner />,
-        text: 'チケット照会ターミナル',
-        link: '',
-        isDisabled: true
-      }
-    ]
+    items: []
   },
   {
     sectionKey: 'system',
@@ -121,17 +84,53 @@ const menu: MenuSection[] = [
     requiredRole: sockbaseShared.enumerations.user.permissionRoles.admin,
     items: [
       {
+        key: 'manageEvents',
+        icon: <MdEditCalendar />,
+        text: 'イベント管理',
+        link: '/dashboard/events'
+      }
+    ]
+  },
+  {
+    sectionKey: 'debug',
+    sectionName: 'デバッグ機能',
+    requiredRole: sockbaseShared.enumerations.user.permissionRoles.admin,
+    items: [
+      {
+        key: 'debug',
+        icon: <MdCottage />,
+        text: 'デバッグダッシュボード',
+        link: '/dashboard/debug',
+        isImportant: true
+      },
+      {
+        key: 'myTickets',
+        icon: <MdLocalActivity />,
+        text: 'マイチケット',
+        link: '',
+        isImportant: true,
+        isDisabled: true
+      },
+      {
+        key: 'ticketHistories',
+        icon: <MdAccountBalanceWallet />,
+        text: 'チケット申し込み履歴',
+        link: '',
+        isDisabled: true
+      },
+      {
+        key: 'terminal',
+        icon: <MdQrCodeScanner />,
+        text: 'チケット照会ターミナル',
+        link: '',
+        isDisabled: true
+      },
+      {
         key: 'omnisearch',
         icon: <MdManageSearch />,
         text: '横断検索',
         link: '',
         isDisabled: true
-      },
-      {
-        key: 'manageEvents',
-        icon: <MdEditCalendar />,
-        text: 'イベント管理',
-        link: '/dashboard/events'
       },
       {
         key: 'manageStores',
@@ -188,7 +187,9 @@ const Sidebar: React.FC<Props> = (props) => {
         <>
           <StyledStatePanel>
             <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
-            <StyledStatePanelContent>{props.user.email}({sockbaseShared.constants.user.roleText[role]})</StyledStatePanelContent>
+            <StyledStatePanelContent>
+              {props.user.email}{role !== sockbaseShared.enumerations.user.permissionRoles.user && `(${sockbaseShared.constants.user.roleText[role]})`}
+            </StyledStatePanelContent>
           </StyledStatePanel>
           <StyledSection>
             <StyledMenu>

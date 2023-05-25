@@ -15,6 +15,8 @@ import {
 } from 'firebase/auth'
 import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase/firestore'
 import { type FirebaseStorage, getStorage as getFirebaseStorage } from 'firebase/storage'
+import { type Functions, getFunctions as getFirebaseFunctions } from 'firebase/functions'
+
 import { getFirebaseApp } from '../libs/FirebaseApp'
 
 import { useAtom } from 'jotai'
@@ -31,6 +33,7 @@ interface IUseFirebase {
   sendPasswordResetURL: (email: string) => void
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
+  getFunctions: () => Functions
 }
 
 const useFirebase: () => IUseFirebase =
@@ -102,6 +105,12 @@ const useFirebase: () => IUseFirebase =
     const getStorage: () => FirebaseStorage =
       () => getFirebaseStorage()
 
+    const getFunctions: () => Functions =
+      () => {
+        const app = getFirebaseApp()
+        return getFirebaseFunctions(app)
+      }
+
     const onAuthenticationUpdated: () => Unsubscribe =
       () => {
         const auth = getAuth()
@@ -142,7 +151,8 @@ const useFirebase: () => IUseFirebase =
       createUser,
       sendPasswordResetURL,
       getFirestore,
-      getStorage
+      getStorage,
+      getFunctions
     }
   }
 

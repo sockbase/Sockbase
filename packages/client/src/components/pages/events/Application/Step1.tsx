@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure } from 'sockbase'
-import { type IPaymentMethod } from './StepContainer'
+import sockbaseShared from '@sockbase/shared'
 
 import usePostalCode from '../../../../hooks/usePostalCode'
 import useValidate from '../../../../hooks/useValidate'
@@ -27,7 +27,6 @@ interface Props {
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
   spaces: SockbaseEventSpace[]
-  paymentMethods: IPaymentMethod[]
   prevStep: () => void
   nextStep: (app: SockbaseApplication, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
@@ -63,7 +62,7 @@ const Step1: React.FC<Props> = (props) => {
     paymentMethod: '',
     remarks: ''
   })
-  const [leaderUserData, setleaderUserData] = useState({
+  const [leaderUserData, setLeaderUserData] = useState({
     name: '',
     birthday: 0,
     postalCode: '',
@@ -90,7 +89,7 @@ const Step1: React.FC<Props> = (props) => {
         setApp(props.app)
       }
       if (props.leaderUserData) {
-        setleaderUserData(props.leaderUserData)
+        setLeaderUserData(props.leaderUserData)
       }
       if (props.circleCutFile) {
         setCircleCutFile(props.circleCutFile)
@@ -98,11 +97,10 @@ const Step1: React.FC<Props> = (props) => {
       if (props.spaces) {
         setSpaceIds(props.spaces.map(i => i.id))
       }
-      if (props.paymentMethods) {
-        setPaymentMethodIds(props.paymentMethods.map(i => i.id))
-      }
+
+      setPaymentMethodIds(sockbaseShared.constants.payment.methods.map(i => i.id))
     }
-  useEffect(onInitialize, [props.app, props.leaderUserData, props.circleCutFile, props.spaces, props.paymentMethods])
+  useEffect(onInitialize, [props.app, props.leaderUserData, props.circleCutFile, props.spaces])
 
   const onChangeCircleCutFile: () => void =
     () => {
@@ -111,13 +109,9 @@ const Step1: React.FC<Props> = (props) => {
     }
   useEffect(onChangeCircleCutFile, [circleCutFile])
 
-  const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace | undefined>()
+  const [selectedSpace, setSelectedSpace] = useState<SockbaseEventSpace | undefined>()
   const onChangeSpaceSelect: () => void =
-    () => {
-      const space = props.spaces
-        .filter(i => i.id === app.spaceId)[0]
-      setSpaceInfo(space)
-    }
+    () => setSelectedSpace(props.spaces.filter(i => i.id === app.spaceId)[0])
   useEffect(onChangeSpaceSelect, [app.spaceId])
 
   const onChangeForm: () => void =
@@ -173,7 +167,7 @@ const Step1: React.FC<Props> = (props) => {
   useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData])
 
   const onChangeBirthday: () => void =
-    () => setleaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
+    () => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
   useEffect(onChangeBirthday, [displayBirthday])
 
   const onChangeCircleCutData: () => void =
@@ -205,7 +199,7 @@ const Step1: React.FC<Props> = (props) => {
         paymentMethod: 'online',
         remarks: '備考'
       })
-      setleaderUserData({
+      setLeaderUserData({
         name: '染宮ねいろ',
         birthday: new Date('2002/03/29').getTime(),
         postalCode: '133-0065',
@@ -236,7 +230,7 @@ const Step1: React.FC<Props> = (props) => {
 
       if (sanitizedPostalCode.length !== 7) return
       getAddressByPostalCode(sanitizedPostalCode)
-        .then(address => setleaderUserData(s => ({
+        .then(address => setLeaderUserData(s => ({
           ...s,
           address
         })))
@@ -254,11 +248,13 @@ const Step1: React.FC<Props> = (props) => {
           </FormItem>
         </FormSection>
       }
+
       <FormSection>
         <FormItem>
           <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
         </FormItem>
       </FormSection>
+
       <h2>申込むスペース数</h2>
       <FormSection>
         <FormItem>
@@ -355,8 +351,8 @@ const Step1: React.FC<Props> = (props) => {
               }
             }))}>
             <option value="none">選択してください</option>
-            <option value="yes">成人向け頒布物はありません</option>
-            <option value="no">成人向け頒布物があります</option>
+            <option value="no">成人向け頒布物はありません</option>
+            <option value="yes">成人向け頒布物があります</option>
           </FormSelect>
         </FormItem>
         <FormItem>
@@ -420,7 +416,7 @@ const Step1: React.FC<Props> = (props) => {
               <FormLabel>氏名</FormLabel>
               <FormInput
                 value={leaderUserData.name}
-                onChange={e => setleaderUserData(s => ({ ...s, name: e.target.value }))} />
+                onChange={e => setLeaderUserData(s => ({ ...s, name: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>生年月日</FormLabel>
@@ -438,7 +434,7 @@ const Step1: React.FC<Props> = (props) => {
                   if (e.target.value.length > 8) return
                   const postal = e.target.value.match(/(\d{3})(\d{4})/)
                   handleFilledPostalCode(e.target.value)
-                  setleaderUserData(s => ({
+                  setLeaderUserData(s => ({
                     ...s,
                     postalCode:
                       postal?.length === 3
@@ -455,13 +451,13 @@ const Step1: React.FC<Props> = (props) => {
               <FormLabel>住所</FormLabel>
               <FormInput
                 value={leaderUserData.address}
-                onChange={e => setleaderUserData(s => ({ ...s, address: e.target.value }))} />
+                onChange={e => setLeaderUserData(s => ({ ...s, address: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
                 value={leaderUserData.telephone}
-                onChange={e => setleaderUserData(s => ({ ...s, telephone: e.target.value }))} />
+                onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value }))} />
             </FormItem>
           </FormSection>
 
@@ -474,20 +470,20 @@ const Step1: React.FC<Props> = (props) => {
               <FormLabel>メールアドレス</FormLabel>
               <FormInput type="email"
                 value={leaderUserData.email}
-                onChange={e => setleaderUserData(s => ({ ...s, email: e.target.value }))}
+                onChange={e => setLeaderUserData(s => ({ ...s, email: e.target.value }))}
                 hasError={!validator.isEmpty(leaderUserData.email) && !validator.isEmail(leaderUserData.email)} />
             </FormItem>
             <FormItem>
               <FormLabel>パスワード</FormLabel>
               <FormInput type="password"
                 value={leaderUserData.password}
-                onChange={e => setleaderUserData(s => ({ ...s, password: e.target.value }))} />
+                onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>パスワード(確認)</FormLabel>
               <FormInput type="password"
                 value={leaderUserData.rePassword}
-                onChange={e => setleaderUserData(s => ({ ...s, rePassword: e.target.value }))}
+                onChange={e => setLeaderUserData(s => ({ ...s, rePassword: e.target.value }))}
                 hasError={!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword} />
               {!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword &&
                 <FormHelp>パスワードの入力が間違っています</FormHelp>}
@@ -498,22 +494,22 @@ const Step1: React.FC<Props> = (props) => {
 
       <h2>サークル参加費お支払い方法</h2>
       {
-        spaceInfo
+        selectedSpace
           ? <FormSection>
             <FormItem>
               <table>
                 <tbody>
                   <tr>
                     <th>申込むスペース</th>
-                    <td>{spaceInfo.name}</td>
+                    <td>{selectedSpace.name}</td>
                   </tr>
                   <tr>
                     <th>スペース詳細情報</th>
-                    <td>{spaceInfo.description}</td>
+                    <td>{selectedSpace.description}</td>
                   </tr>
                   <tr>
                     <th>お支払い額</th>
-                    <td>{spaceInfo.price.toLocaleString()}円</td>
+                    <td>{selectedSpace.price.toLocaleString()}円</td>
                   </tr>
                 </tbody>
               </table>
@@ -521,7 +517,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormRadio
                 name="paymentMethod"
-                values={props.paymentMethods.map(i => ({
+                values={sockbaseShared.constants.payment.methods.map(i => ({
                   text: i.description,
                   value: i.id
                 }))}

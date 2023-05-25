@@ -78,6 +78,7 @@ const StyledWrapMain = styled.main`
   }
 `
 const StyledMain = styled.div`
+  min-height: 100%;
   padding: 20px;
   background-color: #ffffff;
 `

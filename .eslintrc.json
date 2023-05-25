@@ -6,8 +6,8 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "standard-with-typescript"
+    "standard-with-typescript",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": [

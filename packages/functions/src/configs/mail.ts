@@ -1,4 +1,5 @@
-import type { SockbaseApplicationDocument, SockbaseEvent } from 'sockbase'
+import dayjs from '../helpers/dayjs'
+import type { SockbaseApplicationDocument, SockbaseEvent, SockbaseEventSpace, SockbasePaymentDocument, SockbaseStore, SockbaseTicketApplicaitonDocument } from 'sockbase'
 
 const suffix = [
   '',
@@ -10,7 +11,7 @@ const suffix = [
 ]
 
 const templates = {
-  acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument) => ({
+  acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument, space: SockbaseEventSpace) => ({
     subject: `[${event.eventName}] サークル参加申し込み 内容確認`,
     body: [
       `この度は、${event.eventName}への参加申し込みをいただき、誠にありがとうございます。お申し込みいただいた内容を確認いたしました。`,
@@ -21,7 +22,7 @@ const templates = {
       `サークル名(よみ): ${app.circle.yomi}`,
       `ペンネーム: ${app.circle.penName}`,
       `ペンネーム(よみ): ${app.circle.penNameYomi}`,
-      `スペース数: ${app.spaceId}`,
+      `スペース数: ${space.name}`,
       `成人向け頒布物の有無: ${app.circle.hasAdult ? '有り' : '無し'}`,
       `頒布物のジャンル: ${app.circle.genre}`,
       `頒布物概要: ${app.overview.description}`,
@@ -32,12 +33,73 @@ const templates = {
       '',
       '[イベント情報]',
       `イベント名: ${event.eventName}`,
-      `日程: ${event.schedules.startEvent}〜${event.schedules.endEvent}`,
-      '場所: ', // TODO: あとで追記
+      `日程: ${dayjs(event.schedules.startEvent).tz().format('YYYY年M月D日 H:mm')} 〜 ${dayjs(event.schedules.endEvent).tz().format('H:mm')}`,
+      '場所: ', // TODO: 場所 あとで追記
       '',
-      'もし、お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただけますようお願いいたします。',
+      'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただけますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',
       '今後ともどうぞよろしくお願いいたします。',
+      ...suffix
+    ]
+  }),
+  requestCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace) => ({
+    subject: `[${event.eventName}] サークル参加費 お支払いのお願い`,
+    body: [
+      `この度は、${event.eventName}への参加申し込みをいただき、誠にありがとうございます。`,
+      '',
+      'サークル参加費のお支払いのご案内をいたします。',
+      '',
+      '[お支払い情報]',
+      `お支払い方法: ${payment.paymentMethod === 1 ? 'オンライン' : '銀行振込'}`,
+      `お支払い代金: ${payment.paymentAmount.toLocaleString()}円`,
+      `お支払い期限: ${dayjs(event.schedules.endApplication).tz().format('YYYY年M月D日')}`,
+      `お支払い補助番号: ${payment.bankTransferCode}`,
+      '',
+      ...payment.paymentMethod === 2
+        ? [
+          '[銀行振込情報/ ゆうちょ銀行からのお振り込み]',
+          '加入者名: ノートセンディング',
+          '口座記号・口座番号: 10740-30814531',
+          '',
+          '[銀行振込情報/ 他の金融機関からのお振り込み]',
+          '振込先銀行: ゆうちょ銀行(金融機関コード9900)',
+          '加入者名: ノートセンディング',
+          '預金種目: 普通',
+          '支店番号・支店名: 078(◯七八)',
+          '口座番号: 3081453',
+          '',
+          `※お振り込みの特定のため、ご依頼人名の先頭に「${payment.bankTransferCode}」と入力してください。`,
+          ''
+        ]
+        : [],
+      '[申し込み情報]',
+      `イベント: ${event.eventName}`,
+      `サークル名: ${app.circle.name}`,
+      `ペンネーム: ${app.circle.penName}`,
+      `スペース: ${space.name}`,
+      '',
+      'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただけますようお願いいたします。',
+      '何かご不明点がありましたら、お気軽にご連絡ください。',
+      '今後ともどうぞよろしくお願いいたします。',
+      ...suffix
+    ]
+  }),
+  requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketApplicaitonDocument, store: SockbaseStore) => ({
+    subject: `[${store.storeName}] お支払いのお願い`,
+    body: []
+  }),
+  acceptPayment: (payment: SockbasePaymentDocument) => ({
+    subject: '[Sockbase] お支払い完了のお知らせ',
+    body: [
+      '以下の通り、お支払いを受け付けました。',
+      'ご利用ありがとうございました。',
+      '',
+      '[決済情報]',
+      `お支払い方法: ${payment.paymentMethod === 1 ? 'オンライン決済' : '銀行振込'}`,
+      `お支払い代金: ${payment.paymentAmount.toLocaleString()}円`,
+      '',
+      '※プロモーションコード等を使用した場合、実際の決済額と異なって表示される場合がございます。',
+      '※オンライン決済の場合、領収書はメールにて別途送付いたします。',
       ...suffix
     ]
   })
