@@ -62,14 +62,6 @@ const router = createBrowserRouter([
         element: <PrivacyPolicy />
       },
       {
-        path: 'formTemplate',
-        element: <FormTemplate />
-      },
-      {
-        path: 'dashboardTemplate',
-        element: <DashboardTemplate />
-      },
-      {
         path: 'events',
         children: [
           {
@@ -78,25 +70,34 @@ const router = createBrowserRouter([
           }
         ]
       },
-      {
-        path: 'stores',
-        children: [
-          {
-            path: ':storeId',
-            element: <TicketApplication />
-          }
-        ]
-      },
+      ...[
+        ...import.meta.env.DEV
+          ? [
+            {
+              path: 'stores',
+              children: [
+                {
+                  path: ':storeId',
+                  element: <TicketApplication />
+                }
+              ]
+            },
+            {
+              path: 'formTemplate',
+              element: <FormTemplate />
+            },
+            {
+              path: 'dashboardTemplate',
+              element: <DashboardTemplate />
+            }
+          ]
+          : [{}]],
       {
         path: 'dashboard',
         children: [
           {
             index: true,
             element: <Dashboard />
-          },
-          {
-            path: 'debug',
-            element: <DebugDashboard />
           },
           {
             path: 'events',
@@ -132,7 +133,15 @@ const router = createBrowserRouter([
                 element: <DashboardPaymentList />
               }
             ]
-          }
+          },
+          ...[
+            import.meta.env.DEV
+              ? {
+                path: 'debug',
+                element: <DebugDashboard />
+              }
+              : {}
+          ],
         ]
       }
     ]
