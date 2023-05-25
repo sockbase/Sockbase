@@ -101,15 +101,7 @@ const PaymentList: React.FC<Props> = (props) => {
                   {p.status === 0 && p.paymentMethod === 1 && <a href={getSpaceByAppId(p.applicationId)?.productInfo?.paymentURL} target="_blank" rel="noreferrer">お支払いはこちら</a>}
                 </td>
               </tr>)
-            : <tr>
-              <th>決済情報はありません</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
+            : <tr><th colSpan={7}>決済情報はありません</th></tr>
           }
         </tbody>
       </table>

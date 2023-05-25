@@ -47,13 +47,7 @@ const ApplicationList: React.FC<Props> = (props) => {
                     <td>{app.createdAt?.toLocaleString() ?? '-'}</td>
                   </tr>
                 ))
-              : <tr>
-                <th>申し込み情報はありません</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
+              : <tr><th rowSpan={5}>申し込み情報はありません</th></tr>
           }
         </tbody>
       </table>
