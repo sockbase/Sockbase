@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2023",
+    "target": "ESNext",
     "module": "CommonJS",
-    "rootDir": "./src",
-    "noEmit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noUnusedLocals": false,
     "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "moduleResolution": "node",
+    "baseUrl": "."
   }
 }
