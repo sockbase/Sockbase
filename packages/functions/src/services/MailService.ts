@@ -6,7 +6,7 @@ import * as functions from 'firebase-functions'
 import firebaseAdmin from '../libs/FirebaseAdmin'
 
 import mailConfig from '../configs/mail'
-import { applicationConverter, eventConverter } from '../libs/converters'
+import { applicationConverter, applicationHashIdConverter, eventConverter } from '../libs/converters'
 
 const getUser: (userId: string) => Promise<UserRecord> =
   async (userId) => {
@@ -46,6 +46,56 @@ export const acceptApplication = functions.firestore
           text: template.body.join('\n')
         }
       })
+  })
+
+export const onUpdateApplication = functions.firestore
+  .document('/_applications/{applicationId}')
+  .onUpdate(async (change: functions.Change<QueryDocumentSnapshot>, context: functions.EventContext<{ applicationId: string }>) => {
+    if (!change.after.exists) return
+
+    const beforeApp = change.before.data() as SockbaseApplicationDocument
+    const afterApp = change.after.data() as SockbaseApplicationDocument
+
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    if (!beforeApp.unionCircleId && afterApp.unionCircleId) {
+      const unionCircleAppHashDoc = await firestore.doc(`/_applicationHaashIds/${afterApp.unionCircleId}`)
+        .withConverter(applicationHashIdConverter)
+        .get()
+      const unionCircleAppHash = unionCircleAppHashDoc.data()
+      if (!unionCircleAppHash) {
+        throw new Error('unionAppHash not found')
+      }
+
+      const unionCircleAppDoc = await firestore.doc(`/_applications/${unionCircleAppHash.applicationId}`)
+        .withConverter(applicationConverter)
+        .get()
+      const unionCircleApp = unionCircleAppDoc.data()
+      if (!unionCircleApp) {
+        throw new Error('unionApp not found')
+      }
+
+      const unionUser = await getUser(unionCircleApp.userId)
+
+      const eventDoc = await firestore.doc(`/events/${afterApp.eventId}`)
+        .withConverter(eventConverter)
+        .get()
+      const event = eventDoc.data()
+      if (!event) {
+        throw new Error('event not found')
+      }
+
+      const updateUnionCircleTemplate = mailConfig.templates.updateUnionCircle(event, afterApp, unionCircleApp)
+      await firestore.collection('_mails')
+        .add({
+          to: unionUser.email,
+          message: {
+            subject: updateUnionCircleTemplate.subject,
+            text: updateUnionCircleTemplate.body.join('\n')
+          }
+        })
+    }
   })
 
 export const requestPayment = functions.firestore
