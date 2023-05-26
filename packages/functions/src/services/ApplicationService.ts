@@ -17,7 +17,7 @@ import * as functions from 'firebase-functions'
 import fetch from 'node-fetch'
 
 import firebaseAdmin from '../libs/FirebaseAdmin'
-import { applicationConverter, paymentConverter } from '../libs/converters'
+import { applicationConverter, applicationHashIdConverter, paymentConverter } from '../libs/converters'
 
 export const onChangeApplication = functions.firestore
   .document('/_applications/{applicationId}')
@@ -34,10 +34,10 @@ export const onChangeApplication = functions.firestore
       .get()
     if (!userDoc.exists) return
 
-    const user = userDoc.data() as SockbaseAccount
+    const userData = userDoc.data() as SockbaseAccount
     await firestore
       .doc(`/events/${app.eventId}/_users/${app.userId}`)
-      .set(user)
+      .set(userData)
   })
 
 export const createApplication = functions.https.onCall(async (app: SockbaseApplication, context) => {
@@ -50,7 +50,37 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   const adminApp = firebaseAdmin.getFirebaseAdmin()
   const firestore = adminApp.firestore()
 
+  const existsAppsDoc = await firestore.collection('_applications')
+    .withConverter(applicationConverter)
+    .where('userId', '==', userId)
+    .get()
+  const existsApps = existsAppsDoc.docs.length !== 0
+  if (existsApps) {
+    throw new functions.https.HttpsError('already-exists', 'application_already_exists')
+  }
+
+  const unionAppHashDoc = app.unionCircleId
+    ? (await firestore.doc(`/_applicationHashIds/${app.unionCircleId}`)
+      .withConverter(applicationHashIdConverter)
+      .get()).data()
+    : null
+  if (unionAppHashDoc === undefined) {
+    throw new functions.https.HttpsError('not-found', 'application_invalid_unionCircleId')
+  }
+
+  if (unionAppHashDoc !== null) {
+    const unionApp = (await firestore.doc(`/_applications/${unionAppHashDoc.applicationId}`)
+      .withConverter(applicationConverter)
+      .get())
+      .data()
+
+    if (unionApp?.hashId) {
+      throw new functions.https.HttpsError('already-exists', 'application_already_union')
+    }
+  }
+
   const eventId = app.eventId
+
   const eventDoc = await firestore
     .doc(`/events/${eventId}`)
     .get()
@@ -60,6 +90,11 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   }
 
   const now = new Date()
+  const timestamp = now.getTime()
+
+  if (event.schedules.startApplication > timestamp || timestamp > event.schedules.endApplication) {
+    throw new functions.https.HttpsError('deadline-exceeded', 'application_out_of_term')
+  }
 
   const appDoc: SockbaseApplicationDocument = {
     ...app,
@@ -112,6 +147,12 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
       },
       { merge: true }
     )
+
+  if (unionAppHashDoc !== null) {
+    await firestore
+      .doc(`/_applications/${unionAppHashDoc.applicationId}`)
+      .set({ unionCircleId: hashId }, { merge: true })
+  }
 
   const webhookBody = {
     content: '',
