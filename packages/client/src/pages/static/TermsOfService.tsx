@@ -1,16 +1,18 @@
-import DefaultLayout from '../../components/Layout/Default/Default'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import { useState } from "react"
+import DefaultLayout from "../../components/Layout/Default/Default"
+import StaticDocumentProvider from "../../components/StaticDocumentProvider/StaticDocumentProvider"
 
-const TermsOfService: React.FC = () => {
-  return (
-    <DefaultLayout title="Sockbase利用規約">
-      <Breadcrumbs>
-        <li>利用者の方へ</li>
-      </Breadcrumbs>
+const TermsOfService: React.FC =
+  () => {
+    const [title, setTitle] = useState<string>()
 
-      <h1>Sockbase利用規約</h1>
-    </DefaultLayout>
-  )
-}
+    return (
+      <DefaultLayout title={title}>
+        <StaticDocumentProvider
+          docId="tos"
+          setTitle={t => setTitle(t)} />
+      </DefaultLayout>
+    )
+  }
 
 export default TermsOfService
