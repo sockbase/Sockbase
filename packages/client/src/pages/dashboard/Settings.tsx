@@ -1,20 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { SockbaseAccount } from 'sockbase'
 
 import useUserData from '../../hooks/useUserData'
 
 import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
 import DashboardSettings from '../../components/pages/dashboard/Settings'
+import useFirebase from '../../hooks/useFirebase'
 
 const DashboardContainer: React.FC = () => {
-  const { getMyUserDataAsync } = useUserData()
+  const { user } = useFirebase()
+  const { getMyUserDataAsync, updateUserDataAsync } = useUserData()
 
   const [userData, setUserData] = useState<SockbaseAccount>()
 
-  const updateUserData: () => void =
-    () => {
-      alert('更新は現在準備中です')
-    }
+  const updateUserData: (_userData: SockbaseAccount) => Promise<void> =
+    useCallback(async (_userData) => {
+      if (!user) return
+      setUserData(_userData)
+      await updateUserDataAsync(user.uid, _userData)
+        .catch(err => { throw err })
+    }, [user])
 
   const onInitialize: () => void =
     () => {
@@ -33,7 +38,7 @@ const DashboardContainer: React.FC = () => {
     <DashboardLayout title="マイページ設定">
       {userData && <DashboardSettings
         userData={userData}
-        updateUserData={updateUserData}
+        updateUserDataAsync={updateUserData}
       />}
     </DashboardLayout>
   )
