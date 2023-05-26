@@ -22,6 +22,7 @@ export default LoadingCircleWrapper
 const Container = styled.div`
   position: relative;
   display: inline-block;
+  width: 100%;
 `
 
 const LoadingContainer = styled.div`
@@ -52,7 +53,7 @@ const LoadingCircle = styled.span`
   border-radius: 50%;
 
   transform: rotate(-90deg);
-  animation: spin 1.5s infinite cubic-bezier(0.75, 0.25, 0.25, 0.75);
+  animation: spin 1s infinite linear;
 
   @keyframes spin {
     100% {
