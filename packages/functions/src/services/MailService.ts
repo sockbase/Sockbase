@@ -60,7 +60,7 @@ export const onUpdateApplication = functions.firestore
     const firestore = adminApp.firestore()
 
     if (!beforeApp.unionCircleId && afterApp.unionCircleId) {
-      const unionCircleAppHashDoc = await firestore.doc(`/_applicationHaashIds/${afterApp.unionCircleId}`)
+      const unionCircleAppHashDoc = await firestore.doc(`/_applicationHashIds/${afterApp.unionCircleId}`)
         .withConverter(applicationHashIdConverter)
         .get()
       const unionCircleAppHash = unionCircleAppHashDoc.data()
@@ -73,7 +73,7 @@ export const onUpdateApplication = functions.firestore
         .get()
       const unionCircleApp = unionCircleAppDoc.data()
       if (!unionCircleApp) {
-        throw new Error('unionApp not found')
+        throw new Error(`unionApp not found (${unionCircleAppHash.applicationId})`)
       }
 
       const unionUser = await getUser(unionCircleApp.userId)

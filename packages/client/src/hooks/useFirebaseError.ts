@@ -16,7 +16,9 @@ const useFirebaseError: () => IUseFirebaseError =
         } else if (errorMessage.includes('application_out_of_term')) {
           return '期間外です'
         } else if (errorMessage.includes('application_invalid_unionCircleId')) {
-          return '合体先の申し込みIDが間違っています'
+          return '隣接配置先サークルの申し込みIDが間違っています'
+        } else if (errorMessage.includes('application_already_union')) {
+          return '隣接希望サークルが他のサークルとの隣接を希望しているため申請できません。'
         } else {
           return errorMessage
         }

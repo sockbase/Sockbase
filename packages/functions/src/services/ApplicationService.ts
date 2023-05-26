@@ -59,13 +59,24 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     throw new functions.https.HttpsError('already-exists', 'application_already_exists')
   }
 
-  const unionAppDoc = app.unionCircleId
+  const unionAppHashDoc = app.unionCircleId
     ? (await firestore.doc(`/_applicationHashIds/${app.unionCircleId}`)
       .withConverter(applicationHashIdConverter)
       .get()).data()
     : null
-  if (unionAppDoc === undefined) {
+  if (unionAppHashDoc === undefined) {
     throw new functions.https.HttpsError('not-found', 'application_invalid_unionCircleId')
+  }
+
+  if (unionAppHashDoc !== null) {
+    const unionApp = (await firestore.doc(`/_applications/${unionAppHashDoc.applicationId}`)
+      .withConverter(applicationConverter)
+      .get())
+      .data()
+
+    if (unionApp?.hashId) {
+      throw new functions.https.HttpsError('already-exists', 'application_already_union')
+    }
   }
 
   const eventId = app.eventId
@@ -137,9 +148,9 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
       { merge: true }
     )
 
-  if (unionAppDoc !== null) {
+  if (unionAppHashDoc !== null) {
     await firestore
-      .doc(`/_applications/${unionAppDoc.applicationId}`)
+      .doc(`/_applications/${unionAppHashDoc.applicationId}`)
       .set({ unionCircleId: hashId }, { merge: true })
   }
 
