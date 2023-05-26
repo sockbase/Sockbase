@@ -21,6 +21,7 @@ export default LoadingCircleWrapper
 
 const Container = styled.div`
   position: relative;
+  display: inline-block;
 `
 
 const LoadingContainer = styled.div`
