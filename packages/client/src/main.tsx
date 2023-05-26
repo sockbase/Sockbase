@@ -9,8 +9,11 @@ import {
 import { HelmetProvider } from 'react-helmet-async'
 
 import './main.css'
-import ResetStyle from './ResetStyle'
-import GlobalStyle from './GlobalStyle'
+
+import ResetStyle from './styles/ResetStyle'
+import Colors from './styles/Colors'
+import GlobalStyle from './styles/GlobalStyle'
+
 import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 
 import App from './pages/App'
@@ -31,6 +34,7 @@ import DashboardApplicationDetail from './pages/dashboard/CircleApplications/App
 import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
 import Dashboard from './pages/dashboard/Dashboard'
 import DebugDashboard from './pages/dashboard/Debug'
+import DashboardSettings from './pages/dashboard/Settings'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -100,6 +104,15 @@ const router = createBrowserRouter([
             element: <Dashboard />
           },
           {
+            path: 'settings',
+            children: [
+              {
+                index: true,
+                element: <DashboardSettings />
+              }
+            ]
+          },
+          {
             path: 'events',
             children: [
               {
@@ -152,6 +165,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
       <ResetStyle />
+      <Colors />
       <GlobalStyle />
       <RouterProvider router={router} />
     </HelmetProvider>

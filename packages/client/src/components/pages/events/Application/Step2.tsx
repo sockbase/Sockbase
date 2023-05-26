@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount } from 'sockbase'
+import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount, SockbaseEventGenre } from 'sockbase'
 import sockbaseShared from '@sockbase/shared'
 
 import useFirebaseError from '../../../../hooks/useFirebaseError'
@@ -10,12 +10,14 @@ import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
 import Alert from '../../../Parts/Alert'
 import CircleCutImage from '../../../Parts/CircleCutImage'
+import LoadingCircleWrapper from '../../../Parts/LoadingCircleWrapper'
 
 interface Props {
   app: SockbaseApplication | undefined
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutData: string | undefined
   spaces: SockbaseEventSpace[]
+  genres: SockbaseEventGenre[]
   userData: SockbaseAccount | null
   submitApplication: () => Promise<void>
   prevStep: () => void
@@ -24,21 +26,27 @@ interface Props {
 const Step2: React.FC<Props> = (props) => {
   const { localize: localizeFirebaseError } = useFirebaseError()
 
-  const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace | undefined>()
-  const [paymentMethodInfo, setPaymentMethodInfo] = useState<{ id: string, description: string } | undefined>()
+  const [spaceInfo, setSpaceInfo] = useState<SockbaseEventSpace>()
+  const [paymentMethodInfo, setPaymentMethodInfo] = useState<{ id: string, description: string }>()
+  const [genreInfo, setGenreInfo] = useState<SockbaseEventGenre>()
+
   const [isProgress, setProgress] = useState(false)
-  const [error, setError] = useState<Error | null | undefined>()
+  const [error, setError] = useState<Error | null>()
 
   const onChangeSpaceSelect: () => void =
     () => {
       if (!props.app || !props.spaces) return
       const space = props.spaces
-        .filter(i => i.id === props.app?.spaceId)[0]
+        .filter(s => s.id === props.app?.spaceId)[0]
       setSpaceInfo(space)
 
       const paymentMethod = sockbaseShared.constants.payment.methods
-        .filter(i => i.id === props.app?.paymentMethod)[0]
+        .filter(p => p.id === props.app?.paymentMethod)[0]
       setPaymentMethodInfo(paymentMethod)
+
+      const genre = props.genres
+        .filter(g => g.id === props.app?.circle.genre)[0]
+      setGenreInfo(genre)
     }
   useEffect(onChangeSpaceSelect, [props.app, props.spaces, props])
 
@@ -106,7 +114,7 @@ const Step2: React.FC<Props> = (props) => {
               </tr>
               <tr>
                 <th>頒布物のジャンル</th>
-                <td>{props.app.circle.genre}</td>
+                <td>{genreInfo?.name}</td>
               </tr>
               <tr>
                 <th>頒布物概要</th>
@@ -207,11 +215,13 @@ const Step2: React.FC<Props> = (props) => {
               </FormButton>
             </FormItem>
             <FormItem>
-              <FormButton
-                onClick={handleSubmit}
-                disabled={isProgress}>
-                決済に進む(申し込み情報送信)
-              </FormButton>
+              <LoadingCircleWrapper isLoading={isProgress}>
+                <FormButton
+                  onClick={handleSubmit}
+                  disabled={isProgress}>
+                  決済に進む(申し込み情報送信)
+                </FormButton>
+              </LoadingCircleWrapper>
             </FormItem>
           </FormSection>
         </>
