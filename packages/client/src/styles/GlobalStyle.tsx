@@ -1,9 +1,6 @@
 import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
-:root {
-  --darkAccentColor: #ea6183;
-}
 html, body {
   font-family: "Noto Sans JP", sans-serif;
   height: 100vh;

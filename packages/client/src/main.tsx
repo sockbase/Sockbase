@@ -9,8 +9,11 @@ import {
 import { HelmetProvider } from 'react-helmet-async'
 
 import './main.css'
-import ResetStyle from './ResetStyle'
-import GlobalStyle from './GlobalStyle'
+
+import ResetStyle from './styles/ResetStyle'
+import Colors from './styles/Colors'
+import GlobalStyle from './styles/GlobalStyle'
+
 import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 
 import App from './pages/App'
@@ -162,6 +165,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
       <ResetStyle />
+      <Colors />
       <GlobalStyle />
       <RouterProvider router={router} />
     </HelmetProvider>

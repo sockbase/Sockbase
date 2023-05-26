@@ -10,6 +10,7 @@ import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
 import Alert from '../../../Parts/Alert'
 import CircleCutImage from '../../../Parts/CircleCutImage'
+import LoadingCircleWrapper from '../../../Parts/LoadingCircleWrapper'
 
 interface Props {
   app: SockbaseApplication | undefined
@@ -214,11 +215,13 @@ const Step2: React.FC<Props> = (props) => {
               </FormButton>
             </FormItem>
             <FormItem>
-              <FormButton
-                onClick={handleSubmit}
-                disabled={isProgress}>
-                決済に進む(申し込み情報送信)
-              </FormButton>
+              <LoadingCircleWrapper isLoading={isProgress}>
+                <FormButton
+                  onClick={handleSubmit}
+                  disabled={isProgress}>
+                  決済に進む(申し込み情報送信)
+                </FormButton>
+              </LoadingCircleWrapper>
             </FormItem>
           </FormSection>
         </>
