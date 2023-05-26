@@ -34,10 +34,10 @@ export const onChangeApplication = functions.firestore
       .get()
     if (!userDoc.exists) return
 
-    const user = userDoc.data() as SockbaseAccount
+    const userData = userDoc.data() as SockbaseAccount
     await firestore
       .doc(`/events/${app.eventId}/_users/${app.userId}`)
-      .set(user)
+      .set(userData)
   })
 
 export const createApplication = functions.https.onCall(async (app: SockbaseApplication, context) => {

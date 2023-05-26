@@ -73,7 +73,7 @@ const templates = {
         ]
         : [],
       '[申し込み情報]',
-      `イベント: ${event.eventName}`,
+      `イベント名: ${event.eventName}`,
       `サークル名: ${app.circle.name}`,
       `ペンネーム: ${app.circle.penName}`,
       `スペース: ${space.name}`,
@@ -103,11 +103,29 @@ const templates = {
       '※オンライン決済の場合、領収書はメールにて別途送付いたします。',
       '',
       '[申し込み情報]',
-      `イベント: ${event.eventName}`,
+      `イベント名: ${event.eventName}`,
       `サークル名: ${app.circle.name}`,
       `ペンネーム: ${app.circle.penName}`,
       `スペース: ${space.name}`,
       `申込みID: ${app.hashId ?? ''}`,
+      ...suffix
+    ]
+  }),
+  updateUnionCircle: (event: SockbaseEvent, app: SockbaseApplicationDocument, unionApp: SockbaseApplicationDocument) => ({
+    subject: `[${event.eventName}] 隣接希望・合体申し込みを受け付けました`,
+    body: [
+      '以下のサークルが隣接希望・合体申し込みを申請し、システムに登録されましたのでお知らせいたします。',
+      '',
+      '[申請元サークル情報]',
+      `イベント名: ${event.eventName}`,
+      `サークル名: ${app.circle.name}`,
+      `申し込みID: ${app.hashId ?? ''}`,
+      '',
+      '[申請先サークル情報]',
+      `サークル名: ${unionApp.circle.name}`,
+      `申し込みID: ${unionApp.hashId ?? ''}`,
+      '',
+      '※お心当たりのない方は、マイペースのお問い合わせからご連絡ください。',
       ...suffix
     ]
   })
