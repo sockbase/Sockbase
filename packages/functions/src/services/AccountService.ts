@@ -4,6 +4,7 @@ import * as functions from 'firebase-functions'
 import { type Change } from 'firebase-functions'
 
 import FirebaseAdmin from '../libs/FirebaseAdmin'
+
 import { roleConverter } from '../libs/converters'
 
 export const onChangeOrganizationRoles = functions.firestore
