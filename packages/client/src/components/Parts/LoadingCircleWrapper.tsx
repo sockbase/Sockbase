@@ -3,10 +3,11 @@ import styled from 'styled-components'
 interface Props {
   isLoading: boolean
   children: React.ReactNode
+  inlined?: boolean
 }
 const LoadingCircleWrapper: React.FC<Props> = (props) => {
   return (
-    <Container>
+    <Container inlined={props.inlined}>
       {props.children}
       {props.isLoading && <LoadingContainer>
         <LoadingCircleArea>
@@ -19,10 +20,10 @@ const LoadingCircleWrapper: React.FC<Props> = (props) => {
 
 export default LoadingCircleWrapper
 
-const Container = styled.div`
+const Container = styled.div<{ inlined?: boolean }>`
   position: relative;
   display: inline-block;
-  width: 100%;
+  ${props => !props.inlined && `width: 100%;`}
 `
 
 const LoadingContainer = styled.div`
