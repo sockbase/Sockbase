@@ -2,7 +2,7 @@
   "hosting": {
     "public": "./packages/client/dist",
     "predeploy": [
-      "yarn --cwd ./packages/client build"
+      "yarn workspace @sockbase/client run build"
     ],
     "ignore": [
       "firebase.json",
@@ -19,8 +19,8 @@
   "functions": {
     "source": "./packages/functions",
     "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run lint",
-      "npm --prefix \"$RESOURCE_DIR\" run build"
+      "yarn workspace @sockbase/functions run lint",
+      "yarn workspace @sockbase/functions run build"
     ],
     "ignore": [
       "node_modules",
