@@ -22,6 +22,10 @@ const FormInput = styled.input<{ hasError?: boolean }>`
     border: '2px solid #ff2222',
     boxShadow: '0 2px 5px #ff222288'
   }}
+
+  &:disabled {
+    background-color: #c0c0c0;
+  }
 `
 
 export default FormInput

@@ -19,7 +19,8 @@ import {
   MdQrCodeScanner,
   MdManageSearch,
   MdEditCalendar,
-  MdStore
+  MdStore,
+  MdMail
 } from 'react-icons/md'
 
 import useWindowDimension from '../../../hooks/useWindowDimension'
@@ -62,6 +63,12 @@ const menu: MenuSection[] = [
         icon: <MdPayments />,
         text: '決済履歴',
         link: '/dashboard/payments'
+      },
+      {
+        key: 'contact',
+        icon: <MdMail />,
+        text: 'お問い合わせ',
+        link: '/dashboard/contact'
       },
       {
         key: 'settings',
