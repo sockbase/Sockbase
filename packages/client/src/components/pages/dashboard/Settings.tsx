@@ -145,7 +145,7 @@ const DashboardSettings: React.FC<Props> = (props) => {
 
           <FormSection>
             <FormItem>
-              <LoadingCircleWrapper isLoading={isProgress}>
+              <LoadingCircleWrapper isLoading={isProgress} inlined>
                 <FormButton
                   inlined
                   disabled={isProgress || errorCount !== 0}

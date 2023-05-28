@@ -170,7 +170,7 @@ const Contact: React.FC = () => {
 
           <FormSection>
             <FormItem>
-              <LoadingCircleWrapper isLoading={isProgress}>
+              <LoadingCircleWrapper isLoading={isProgress} inlined>
                 <FormButton
                   inlined
                   onClick={handleSubmit}
