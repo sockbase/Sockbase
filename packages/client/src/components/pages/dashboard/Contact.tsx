@@ -27,7 +27,7 @@ const inquiryTypes: Array<{
     {
       type: 'payment',
       name: '決済に関する相談',
-      description: '決済に紐づいている申し込みIDを添えてお問い合わせください。'
+      description: '決済に紐づいている申し込みIDを添えてお問い合わせください。(申し込みIDは申し込み情報下部にあります)'
     },
     {
       type: 'changePassword',
@@ -42,7 +42,7 @@ const inquiryTypes: Array<{
     {
       type: 'changeCircleInfo',
       name: 'サークル申し込み情報変更',
-      description: '申し込みIDを添えてお問い合わせください。'
+      description: '申し込み情報下部の申し込みIDを添えてお問い合わせください。'
     },
     {
       type: 'other',
