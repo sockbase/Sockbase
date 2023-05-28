@@ -81,8 +81,8 @@ service cloud.firestore {
 
     match /_payments/{paymentId} {
       allow read: if request.auth.uid == resource.data.userId
-        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resouce.data.applicationId).eventId)._organization.id);
-      allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resouce.data.applicationId).eventId)._organization.id);
+        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id);
+      allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id);
     }
 
     match /_inquiries/{inquiryId} {
