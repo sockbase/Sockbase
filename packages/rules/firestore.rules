@@ -84,6 +84,11 @@ service cloud.firestore {
         || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resouce.data.applicationId).eventId)._organization.id);
       allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resouce.data.applicationId).eventId)._organization.id);
     }
+
+    match /_inquiries/{inquiryId} {
+      allow create: if request.auth.uid == request.resource.data.userId;
+      allow read: if false;
+    }
     
     // match /{document=**} {
     //  allow read, write: if false;

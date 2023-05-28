@@ -1,3 +1,5 @@
+export type valueOf<T> = T[keyof T]
+
 export interface SockbaseEvent {
   eventName: string
   descriptions: string[]
@@ -181,4 +183,26 @@ export type SockbasePaymentDocument = SockbasePayment & {
   updatedAt: Date | null
 }
 
-export type valueOf<T> = T[keyof T]
+export interface SockbaseInquiry {
+  userId: string
+  inquiryType: string
+  body: string
+}
+
+export type SockbaseInquiryDocument = SockbaseInquiry & {
+  id: string
+  status: InquiryStatus
+  createdAt: Date | null
+  updatedAt: Date | null
+}
+
+export type InquiryType = 'other'
+
+/**
+ * InquiryStatus
+ * 
+ * todo: 0
+ * inProgress: 1
+ * done: 2
+ */
+export type InquiryStatus = 0 | 1 | 2

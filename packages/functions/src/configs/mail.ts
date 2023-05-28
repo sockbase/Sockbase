@@ -1,5 +1,6 @@
 import dayjs from '../helpers/dayjs'
-import type { SockbaseApplicationDocument, SockbaseEvent, SockbaseEventSpace, SockbasePaymentDocument, SockbaseStore, SockbaseTicketApplicaitonDocument } from 'sockbase'
+import type { SockbaseAccountDocument, SockbaseApplicationDocument, SockbaseEvent, SockbaseEventSpace, SockbaseInquiryDocument, SockbasePaymentDocument, SockbaseStore, SockbaseTicketApplicaitonDocument } from 'sockbase'
+import { convertTypeText } from '../models/inquiry'
 
 const suffix = [
   '',
@@ -128,6 +129,21 @@ const templates = {
       `申し込みID: ${unionApp.hashId ?? ''}`,
       '',
       '※お心当たりのない方は、マイペースのお問い合わせからご連絡ください。',
+      ...suffix
+    ]
+  }),
+  acceptInquiry: (inquiry: SockbaseInquiryDocument, user: SockbaseAccountDocument) => ({
+    subject: '[Sockbase] お問い合わせを受け付けました',
+    body: [
+      `${user.name} 様`,
+      '以下のとおり、お問い合せを受け付けました。',
+      '返信は通常3営業日以内に行いますので、今しばらくお待ちください。',
+      '',
+      '[お問い合わせ内容]',
+      `ご返信先: ${user.email}`,
+      `お問い合わせ種類: ${convertTypeText(inquiry.inquiryType)}`,
+      'お問い合わせ内容',
+      inquiry.body.replace('\\n', '\n'),
       ...suffix
     ]
   })

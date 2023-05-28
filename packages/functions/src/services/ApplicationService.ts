@@ -8,16 +8,15 @@ import type {
   SockbaseApplicationAddedResult,
   SockbaseApplicationDocument,
   SockbaseEvent,
-  SockbaseOrganizationWithMeta,
   SockbasePaymentDocument
 } from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
-import fetch from 'node-fetch'
-
 import firebaseAdmin from '../libs/FirebaseAdmin'
 import { applicationConverter, applicationHashIdConverter, paymentConverter } from '../libs/converters'
+
+import { sendMessageToDiscord } from '../libs/sendWebhook'
 
 export const onChangeApplication = functions.firestore
   .document('/_applications/{applicationId}')
@@ -187,35 +186,6 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   }
   return result
 })
-
-const sendMessageToDiscord: (organizationId: string, messageBody: {
-  content: string
-  username: string
-  embeds: Array<{
-    title: string
-    url: string
-    color: number
-    fields: Array<{
-      name: string
-      value: string
-    }>
-  }>
-}) => Promise<void> =
-  async (organizationId, messageBody) => {
-    const adminApp = firebaseAdmin.getFirebaseAdmin()
-    const organizationDoc = await adminApp.firestore()
-      .doc(`/organizations/${organizationId}`)
-      .get()
-    const organization = organizationDoc.data() as SockbaseOrganizationWithMeta
-
-    await fetch(organization.config.discordWebhookURL, {
-      method: 'POST',
-      body: JSON.stringify(messageBody),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-  }
 
 const generateHashId: (eventId: string, refId: string, now: Date) => Promise<string> =
   async (eventId, refId, now) => {

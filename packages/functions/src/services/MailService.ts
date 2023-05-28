@@ -1,16 +1,16 @@
 import { type UserRecord, getAuth } from 'firebase-admin/auth'
-import type { SockbaseApplicationDocument, SockbasePaymentDocument } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbaseInquiryDocument, SockbasePaymentDocument } from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
-import firebaseAdmin from '../libs/FirebaseAdmin'
-
 import mailConfig from '../configs/mail'
 import { applicationConverter, applicationHashIdConverter, eventConverter } from '../libs/converters'
+import FirebaseAdmin from '../libs/FirebaseAdmin'
+import { getUserDataAsync } from '../models/user'
 
 const getUser: (userId: string) => Promise<UserRecord> =
   async (userId) => {
-    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const auth = getAuth(adminApp)
     const user = await auth.getUser(userId)
     return user
@@ -19,7 +19,7 @@ const getUser: (userId: string) => Promise<UserRecord> =
 export const acceptApplication = functions.firestore
   .document('/_applications/{applicationId}')
   .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ applicationId: string }>) => {
-    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
     const app = snapshot.data() as SockbaseApplicationDocument
@@ -56,7 +56,7 @@ export const onUpdateApplication = functions.firestore
     const beforeApp = change.before.data() as SockbaseApplicationDocument
     const afterApp = change.after.data() as SockbaseApplicationDocument
 
-    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
     if (!beforeApp.unionCircleId && afterApp.unionCircleId) {
@@ -101,7 +101,7 @@ export const onUpdateApplication = functions.firestore
 export const requestPayment = functions.firestore
   .document('/_payments/{paymentId}')
   .onCreate(async (snapshot: QueryDocumentSnapshot, context: functions.EventContext<{ paymentId: string }>) => {
-    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
     const payment = snapshot.data() as SockbasePaymentDocument
@@ -125,7 +125,7 @@ export const acceptPayment = functions.firestore
   .onUpdate(async (change: functions.Change<QueryDocumentSnapshot>, context: functions.EventContext<{ paymentId: string }>) => {
     if (!change.after) return
 
-    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
     const payment = change.after.data() as SockbasePaymentDocument
@@ -162,7 +162,7 @@ export const acceptPayment = functions.firestore
 
 const requestCirclePaymentAsync =
   async (appId: string, payment: SockbasePaymentDocument): Promise<{ subject: string, body: string[] }> => {
-    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
     const appDoc = await firestore
@@ -188,3 +188,25 @@ const requestCirclePaymentAsync =
 
     return mailConfig.templates.requestCirclePayment(payment, app, event, space)
   }
+
+export const acceptInquiry = functions.firestore
+  .document('/_inquiries/{inquiryId}')
+  .onCreate(async (snapshot: QueryDocumentSnapshot) => {
+    const inquiry = snapshot.data() as SockbaseInquiryDocument
+
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const user = await getUser(inquiry.userId)
+    const userData = await getUserDataAsync(user.uid)
+
+    const template = mailConfig.templates.acceptInquiry(inquiry, userData)
+    await firestore.collection('_mails')
+      .add({
+        to: user.email,
+        message: {
+          subject: template.subject,
+          text: template.body.join('\n')
+        }
+      })
+  })
