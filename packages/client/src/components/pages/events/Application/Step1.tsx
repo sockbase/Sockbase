@@ -20,6 +20,7 @@ import FormButton from '../../../Form/Button'
 import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
 import CircleCutImage from '../../../Parts/CircleCutImage'
+import { Link } from 'react-router-dom'
 
 interface Props {
   eventId: string
@@ -560,7 +561,7 @@ const Step1: React.FC<Props> = (props) => {
       </FormSection >
       <h2>注意事項</h2>
       <p>
-        Sockbase利用規約およびプライバシーポリシーに同意しますか？
+        <Link to="/tos">Sockbase利用規約</Link>および<Link to="/privacy-policy">プライバシーポリシー</Link>に同意しますか？
       </p>
       <FormSection>
         <FormItem>
