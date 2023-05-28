@@ -28,6 +28,7 @@ import DashboardApplicationList from './pages/dashboard/CircleApplications/Appli
 import DashboardApplicationDetail from './pages/dashboard/CircleApplications/ApplicationDetail'
 import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
 import DashboardSettings from './pages/dashboard/Settings'
+import DashboardContact from './pages/dashboard/Contact'
 import DebugDashboard from './pages/dashboard/Debug'
 import DashboardTemplate from './pages/DashboardTemplate'
 import FormTemplate from './pages/FormTemplate'
@@ -105,6 +106,15 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <DashboardSettings />
+              }
+            ]
+          },
+          {
+            path: 'contact',
+            children: [
+              {
+                index: true,
+                element: <DashboardContact />
               }
             ]
           },

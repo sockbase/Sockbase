@@ -95,6 +95,18 @@ a {
     text-decoration: underline;
   }
 }
+
+code {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 5px 10px;
+  border-radius: 5px;
+
+  font-family: 'Consolas', 'Osaka-Mono', monospace;
+  font-size: 1em;
+  
+  background-color: #e0e0e0;
+}
 `
 
 export default GlobalStyle
