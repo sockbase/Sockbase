@@ -1,7 +1,7 @@
 export const convertTypeText: (type: string) => string =
   (type) => {
     if (type === 'changeCircleInfo') {
-      return 'サークル申し込み情報変更'
+      return 'サークル申し込み情報変更, サークルカット変更'
     } else if (type === 'payment') {
       return '決済に関する相談'
     } else if (type === 'changePassword') {

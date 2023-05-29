@@ -89,6 +89,9 @@ const ApplicationDetail: React.FC<Props> = (props) => {
 
           <h3>サークルカット</h3>
           {props.circleCutURL && <CircleCutImage src={props.circleCutURL} />}
+          <p>
+            サークルカットの変更は「お問い合わせ」よりご依頼ください。
+          </p>
 
           <h3>サークル情報</h3>
           <table>

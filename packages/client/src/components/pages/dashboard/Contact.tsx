@@ -41,7 +41,7 @@ const inquiryTypes: Array<{
     },
     {
       type: 'changeCircleInfo',
-      name: 'サークル申し込み情報変更',
+      name: 'サークル申し込み情報変更, サークルカット変更',
       description: '申し込み情報下部の申し込みIDを添えてお問い合わせください。'
     },
     {
