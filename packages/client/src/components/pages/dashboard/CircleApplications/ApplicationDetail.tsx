@@ -14,6 +14,7 @@ import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
 import PaymentStatusLabel from '../../../Parts/PaymentStatusLabel'
+import Alert from '../../../Parts/Alert'
 
 interface Props {
   app: SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }
@@ -54,6 +55,10 @@ const ApplicationDetail: React.FC<Props> = (props) => {
         icon={<MdEdit />}
         title={props.app.circle.name}
         description="申し込み情報" />
+
+      {props.payment?.status === 0 && <Alert type='danger' title='サークル参加費のお支払いをお願いいたします'>
+        申し込み手続きを円滑に行うため<Link to="/dashboard/payments">こちら</Link>からお支払いをお願いいたします。
+      </Alert>}
 
       <TwoColumnsLayout>
         <>
