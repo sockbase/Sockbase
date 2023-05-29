@@ -36,6 +36,7 @@ const ApplicationDetailContainer: React.FC = () => {
   const [appId, setAppId] = useState<string>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
   const [event, setEvent] = useState<SockbaseEvent>()
+  const [eventId, setEventId] = useState<string>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
   const [isAdmin, setAdmin] = useState<boolean | null>()
@@ -61,6 +62,7 @@ const ApplicationDetailContainer: React.FC = () => {
           setCircleCutURL(fetchedCircleCutURL)
           setUserData(fetchedUser)
           setEvent(fetchedEvent)
+          setEventId(fetchedApp.eventId)
           setAdmin(fetchedIsAdmin)
         }
       fetchApplicationAsync()
@@ -93,11 +95,12 @@ const ApplicationDetailContainer: React.FC = () => {
 
   return (
     <DashboardLayout title={title}>
-      {app && payment !== undefined && event && userData && circleCutURL && isAdmin !== undefined
+      {app && payment !== undefined && event && eventId && userData && circleCutURL && isAdmin !== undefined
         ? <ApplicationDetail
           app={app}
           payment={payment}
           event={event}
+          eventId={eventId}
           userData={userData}
           circleCutURL={circleCutURL}
           isAdmin={isAdmin}
