@@ -35,7 +35,7 @@ const templates = {
       '[イベント情報]',
       `イベント名: ${event.eventName}`,
       `日程: ${dayjs(event.schedules.startEvent).tz().format('YYYY年M月D日 H:mm')} 〜 ${dayjs(event.schedules.endEvent).tz().format('H:mm')}`,
-      '場所: ', // TODO: 場所 あとで追記
+      // '場所: ', // TODO: 場所 あとで追記
       '',
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',
