@@ -18,6 +18,7 @@ interface Props {
   payments: SockbasePaymentDocument[]
   apps: Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
   events: Record<string, SockbaseEvent>
+  email: string
 }
 const PaymentList: React.FC<Props> = (props) => {
   const linkTargetId: (appId: string | null, ticketId: string | null) => string =
@@ -98,7 +99,7 @@ const PaymentList: React.FC<Props> = (props) => {
                 <td><PaymentStatusLabel status={p.status} /></td>
                 <td>{p.updatedAt?.toLocaleString() ?? '-'}</td>
                 <td>
-                  {p.status === 0 && p.paymentMethod === 1 && <a href={getSpaceByAppId(p.applicationId)?.productInfo?.paymentURL} target="_blank" rel="noreferrer">お支払いはこちら</a>}
+                  {p.status === 0 && p.paymentMethod === 1 && p.applicationId && <a href={`${getSpaceByAppId(p.applicationId)?.productInfo?.paymentURL ?? ''}?prefilled_email=${encodeURIComponent(props.email)}`} target="_blank" rel="noreferrer">お支払いはこちら</a>}
                 </td>
               </tr>)
             : <tr><th colSpan={7}>決済情報はありません</th></tr>
