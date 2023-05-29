@@ -19,6 +19,7 @@ import Alert from '../../../Parts/Alert'
 interface Props {
   app: SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }
   event: SockbaseEvent
+  eventId: string
   payment: SockbasePaymentDocument | null
   userData: SockbaseAccount
   circleCutURL: string
@@ -44,7 +45,7 @@ const ApplicationDetail: React.FC<Props> = (props) => {
           ? <>
             <li><Link to="/dashboard/events">管理イベント</Link></li>
             <li>{props.event._organization.name}</li>
-            <li><Link to="/dashboard/events/sockbase1">{props.event.eventName}</Link></li>
+            <li><Link to={`/dashboard/events/${props.eventId}`}>{props.event.eventName}</Link></li>
           </>
           : <>
             <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
