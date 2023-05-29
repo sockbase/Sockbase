@@ -14,6 +14,7 @@ import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 import FormButton from '../../../Form/Button'
 import PaymentStatusLabel from '../../../Parts/PaymentStatusLabel'
+import Alert from '../../../Parts/Alert'
 
 interface Props {
   app: SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }
@@ -26,8 +27,13 @@ interface Props {
 }
 const ApplicationDetail: React.FC<Props> = (props) => {
   const spaceName = useMemo(() => {
-    const spaceData = props.event.spaces.filter(i => i.id === props.app.spaceId)[0]
-    return spaceData.name
+    const spaceInfo = props.event.spaces.filter(s => s.id === props.app.spaceId)[0]
+    return spaceInfo.name
+  }, [])
+
+  const genreName = useMemo(() => {
+    const genreInfo = props.event.genres.filter(g => g.id === props.app.circle.genre)[0]
+    return genreInfo.name
   }, [])
 
   return (
@@ -49,6 +55,10 @@ const ApplicationDetail: React.FC<Props> = (props) => {
         icon={<MdEdit />}
         title={props.app.circle.name}
         description="申し込み情報" />
+
+      {props.payment?.status === 0 && <Alert type='danger' title='サークル参加費のお支払いをお願いいたします'>
+        申し込み手続きを円滑に行うため<Link to="/dashboard/payments">こちら</Link>からお支払いをお願いいたします。
+      </Alert>}
 
       <TwoColumnsLayout>
         <>
@@ -84,6 +94,9 @@ const ApplicationDetail: React.FC<Props> = (props) => {
 
           <h3>サークルカット</h3>
           {props.circleCutURL && <CircleCutImage src={props.circleCutURL} />}
+          <p>
+            サークルカットの変更は「お問い合わせ」よりご依頼ください。
+          </p>
 
           <h3>サークル情報</h3>
           <table>
@@ -116,7 +129,7 @@ const ApplicationDetail: React.FC<Props> = (props) => {
               </tr>
               <tr>
                 <th>頒布物のジャンル</th>
-                <td>{props.app.circle.genre}</td>
+                <td>{genreName}</td>
               </tr>
               <tr>
                 <th>頒布物概要</th>

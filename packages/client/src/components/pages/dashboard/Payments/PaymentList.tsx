@@ -18,6 +18,7 @@ interface Props {
   payments: SockbasePaymentDocument[]
   apps: Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
   events: Record<string, SockbaseEvent>
+  email: string
 }
 const PaymentList: React.FC<Props> = (props) => {
   const linkTargetId: (appId: string | null, ticketId: string | null) => string =
@@ -89,7 +90,7 @@ const PaymentList: React.FC<Props> = (props) => {
         <tbody>
           {props.payments.length !== 0
             ? props.payments
-              .sort((a, b) => ((b.createdAt?.getTime()) ?? 9) - ((a.createdAt?.getTime()) ?? 0))
+              .sort((a, b) => (b.updatedAt?.getTime() ?? 9) - (a.updatedAt?.getTime() ?? 0))
               .map(p => <tr key={p.id}>
                 <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getEventByAppId(p.applicationId)?.eventName}</Link></th>
                 <td>{p.paymentAmount.toLocaleString()}円</td>
@@ -98,18 +99,10 @@ const PaymentList: React.FC<Props> = (props) => {
                 <td><PaymentStatusLabel status={p.status} /></td>
                 <td>{p.updatedAt?.toLocaleString() ?? '-'}</td>
                 <td>
-                  {p.status === 0 && p.paymentMethod === 1 && <a href={getSpaceByAppId(p.applicationId)?.productInfo?.paymentURL} target="_blank" rel="noreferrer">お支払いはこちら</a>}
+                  {p.status === 0 && p.paymentMethod === 1 && p.applicationId && <a href={`${getSpaceByAppId(p.applicationId)?.productInfo?.paymentURL ?? ''}?prefilled_email=${encodeURIComponent(props.email)}`} target="_blank" rel="noreferrer">お支払いはこちら</a>}
                 </td>
               </tr>)
-            : <tr>
-              <th>決済情報はありません</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
+            : <tr><th colSpan={7}>決済情報はありません</th></tr>
           }
         </tbody>
       </table>

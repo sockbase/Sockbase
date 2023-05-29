@@ -3,8 +3,16 @@ import PageTitle from '../../Layout/Dashboard/PageTitle'
 import Alert from '../../Parts/Alert'
 
 import { MdEditNote } from 'react-icons/md'
+import FormSection from '../../Form/FormSection'
+import FormItem from '../../Form/Form'
+import FormTextarea from '../../Form/Textarea'
+import { useEffect, useState } from 'react'
 
 const DashboardTemplate: React.FC = (props) => {
+  const [textAreaValue, setTextAreaValue] = useState('')
+
+  useEffect(() => console.log(textAreaValue.replaceAll(/\r?\n/g, '\\n')), [textAreaValue])
+
   return (
     <>
       <Breadcrumbs>
@@ -25,6 +33,12 @@ const DashboardTemplate: React.FC = (props) => {
       </Alert>
 
       <p>ここに何らかのマイページコンテンツが入ります</p>
+
+      <FormSection>
+        <FormItem>
+          <FormTextarea value={textAreaValue} onChange={e => setTextAreaValue(e.target.value)} />
+        </FormItem>
+      </FormSection>
     </>
   )
 }

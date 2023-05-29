@@ -65,11 +65,12 @@ const DashboardPaymentList: React.FC = () => {
 
   return (
     <DashboardLayout title="決済一覧">
-      {payments && apps && events
+      {payments && apps && events && user?.email
         ? <PaymentList
           payments={payments}
           apps={apps}
-          events={events} />
+          events={events}
+          email={user.email} />
         : <Loading text="決済一覧" />}
     </DashboardLayout>
   )

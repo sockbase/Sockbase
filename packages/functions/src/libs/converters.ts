@@ -1,6 +1,12 @@
 import type * as types from 'packages/types/src'
 import type * as firestore from 'firebase-admin/firestore'
 
+interface ApplicationHashIdDocument {
+  applicationId: string
+  hashId: string
+  paymentId: string
+}
+
 export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePaymentDocument> = {
   toFirestore: (payment: types.SockbasePaymentDocument): firestore.DocumentData => ({
     userId: payment.userId,
@@ -124,6 +130,7 @@ export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEven
       descriptions: event.descriptions,
       rules: event.rules,
       spaces: event.spaces,
+      genres: event.genres,
       schedules: {
         startApplication: event.schedules.startApplication,
         endApplication: event.schedules.endApplication,
@@ -136,6 +143,28 @@ export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEven
         name: '',
         contactUrl: ''
       }
+    }
+  }
+}
+
+export const roleConverter: firestore.FirestoreDataConverter<{ role: number }> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot) => {
+    const data = snapshot.data()
+    return {
+      role: data.role
+    }
+  }
+}
+
+export const applicationHashIdConverter: firestore.FirestoreDataConverter<ApplicationHashIdDocument> = {
+  toFirestore: (app: ApplicationHashIdDocument): firestore.DocumentData => ({}),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): ApplicationHashIdDocument => {
+    const hashDoc = snapshot.data()
+    return {
+      applicationId: hashDoc.applicationId,
+      hashId: hashDoc.hashId,
+      paymentId: hashDoc.paymentId
     }
   }
 }
