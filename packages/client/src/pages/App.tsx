@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import useFirebase from '../hooks/useFirebase'
 import useFirebaseError from '../hooks/useFirebaseError'
@@ -65,10 +65,37 @@ const App: React.FC = () => {
       }
 
       <h2>Sockbaseとは？</h2>
+      <p>
+        <a href="https://nectarition.jp">ねくたりしょん</a>が提供するイベント申し込み情報管理サービスです。
+      </p>
+
+      <h3>マイページへのアクセス方法</h3>
+      <p>
+        サークル申し込み時, チケット購入時・受け取り時にアカウントを作成することができます。<br />
+        作成したアカウントとパスワードを用いて、上のログイン画面からログインしてください。
+      </p>
+
+      <h3>支払い方法</h3>
+      <p>
+        オンライン決済(クレジットカード, Google Pay, Apple Pay)のほか、銀行振込に対応しています。
+      </p>
+
       <h3>イベントへの申し込み方法</h3>
       <p>
         イベント主催者から提供されたURLを使用してください。
       </p>
+
+      <h3>問い合わせ先</h3>
+      <ul>
+        <li>アカウント登録前のお問い合わせ: <code>support@sockbase.net</code></li>
+        <li>申し込み後に関するお問い合わせ: マイページメニューの「お問い合わせ」</li>
+      </ul>
+
+      <h3>表記事項</h3>
+      <ul>
+        <li><Link to="/tos">利用規約・特定商取引法に基づく表記</Link></li>
+        <li><Link to="/privacy-policy">プライバシーポリシー</Link></li>
+      </ul>
     </DefaultLayout>)
 }
 
