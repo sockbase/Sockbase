@@ -18,7 +18,7 @@ interface Props {
 const Login: React.FC<Props> = (props) => {
   return (
     <>
-      <h1>マイページにログイン</h1>
+      <h1>Sockbaseマイページにログイン</h1>
       <p>
         イベント・チケット申し込み時に入力したメールアドレスとパスワードを入力してください。
       </p>
