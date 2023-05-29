@@ -44,8 +44,8 @@ jobs:
       
       - name: Create .env file
         run: |
-          touch .env
-          echo STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} >> .env
+          touch ./packages/functions/.env
+          echo STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} >> ./packages/functions/.env
 
       - name: Deploy to firebase
         run: |
