@@ -2,9 +2,7 @@ import * as FirestoreDB from 'firebase/firestore'
 
 import useFirebase from './useFirebase'
 
-import type {
-  SockbaseEvent
-} from 'sockbase'
+import type { SockbaseEvent } from 'sockbase'
 
 const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
   toFirestore: (event: SockbaseEvent): FirestoreDB.DocumentData => ({
@@ -30,12 +28,13 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
     // }
   }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseEvent => {
-    const event = snapshot.data()
+    const event = snapshot.data() as SockbaseEvent
     return {
       eventName: event.eventName,
       descriptions: event.descriptions,
       rules: event.rules,
-      spaces: event.spaces,
+      spaces: event.spaces
+        .sort((a, b) => a.price - b.price),
       genres: event.genres,
       schedules: event.schedules,
       _organization: event._organization
