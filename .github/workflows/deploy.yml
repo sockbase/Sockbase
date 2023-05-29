@@ -43,7 +43,7 @@ jobs:
         run: yarn install
       
       - name: Create .env file
-        run |
+        run: |
           touch .env
           echo STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }} >> .env
 
