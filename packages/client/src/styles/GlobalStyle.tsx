@@ -1,9 +1,6 @@
 import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
-:root {
-  --darkAccentColor: #ea6183;
-}
 html, body {
   font-family: "Noto Sans JP", sans-serif;
   height: 100vh;
@@ -97,6 +94,18 @@ a {
   &:hover {
     text-decoration: underline;
   }
+}
+
+code {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 5px 10px;
+  border-radius: 5px;
+
+  font-family: 'Consolas', 'Osaka-Mono', monospace;
+  font-size: 1em;
+  
+  background-color: #e0e0e0;
 }
 `
 

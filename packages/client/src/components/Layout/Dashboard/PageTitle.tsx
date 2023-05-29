@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 
 interface Props {
-  icon?: React.ReactNode
-  title?: string
-  description?: string
+  icon: React.ReactNode
+  title: string
+  description: string
 }
 
 const PageTitle: React.FC<Props> = (props) => {

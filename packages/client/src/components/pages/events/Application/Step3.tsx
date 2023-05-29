@@ -27,7 +27,7 @@ const Step3: React.FC<Props> = (props) => {
     props.appResult && props.app && props.event && space && props.email
       ? <>
         <Alert type="success" title="申し込み情報の送信が完了しました">
-          申し込みIDは {props.appResult.hashId} です。
+          申し込みIDは「<b>{props.appResult.hashId}</b> <CopyToClipboard content={props.appResult.hashId} />」です。
         </Alert>
         <p>
           お申し込みいただきましてありがとうございました。<br />
@@ -72,15 +72,15 @@ const Step3: React.FC<Props> = (props) => {
               ? <>
                 <h2>オンライン決済でのお支払い</h2>
                 <Alert>
-                  決済で使用するメールアドレスは必ず「<b>{props.email}</b> <CopyToClipboard content={props.email} />」にしてください。<br />
-                  別のメールアドレスを入力すると、お支払いの確認までお時間をいただく場合がございます。
+                  メールアドレスは自動で入力されます。<br />
+                  別のメールアドレスを入力すると、お支払いの確認までお時間をいただく場合がございますので、<b>絶対に変更しないでください。</b>
                 </Alert>
                 <p>
                   「決済画面を開く」より決済を行ってください。
                 </p>
                 <FormSection>
                   <FormItem>
-                    <AnchorButton href={space.productInfo.paymentURL} target="_blank">決済画面を開く</AnchorButton>
+                    <AnchorButton href={`${space.productInfo.paymentURL}?prefilled_email=${encodeURIComponent(props.email)}`} target="_blank">決済画面を開く</AnchorButton>
                   </FormItem>
                 </FormSection>
               </>

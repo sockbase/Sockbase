@@ -9,28 +9,29 @@ import {
 import { HelmetProvider } from 'react-helmet-async'
 
 import './main.css'
-import ResetStyle from './ResetStyle'
-import GlobalStyle from './GlobalStyle'
+
+import ResetStyle from './styles/ResetStyle'
+import Colors from './styles/Colors'
+import GlobalStyle from './styles/GlobalStyle'
+
 import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 
 import App from './pages/App'
-
-import FormTemplate from './pages/FormTemplate'
-import DashboardTemplate from './pages/DashboardTemplate'
-
 import TermsOfService from './pages/static/TermsOfService'
 import PrivacyPolicy from './pages/static/PrivacyPolicy'
-
 import EventApplication from './pages/events/Application'
 import TicketApplication from './pages/stores/Application'
-
+import Dashboard from './pages/dashboard/Dashboard'
 import DashboardEventList from './pages/dashboard/Events/EventList'
 import DashboardEventApplications from './pages/dashboard/Events/EventApplications'
 import DashboardApplicationList from './pages/dashboard/CircleApplications/ApplicationList'
 import DashboardApplicationDetail from './pages/dashboard/CircleApplications/ApplicationDetail'
 import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
-import Dashboard from './pages/dashboard/Dashboard'
+import DashboardSettings from './pages/dashboard/Settings'
+import DashboardContact from './pages/dashboard/Contact'
 import DebugDashboard from './pages/dashboard/Debug'
+import DashboardTemplate from './pages/DashboardTemplate'
+import FormTemplate from './pages/FormTemplate'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -100,6 +101,24 @@ const router = createBrowserRouter([
             element: <Dashboard />
           },
           {
+            path: 'settings',
+            children: [
+              {
+                index: true,
+                element: <DashboardSettings />
+              }
+            ]
+          },
+          {
+            path: 'contact',
+            children: [
+              {
+                index: true,
+                element: <DashboardContact />
+              }
+            ]
+          },
+          {
             path: 'events',
             children: [
               {
@@ -152,6 +171,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
       <ResetStyle />
+      <Colors />
       <GlobalStyle />
       <RouterProvider router={router} />
     </HelmetProvider>

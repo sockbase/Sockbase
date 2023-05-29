@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 
-import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure } from 'sockbase'
+import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure, SockbaseEventGenre } from 'sockbase'
 import sockbaseShared from '@sockbase/shared'
 
 import usePostalCode from '../../../../hooks/usePostalCode'
@@ -20,6 +20,7 @@ import FormButton from '../../../Form/Button'
 import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
 import CircleCutImage from '../../../Parts/CircleCutImage'
+import { Link } from 'react-router-dom'
 
 interface Props {
   eventId: string
@@ -27,6 +28,7 @@ interface Props {
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
   spaces: SockbaseEventSpace[]
+  genres: SockbaseEventGenre[]
   prevStep: () => void
   nextStep: (app: SockbaseApplication, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
@@ -127,10 +129,11 @@ const Step1: React.FC<Props> = (props) => {
         !validator.isEmpty(app.circle.penName),
         validator.isOnlyHiragana(app.circle.penNameYomi),
         !validator.isNull(app.circle.hasAdult),
-        validator.isIn(app.circle.genre, ['あいうえお']),
+        validator.isIn(app.circle.genre, props.genres.map(g => g.id)),
         !validator.isEmpty(app.overview.description),
         !validator.isEmpty(app.overview.totalAmount),
-        validator.isIn(app.paymentMethod, paymentMethodIds)
+        validator.isIn(app.paymentMethod, paymentMethodIds),
+        (!app.unionCircleId || validator.isApplicationHashId(app.unionCircleId))
       ]
       const invalidCount = validators
         .filter(i => !i)
@@ -164,7 +167,7 @@ const Step1: React.FC<Props> = (props) => {
       setInvalidFieldCount(invalidCount)
       setAllValid(!hasValidationError)
     }
-  useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData])
+  useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData, props.genres])
 
   const onChangeBirthday: () => void =
     () => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
@@ -188,7 +191,7 @@ const Step1: React.FC<Props> = (props) => {
           penName: 'nirsmmy',
           penNameYomi: 'そめみやねいろ',
           hasAdult: false,
-          genre: 'あいうえお'
+          genre: 'aiueo1'
         },
         overview: {
           description: 'ここには頒布物概要が入ります',
@@ -275,9 +278,8 @@ const Step1: React.FC<Props> = (props) => {
       <h2>サークルカット</h2>
       <ul>
         <li>サークルカットを提出する際は、テンプレートを使用する必要があります。</li>
-        <li>テンプレートは、下記URLからダウンロード可能です。</li>
-        <li>申し込み後でもサークルカットを差し替えることができます。</li>
-        <li>公序良俗に反する画像は使用できません。不特定多数の方の閲覧が可能なため、ご配慮をお願いいたします。</li>
+        <li>サークルカットの変更は、申し込み後のマイページから行えます。</li>
+        <li>公序良俗に反する画像は使用できません。不特定多数の方の閲覧が可能なためご配慮をお願いいたします。</li>
       </ul>
       <FormSection>
         <FormItem>
@@ -297,6 +299,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>サークル名</FormLabel>
           <FormInput
+            placeholder='サークル名'
             value={app.circle.name}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, name: e.target.value } }))} />
         </FormItem>
@@ -304,6 +307,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>サークル名(よみ)</FormLabel>
           <FormInput
+            placeholder='さーくるめい'
             value={app.circle.yomi}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, yomi: e.target.value } }))}
             hasError={!validator.isEmpty(app.circle.yomi) && !validator.isOnlyHiragana(app.circle.yomi)} />
@@ -315,6 +319,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>ペンネーム</FormLabel>
           <FormInput
+            placeholder='ペンネーム'
             value={app.circle.penName}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, penName: e.target.value } }))} />
         </FormItem>
@@ -322,6 +327,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>ペンネーム(よみ)</FormLabel>
           <FormInput
+            placeholder='ぺんねーむ'
             value={app.circle.penNameYomi}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, penNameYomi: e.target.value } }))}
             hasError={!validator.isEmpty(app.circle.penNameYomi) && !validator.isOnlyHiragana(app.circle.penNameYomi)} />
@@ -360,12 +366,8 @@ const Step1: React.FC<Props> = (props) => {
           <FormSelect
             value={app.circle.genre}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}>
-            <option>選択してください</option>
-            <option>あいうえお</option>
-            <option>あいうえお</option>
-            <option>あいうえお</option>
-            <option>あいうえお</option>
-            <option>あいうえお</option>
+            <option value="">選択してください</option>
+            {props.genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
           </FormSelect>
           <FormHelp>
             頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
@@ -374,6 +376,7 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>頒布物概要</FormLabel>
           <FormTextarea
+            placeholder='◯◯◯◯と△△△△のシリアス系合同誌(小説, 漫画)を頒布する予定。その他グッズや既刊あり。'
             value={app.overview.description}
             onChange={e => setApp(s => ({ ...s, overview: { ...s.overview, description: e.target.value } }))} />
           <FormHelp>
@@ -383,7 +386,8 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
         <FormItem>
           <FormLabel>総搬入量</FormLabel>
-          <FormInput
+          <FormTextarea
+            placeholder='合同誌: 1種1,000冊, 既刊: 5種合計500冊, グッズ: 3種合計30個'
             value={app.overview.totalAmount}
             onChange={e => setApp(s => ({ ...s, overview: { ...s.overview, totalAmount: e.target.value } }))} />
           <FormHelp>単位まで入力してください。</FormHelp>
@@ -395,13 +399,16 @@ const Step1: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>合体希望サークル 合体申し込みID</FormLabel>
           <FormInput
+            placeholder='20231231235959123-abc0def1'
             value={app.unionCircleId}
-            onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value }))} />
+            onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value }))}
+            hasError={!validator.isEmpty(app.unionCircleId) && !validator.isApplicationHashId(app.unionCircleId)} />
           <FormHelp>先に申し込んだ方から提供された合体申し込みIDを入力してください。</FormHelp>
         </FormItem>
         <FormItem>
           <FormLabel>プチオンリーコード</FormLabel>
           <FormInput
+            placeholder='marukaku00'
             value={app.petitCode}
             onChange={e => setApp(s => ({ ...s, petitCode: e.target.value }))} />
           <FormHelp>プチオンリー主催から入力を指示された場合のみ入力してください。</FormHelp>
@@ -415,6 +422,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>氏名</FormLabel>
               <FormInput
+                placeholder='速部 すみれ'
                 value={leaderUserData.name}
                 onChange={e => setLeaderUserData(s => ({ ...s, name: e.target.value }))} />
             </FormItem>
@@ -429,6 +437,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>郵便番号</FormLabel>
               <FormInput
+                placeholder='000-0000'
                 value={leaderUserData.postalCode}
                 onChange={e => {
                   if (e.target.value.length > 8) return
@@ -450,12 +459,14 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>住所</FormLabel>
               <FormInput
+                placeholder='東京都千代田区外神田9-9-9'
                 value={leaderUserData.address}
                 onChange={e => setLeaderUserData(s => ({ ...s, address: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
+                placeholder='070-0123-4567'
                 value={leaderUserData.telephone}
                 onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value }))} />
             </FormItem>
@@ -469,6 +480,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>メールアドレス</FormLabel>
               <FormInput type="email"
+                placeholder='sumire@sockbase.net'
                 value={leaderUserData.email}
                 onChange={e => setLeaderUserData(s => ({ ...s, email: e.target.value }))}
                 hasError={!validator.isEmpty(leaderUserData.email) && !validator.isEmail(leaderUserData.email)} />
@@ -476,12 +488,14 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>パスワード</FormLabel>
               <FormInput type="password"
+                placeholder='●●●●●●●●●●●●'
                 value={leaderUserData.password}
                 onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))} />
             </FormItem>
             <FormItem>
               <FormLabel>パスワード(確認)</FormLabel>
               <FormInput type="password"
+                placeholder='●●●●●●●●●●●●'
                 value={leaderUserData.rePassword}
                 onChange={e => setLeaderUserData(s => ({ ...s, rePassword: e.target.value }))}
                 hasError={!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword} />
@@ -538,6 +552,7 @@ const Step1: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormTextarea
+            placeholder='成人向け作品を頒布するサークルとは離れた場所に配置をお願いします。'
             value={app.remarks}
             onChange={e => setApp(s => ({ ...s, remarks: e.target.value }))}
           ></FormTextarea>
@@ -545,7 +560,7 @@ const Step1: React.FC<Props> = (props) => {
       </FormSection >
       <h2>注意事項</h2>
       <p>
-        Sockbase利用規約およびプライバシーポリシーに同意しますか？
+        <Link to="/tos">Sockbase利用規約</Link>および<Link to="/privacy-policy">プライバシーポリシー</Link>に同意しますか？
       </p>
       <FormSection>
         <FormItem>

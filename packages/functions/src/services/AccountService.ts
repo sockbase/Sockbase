@@ -1,17 +1,11 @@
-import { FieldValue, type FirestoreDataConverter, type QueryDocumentSnapshot } from 'firebase-admin/firestore'
+import { FieldValue, type QueryDocumentSnapshot } from 'firebase-admin/firestore'
+import type { SockbaseAccountDocument } from 'sockbase'
 import * as functions from 'firebase-functions'
 import { type Change } from 'firebase-functions'
+
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 
-const roleConverter: FirestoreDataConverter<{ role: number }> = {
-  toFirestore: () => ({}),
-  fromFirestore: (snapshot: QueryDocumentSnapshot) => {
-    const data = snapshot.data()
-    return {
-      role: data.role
-    }
-  }
-}
+import { roleConverter } from '../libs/converters'
 
 export const onChangeOrganizationRoles = functions.firestore
   .document('/organizations/{organizationId}/users/{userId}')
@@ -49,14 +43,14 @@ export const onChangeUserRoles = functions.firestore
   .document('/users/{userId}/_roles/{organizationId}')
   .onUpdate(
     async (
-      snapshot: Change<QueryDocumentSnapshot>,
+      change: Change<QueryDocumentSnapshot>,
       context: functions.EventContext<{ userId: string, organizationId: string }>
     ) => {
       const adminApp = FirebaseAdmin.getFirebaseAdmin()
-      const adminFirestore = adminApp.firestore()
-      const adminAuth = adminApp.auth()
+      const firestore = adminApp.firestore()
+      const auth = adminApp.auth()
 
-      const rolesCol = await adminFirestore
+      const rolesCol = await firestore
         .collection(`/users/${context.params.userId}/_roles`)
         .withConverter(roleConverter)
         .get()
@@ -67,11 +61,32 @@ export const onChangeUserRoles = functions.firestore
         .map(rd => ({ id: rd.id, data: rd.data() }))
         .reduce<Record<string, number>>((p, c) => ({ ...p, [c.id]: c.data.role }), {})
 
-      adminAuth.setCustomUserClaims(context.params.userId, {
+      auth.setCustomUserClaims(context.params.userId, {
         roles
       })
         .catch(err => {
           throw err
         })
+    }
+  )
+
+export const onChangeUser = functions.firestore
+  .document('/users/{userId}')
+  .onUpdate(
+    async (
+      change: Change<QueryDocumentSnapshot>,
+      context: functions.EventContext<{ userId: string }>
+    ) => {
+      if (!change.after.exists) return
+      const data = change.after.data() as SockbaseAccountDocument
+
+      const adminApp = FirebaseAdmin.getFirebaseAdmin()
+      const auth = adminApp.auth()
+
+      auth.updateUser(context.params.userId, {
+        email: data.email,
+        emailVerified: false
+      })
+        .catch(err => { throw err })
     }
   )
