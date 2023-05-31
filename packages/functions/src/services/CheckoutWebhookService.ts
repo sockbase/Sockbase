@@ -8,6 +8,7 @@ import firebaseAdmin from '../libs/FirebaseAdmin'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2022-11-15' })
+const firebaseAppId = process.env.FUNC_FIREBASE_APP_ID ?? ''
 
 enum Status {
   Pending = 0,
@@ -23,7 +24,7 @@ const noticeErrorMessage: (errorType: string, paymentId: string) => void =
   (errorType, paymentId) => {
     const body = {
       content: '<@&1112355055501316198>',
-      username: 'Sockbase: 決済エラー',
+      username: `Sockbase(${firebaseAppId}): 決済エラー`,
       embeds: [
         {
           title: '決済でエラーが発生しました！',
@@ -31,6 +32,10 @@ const noticeErrorMessage: (errorType: string, paymentId: string) => void =
           url: '',
           color: 16711680,
           fields: [
+            {
+              name: '環境',
+              value: firebaseAppId
+            },
             {
               name: 'エラー種類',
               value: errorType
