@@ -24,7 +24,7 @@ const noticeErrorMessage: (errorType: string, paymentId: string) => void =
   (errorType, paymentId) => {
     const body = {
       content: '<@&1112355055501316198>',
-      username: `Sockbase(${firebaseProjectId}): 決済エラー`,
+      username: `Sockbase: 決済エラー`,
       embeds: [
         {
           title: '決済でエラーが発生しました！',
