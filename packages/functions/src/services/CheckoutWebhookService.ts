@@ -20,33 +20,56 @@ const adminApp = firebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
 const auth = adminApp.auth()
 
-const noticeErrorMessage: (errorType: string, paymentId: string) => void =
-  (errorType, paymentId) => {
-    const body = {
-      username: `Sockbase: 決済エラー`,
-      embeds: [
-        {
-          title: '決済でエラーが発生しました！',
-          description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
-          url: '',
-          color: 16711680,
-          fields: [
-            {
-              name: '環境',
-              value: firebaseProjectId
-            },
-            {
-              name: 'エラー種類',
-              value: errorType
-            },
-            {
-              name: 'Stripe決済ID',
-              value: paymentId
-            }
-          ]
-        }
-      ]
-    }
+const noticeMessage: (paymentId: string, errorDetail: string | null) => void =
+  (paymentId, errorDetail) => {
+    const body = errorDetail
+      ? {
+        username: 'Sockbase: 決済エラー',
+        embeds: [
+          {
+            title: '決済でエラーが発生しました！',
+            description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
+            url: '',
+            color: 16711680,
+            fields: [
+              {
+                name: '環境',
+                value: firebaseProjectId
+              },
+              {
+                name: 'エラー種類',
+                value: errorDetail
+              },
+              {
+                name: 'Stripe決済ID',
+                value: paymentId
+              }
+            ]
+          }
+        ]
+      }
+      : {
+        username: 'Sockbase: 決済完了',
+        embeds: [
+          {
+            title: '決済が完了しました！',
+            description: '以下の決済依頼ステータスを完了にしました。',
+            url: '',
+            color: 4259712,
+            fields: [
+              {
+                name: '環境',
+                value: firebaseProjectId
+              },
+              {
+                name: 'Stripe決済ID',
+                value: paymentId
+              }
+            ]
+          }
+        ]
+      }
+
     sendMessageToDiscord('system', body)
       .catch(err => { throw err })
   }
@@ -129,21 +152,21 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
   const email = session.customer_details.email
   if (!email) {
     res.status(400).send({ error: 'EmailIsMissing', detail: 'email is missing' })
-    noticeErrorMessage('email is missing', paymentId)
+    noticeMessage(paymentId, 'email is missing')
     return
   }
 
   const user = await getUser(email)
   if (!user) {
     res.status(404).send({ error: 'NotFound', detail: `user(${email}) is not found` })
-    noticeErrorMessage(`user(${email}) is not found`, paymentId)
+    noticeMessage(paymentId, `user(${email}) is not found`)
     return
   }
 
   const payment = await collectPayments(user.uid, Status.Pending)
   if (!payment) {
     res.status(404).send({ error: 'NotFound', detail: 'required payment is not found' })
-    noticeErrorMessage(`required payment is not found`, paymentId)
+    noticeMessage(paymentId, `required payment is not found`)
     return
   }
 
@@ -156,7 +179,7 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
 
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeErrorMessage(`required product item is not found`, paymentId)
+        noticeMessage(paymentId, `required product item is not found`)
         return
       }
       break
@@ -165,7 +188,7 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     case HANDLEABLE_EVENTS.asyncPaymentSuccessed: {
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeErrorMessage(`required product item is not found`, paymentId)
+        noticeMessage(paymentId, `required product item is not found`)
         return
       }
       break
@@ -174,7 +197,7 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     case HANDLEABLE_EVENTS.asyncPaymentFailed: {
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.PaymentFailure, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeErrorMessage(`required product item is not found`, paymentId)
+        noticeMessage(paymentId, `required product item is not found`,)
         return
       }
       break
@@ -186,4 +209,5 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     userId: user.uid,
     paymentId: payment.id
   })
+  noticeMessage(paymentId, null)
 })
