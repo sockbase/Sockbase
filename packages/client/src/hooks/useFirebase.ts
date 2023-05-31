@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { type FirebaseError } from 'firebase/app'
 import {
   type Auth,
@@ -11,7 +11,8 @@ import {
   signOut,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  onIdTokenChanged
+  onIdTokenChanged,
+  sendEmailVerification
 } from 'firebase/auth'
 import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase/firestore'
 import { type FirebaseStorage, getStorage as getFirebaseStorage } from 'firebase/storage'
@@ -31,6 +32,7 @@ interface IUseFirebase {
   logout: () => void
   createUser: (email: string, password: string) => Promise<User>
   sendPasswordResetURL: (email: string) => void
+  sendVerifyMail: () => Promise<void>
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
   getFunctions: () => Functions
@@ -99,6 +101,13 @@ const useFirebase: () => IUseFirebase =
           })
       }
 
+    const sendVerifyMail: () => Promise<void> =
+      useCallback(async () => {
+        if (!user) return
+        sendEmailVerification(user)
+          .catch(err => { throw err })
+      }, [user])
+
     const getFirestore: () => Firestore =
       () => getFirebaseFirestore()
 
@@ -150,6 +159,7 @@ const useFirebase: () => IUseFirebase =
       logout,
       createUser,
       sendPasswordResetURL,
+      sendVerifyMail,
       getFirestore,
       getStorage,
       getFunctions
