@@ -34,7 +34,7 @@ const noticeErrorMessage: (errorType: string, paymentId: string) => void =
           fields: [
             {
               name: '環境',
-              value: firebaseAppId
+              value: firebaseProjectId
             },
             {
               name: 'エラー種類',
