@@ -23,7 +23,6 @@ const auth = adminApp.auth()
 const noticeErrorMessage: (errorType: string, paymentId: string) => void =
   (errorType, paymentId) => {
     const body = {
-      content: '<@&1112355055501316198>',
       username: `Sockbase: 決済エラー`,
       embeds: [
         {

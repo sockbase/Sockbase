@@ -5,7 +5,6 @@ import FirebaseAdmin from '../libs/FirebaseAdmin'
 import fetch from 'node-fetch'
 
 const sendMessageToDiscord: (organizationId: string, messageBody: {
-  content: string
   username: string
   embeds: Array<{
     title: string
@@ -25,9 +24,14 @@ const sendMessageToDiscord: (organizationId: string, messageBody: {
       .get()
     const organization = organizationDoc.data() as SockbaseOrganizationWithMeta
 
+    const bodyWithRoles = {
+      ...messageBody,
+      content: `<@&${organization.config.discordRoleId}>`
+    }
+
     await fetch(organization.config.discordWebhookURL, {
       method: 'POST',
-      body: JSON.stringify(messageBody),
+      body: JSON.stringify(bodyWithRoles),
       headers: {
         'Content-Type': 'application/json'
       }
