@@ -8,7 +8,7 @@ import firebaseAdmin from '../libs/FirebaseAdmin'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2022-11-15' })
-const firebaseAppId = process.env.FIREBASE_APP_ID ?? ''
+const firebaseAppId = process.env.FUNC_FIREBASE_APP_ID ?? ''
 
 enum Status {
   Pending = 0,
