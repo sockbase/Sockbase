@@ -154,7 +154,6 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
   }
 
   const webhookBody = {
-    content: '',
     username: `Sockbase: ${event.eventName}`,
     embeds: [
       {

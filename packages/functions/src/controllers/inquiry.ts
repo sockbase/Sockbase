@@ -18,7 +18,6 @@ export const onCreate = functions.firestore
       const user = await getUserDataAsync(inquiry.userId)
 
       const body = {
-        content: '',
         username: 'Sockbase: お問い合わせ',
         embeds: [{
           title: 'お問い合わせを受信しました！',
