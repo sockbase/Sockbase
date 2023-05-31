@@ -55,7 +55,7 @@ const noticeMessage: (paymentId: string, errorDetail: string | null) => void =
             title: '決済が完了しました！',
             description: '以下の決済依頼ステータスを完了にしました。',
             url: '',
-            color: 4259712,
+            color: 65280,
             fields: [
               {
                 name: '環境',
