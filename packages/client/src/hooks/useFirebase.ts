@@ -17,11 +17,8 @@ import {
 import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase/firestore'
 import { type FirebaseStorage, getStorage as getFirebaseStorage } from 'firebase/storage'
 import { type Functions, getFunctions as getFirebaseFunctions } from 'firebase/functions'
-
+import type { SockbaseRole } from 'sockbase'
 import { getFirebaseApp } from '../libs/FirebaseApp'
-
-import { useAtom } from 'jotai'
-import rolesAtom from '../atoms/roles'
 
 interface IUseFirebase {
   isLoggedIn: boolean | undefined
@@ -43,7 +40,7 @@ const useFirebase: () => IUseFirebase =
     const [auth, setAuth] = useState<Auth | undefined>()
     const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>()
     const [user, setUser] = useState<User | null | undefined>()
-    const [roles, setRoles] = useAtom(rolesAtom)
+    const [roles, setRoles] = useState<Record<string, SockbaseRole> | null>()
 
     const getAuth: () => Auth =
       () => {
