@@ -12,11 +12,13 @@ import Loading from '../../components/Parts/Loading'
 
 const EventApplication: React.FC = () => {
   const params = useParams<{ eventId: string }>()
-  const { getEventByIdAsync } = useEvent()
+  const { getEventByIdAsync, getEventEyecatch } = useEvent()
   const { isLoggedIn, user } = useFirebase()
 
   const [pageTitle, setPageTitle] = useState('')
-  const [event, setEvent] = useState<SockbaseEvent | null | undefined>()
+  const [event, setEvent] = useState<SockbaseEvent | null>()
+  const [eyecatchURL, setEyecatchURL] = useState<string | null>()
+
   const onChangeEventId: () => void = () => {
     if (!params.eventId) return
     const eventId = params.eventId
@@ -27,6 +29,9 @@ const EventApplication: React.FC = () => {
           return null
         })
       setEvent(fetchedEvent)
+
+      const fetchedEyecatchURL = await getEventEyecatch(eventId)
+      setEyecatchURL(fetchedEyecatchURL)
 
       if (fetchedEvent) {
         setPageTitle(`${fetchedEvent?.eventName} サークル参加申し込み受付`)
@@ -48,11 +53,11 @@ const EventApplication: React.FC = () => {
               指定されたIDのイベントを見つけることができませんでした。<br />
               URLが正しく入力されていることを確認してください。
             </Alert>
-            : params.eventId && isLoggedIn !== undefined && user !== undefined && event && <>
+            : params.eventId && isLoggedIn !== undefined && user !== undefined && event && eyecatchURL !== undefined && <>
               {user?.email && <Alert>
                 {user.email} としてログイン中です
               </Alert>}
-              <StepContainerComponent eventId={params.eventId} event={event} isLoggedIn={isLoggedIn} />
+              <StepContainerComponent eventId={params.eventId} event={event} isLoggedIn={isLoggedIn} eyecatchURL={eyecatchURL} />
             </>
       }
     </DefaultLayout>

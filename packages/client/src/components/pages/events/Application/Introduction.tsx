@@ -1,3 +1,4 @@
+import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import type { SockbaseEvent } from 'sockbase'
 
@@ -7,11 +8,15 @@ import FormItem from '../../../Form/FormItem'
 
 interface Props {
   event: SockbaseEvent
+  eyecatchURL: string | null
   nextStep: () => void
 }
 const Introduction: React.FC<Props> = (props) => {
   return (
     <>
+      {props.eyecatchURL && <p>
+        <EyecatchImage src={props.eyecatchURL} />
+      </p>}
       <h1>申し込みの前に</h1>
       <p>
         このページでは「{props.event.eventName}」へのサークル参加申し込みを受け付けます。<br />
@@ -151,3 +156,7 @@ const Introduction: React.FC<Props> = (props) => {
 }
 
 export default Introduction
+
+const EyecatchImage = styled.img`
+  width: 100%;
+`
