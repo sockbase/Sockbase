@@ -1,4 +1,5 @@
 import * as FirestoreDB from 'firebase/firestore'
+import * as FirebaseStorage from 'firebase/storage'
 
 import useFirebase from './useFirebase'
 
@@ -44,9 +45,10 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent>
+  getEventEyecatch: (eventId: string) => Promise<string | null>
 }
 const useEvent: () => IUseEvent = () => {
-  const { getFirestore } = useFirebase()
+  const { getFirestore, getStorage } = useFirebase()
 
   const getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent> =
     async (eventId) => {
@@ -63,8 +65,18 @@ const useEvent: () => IUseEvent = () => {
       return eventDoc.data()
     }
 
+  const getEventEyecatch: (eventId: string) => Promise<string | null> =
+    async (eventId) => {
+      const storage = getStorage()
+      const eyecatchRef = FirebaseStorage.ref(storage, `/events/${eventId}/eyecatch.jpg`)
+      const eyecatchURL = await FirebaseStorage.getDownloadURL(eyecatchRef)
+        .catch(() => null)
+      return eyecatchURL
+    }
+
   return {
-    getEventByIdAsync
+    getEventByIdAsync,
+    getEventEyecatch
   }
 }
 

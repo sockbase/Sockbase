@@ -23,6 +23,7 @@ const stepProgresses = ['入力', '確認', '決済', '完了']
 interface Props {
   eventId: string
   event: SockbaseEvent
+  eyecatchURL: string | null
   isLoggedIn: boolean
 }
 const StepContainer: React.FC<Props> = (props) => {
@@ -80,7 +81,7 @@ const StepContainer: React.FC<Props> = (props) => {
       if (userData === undefined) return
 
       setStepComponents([
-        <Introduction key="introduction" nextStep={() => setStep(1)} event={props.event} />,
+        <Introduction key="introduction" nextStep={() => setStep(1)} event={props.event} eyecatchURL={props.eyecatchURL} />,
         <Step1 key="step1"
           eventId={props.eventId}
           app={app}
