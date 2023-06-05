@@ -6,6 +6,8 @@ import FormButton from '../../../Form/Button'
 import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 
+import dummyEyecatchImage from '../../../../assets/dummy-eyecatch.jpg'
+
 interface Props {
   event: SockbaseEvent
   eyecatchURL: string | null
@@ -14,9 +16,13 @@ interface Props {
 const Introduction: React.FC<Props> = (props) => {
   return (
     <>
-      {props.eyecatchURL && <p>
-        <EyecatchImage src={props.eyecatchURL} />
-      </p>}
+      <p>
+        {
+          props.eyecatchURL
+            ? <EyecatchImage src={props.eyecatchURL} />
+            : <EyecatchImage src={dummyEyecatchImage} />
+        }
+      </p>
       <h1>申し込みの前に</h1>
       <p>
         このページでは「{props.event.eventName}」へのサークル参加申し込みを受け付けます。<br />
