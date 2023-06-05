@@ -118,7 +118,7 @@ const StepContainer: React.FC<Props> = (props) => {
           appResult={appResult} />
       ])
     }
-  useEffect(onInitialize, [props.isLoggedIn, app, leaderUserData, circleCutData, userData, appResult])
+  useEffect(onInitialize, [props, app, leaderUserData, circleCutData, userData, appResult])
 
   return (
     <>
@@ -134,7 +134,7 @@ const StepContainer: React.FC<Props> = (props) => {
         }))
       } />
 
-      {stepComponents?.[step] ?? 'エラー！'}
+      {stepComponents?.[step] ?? ''}
     </>
   )
 }
