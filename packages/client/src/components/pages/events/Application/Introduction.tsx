@@ -2,9 +2,13 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import type { SockbaseEvent } from 'sockbase'
 
+import useDayjs from '../../../../hooks/useDayjs'
+
 import FormButton from '../../../Form/Button'
 import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
+
+import dummyEyecatchImage from '../../../../assets/dummy-eyecatch.jpg'
 
 interface Props {
   event: SockbaseEvent
@@ -12,11 +16,17 @@ interface Props {
   nextStep: () => void
 }
 const Introduction: React.FC<Props> = (props) => {
+  const { formatByDate } = useDayjs()
+
   return (
     <>
-      {props.eyecatchURL && <p>
-        <EyecatchImage src={props.eyecatchURL} />
-      </p>}
+      <p>
+        {
+          props.eyecatchURL
+            ? <EyecatchImage src={props.eyecatchURL} />
+            : <EyecatchImage src={dummyEyecatchImage} />
+        }
+      </p>
       <h1>申し込みの前に</h1>
       <p>
         このページでは「{props.event.eventName}」へのサークル参加申し込みを受け付けます。<br />
@@ -29,23 +39,23 @@ const Introduction: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>申し込み受付開始</th>
-            <td>{new Date(props.event.schedules.startApplication).toLocaleString()}</td>
+            <td>{formatByDate(props.event.schedules.startApplication, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>申し込み受付終了</th>
-            <td>{new Date(props.event.schedules.endApplication).toLocaleString()}</td>
+            <td>{formatByDate(props.event.schedules.endApplication, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>配置発表(予定)</th>
-            <td>{new Date(props.event.schedules.publishSpaces).toLocaleString()}</td>
+            <td>{formatByDate(props.event.schedules.publishSpaces, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>会期開始</th>
-            <td>{new Date(props.event.schedules.startEvent).toLocaleString()}</td>
+            <td>{formatByDate(props.event.schedules.startEvent, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>会期終了</th>
-            <td>{new Date(props.event.schedules.endEvent).toLocaleString()}</td>
+            <td>{formatByDate(props.event.schedules.endEvent, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
         </tbody>
       </table>
@@ -70,7 +80,7 @@ const Introduction: React.FC<Props> = (props) => {
       <h3>申し込み完了後～当日</h3>
       <h4>配置発表・デジタル通行証発券</h4>
       <p>
-        配置発表を {new Date(props.event.schedules.publishSpaces).toLocaleString()} に行う予定です。
+        配置発表を {formatByDate(props.event.schedules.publishSpaces, 'YYYY年M月D日 H時mm分')} に行う予定です。
       </p>
       <p>
         配置は、申し込み後にログインできる「申し込み履歴」のページからご確認いただけます。<br />
