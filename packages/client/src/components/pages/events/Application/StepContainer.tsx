@@ -134,7 +134,7 @@ const StepContainer: React.FC<Props> = (props) => {
         }))
       } />
 
-      {stepComponents?.[step] ?? 'エラー！'}
+      {stepComponents?.[step] ?? ''}
     </>
   )
 }
