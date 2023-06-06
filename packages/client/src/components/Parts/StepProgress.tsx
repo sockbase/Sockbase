@@ -53,7 +53,7 @@ const StyledStepProgress = styled.ol`
     &.active {
       font-weight: bold;
       &::before {
-        background-color: var(--darkAccentColor);
+        background-color: var(--primary-color);
       }
     }
   }
