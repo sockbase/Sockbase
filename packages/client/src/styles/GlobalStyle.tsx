@@ -25,8 +25,8 @@ h1 { font-size: 2em; }
 h2 {
   padding-bottom: 4px;
   font-size: 1.5em;
-  color: var(--darkAccentColor);
-  border-bottom: 4px solid var(--darkAccentColor);
+  color: var(--primary-color);
+  border-bottom: 4px solid var(--primary-color);
   position: relative;
   display: inline;
   z-index: 0;
@@ -42,7 +42,7 @@ h2 {
 }
 h3 {
   font-size: 1em;
-  color: var(--darkAccentColor);
+  color: var(--primary-color);
 }
 h4 { font-size: 0.9em; }
 h5 { font-size: 0.8em; }

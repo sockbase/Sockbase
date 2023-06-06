@@ -32,6 +32,7 @@ import DashboardContact from './pages/dashboard/Contact'
 import DebugDashboard from './pages/dashboard/Debug'
 import DashboardTemplate from './pages/DashboardTemplate'
 import FormTemplate from './pages/FormTemplate'
+import NotFound from './pages/NotFound'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -164,6 +165,10 @@ const router = createBrowserRouter([
         ]
       }
     ]
+  },
+  {
+    path: '*',
+    element: <NotFound />
   }
 ])
 
