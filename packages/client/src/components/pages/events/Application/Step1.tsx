@@ -493,7 +493,7 @@ const Step1: React.FC<Props> = (props) => {
                 onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))}
                 hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)} />
               <FormHelp hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)}>
-                英数を含め、12文字以上で設定してください。
+                アルファベット大文字を含め、英数12文字以上で設定してください。
               </FormHelp>
             </FormItem>
             <FormItem>
