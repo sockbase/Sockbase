@@ -19,8 +19,8 @@ const FormInput = styled.input<{ hasError?: boolean }>`
   }
 
   ${props => props.hasError && {
-    border: '2px solid #ff2222',
-    boxShadow: '0 2px 5px #ff222288'
+    border: '2px solid #ff2222 !important',
+    boxShadow: '0 2px 5px #ff222288 !important'
   }}
 
   &:disabled {
