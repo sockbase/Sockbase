@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-const FormHelp = styled.label`
+const FormHelp = styled.label<{ hasError?: boolean }>`
   display: block;
   margin-top: -2px;
   padding: 5px;
@@ -15,6 +15,13 @@ const FormHelp = styled.label`
     background-color: #ea618380;
     border: 2px solid #ea618380;
   }
+
+  ${props => props.hasError && `
+    background-color: #ff2222 !important;
+    border: 2px solid #ff2222 !important;
+    box-shadow: 0 2px 5px #ff222288;
+    color: #ffffff;
+  `}
 `
 
 export default FormHelp

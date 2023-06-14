@@ -148,7 +148,7 @@ const Step1: React.FC<Props> = (props) => {
           // validator.isDate(leaderUserData.birthday),
           validator.isPostalCode(leaderUserData.postalCode),
           validator.isEmail(leaderUserData.email),
-          !validator.isEmpty(leaderUserData.password),
+          validator.isStrongPassword(leaderUserData.password),
           !validator.isEmpty(leaderUserData.rePassword),
           validator.equals(leaderUserData.password, leaderUserData.rePassword)
         ]
@@ -490,7 +490,11 @@ const Step1: React.FC<Props> = (props) => {
               <FormInput type="password"
                 placeholder='●●●●●●●●●●●●'
                 value={leaderUserData.password}
-                onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))} />
+                onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))}
+                hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)} />
+              <FormHelp hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)}>
+                アルファベット大文字を含め、英数12文字以上で設定してください。
+              </FormHelp>
             </FormItem>
             <FormItem>
               <FormLabel>パスワード(確認)</FormLabel>
@@ -500,7 +504,7 @@ const Step1: React.FC<Props> = (props) => {
                 onChange={e => setLeaderUserData(s => ({ ...s, rePassword: e.target.value }))}
                 hasError={!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword} />
               {!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword &&
-                <FormHelp>パスワードの入力が間違っています</FormHelp>}
+                <FormHelp hasError>パスワードの入力が間違っています</FormHelp>}
             </FormItem>
           </FormSection>
         </>

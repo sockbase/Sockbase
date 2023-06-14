@@ -10,6 +10,7 @@ interface IUseValidate {
   isDate: (value: string) => boolean
   isEmail: (value: string) => boolean
   isApplicationHashId: (value: string) => boolean
+  isStrongPassword: (value: string) => boolean
   equals: (value1: string, value2: string) => boolean
 }
 const useValidate: () => IUseValidate =
@@ -41,6 +42,9 @@ const useValidate: () => IUseValidate =
     const isApplicationHashId: (value: string) => boolean =
       (value) => isMatchRegex(value, /^\d{17}-[0-9a-f]{8}$/)
 
+    const isStrongPassword: (value: string) => boolean =
+      (value) => isMatchRegex(value, /(?=.*[A-Z])[a-zA-Z0-9]+/) && value.length >= 12
+
     const equals: (value1: string, value2: string) => boolean =
       (value1, value2) => value1 === value2
 
@@ -54,6 +58,7 @@ const useValidate: () => IUseValidate =
       isDate,
       isEmail,
       isApplicationHashId,
+      isStrongPassword,
       equals
     }
   }
