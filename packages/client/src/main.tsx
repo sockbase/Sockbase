@@ -31,6 +31,7 @@ import DashboardSettings from './pages/dashboard/Settings'
 import DashboardContact from './pages/dashboard/Contact'
 import DebugDashboard from './pages/dashboard/Debug'
 import DashboardTemplate from './pages/DashboardTemplate'
+import DashboardInquiryList from './pages/dashboard/manage/inquiries/InquiryList'
 import FormTemplate from './pages/FormTemplate'
 import NotFound from './pages/NotFound'
 
@@ -151,6 +152,15 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <DashboardPaymentList />
+              }
+            ]
+          },
+          {
+            path: 'manage',
+            children: [
+              {
+                path: 'inquiries',
+                element: <DashboardInquiryList />
               }
             ]
           },
