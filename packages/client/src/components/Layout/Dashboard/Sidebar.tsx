@@ -20,7 +20,8 @@ import {
   MdManageSearch,
   MdEditCalendar,
   MdStore,
-  MdMail
+  MdMail,
+  MdInbox
 } from 'react-icons/md'
 
 import useWindowDimension from '../../../hooks/useWindowDimension'
@@ -94,6 +95,12 @@ const menu: MenuSection[] = [
         icon: <MdEditCalendar />,
         text: 'イベント管理',
         link: '/dashboard/events'
+      },
+      {
+        key: 'manageInquiries',
+        icon: <MdInbox />,
+        text: '問い合わせ管理',
+        link: '/dashboard/inquiries'
       }
     ]
   },
