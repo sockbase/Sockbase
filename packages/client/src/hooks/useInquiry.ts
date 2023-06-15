@@ -20,13 +20,14 @@ const inquiryConverter: FirestoreDB.FirestoreDataConverter<SockbaseInquiryDocume
       inquiryType: data.inquiryType,
       body: data.body,
       status: data.status,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt
+      createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
+      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null
     }
   }
 }
 interface IUseInquiry {
   submitInquiry: (inquiryType: string, inquiryBody: string) => Promise<void>
+  getInquiries: () => Promise<SockbaseInquiryDocument[]>
 }
 
 const useInquiry: () => IUseInquiry =
@@ -54,8 +55,22 @@ const useInquiry: () => IUseInquiry =
         await FirestoreDB.addDoc(inquiryRef, inquiryDoc)
       }, [user])
 
+    const getInquiries: () => Promise<SockbaseInquiryDocument[]> =
+      async () => {
+        const db = getFirestore()
+        const inquiriesRef = FirestoreDB.collection(db, '_inquiries')
+          .withConverter(inquiryConverter)
+
+        const inquiriesDocs = await FirestoreDB.getDocs(inquiriesRef)
+        const inquries = inquiriesDocs.docs
+          .map(i => i.data())
+
+        return inquries
+      }
+
     return {
-      submitInquiry
+      submitInquiry,
+      getInquiries
     }
   }
 
