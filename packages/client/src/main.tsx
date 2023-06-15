@@ -148,21 +148,11 @@ const router = createBrowserRouter([
           },
           {
             path: 'payments',
-            children: [
-              {
-                index: true,
-                element: <DashboardPaymentList />
-              }
-            ]
+            element: <DashboardPaymentList />
           },
           {
-            path: 'manage',
-            children: [
-              {
-                path: 'inquiries',
-                element: <DashboardInquiryList />
-              }
-            ]
+            path: 'inquiries',
+            element: <DashboardInquiryList />
           },
           ...[
             import.meta.env.DEV
