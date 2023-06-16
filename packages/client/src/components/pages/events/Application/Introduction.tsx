@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import type { SockbaseEvent } from 'sockbase'
 
 import useDayjs from '../../../../hooks/useDayjs'
@@ -153,7 +152,7 @@ const Introduction: React.FC<Props> = (props) => {
           申し込み情報はねくたりしょんが保管し、イベント主催である「{props.event._organization.name}」に提供いたします。
         </p>}
       <p>
-        詳しくは<Link to="/privacy-policy">プライバシーポリシー</Link>をご確認ください。
+        詳しくは<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>をご確認ください。
       </p>
 
       <FormSection>
