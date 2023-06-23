@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount, SockbaseEventGenre } from 'sockbase'
+import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount, SockbaseEventGenre, SockbaseEvent } from 'sockbase'
 import sockbaseShared from '@sockbase/shared'
 
 import useFirebaseError from '../../../../hooks/useFirebaseError'
@@ -14,10 +14,9 @@ import LoadingCircleWrapper from '../../../Parts/LoadingCircleWrapper'
 
 interface Props {
   app: SockbaseApplication | undefined
+  event: SockbaseEvent
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutData: string | undefined
-  spaces: SockbaseEventSpace[]
-  genres: SockbaseEventGenre[]
   userData: SockbaseAccount | null
   submitApplication: () => Promise<void>
   prevStep: () => void
@@ -35,8 +34,8 @@ const Step2: React.FC<Props> = (props) => {
 
   const onChangeSpaceSelect: () => void =
     () => {
-      if (!props.app || !props.spaces) return
-      const space = props.spaces
+      if (!props.app || !props.event.spaces) return
+      const space = props.event.spaces
         .filter(s => s.id === props.app?.spaceId)[0]
       setSpaceInfo(space)
 
@@ -44,11 +43,11 @@ const Step2: React.FC<Props> = (props) => {
         .filter(p => p.id === props.app?.paymentMethod)[0]
       setPaymentMethodInfo(paymentMethod)
 
-      const genre = props.genres
+      const genre = props.event.genres
         .filter(g => g.id === props.app?.circle.genre)[0]
       setGenreInfo(genre)
     }
-  useEffect(onChangeSpaceSelect, [props.app, props.spaces, props])
+  useEffect(onChangeSpaceSelect, [props.app, props.event, props])
 
   const handleSubmit: () => void =
     () => {
@@ -106,12 +105,12 @@ const Step2: React.FC<Props> = (props) => {
           <h2>頒布物情報</h2>
           <table>
             <tbody>
-              <tr>
+              {props.event.permissions.allowAdult && <tr>
                 <th>成人向け頒布物の有無</th>
                 <td>{props.app.circle.hasAdult
                   ? '成人向け頒布物があります'
                   : '成人向け頒布物はありません'}</td>
-              </tr>
+              </tr>}
               <tr>
                 <th>頒布物のジャンル</th>
                 <td>{genreInfo?.name}</td>
