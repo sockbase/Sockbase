@@ -9,10 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@sockbase/shared": "workspace:^",
     "@types/crypto-js": "^4.1.1",
     "@types/node": "^18.14.2",
-    "@types/sockbase": "workspace:^",
     "@types/styled-components": "^5.1.26",
     "@types/validator": "^13.7.12",
     "crypto-js": "^4.1.1",
