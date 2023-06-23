@@ -19,10 +19,10 @@ jobs:
       
       - name: Install monorepo packages
         working-directory: ./
-        run: pnpm install
+        run: pnpm install --shamefully-hoist
 
       - name: Install packages for functions
-        run: pnpm install
+        run: pnpm install 
 
       - name: Lint functions
         run: pnpm lint
