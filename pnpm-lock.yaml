@@ -44,12 +44,18 @@ importers:
 
   packages/client:
     dependencies:
+      '@sockbase/shared':
+        specifier: workspace:^
+        version: link:../shared
       '@types/crypto-js':
         specifier: ^4.1.1
         version: 4.1.1
       '@types/node':
         specifier: ^18.14.2
         version: 18.14.2
+      '@types/sockbase':
+        specifier: workspace:^
+        version: link:../types
       '@types/styled-components':
         specifier: ^5.1.26
         version: 5.1.26
