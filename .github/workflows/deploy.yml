@@ -32,10 +32,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-          version: '8.6.2'
-      
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS_JSON }}
@@ -44,7 +40,7 @@ jobs:
         run: npm install -g firebase-tools
       
       - name: Install monorepo packages
-        run: pnpm install --shamefully-hoist
+        run: yarn install
       
       - name: Create .env file
         run: |
