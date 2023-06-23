@@ -16,6 +16,9 @@ export interface SockbaseEvent {
   _organization: SockbaseOrganization & {
     id: string
   }
+  permissions: {
+    allowAdult: boolean
+  }
 }
 
 export interface SockbaseEventSpace {

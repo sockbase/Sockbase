@@ -8,6 +8,7 @@ import FormSection from '../../../Form/FormSection'
 import FormItem from '../../../Form/FormItem'
 
 import dummyEyecatchImage from '../../../../assets/dummy-eyecatch.jpg'
+import Alert from '../../../Parts/Alert'
 
 interface Props {
   event: SockbaseEvent
@@ -26,13 +27,16 @@ const Introduction: React.FC<Props> = (props) => {
             : <EyecatchImage src={dummyEyecatchImage} />
         }
       </p>
+
       <h1>申し込みの前に</h1>
+
       <p>
         このページでは「{props.event.eventName}」へのサークル参加申し込みを受け付けます。<br />
         申し込み手続きを進める前に以下の内容を確認してください。
       </p>
 
       <h2>当日までの流れ</h2>
+
       <h3>スケジュール</h3>
       <table>
         <tbody>
@@ -58,11 +62,14 @@ const Introduction: React.FC<Props> = (props) => {
           </tr>
         </tbody>
       </table>
+
       <h3>申し込み</h3>
+
       <h4>申し込み情報の入力</h4>
       <p>
         サークル参加に必要な情報を入力します。
       </p>
+
       <h4>サークル参加費のお支払い</h4>
       <p>
         参加費のお支払いには、クレジットカードを利用したオンライン決済のほか、銀行振込がご利用いただけます。
@@ -71,12 +78,14 @@ const Introduction: React.FC<Props> = (props) => {
         銀行振込の場合、手数料は申し込み者様によるご負担となります。<br />
         また、お振込みの確認までにお時間をいただく場合がございます。
       </p>
+
       <h4>申し込み完了</h4>
       <p>
         決済が完了次第、申し込み完了となります。
       </p>
 
       <h3>申し込み完了後～当日</h3>
+
       <h4>配置発表・デジタル通行証発券</h4>
       <p>
         配置発表を {formatByDate(props.event.schedules.publishSpaces, 'YYYY年M月D日 H時mm分')} に行う予定です。
@@ -85,23 +94,32 @@ const Introduction: React.FC<Props> = (props) => {
         配置は、申し込み後にログインできる「申し込み履歴」のページからご確認いただけます。<br />
         配置発表と同時に、当日使用するデジタル通行証を発券いたしますので必ずご確認ください。
       </p>
+
       <h4>当日</h4>
       <p>
         当日は配置発表時に発券されたデジタル通行証を入り口のスタッフまでご提示ください。<br />
         デジタル通行証を表示できる端末をお持ちでない場合は、デジタル通行証のページから予め紙の通行証を印刷し、入り口スタッフまでご提示ください。
       </p>
 
+      {!props.event.permissions.allowAdult && <>
+        <h2>お知らせ</h2>
+        <Alert type="danger" title="成人向け作品の頒布はできません">
+          今回のイベントでは、会場からの要請・運営の都合上、成人向け作品の頒布はできません。<br />
+          予めご了承ください。
+        </Alert>
+      </>}
+
       <h2>申し込みに必要なもの</h2>
+
       <h3>必須</h3>
       <ul>
         <li>サークルカット</li>
       </ul>
+
       <h3>隣接配置(合体)を希望する場合</h3>
       <ul>
         <li>先に申し込んだ方の合体申し込みID</li>
       </ul>
-      <p>
-      </p>
 
       <h3>プチオンリーに参加する場合</h3>
       <ul>
@@ -130,9 +148,6 @@ const Introduction: React.FC<Props> = (props) => {
           }
         </tbody>
       </table>
-      <ul>
-
-      </ul>
 
       <h2>注意事項</h2>
       <ul>

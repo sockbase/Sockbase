@@ -38,7 +38,8 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
         .sort((a, b) => a.price - b.price),
       genres: event.genres,
       schedules: event.schedules,
-      _organization: event._organization
+      _organization: event._organization,
+      permissions: event.permissions
     }
   }
 }
