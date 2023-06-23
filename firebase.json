@@ -2,7 +2,7 @@
   "hosting": {
     "public": "./packages/client/dist",
     "predeploy": [
-      "yarn workspace @sockbase/client build"
+      "pnpm client build"
     ],
     "ignore": [
       "firebase.json",
@@ -19,8 +19,8 @@
   "functions": {
     "source": "./packages/functions",
     "predeploy": [
-      "yarn workspace @sockbase/functions run lint",
-      "yarn workspace @sockbase/functions run build"
+      "pnpm functions run lint",
+      "pnpm functions run build"
     ],
     "ignore": [
       "node_modules",

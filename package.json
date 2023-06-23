@@ -1,13 +1,18 @@
 {
   "name": "sockbase",
   "private": true,
-  "workspaces": [
-    "./packages/*"
-  ],
   "scripts": {
     "format": "prettier . --ignore-path .gitignore --write",
-    "lint": "eslint --ext .ts,.tsx . --ignore-path .gitignore"
+    "lint": "eslint --ext .ts,.tsx . --ignore-path .gitignore",
+    "client": "pnpm -F \"client\"",
+    "functions": "pnpm -F \"functions\""
   },
+  "engines": {
+    "pnpm": "8.6.2",
+    "npm": "please_use_pnpm_instead",
+    "yarn": "please_use_pnpm_instead"
+  },
+  "packageManager": "pnpm@8.6.2",
   "license": "AGPL-3.0",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.52.0",
