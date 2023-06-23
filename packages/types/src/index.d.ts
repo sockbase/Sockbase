@@ -16,6 +16,9 @@ export interface SockbaseEvent {
   _organization: SockbaseOrganization & {
     id: string
   }
+  permissions: {
+    allowAdult: boolean
+  }
 }
 
 export interface SockbaseEventSpace {
@@ -111,6 +114,14 @@ export interface SockbaseApplicationAddedResult {
 export interface SockbaseApplicationMeta {
   applicationStatus: SockbaseApplicationStatus
 }
+
+/**
+ * SockbaseApplicationStatus
+ * 
+ * 0: 仮申し込み
+ * 1: キャンセル済み
+ * 2: 申し込み確定
+ */
 export type SockbaseApplicationStatus = 0 | 1 | 2
 
 export interface SockbaseTicketApplication {
