@@ -142,7 +142,8 @@ export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEven
         id: event._organization.id,
         name: '',
         contactUrl: ''
-      }
+      },
+      permissions: event.permissions
     }
   }
 }

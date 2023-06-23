@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react'
 
-import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure, SockbaseEventGenre } from 'sockbase'
+import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure, SockbaseEvent } from 'sockbase'
 import sockbaseShared from '@sockbase/shared'
 
 import usePostalCode from '../../../../hooks/usePostalCode'
@@ -23,11 +23,10 @@ import CircleCutImage from '../../../Parts/CircleCutImage'
 
 interface Props {
   eventId: string
+  event: SockbaseEvent
   app: SockbaseApplication | undefined
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
-  spaces: SockbaseEventSpace[]
-  genres: SockbaseEventGenre[]
   prevStep: () => void
   nextStep: (app: SockbaseApplication, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
@@ -95,13 +94,13 @@ const Step1: React.FC<Props> = (props) => {
       if (props.circleCutFile) {
         setCircleCutFile(props.circleCutFile)
       }
-      if (props.spaces) {
-        setSpaceIds(props.spaces.map(i => i.id))
+      if (props.event.spaces) {
+        setSpaceIds(props.event.spaces.map(i => i.id))
       }
 
       setPaymentMethodIds(sockbaseShared.constants.payment.methods.map(i => i.id))
     }
-  useEffect(onInitialize, [props.app, props.leaderUserData, props.circleCutFile, props.spaces])
+  useEffect(onInitialize, [props.app, props.leaderUserData, props.circleCutFile, props.event])
 
   const onChangeCircleCutFile: () => void =
     () => {
@@ -112,7 +111,7 @@ const Step1: React.FC<Props> = (props) => {
 
   const [selectedSpace, setSelectedSpace] = useState<SockbaseEventSpace | undefined>()
   const onChangeSpaceSelect: () => void =
-    () => setSelectedSpace(props.spaces.filter(i => i.id === app.spaceId)[0])
+    () => setSelectedSpace(props.event.spaces.filter(i => i.id === app.spaceId)[0])
   useEffect(onChangeSpaceSelect, [app.spaceId])
 
   const onChangeForm: () => void =
@@ -127,8 +126,8 @@ const Step1: React.FC<Props> = (props) => {
         validator.isOnlyHiragana(app.circle.yomi),
         !validator.isEmpty(app.circle.penName),
         validator.isOnlyHiragana(app.circle.penNameYomi),
-        !validator.isNull(app.circle.hasAdult),
-        validator.isIn(app.circle.genre, props.genres.map(g => g.id)),
+        !props.event.permissions.allowAdult || !validator.isNull(app.circle.hasAdult),
+        validator.isIn(app.circle.genre, props.event.genres.map(g => g.id)),
         !validator.isEmpty(app.overview.description),
         !validator.isEmpty(app.overview.totalAmount),
         validator.isIn(app.paymentMethod, paymentMethodIds),
@@ -166,7 +165,7 @@ const Step1: React.FC<Props> = (props) => {
       setInvalidFieldCount(invalidCount)
       setAllValid(!hasValidationError)
     }
-  useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData, props.genres])
+  useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData, props.event])
 
   const onChangeBirthday: () => void =
     () => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
@@ -183,7 +182,7 @@ const Step1: React.FC<Props> = (props) => {
     () => {
       setApp({
         eventId: props.eventId,
-        spaceId: props.spaces[0].id,
+        spaceId: props.event.spaces[0].id,
         circle: {
           name: 'test',
           yomi: 'てすと',
@@ -264,7 +263,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormRadio
             name="space"
             values={
-              props.spaces.map(i => ({
+              props.event.spaces.map(i => ({
                 text: `${i.name} ${i.price.toLocaleString()}円 / ${i.description}`,
                 value: i.id
               }))
@@ -338,35 +337,38 @@ const Step1: React.FC<Props> = (props) => {
 
       <h2>頒布物情報</h2>
       <FormSection>
-        <FormItem>
-          <FormLabel>成人向け頒布物の有無</FormLabel>
-          <FormSelect
-            value={app.circle.hasAdult === null
-              ? 'none'
-              : app.circle.hasAdult
-                ? 'yes'
-                : 'no'}
-            onChange={e => setApp(s => ({
-              ...s,
-              circle: {
-                ...s.circle,
-                hasAdult: e.target.value === 'none'
-                  ? null
-                  : e.target.value === 'yes'
-              }
-            }))}>
-            <option value="none">選択してください</option>
-            <option value="no">成人向け頒布物はありません</option>
-            <option value="yes">成人向け頒布物があります</option>
-          </FormSelect>
-        </FormItem>
+        {
+          props.event.permissions.allowAdult &&
+          <FormItem>
+            <FormLabel>成人向け頒布物の有無</FormLabel>
+            <FormSelect
+              value={app.circle.hasAdult === null
+                ? 'none'
+                : app.circle.hasAdult
+                  ? 'yes'
+                  : 'no'}
+              onChange={e => setApp(s => ({
+                ...s,
+                circle: {
+                  ...s.circle,
+                  hasAdult: e.target.value === 'none'
+                    ? null
+                    : e.target.value === 'yes'
+                }
+              }))}>
+              <option value="none">選択してください</option>
+              <option value="no">成人向け頒布物はありません</option>
+              <option value="yes">成人向け頒布物があります</option>
+            </FormSelect>
+          </FormItem>
+        }
         <FormItem>
           <FormLabel>頒布物のジャンル</FormLabel>
           <FormSelect
             value={app.circle.genre}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}>
             <option value="">選択してください</option>
-            {props.genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+            {props.event.genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
           </FormSelect>
           <FormHelp>
             頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
