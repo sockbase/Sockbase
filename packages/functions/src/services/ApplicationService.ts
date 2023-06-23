@@ -73,7 +73,7 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
       .get())
       .data()
 
-    if (unionApp?.hashId) {
+    if (unionApp?.unionCircleId) {
       throw new functions.https.HttpsError('already-exists', 'application_already_union')
     }
   }
