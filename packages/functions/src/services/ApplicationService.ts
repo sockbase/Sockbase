@@ -95,8 +95,16 @@ export const createApplication = functions.https.onCall(async (app: SockbaseAppl
     throw new functions.https.HttpsError('deadline-exceeded', 'application_out_of_term')
   }
 
+  if (!event.permissions.allowAdult && app.circle.hasAdult) {
+    throw new functions.https.HttpsError('invalid-argument', 'invalid_argument_adult')
+  }
+
   const appDoc: SockbaseApplicationDocument = {
     ...app,
+    circle: {
+      ...app.circle,
+      hasAdult: event.permissions.allowAdult && app.circle.hasAdult
+    },
     userId,
     createdAt: now,
     updatedAt: null,
