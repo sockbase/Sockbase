@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationLinksDocument, SockbaseApplicationMeta, SockbaseApplicationStatus, SockbaseEvent, SockbasePaymentDocument } from 'sockbase'
-import sockbaseShared from '@sockbase/shared'
+import sockbaseShared from 'shared'
 
 import { MdEdit } from 'react-icons/md'
 
