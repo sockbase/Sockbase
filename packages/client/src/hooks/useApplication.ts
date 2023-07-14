@@ -8,9 +8,12 @@ import type {
   SockbaseApplication,
   SockbaseApplicationAddedResult,
   SockbaseApplicationDocument,
+  SockbaseApplicationLinks,
+  SockbaseApplicationLinksDocument,
   SockbaseApplicationMeta,
   SockbaseApplicationStatus
 } from 'sockbase'
+import { useCallback } from 'react'
 
 interface ApplicationHashIdDocument {
   applicationId: string
@@ -62,6 +65,29 @@ const applicationMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseAppli
   }
 }
 
+const applicationLinksConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicationLinksDocument> = {
+  toFirestore: (links: SockbaseApplicationLinksDocument) => ({
+    userId: links.userId,
+    applicationId: links.applicationId,
+    twitterScreenName: links.twitterScreenName,
+    pixivUserId: links.pixivUserId,
+    websiteURL: links.websiteURL,
+    menuURL: links.menuURL
+  }),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseApplicationLinksDocument => {
+    const links = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: links.userId,
+      applicationId: links.applicationId,
+      twitterScreenName: links.twitterScreenName,
+      pixivUserId: links.pixivUserId,
+      websiteURL: links.websiteURL,
+      menuURL: links.menuURL
+    }
+  }
+}
+
 interface IUseApplication {
   getApplicationIdByHashedIdAsync: (hashedAppId: string) => Promise<string>
   getApplicationByIdAsync: (appId: string) => Promise<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
@@ -72,9 +98,12 @@ interface IUseApplication {
   getApplicationMetaByIdAsync: (appId: string) => Promise<SockbaseApplicationMeta>
   updateApplicationStatusByIdAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void>
   getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
+  getLinksByApplicationIdAsync: (appId: string) => Promise<SockbaseApplicationLinksDocument | null>
+  getLinksByApplicationIdOptionalAsync: (appId: string) => Promise<SockbaseApplicationLinksDocument | null>
+  setLinksByApplicationIdAsync: (appId: string, links: SockbaseApplicationLinks) => Promise<void>
 }
 const useApplication: () => IUseApplication = () => {
-  const { getFirestore, getStorage, getFunctions } = useFirebase()
+  const { user, getFirestore, getStorage, getFunctions } = useFirebase()
 
   const getApplicationIdByHashedIdAsync: (hashedAppId: string) => Promise<string> =
     async (hashedAppId) => {
@@ -209,6 +238,42 @@ const useApplication: () => IUseApplication = () => {
       return circleCutURL
     }
 
+  const getLinksByApplicationIdAsync = async (appId: string): Promise<SockbaseApplicationLinksDocument | null> => {
+    const db = getFirestore()
+    const linksDoc = FirestoreDB.doc(db, '_applicationLinks', appId)
+      .withConverter(applicationLinksConverter)
+
+    const links = await FirestoreDB.getDoc(linksDoc)
+    if (!links.exists()) {
+      return null
+    }
+
+    return links.data()
+  }
+
+  const getLinksByApplicationIdOptionalAsync = async (appId: string): Promise<SockbaseApplicationLinksDocument | null> => {
+    return await getLinksByApplicationIdAsync(appId)
+      .catch(() => null)
+  }
+
+  const setLinksByApplicationIdAsync = useCallback(async (appId: string, links: SockbaseApplicationLinks): Promise<void> => {
+    if (!user) return
+
+    const db = getFirestore()
+    const linksRef = FirestoreDB.doc(db, '_applicationLinks', appId)
+      .withConverter(applicationLinksConverter)
+
+    const linksDoc: SockbaseApplicationLinksDocument = {
+      ...links,
+      id: '',
+      applicationId: appId,
+      userId: user.uid
+    }
+
+    await FirestoreDB.setDoc(linksRef, linksDoc)
+      .catch(err => { throw err })
+  }, [user])
+
   return {
     getApplicationIdByHashedIdAsync,
     getApplicationByIdAsync,
@@ -218,7 +283,10 @@ const useApplication: () => IUseApplication = () => {
     submitApplicationAsync,
     getApplicationMetaByIdAsync,
     updateApplicationStatusByIdAsync,
-    getCircleCutURLByHashedIdAsync
+    getCircleCutURLByHashedIdAsync,
+    getLinksByApplicationIdOptionalAsync,
+    getLinksByApplicationIdAsync,
+    setLinksByApplicationIdAsync
   }
 }
 
