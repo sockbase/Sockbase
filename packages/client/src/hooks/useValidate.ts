@@ -11,6 +11,9 @@ interface IUseValidate {
   isEmail: (value: string) => boolean
   isApplicationHashId: (value: string) => boolean
   isStrongPassword: (value: string) => boolean
+  isTwitterScreenName: (value: string) => boolean
+  isURL: (value: string) => boolean
+  isOnlyNumber: (value: string) => boolean
   equals: (value1: string, value2: string) => boolean
 }
 const useValidate: () => IUseValidate =
@@ -45,6 +48,15 @@ const useValidate: () => IUseValidate =
     const isStrongPassword: (value: string) => boolean =
       (value) => isMatchRegex(value, /(?=.*[A-Z])[a-zA-Z0-9]+/) && value.length >= 12
 
+    const isTwitterScreenName = (value: string): boolean =>
+      isMatchRegex(value, /^[A-Za-z0-9_]{1,16}$/)
+
+    const isOnlyNumber = (value: string): boolean =>
+      isMatchRegex(value, /^\d+$/)
+
+    const isURL = (value: string): boolean =>
+      isMatchRegex(value, /^http(s)?:\/\//)
+
     const equals: (value1: string, value2: string) => boolean =
       (value1, value2) => value1 === value2
 
@@ -59,6 +71,9 @@ const useValidate: () => IUseValidate =
       isEmail,
       isApplicationHashId,
       isStrongPassword,
+      isTwitterScreenName,
+      isOnlyNumber,
+      isURL,
       equals
     }
   }

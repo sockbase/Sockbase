@@ -1,12 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import type {
-  SockbasePaymentDocument,
-  SockbaseAccount,
-  SockbaseApplicationDocument,
-  SockbaseApplicationMeta,
-  SockbaseApplicationStatus,
-  SockbaseEvent
+import {
+  type SockbasePaymentDocument,
+  type SockbaseAccount,
+  type SockbaseApplicationDocument,
+  type SockbaseApplicationMeta,
+  type SockbaseApplicationStatus,
+  type SockbaseEvent,
+  type SockbaseApplicationLinksDocument
 } from 'sockbase'
 
 import useApplication from '../../../hooks/useApplication'
@@ -24,7 +25,8 @@ const ApplicationDetailContainer: React.FC = () => {
     getApplicationIdByHashedIdAsync,
     getApplicationByIdAsync,
     getCircleCutURLByHashedIdAsync,
-    updateApplicationStatusByIdAsync
+    updateApplicationStatusByIdAsync,
+    getLinksByApplicationIdOptionalAsync
   } = useApplication()
   const { getPaymentIdByHashId, getPayment } = usePayment()
   const { getEventByIdAsync } = useEvent()
@@ -38,6 +40,7 @@ const ApplicationDetailContainer: React.FC = () => {
   const [event, setEvent] = useState<SockbaseEvent>()
   const [eventId, setEventId] = useState<string>()
   const [userData, setUserData] = useState<SockbaseAccount>()
+  const [links, setLinks] = useState<SockbaseApplicationLinksDocument | null>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
   const [isAdmin, setAdmin] = useState<boolean | null>()
 
@@ -53,6 +56,7 @@ const ApplicationDetailContainer: React.FC = () => {
           const fetchedPayment = await getPayment(fetchedPaymentId)
           const fetchedCircleCutURL = await getCircleCutURLByHashedIdAsync(hashedAppId)
           const fetchedUser = await getUserDataByUserIdAndEventIdAsync(fetchedApp.userId, fetchedApp.eventId)
+          const fetchedLinks = await getLinksByApplicationIdOptionalAsync(fetchedAppId)
           const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
           const fetchedIsAdmin = checkIsAdminByOrganizationId(fetchedEvent._organization.id)
 
@@ -61,6 +65,7 @@ const ApplicationDetailContainer: React.FC = () => {
           setPayment(fetchedPayment)
           setCircleCutURL(fetchedCircleCutURL)
           setUserData(fetchedUser)
+          setLinks(fetchedLinks)
           setEvent(fetchedEvent)
           setEventId(fetchedApp.eventId)
           setAdmin(fetchedIsAdmin)
@@ -95,13 +100,15 @@ const ApplicationDetailContainer: React.FC = () => {
 
   return (
     <DashboardLayout title={title}>
-      {app && payment !== undefined && event && eventId && userData && circleCutURL && isAdmin !== undefined
+      {hashedAppId && app && payment !== undefined && event && eventId && userData && links !== undefined && circleCutURL && isAdmin !== undefined
         ? <ApplicationDetail
+          hashedAppId={hashedAppId}
           app={app}
           payment={payment}
           event={event}
           eventId={eventId}
           userData={userData}
+          links={links}
           circleCutURL={circleCutURL}
           isAdmin={isAdmin}
           handleChangeStatus={handleChangeStatus} />
