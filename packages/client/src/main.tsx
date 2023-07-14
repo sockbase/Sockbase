@@ -32,6 +32,7 @@ import DashboardContact from './pages/dashboard/Contact'
 import DebugDashboard from './pages/dashboard/Debug'
 import DashboardTemplate from './pages/DashboardTemplate'
 import DashboardInquiryList from './pages/dashboard/manage/inquiries/InquiryList'
+import DashboardEditLinks from './pages/dashboard/CircleApplications/EditLinks'
 import FormTemplate from './pages/FormTemplate'
 import NotFound from './pages/NotFound'
 
@@ -142,7 +143,16 @@ const router = createBrowserRouter([
               },
               {
                 path: ':hashedAppId',
-                element: <DashboardApplicationDetail />
+                children: [
+                  {
+                    index: true,
+                    element: <DashboardApplicationDetail />,
+                  },
+                  {
+                    path: 'links',
+                    element: <DashboardEditLinks />
+                  }
+                ]
               }
             ]
           },
