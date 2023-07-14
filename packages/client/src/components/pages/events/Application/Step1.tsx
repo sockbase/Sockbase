@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 
 import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure, SockbaseEvent } from 'sockbase'
-import sockbaseShared from '@sockbase/shared'
+import sockbaseShared from 'shared'
 
 import usePostalCode from '../../../../hooks/usePostalCode'
 import useValidate from '../../../../hooks/useValidate'

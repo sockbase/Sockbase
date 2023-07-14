@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react'
-import sockbaseShared from '@sockbase/shared'
+import sockbaseShared from 'shared'
 
 import useFirebase from './useFirebase'
 import type { SockbaseRole } from 'sockbase'
