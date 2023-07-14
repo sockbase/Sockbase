@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 import type { SockbaseStoreType, SockbaseStore, SockbaseTicketApplication, SockbaseAccountSecure } from 'sockbase'
-import sockbaseShared from '@sockbase/shared'
+import sockbaseShared from 'shared'
 
 import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'

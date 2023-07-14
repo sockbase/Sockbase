@@ -113,12 +113,14 @@ const StyledWrapMain = styled.main`
   @media screen and (max-width: 840px) {
     padding: 0;
   }
+
   grid-row: 2;
   grid-column: 2;
 `
 const StyledMain = styled.div`
   min-height: 100%;
   padding: 20px;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
   background-color: #ffffff;
 `
 const Logotype = styled.img`

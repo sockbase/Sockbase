@@ -49,6 +49,10 @@ const Introduction: React.FC<Props> = (props) => {
             <td>{formatByDate(props.event.schedules.endApplication, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
           <tr>
+            <th>カタログ情報確定日</th>
+            <td>{formatByDate(props.event.schedules.fixedApplication, 'YYYY年M月D日 H時mm分')}</td>
+          </tr>
+          <tr>
             <th>配置発表(予定)</th>
             <td>{formatByDate(props.event.schedules.publishSpaces, 'YYYY年M月D日 H時mm分')}</td>
           </tr>

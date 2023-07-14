@@ -1,5 +1,8 @@
 export type valueOf<T> = T[keyof T]
 
+/**
+ * イベント
+ */
 export interface SockbaseEvent {
   eventName: string
   descriptions: string[]
@@ -9,6 +12,7 @@ export interface SockbaseEvent {
   schedules: {
     startApplication: number
     endApplication: number
+    fixedApplication: number
     publishSpaces: number
     startEvent: number
     endEvent: number
@@ -21,6 +25,9 @@ export interface SockbaseEvent {
   }
 }
 
+/**
+ * スペース
+ */
 export interface SockbaseEventSpace {
   id: string
   name: string
@@ -32,11 +39,17 @@ export interface SockbaseEventSpace {
   } | null
 }
 
+/**
+ * ジャンル
+ */
 export interface SockbaseEventGenre {
   id: string
   name: string
 }
 
+/**
+ * チケットストア
+ */
 export interface SockbaseStore {
   storeName: string
   descriptions: string[]
@@ -53,6 +66,9 @@ export interface SockbaseStore {
   }
 }
 
+/**
+ * チケット種類
+ */
 export interface SockbaseStoreType {
   id: string
   name: string
@@ -64,11 +80,17 @@ export interface SockbaseStoreType {
   } | null
 }
 
+/**
+ * 組織
+ */
 export interface SockbaseOrganization {
   name: string
   contactUrl: string
 }
 
+/**
+ * 組織設定
+ */
 export type SockbaseOrganizationWithMeta = SockbaseOrganization & {
   config: {
     discordWebhookURL: string
@@ -76,6 +98,9 @@ export type SockbaseOrganizationWithMeta = SockbaseOrganization & {
   }
 }
 
+/**
+ * サークル申し込み情報
+ */
 export interface SockbaseApplication {
   eventId: string
   spaceId: string
@@ -98,7 +123,14 @@ export interface SockbaseApplication {
   remarks: string
 }
 
+/**
+ * ジャンルタイプ
+ */
 export type CircleGenreType = ''
+
+/**
+ * サークル申し込み情報(DB取得)
+ */
 export type SockbaseApplicationDocument = SockbaseApplication & {
   userId: string
   createdAt: Date | null
@@ -111,12 +143,15 @@ export interface SockbaseApplicationAddedResult {
   bankTransferCode: string
 }
 
+/**
+ * 申し込み管理情報
+ */
 export interface SockbaseApplicationMeta {
   applicationStatus: SockbaseApplicationStatus
 }
 
 /**
- * SockbaseApplicationStatus
+ * 申し込みステータス
  * 
  * 0: 仮申し込み
  * 1: キャンセル済み
@@ -124,6 +159,28 @@ export interface SockbaseApplicationMeta {
  */
 export type SockbaseApplicationStatus = 0 | 1 | 2
 
+/**
+ * サークル広報情報
+ */
+export interface SockbaseApplicationLinks {
+  twitterScreenName: string | null
+  pixivUserId: string | null
+  websiteURL: string | null
+  menuURL: string | null
+}
+
+/**
+ * サークル広報情報(DB取得)
+ */
+export type SockbaseApplicationLinksDocument = SockbaseApplicationLinks & {
+  id: string
+  applicationId: string
+  userId: string
+}
+
+/**
+ * チケット情報
+ */
 export interface SockbaseTicketApplication {
   storeId: string
   typeId: string
@@ -131,13 +188,21 @@ export interface SockbaseTicketApplication {
   paymentProductId?: string
   remarks: string
 }
+
+/**
+ * チケット情報(DB取得)
+ */
 export type SockbaseTicketApplicaitonDocument = SockbaseTicketApplication & {
   userId: string
+  usableUserId?: string
   createdAt: Date | null
   updatedAt: Date | null
   hashId: string | null
 }
 
+/**
+ * アカウント
+ */
 export interface SockbaseAccount {
   name: string
   email: string
@@ -148,28 +213,41 @@ export interface SockbaseAccount {
   telephone: string
 }
 
+/**
+ * アカウント機密情報
+ */
 export type SockbaseAccountSecure = SockbaseAccount & {
   password: string
   rePassword: string
 }
 
+/**
+ * アカウント情報(DB取得)
+ */
 export type SockbaseAccountDocument = SockbaseAccount & {
   id: string
 }
 
+/**
+ * ロール
+ * 
+ * 0: 通常ユーザ
+ * 1: スタッフ
+ * 2: 管理者
+ */
 export type SockbaseRole = 0 | 1 | 2
 
 /**
- * PaymentType
- *
+ * 決済方法
+ * 
  * online: 1
  * bankTransfer: 2
  */
 export type PaymentMethod = 1 | 2
 
 /**
- * PaymentStatus
- *
+ * 決済ステータス
+ * 
  * pending: 0
  * paid: 1
  * refunded: 2
@@ -177,6 +255,9 @@ export type PaymentMethod = 1 | 2
  */
 export type PaymentStatus = 0 | 1 | 2 | 3
 
+/**
+ * 決済情報
+ */
 export interface SockbasePayment {
   userId: string
   paymentProductId: string
@@ -187,6 +268,9 @@ export interface SockbasePayment {
   ticketId: string | null
 }
 
+/**
+ * 決済情報(DB取得)
+ */
 export type SockbasePaymentDocument = SockbasePayment & {
   id: string
   paymentId: string
@@ -195,12 +279,18 @@ export type SockbasePaymentDocument = SockbasePayment & {
   updatedAt: Date | null
 }
 
+/**
+ * 問い合わせ情報
+ */
 export interface SockbaseInquiry {
   userId: string
   inquiryType: string
   body: string
 }
 
+/**
+ * 問い合わせ情報(DB取得)
+ */
 export type SockbaseInquiryDocument = SockbaseInquiry & {
   id: string
   status: InquiryStatus
@@ -208,10 +298,13 @@ export type SockbaseInquiryDocument = SockbaseInquiry & {
   updatedAt: Date | null
 }
 
+/**
+ * 問い合わせタイプ
+ */
 export type InquiryType = 'other'
 
 /**
- * InquiryStatus
+ * 問い合わせステータス
  * 
  * todo: 0
  * inProgress: 1
