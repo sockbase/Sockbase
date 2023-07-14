@@ -1,4 +1,4 @@
-import type * as types from 'packages/types/src'
+import type * as types from 'sockbase'
 import type * as firestore from 'firebase-admin/firestore'
 
 interface ApplicationHashIdDocument {
@@ -134,6 +134,7 @@ export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEven
       schedules: {
         startApplication: event.schedules.startApplication,
         endApplication: event.schedules.endApplication,
+        fixedApplication: event.schedules.fixedApplication,
         publishSpaces: event.schedules.publishSpaces,
         startEvent: event.schedules.startEvent,
         endEvent: event.schedules.endEvent
