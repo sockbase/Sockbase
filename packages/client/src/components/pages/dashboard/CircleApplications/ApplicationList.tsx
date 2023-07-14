@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
-import sockbaseShared from '@sockbase/shared'
+import sockbaseShared from 'shared'
 
 import { MdEditNote } from 'react-icons/md'
 import PageTitle from '../../../Layout/Dashboard/PageTitle'

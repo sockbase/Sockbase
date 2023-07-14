@@ -9,6 +9,6 @@
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": false,
     "moduleResolution": "node",
-    "baseUrl": "."
+    // "baseUrl": "."
   }
 }

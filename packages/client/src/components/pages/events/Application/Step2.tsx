@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount, SockbaseEventGenre, SockbaseEvent } from 'sockbase'
-import sockbaseShared from '@sockbase/shared'
+import sockbaseShared from 'shared'
 
 import useFirebaseError from '../../../../hooks/useFirebaseError'
 
