@@ -24,6 +24,7 @@
     "react-icons": "^4.7.1",
     "react-markdown": "^8.0.7",
     "react-router-dom": "^6.8.1",
+    "shared": "../shared",
     "styled-components": "^5.3.6",
     "validator": "^13.9.0"
   },

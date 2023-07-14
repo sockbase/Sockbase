@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import type { User } from 'firebase/auth'
 import type { SockbaseRole } from 'sockbase'
-import sockbaseShared from '@sockbase/shared'
+import sockbaseShared from 'shared'
 
 import {
   MdCottage,
