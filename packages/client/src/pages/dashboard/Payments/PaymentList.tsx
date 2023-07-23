@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent, SockbasePaymentDocument } from 'sockbase'
-
+import { MdPayments } from 'react-icons/md'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import PaymentList from '../../../components/pages/dashboard/Payments/PaymentList'
-
 import useFirebase from '../../../hooks/useFirebase'
 import usePayment from '../../../hooks/usePayment'
 import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
-
 import Loading from '../../../components/Parts/Loading'
+import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import PageTitle from '../../../components/Layout/Dashboard/PageTitle'
 
 const DashboardPaymentList: React.FC = () => {
   const { user } = useFirebase()
@@ -65,6 +66,14 @@ const DashboardPaymentList: React.FC = () => {
 
   return (
     <DashboardLayout title="決済一覧">
+      <Breadcrumbs>
+        <li><Link to="/dashboard">マイページ</Link></li>
+      </Breadcrumbs>
+      <PageTitle
+        icon={<MdPayments />}
+        title="決済履歴"
+        description="Sockbaseでのお支払い状況の一覧を表示中" />
+
       {payments && apps && events && user?.email
         ? <PaymentList
           payments={payments}

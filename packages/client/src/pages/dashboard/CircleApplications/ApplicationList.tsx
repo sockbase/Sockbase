@@ -8,6 +8,10 @@ import useFirebase from '../../../hooks/useFirebase'
 import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
 import Loading from '../../../components/Parts/Loading'
+import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import { Link } from 'react-router-dom'
+import PageTitle from '../../../components/Layout/Dashboard/PageTitle'
+import { MdEditNote } from 'react-icons/md'
 
 const ApplicationListContainer: React.FC = () => {
   const { user } = useFirebase()
@@ -70,6 +74,14 @@ const ApplicationListContainer: React.FC = () => {
 
   return (
     <DashboardLayout title="申し込んだイベント">
+      <Breadcrumbs>
+        <li><Link to="/dashboard">マイページ</Link></li>
+      </Breadcrumbs>
+      <PageTitle
+        icon={<MdEditNote />}
+        title="サークル申し込み履歴"
+        description="今までに申し込んだイベントの一覧を表示中" />
+
       {apps && events && metas
         ? <ApplicationList apps={apps} metas={metas} events={events} />
         : <Loading text="申し込み履歴" />}
