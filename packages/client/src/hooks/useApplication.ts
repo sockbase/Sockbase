@@ -101,6 +101,7 @@ interface IUseApplication {
   getLinksByApplicationIdAsync: (appId: string) => Promise<SockbaseApplicationLinksDocument | null>
   getLinksByApplicationIdOptionalAsync: (appId: string) => Promise<SockbaseApplicationLinksDocument | null>
   setLinksByApplicationIdAsync: (appId: string, links: SockbaseApplicationLinks) => Promise<void>
+  exportCSV: (apps: SockbaseApplicationDocument[]) => string
 }
 const useApplication: () => IUseApplication = () => {
   const { user, getFirestore, getStorage, getFunctions } = useFirebase()
@@ -274,6 +275,30 @@ const useApplication: () => IUseApplication = () => {
       .catch(err => { throw err })
   }, [user])
 
+  const exportCSV = (apps: SockbaseApplicationDocument[]): string => {
+    const header = 'id,name,yomi,penName,genre,space,unionId,description,totalAmount'
+    const entries = apps
+      .map(a => ({
+        hashId: a.hashId,
+        circleName: a.circle.name,
+        circleNameYomi: a.circle.yomi,
+        penName: a.circle.penName,
+        genre: a.circle.genre,
+        spaceId: a.spaceId,
+        unionCircle: a.unionCircleId || 'null',
+        description: a.overview.description
+          .replaceAll(',', '，')
+          .replaceAll(/[\r\n]+/g, ' '),
+        totalAmount: a.overview.totalAmount
+          .replaceAll(',', '，')
+          .replaceAll(/[\r\n]+/g, ' '),
+      }))
+      .map(a => `${a.hashId},${a.circleName},${a.circleNameYomi},${a.penName},${a.genre},${a.spaceId},${a.unionCircle},${a.description},${a.totalAmount}`)
+      .join('\n')
+
+    return `${header}\n${entries}\n`
+  }
+
   return {
     getApplicationIdByHashedIdAsync,
     getApplicationByIdAsync,
@@ -286,7 +311,8 @@ const useApplication: () => IUseApplication = () => {
     getCircleCutURLByHashedIdAsync,
     getLinksByApplicationIdOptionalAsync,
     getLinksByApplicationIdAsync,
-    setLinksByApplicationIdAsync
+    setLinksByApplicationIdAsync,
+    exportCSV
   }
 }
 
