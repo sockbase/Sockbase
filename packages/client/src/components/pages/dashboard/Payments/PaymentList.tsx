@@ -7,11 +7,6 @@ import type {
   SockbasePaymentDocument
 } from 'sockbase'
 import { Link } from 'react-router-dom'
-
-import { MdPayments } from 'react-icons/md'
-
-import PageTitle from '../../../Layout/Dashboard/PageTitle'
-import Breadcrumbs from '../../../Parts/Breadcrumbs'
 import PaymentStatusLabel from '../../../Parts/PaymentStatusLabel'
 
 interface Props {
@@ -67,14 +62,6 @@ const PaymentList: React.FC<Props> = (props) => {
 
   return (
     <>
-      <Breadcrumbs>
-        <li><Link to="/dashboard">マイページ</Link></li>
-      </Breadcrumbs>
-      <PageTitle
-        icon={<MdPayments />}
-        title="決済履歴"
-        description="Sockbaseでのお支払い状況の一覧を表示中" />
-
       <table>
         <thead>
           <tr>

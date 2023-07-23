@@ -2,10 +2,6 @@ import { Link } from 'react-router-dom'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
 import sockbaseShared from 'shared'
 
-import { MdEditNote } from 'react-icons/md'
-import PageTitle from '../../../Layout/Dashboard/PageTitle'
-import Breadcrumbs from '../../../Parts/Breadcrumbs'
-
 interface Props {
   apps: Record<string, SockbaseApplicationDocument>
   metas: Record<string, SockbaseApplicationMeta>
@@ -14,14 +10,6 @@ interface Props {
 const ApplicationList: React.FC<Props> = (props) => {
   return (
     <>
-      <Breadcrumbs>
-        <li><Link to="/dashboard">マイページ</Link></li>
-      </Breadcrumbs>
-      <PageTitle
-        icon={<MdEditNote />}
-        title="サークル申し込み履歴"
-        description="今までに申し込んだイベントの一覧を表示中" />
-
       <table>
         <thead>
           <tr>
@@ -47,7 +35,7 @@ const ApplicationList: React.FC<Props> = (props) => {
                     <td>{app.createdAt?.toLocaleString() ?? '-'}</td>
                   </tr>
                 ))
-              : <tr><th rowSpan={5}>申し込み情報はありません</th></tr>
+              : <tr><th colSpan={5}>申し込み情報はありません</th></tr>
           }
         </tbody>
       </table>
