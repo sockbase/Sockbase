@@ -5,7 +5,7 @@ import { type Change } from 'firebase-functions'
 
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 
-import { roleConverter } from '../libs/converters'
+import { applicationConverter, roleConverter } from '../libs/converters'
 
 export const onChangeOrganizationRoles = functions.firestore
   .document('/organizations/{organizationId}/users/{userId}')
@@ -80,13 +80,28 @@ export const onChangeUser = functions.firestore
       if (!change.after.exists) return
       const data = change.after.data() as SockbaseAccountDocument
 
+      const userId = context.params.userId
+
       const adminApp = FirebaseAdmin.getFirebaseAdmin()
       const auth = adminApp.auth()
 
-      auth.updateUser(context.params.userId, {
+      auth.updateUser(userId, {
         email: data.email,
         emailVerified: false
       })
         .catch(err => { throw err })
+
+      const firestore = adminApp.firestore()
+      await firestore.runTransaction(async tx => {
+        const appsQuery = await firestore.collection('/_applications')
+          .withConverter(applicationConverter)
+          .where('userId', '==', userId)
+          .get()
+
+        appsQuery.docs
+          .map(app => app.data())
+          .map(data => firestore.doc(`/events/${data.eventId}/_users/${userId}`))
+          .map(ref => tx.update(ref, { ...data }))
+      })
     }
   )
