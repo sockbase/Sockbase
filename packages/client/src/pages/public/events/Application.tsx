@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type SockbaseEvent } from 'sockbase'
 
-import useEvent from '../../hooks/useEvent'
-import useFirebase from '../../hooks/useFirebase'
+import useEvent from '../../../hooks/useEvent'
+import useFirebase from '../../../hooks/useFirebase'
 
-import DefaultLayout from '../../components/Layout/Default/Default'
-import StepContainerComponent from '../../components/pages/events/Application/StepContainer'
-import Alert from '../../components/Parts/Alert'
-import Loading from '../../components/Parts/Loading'
+import DefaultLayout from '../../../components/Layout/Default/Default'
+import StepContainerComponent from '../../../components/pages/events/Application/StepContainer'
+import Alert from '../../../components/Parts/Alert'
+import Loading from '../../../components/Parts/Loading'
 
 const EventApplication: React.FC = () => {
   const params = useParams<{ eventId: string }>()

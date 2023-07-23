@@ -1,6 +1,6 @@
 import { useState } from "react"
-import DefaultLayout from "../../components/Layout/Default/Default"
-import StaticDocumentProvider from "../../components/StaticDocumentProvider/StaticDocumentProvider"
+import DefaultLayout from "../../../components/Layout/Default/Default"
+import StaticDocumentProvider from "../../../components/StaticDocumentProvider/StaticDocumentProvider"
 
 const TermsOfService: React.FC =
   () => {
