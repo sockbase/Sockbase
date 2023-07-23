@@ -179,10 +179,6 @@ const ApplicationDetail: React.FC<Props> = (props) => {
                 <th>メールアドレス</th>
                 <td>{props.userData.email}</td>
               </tr>
-              <tr>
-                <th>メールアドレス確認状態</th>
-                <td>{props.userData.isEmailVerified ? '確認済み' : '未確認'}</td>
-              </tr>
             </tbody>
           </table>
 
