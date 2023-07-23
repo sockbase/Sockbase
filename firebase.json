@@ -2,7 +2,7 @@
   "hosting": {
     "public": "./packages/client/dist",
     "predeploy": [
-      "yarn --cwd ./packages/client build"
+      "yarn workspace client build"
     ],
     "ignore": [
       "firebase.json",
@@ -19,8 +19,8 @@
   "functions": {
     "source": "./packages/functions",
     "predeploy": [
-      "yarn --cwd ./packages/functions lint",
-      "yarn --cwd ./packages/functions build"
+      "yarn workspace functions lint",
+      "yarn workspace functions build"
     ],
     "ignore": [
       "node_modules",
