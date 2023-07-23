@@ -1,16 +1,21 @@
 import styled from 'styled-components'
+import BlinkField from '../../Parts/BlinkField'
 
 interface Props {
   icon: React.ReactNode
-  title: string
+  title: string | undefined
   description: string
+  isLoading?: boolean
 }
 
 const PageTitle: React.FC<Props> = (props) => {
   return (
     <StyledPageTitleContainer>
       <StyledIcon>{props.icon}</StyledIcon>
-      <StyledTitle>{props.title}</StyledTitle>
+      <StyledTitle>
+        {!props.isLoading
+          ? props.title
+          : <BlinkField />}</StyledTitle>
       <StyledDescription>{props.description}</StyledDescription>
     </StyledPageTitleContainer>
   )
