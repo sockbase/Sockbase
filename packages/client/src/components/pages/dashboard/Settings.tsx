@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'react'
 import type { SockbaseAccount } from 'sockbase'
-
-import { MdSettings } from 'react-icons/md'
-
 import TwoColumnsLayout from '../../Layout/TwoColumns/TwoColumns'
-
-import PageTitle from '../../Layout/Dashboard/PageTitle'
 import FormSection from '../../Form/FormSection'
 import FormItem from '../../Form/FormItem'
 import FormLabel from '../../Form/Label'
 import FormInput from '../../Form/Input'
 import FormButton from '../../Form/Button'
-
 import useDayjs from '../../../hooks/useDayjs'
 import useValidate from '../../../hooks/useValidate'
 import useFirebaseError from '../../../hooks/useFirebaseError'
-
 import Alert from '../../Parts/Alert'
 import LoadingCircleWrapper from '../../Parts/LoadingCircleWrapper'
 
@@ -82,11 +75,6 @@ const DashboardSettings: React.FC<Props> = (props) => {
 
   return (
     <>
-      <PageTitle
-        icon={<MdSettings />}
-        title="マイページ設定"
-        description="Sockbaseが共通で使用している設定はこのページで変更できます" />
-
       {userData && <TwoColumnsLayout>
         <>
           <FormSection>
