@@ -6,17 +6,17 @@ import type {
   SockbaseApplication,
   SockbaseEvent
 } from 'sockbase'
-
 import useFirebase from '../../../../hooks/useFirebase'
 import useUserData from '../../../../hooks/useUserData'
-
+import useApplication from '../../../../hooks/useApplication'
+import useDayjs from '../../../../hooks/useDayjs'
 import StepProgress from '../../../Parts/StepProgress'
 import Introduction from './Introduction'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import Step4 from './Step4'
-import useApplication from '../../../../hooks/useApplication'
+import Alert from '../../../Parts/Alert'
 
 const stepProgresses = ['入力', '確認', '決済', '完了']
 
@@ -30,6 +30,7 @@ const StepContainer: React.FC<Props> = (props) => {
   const { user, createUser } = useFirebase()
   const { updateUserDataAsync, getMyUserDataAsync } = useUserData()
   const { submitApplicationAsync } = useApplication()
+  const { formatByDate } = useDayjs()
 
   const [step, setStep] = useState(0)
   const [circleCutData, setCircleCutData] = useState<string>()
@@ -121,18 +122,23 @@ const StepContainer: React.FC<Props> = (props) => {
   return (
     <>
       <h1>{props.event.eventName} サークル参加申し込み受付フォーム</h1>
-      {
-        props.event.descriptions.map((i, k) => <p key={k}>{i}</p>)
-      }
 
-      <StepProgress steps={
-        stepProgresses.map((i, k) => ({
-          text: i,
-          isActive: k === step - 1
-        }))
-      } />
+      {props.event.schedules.endApplication < new Date().getTime()
+        ? <Alert type="danger" title="参加受付は終了しました">
+          このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication, 'YYYY年M月D日 H時mm分')}</b> をもって終了しました。
+        </Alert>
+        : <>
+          {props.event.descriptions.map((i, k) => <p key={k}>{i}</p>)}
 
-      {stepComponents?.[step] ?? ''}
+          <StepProgress steps={
+            stepProgresses.map((i, k) => ({
+              text: i,
+              isActive: k === step - 1
+            }))
+          } />
+
+          {stepComponents?.[step] ?? ''}
+        </>}
     </>
   )
 }
