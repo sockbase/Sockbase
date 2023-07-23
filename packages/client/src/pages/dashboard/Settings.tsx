@@ -8,6 +8,7 @@ import useFirebase from '../../hooks/useFirebase'
 import PageTitle from '../../components/Layout/Dashboard/PageTitle'
 import { MdSettings } from 'react-icons/md'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import Loading from '../../components/Parts/Loading'
 
 const SettingsContainer: React.FC = () => {
   const { user } = useFirebase()
@@ -46,10 +47,12 @@ const SettingsContainer: React.FC = () => {
         title="マイページ設定"
         description="Sockbaseが共通で使用している設定はこのページで変更できます" />
 
-      {userData && <DashboardSettings
-        userData={userData}
-        updateUserDataAsync={updateUserData}
-      />}
+      {userData
+        ? <DashboardSettings
+          userData={userData}
+          updateUserDataAsync={updateUserData}
+        />
+        : <Loading text="ユーザ情報" />}
     </DashboardLayout>
   )
 }
