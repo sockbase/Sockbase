@@ -1,12 +1,6 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
-import sockbaseShared from 'shared'
-
-import { MdEditCalendar } from 'react-icons/md'
-import PageTitle from '../../../Layout/Dashboard/PageTitle'
-import Breadcrumbs from '../../../Parts/Breadcrumbs'
-// import Label from '../../../Parts/Label'
 
 interface Props {
   event: SockbaseEvent
@@ -25,18 +19,16 @@ const EventApplications: React.FC<Props> = (props) => {
     (spaceId) => props.event.spaces
       .filter(s => s.id === spaceId)[0].name
 
+  const genreName = (genreId: string): string =>
+    props.event.genres
+      .filter(g => g.id === genreId)[0].name
+
+  const circleNameByHashId = (appHashId: string): string =>
+    Object.values(props.apps)
+      .filter(a => a.hashId === appHashId)[0].circle.name
+
   return (
     <>
-      <Breadcrumbs>
-        <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/events">管理イベント</Link></li>
-        <li>{props.event._organization.name}</li>
-      </Breadcrumbs>
-      <PageTitle
-        icon={<MdEditCalendar />}
-        title={props.event.eventName}
-        description="申し込みサークル一覧" />
-
       <p>
         総申込みサークル数(キャンセル除く): {circleCount}件
       </p>
@@ -47,24 +39,22 @@ const EventApplications: React.FC<Props> = (props) => {
             <th>サークル名</th>
             <th>ペンネーム</th>
             <th>申し込みスペース</th>
-            <th>ステータス</th>
-            <th>申し込み日時</th>
-            <th>申し込みID</th>
+            <th>ジャンル</th>
+            <th>隣接配置希望</th>
           </tr>
         </thead>
         <tbody>
           {
             Object.entries(props.apps)
               .filter(([_, app]) => !!app.hashId)
+              .sort(([_a, a], [_b, b]) => (a.createdAt?.getTime() ?? 9) - (b.createdAt?.getTime() ?? 0))
               .map(([appId, app]) => (
                 app.hashId && <tr key={app.hashId}>
                   <th><Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link></th>
                   <td>{app.circle.penName}</td>
                   <td>{spaceName(app.spaceId)}</td>
-                  <td>{sockbaseShared.constants.application.statusText[props.metas[appId].applicationStatus]}</td>
-                  {/* <td> // TODO: 申し込み関連ステータスのラベル コンポーネント化する <Label color="success">申し込み完了</Label></td> */}
-                  <td>{app.createdAt?.toLocaleString() ?? '-'}</td>
-                  <td>{app.hashId}</td>
+                  <td>{genreName(app.circle.genre)}</td>
+                  <td>{(app.unionCircleId && circleNameByHashId(app.unionCircleId)) || '-'}</td>
                 </tr>
               ))
           }
