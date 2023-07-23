@@ -323,7 +323,7 @@ const ApplicationDetailContainer: React.FC = () => {
               <tr>
                 <th>Twitter</th>
                 <td>
-                  {links
+                  {links !== undefined
                     ? links?.twitterScreenName ? `@${links.twitterScreenName}` : '(未入力)'
                     : <BlinkField />}
                 </td>
@@ -331,7 +331,7 @@ const ApplicationDetailContainer: React.FC = () => {
               <tr>
                 <th>pixiv</th>
                 <td>
-                  {links
+                  {links !== undefined
                     ? links?.pixivUserId ? `users/${links.pixivUserId}` : '(未入力)'
                     : <BlinkField />}
                 </td>
@@ -339,16 +339,16 @@ const ApplicationDetailContainer: React.FC = () => {
               <tr>
                 <th>Web</th>
                 <td>
-                  {links ?
-                    links?.websiteURL || '(未入力)'
+                  {links !== undefined
+                    ? links?.websiteURL || '(未入力)'
                     : <BlinkField />}
                 </td>
               </tr>
               <tr>
                 <th>お品書きURL</th>
                 <td>
-                  {links ?
-                    links?.menuURL || '(未入力)'
+                  {links !== undefined
+                    ? links?.menuURL || '(未入力)'
                     : <BlinkField />}
                 </td>
               </tr>
