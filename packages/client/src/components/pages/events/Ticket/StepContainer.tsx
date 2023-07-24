@@ -78,7 +78,7 @@ const StepContainerComponent: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1>{props.store.storeName} チケット申し込みフォーム</h1>
+      <h1>{props.store.storeName} 申し込み受付</h1>
 
       <ul>
         {props.store.descriptions.map((d, k) => <li key={k}>{d}</li>)}
