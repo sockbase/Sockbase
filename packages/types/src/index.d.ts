@@ -67,6 +67,13 @@ export interface SockbaseStore {
 }
 
 /**
+ * チケットストア(DB取得)
+ */
+export type SockbaseStoreDocument = SockbaseStore & {
+  id: string
+}
+
+/**
  * チケット種類
  */
 export interface SockbaseStoreType {
@@ -181,23 +188,30 @@ export type SockbaseApplicationLinksDocument = SockbaseApplicationLinks & {
 /**
  * チケット情報
  */
-export interface SockbaseTicketApplication {
+export interface SockbaseTicket {
   storeId: string
   typeId: string
   paymentMethod: string
   paymentProductId?: string
-  remarks: string
 }
 
 /**
  * チケット情報(DB取得)
  */
-export type SockbaseTicketApplicaitonDocument = SockbaseTicketApplication & {
+export type SockbaseTicketDocument = SockbaseTicket & {
+  id: string
   userId: string
   usableUserId?: string
   createdAt: Date | null
   updatedAt: Date | null
   hashId: string | null
+}
+
+/**
+ * チケット管理情報
+ */
+export interface SockbaseTicketMeta {
+  applicationStatus: SockbaseApplicationStatus
 }
 
 /**
