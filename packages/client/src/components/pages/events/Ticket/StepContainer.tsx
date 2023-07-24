@@ -1,11 +1,18 @@
 import { useEffect, useState } from 'react'
-import { type SockbaseTicket, type SockbaseStoreDocument, type SockbaseAccountSecure, type SockbaseAccount } from 'sockbase'
+import {
+  type SockbaseTicket,
+  type SockbaseStoreDocument,
+  type SockbaseAccountSecure,
+  type SockbaseAccount,
+  type SockbaseTicketAddedResult
+} from 'sockbase'
 import StepProgress from '../../../Parts/StepProgress'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import Step4 from './Step4'
 import Introduction from './Introduction'
+import useStore from '../../../../hooks/useStore'
 
 const stepProgresses = ['入力', '確認', '決済', '完了']
 
@@ -15,11 +22,14 @@ interface Props {
   isLoggedIn: boolean
 }
 const StepContainerComponent: React.FC<Props> = (props) => {
+  const { createTicketAsync } = useStore()
+
   const [step, setStep] = useState(0)
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
 
   const [ticketInfo, setTicketInfo] = useState<SockbaseTicket>()
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
+  const [ticketResult, setTicketResult] = useState<SockbaseTicketAddedResult>()
 
   const onChangeStep: () => void =
     () => window.scrollTo(0, 0)
@@ -28,8 +38,8 @@ const StepContainerComponent: React.FC<Props> = (props) => {
   const handleSubmit = async (): Promise<void> => {
     if (!ticketInfo || !userData) return
 
-    alert('申し込みが完了しました')
-    setStep(3)
+    const result = await createTicketAsync(ticketInfo)
+    setTicketResult(result)
   }
 
   const onInitialize = (): void => {
@@ -52,13 +62,18 @@ const StepContainerComponent: React.FC<Props> = (props) => {
         userData={userData}
         fetchedUserData={props.userData}
         isLoggedIn={props.isLoggedIn}
-        nextStep={async () => await handleSubmit()}
+        submitTicket={async () => await handleSubmit()}
+        nextStep={() => setStep(3)}
         prevStep={() => setStep(1)} />,
-      <Step3 key="step3" store={props.store} ticketInfo={ticketInfo} nextStep={() => setStep(4)} />,
+      <Step3 key="step3"
+        store={props.store}
+        ticketInfo={ticketInfo}
+        ticketResult={ticketResult}
+        nextStep={() => setStep(4)} />,
       <Step4 key="step4" />
     ])
   }
-  useEffect(onInitialize, [props.store, props.userData, ticketInfo, userData])
+  useEffect(onInitialize, [props.store, props.userData, ticketInfo, userData, ticketResult])
 
   return (
     <>

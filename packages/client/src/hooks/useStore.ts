@@ -1,6 +1,6 @@
 import * as FirestoreDB from 'firebase/firestore'
-import type { SockbaseStoreDocument } from 'sockbase'
-
+import * as FirebaseFunctions from 'firebase/functions'
+import type { SockbaseStoreDocument, SockbaseTicket, SockbaseTicketAddedResult } from 'sockbase'
 import useFirebase from './useFirebase'
 
 const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStoreDocument> = {
@@ -22,9 +22,11 @@ const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStoreDocument> 
 interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
   getStoreByIdOptionalAsync: (storeId: string) => Promise<SockbaseStoreDocument | null>
+  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
 }
+
 const useStore: () => IUseStore = () => {
-  const { getFirestore } = useFirebase()
+  const { getFirestore, getFunctions } = useFirebase()
 
   const getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument> =
     async (storeId) => {
@@ -46,9 +48,19 @@ const useStore: () => IUseStore = () => {
       .then((store) => store)
       .catch(() => null)
 
+  const createTicketAsync = async (ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
+    const functions = getFunctions()
+    const createApplicationFunction = FirebaseFunctions
+      .httpsCallable<SockbaseTicket, SockbaseTicketAddedResult>(functions, 'store-createTicket')
+
+    const appResult = await createApplicationFunction(ticket)
+    return appResult.data
+  }
+
   return {
     getStoreByIdAsync,
-    getStoreByIdOptionalAsync
+    getStoreByIdOptionalAsync,
+    createTicketAsync
   }
 }
 

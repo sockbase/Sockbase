@@ -4,13 +4,14 @@ import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
 import Alert from '../../../Parts/Alert'
 import AnchorButton from '../../../Parts/AnchorButton'
-import { type SockbaseStoreType, type SockbaseStoreDocument, type SockbaseTicket } from 'sockbase'
+import { type SockbaseStoreType, type SockbaseStoreDocument, type SockbaseTicket, type SockbaseTicketAddedResult } from 'sockbase'
 import sockbaseShared from 'shared'
 import useDayjs from '../../../../hooks/useDayjs'
 
 interface Props {
   store: SockbaseStoreDocument
   ticketInfo: SockbaseTicket | undefined
+  ticketResult: SockbaseTicketAddedResult | undefined
   nextStep: () => void
 }
 const Step3: React.FC<Props> = (props) => {
@@ -31,7 +32,7 @@ const Step3: React.FC<Props> = (props) => {
   return (
     <>
       <Alert type="success" title="申し込み情報の送信が完了しました">
-        申し込みIDは「」です。
+        申し込みIDは「{props.ticketResult?.hashId}」です。
       </Alert>
       <p>
         お申し込みいただきましてありがとうございました。<br />
@@ -55,7 +56,7 @@ const Step3: React.FC<Props> = (props) => {
           </tr>
           <tr>
             <th>お支払い補助番号</th>
-            <td></td>
+            <td>{props.ticketResult?.bankTransferCode}</td>
           </tr>
         </tbody>
       </table>
@@ -88,7 +89,7 @@ const Step3: React.FC<Props> = (props) => {
             までに以下の口座へ所定の金額のお振り込みをお願いいたします。
           </p>
           <Alert>
-            お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「」を入力してください。
+            お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「{props.ticketResult?.bankTransferCode}」を入力してください。
           </Alert>
 
           <h3>ゆうちょ銀行からお振込みの場合</h3>

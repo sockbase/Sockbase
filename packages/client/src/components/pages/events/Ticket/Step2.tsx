@@ -13,8 +13,9 @@ interface Props {
   userData: SockbaseAccountSecure | undefined
   fetchedUserData: SockbaseAccount | null
   isLoggedIn: boolean
+  submitTicket: () => Promise<void>
   prevStep: () => void
-  nextStep: () => Promise<void>
+  nextStep: () => void
 }
 const Step2: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
@@ -36,7 +37,8 @@ const Step2: React.FC<Props> = (props) => {
   const handleSubmit = (): void => {
     setProgressing(true)
 
-    props.nextStep()
+    props.submitTicket()
+      .then(() => props.nextStep())
       .catch(() => setProgressing(false))
   }
 
@@ -112,7 +114,7 @@ const Step2: React.FC<Props> = (props) => {
         </FormItem>
         <FormItem>
           <LoadingCircleWrapper isLoading={isProgressing}>
-            <FormButton onClick={handleSubmit}>決済に進む</FormButton>
+            <FormButton onClick={handleSubmit} disabled={isProgressing}>決済に進む(申し込み情報送信)</FormButton>
           </LoadingCircleWrapper>
         </FormItem>
       </FormSection>
