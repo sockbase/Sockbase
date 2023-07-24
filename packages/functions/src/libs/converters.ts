@@ -170,3 +170,36 @@ export const applicationHashIdConverter: firestore.FirestoreDataConverter<Applic
     }
   }
 }
+
+export const storeConverter: firestore.FirestoreDataConverter<types.SockbaseStoreDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseStoreDocument => {
+    const storeDoc = snapshot.data()
+    return {
+      id: snapshot.id,
+      storeName: storeDoc.storeName,
+      descriptions: storeDoc.descriptions,
+      rules: storeDoc.rules,
+      types: storeDoc.types,
+      schedules: storeDoc.schedules,
+      _organization: storeDoc._organization
+    }
+  }
+}
+
+export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTicketApplicaitonDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketApplicaitonDocument => {
+    const ticketDoc = snapshot.data()
+    return {
+      id: snapshot.id,
+      storeId: ticketDoc.storeId,
+      typeId: ticketDoc.typeId,
+      paymentMethod: ticketDoc.paymentMethod,
+      userId: ticketDoc.userId,
+      createdAt: ticketDoc.createdAt,
+      updatedAt: ticketDoc.updatedAt,
+      hashId: ticketDoc.hashId
+    }
+  }
+}
