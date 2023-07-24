@@ -48,9 +48,7 @@ const StepContainer: React.FC<Props> = (props) => {
 
       if (!user) {
         const newUser = await createUser(leaderUserData.email, leaderUserData.password)
-          .catch(err => {
-            throw err
-          })
+          .catch(err => { throw err })
 
         await updateUserDataAsync(newUser.uid, leaderUserData)
       }
