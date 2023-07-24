@@ -1,10 +1,11 @@
-import { type SockbaseStoreDocument } from 'sockbase'
+import { type SockbaseTicketAddedResult, type SockbaseStoreDocument } from 'sockbase'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
 import LinkButton from '../../../Parts/LinkButton'
 
 interface Props {
   store: SockbaseStoreDocument
+  ticketResult: SockbaseTicketAddedResult | undefined
 }
 const Step4: React.FC<Props> = (props) => {
   return (
@@ -23,7 +24,7 @@ const Step4: React.FC<Props> = (props) => {
       </p>
       <FormSection>
         <FormItem>
-          {/* <LinkButton color="default" to={`/dashboard/applications/${props.appResult.hashId}`}>マイページを開く</LinkButton> */}
+          <LinkButton color="default" to={`/dashboard/tickets/${props.ticketResult?.hashId}`}>マイページを開く</LinkButton>
         </FormItem>
         <FormItem>
           <LinkButton to={props.store.storeWebURL}>イベントサイトへ戻る</LinkButton>

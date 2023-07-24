@@ -173,7 +173,7 @@ const Step1: React.FC<Props> = (props) => {
               </Alert>
             </FormItem>}
           </FormSection>
-          : <Alert>申し込みたいスペース数を選択してください</Alert>
+          : <Alert>申し込みたい参加種別を選択してください</Alert>
       }
 
       {!props.isLoggedIn
