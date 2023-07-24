@@ -281,6 +281,11 @@ const ApplicationDetailContainer: React.FC = () => {
             </tbody>
           </table>
 
+          <h3>通信欄</h3>
+          <p>
+            {app ? (app.remarks || '(空欄)') : <BlinkField />}
+          </p>
+
           <h3>申し込み情報</h3>
           <table>
             <tbody>
