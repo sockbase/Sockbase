@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { type SockbaseTicket, type SockbaseStoreDocument, type SockbaseAccountSecure } from 'sockbase'
+import { type SockbaseTicket, type SockbaseStoreDocument, type SockbaseAccountSecure, type SockbaseAccount } from 'sockbase'
 import StepProgress from '../../../Parts/StepProgress'
 import Step1 from './Step1'
 import Step2 from './Step2'
@@ -11,6 +11,7 @@ const stepProgresses = ['入力', '確認', '決済', '完了']
 
 interface Props {
   store: SockbaseStoreDocument
+  userData: SockbaseAccount | null
   isLoggedIn: boolean
 }
 const StepContainerComponent: React.FC<Props> = (props) => {
@@ -19,6 +20,10 @@ const StepContainerComponent: React.FC<Props> = (props) => {
 
   const [ticketInfo, setTicketInfo] = useState<SockbaseTicket>()
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
+
+  const onChangeStep: () => void =
+    () => window.scrollTo(0, 0)
+  useEffect(onChangeStep, [step])
 
   const handleSubmit = async (): Promise<void> => {
     if (!ticketInfo || !userData) return
@@ -45,6 +50,7 @@ const StepContainerComponent: React.FC<Props> = (props) => {
         store={props.store}
         ticketInfo={ticketInfo}
         userData={userData}
+        fetchedUserData={props.userData}
         isLoggedIn={props.isLoggedIn}
         nextStep={async () => await handleSubmit()}
         prevStep={() => setStep(1)} />,
@@ -52,7 +58,7 @@ const StepContainerComponent: React.FC<Props> = (props) => {
       <Step4 key="step4" />
     ])
   }
-  useEffect(onInitialize, [props.store, ticketInfo, userData])
+  useEffect(onInitialize, [props.store, props.userData, ticketInfo, userData])
 
   return (
     <>
