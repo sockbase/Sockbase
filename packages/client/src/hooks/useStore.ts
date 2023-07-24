@@ -1,13 +1,14 @@
 import * as FirestoreDB from 'firebase/firestore'
-import type { SockbaseStore } from 'sockbase'
+import type { SockbaseStoreDocument } from 'sockbase'
 
 import useFirebase from './useFirebase'
 
-const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStore> = {
-  toFirestore: (store: SockbaseStore): FirestoreDB.DocumentData => ({}),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseStore => {
+const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStoreDocument> = {
+  toFirestore: (store: SockbaseStoreDocument): FirestoreDB.DocumentData => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseStoreDocument => {
     const data = snapshot.data()
     return {
+      id: snapshot.id,
       storeName: data.storeName,
       descriptions: data.descriptions,
       rules: data.rules,
@@ -19,12 +20,13 @@ const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStore> = {
 }
 
 interface IUseStore {
-  getStoreByIdAsync: (storeId: string) => Promise<SockbaseStore>
+  getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
+  getStoreByIdOptionalAsync: (storeId: string) => Promise<SockbaseStoreDocument | null>
 }
 const useStore: () => IUseStore = () => {
   const { getFirestore } = useFirebase()
 
-  const getStoreByIdAsync: (storeId: string) => Promise<SockbaseStore> =
+  const getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument> =
     async (storeId) => {
       const db = getFirestore()
       const storeRef = FirestoreDB
@@ -39,8 +41,14 @@ const useStore: () => IUseStore = () => {
       return storeDoc.data()
     }
 
+  const getStoreByIdOptionalAsync = async (storeId: string): Promise<SockbaseStoreDocument | null> =>
+    await getStoreByIdAsync(storeId)
+      .then((store) => store)
+      .catch(() => null)
+
   return {
-    getStoreByIdAsync
+    getStoreByIdAsync,
+    getStoreByIdOptionalAsync
   }
 }
 
