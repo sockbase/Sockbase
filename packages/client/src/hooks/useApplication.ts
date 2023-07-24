@@ -276,7 +276,7 @@ const useApplication: () => IUseApplication = () => {
   }, [user])
 
   const exportCSV = (apps: SockbaseApplicationDocument[]): string => {
-    const header = 'id,name,penName,yomi,genre,space,unionId,description,totalAmount'
+    const header = 'id,name,penName,yomi,genre,space,unionId,description,totalAmount,remarks'
     const entries = apps
       .map(a => ({
         hashId: a.hashId,
