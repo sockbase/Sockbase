@@ -145,6 +145,9 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
   hashId: string | null
 }
 
+/**
+ * サークル申し込み作成リザルト
+ */
 export interface SockbaseApplicationAddedResult {
   hashId: string
   bankTransferCode: string
@@ -198,8 +201,8 @@ export interface SockbaseTicket {
 /**
  * チケット情報(DB取得)
  */
-export type SockbaseTicketDocument = SockbaseTicket & {
-  id: string
+export type SockbaseTicketApplicaitonDocument = SockbaseTicket & {
+  id?: string
   userId: string
   usableUserId?: string
   createdAt: Date | null
@@ -212,6 +215,14 @@ export type SockbaseTicketDocument = SockbaseTicket & {
  */
 export interface SockbaseTicketMeta {
   applicationStatus: SockbaseApplicationStatus
+}
+
+/**
+ * チケット作成リザルト
+ */
+export interface SockbaseTicketAddedResult {
+  hashId: string
+  bankTransferCode: string
 }
 
 /**

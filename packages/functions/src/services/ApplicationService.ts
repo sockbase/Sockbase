@@ -39,160 +39,161 @@ export const onChangeApplication = functions.firestore
       .set(userData)
   })
 
-export const createApplication = functions.https.onCall(async (app: SockbaseApplication, context) => {
-  if (!context.auth) {
-    throw new functions.https.HttpsError('permission-denied', 'Auth Error')
-  }
-
-  const userId = context.auth.uid
-
-  const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const firestore = adminApp.firestore()
-
-  const existsAppsDoc = await firestore.collection('_applications')
-    .withConverter(applicationConverter)
-    .where('userId', '==', userId)
-    .get()
-  const existsApps = existsAppsDoc.docs.length !== 0
-  if (existsApps) {
-    throw new functions.https.HttpsError('already-exists', 'application_already_exists')
-  }
-
-  const unionAppHashDoc = app.unionCircleId
-    ? (await firestore.doc(`/_applicationHashIds/${app.unionCircleId}`)
-      .withConverter(applicationHashIdConverter)
-      .get()).data()
-    : null
-  if (unionAppHashDoc === undefined) {
-    throw new functions.https.HttpsError('not-found', 'application_invalid_unionCircleId')
-  }
-
-  if (unionAppHashDoc !== null) {
-    const unionApp = (await firestore.doc(`/_applications/${unionAppHashDoc.applicationId}`)
-      .withConverter(applicationConverter)
-      .get())
-      .data()
-
-    if (unionApp?.unionCircleId) {
-      throw new functions.https.HttpsError('already-exists', 'application_already_union')
+export const createApplication = functions.https.onCall(
+  async (app: SockbaseApplication, context): Promise<SockbaseApplicationAddedResult> => {
+    if (!context.auth) {
+      throw new functions.https.HttpsError('permission-denied', 'Auth Error')
     }
-  }
 
-  const eventId = app.eventId
+    const userId = context.auth.uid
 
-  const eventDoc = await firestore
-    .doc(`/events/${eventId}`)
-    .get()
-  const event = eventDoc.data() as SockbaseEvent | undefined
-  if (!event) {
-    throw new functions.https.HttpsError('not-found', 'Event')
-  }
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
 
-  const now = new Date()
-  const timestamp = now.getTime()
+    const existsAppsDoc = await firestore.collection('_applications')
+      .withConverter(applicationConverter)
+      .where('userId', '==', userId)
+      .get()
+    const existsApps = existsAppsDoc.docs.length !== 0
+    if (existsApps) {
+      throw new functions.https.HttpsError('already-exists', 'application_already_exists')
+    }
 
-  if (event.schedules.startApplication > timestamp || timestamp > event.schedules.endApplication) {
-    throw new functions.https.HttpsError('deadline-exceeded', 'application_out_of_term')
-  }
+    const unionAppHashDoc = app.unionCircleId
+      ? (await firestore.doc(`/_applicationHashIds/${app.unionCircleId}`)
+        .withConverter(applicationHashIdConverter)
+        .get()).data()
+      : null
+    if (unionAppHashDoc === undefined) {
+      throw new functions.https.HttpsError('not-found', 'application_invalid_unionCircleId')
+    }
 
-  if (!event.permissions.allowAdult && app.circle.hasAdult) {
-    throw new functions.https.HttpsError('invalid-argument', 'invalid_argument_adult')
-  }
+    if (unionAppHashDoc !== null) {
+      const unionApp = (await firestore.doc(`/_applications/${unionAppHashDoc.applicationId}`)
+        .withConverter(applicationConverter)
+        .get())
+        .data()
 
-  const appDoc: SockbaseApplicationDocument = {
-    ...app,
-    circle: {
-      ...app.circle,
-      hasAdult: event.permissions.allowAdult && app.circle.hasAdult
-    },
-    userId,
-    createdAt: now,
-    updatedAt: null,
-    hashId: null
-  }
-
-  const addResult = await firestore
-    .collection('_applications')
-    .withConverter(applicationConverter)
-    .add(appDoc)
-  const appId = addResult.id
-
-  await firestore
-    .doc(`/_applications/${appId}/private/meta`)
-    .set({ applicationStatus: 0 })
-
-  const space = event.spaces
-    .filter(s => s.id === app.spaceId)[0]
-
-  const bankTransferCode = generateBankTransferCode(now)
-  const paymentId = space.productInfo
-    ? await createPayment(
-      userId,
-      app.paymentMethod === 'online' ? 1 : 2,
-      bankTransferCode,
-      space.productInfo.productId,
-      space.price,
-      'circle',
-      appId
-    )
-    : null
-
-  const hashId = await generateHashId(eventId, appId, now)
-  await firestore
-    .doc(`/_applications/${appId}`)
-    .set(
-      { hashId },
-      { merge: true }
-    )
-  await firestore
-    .doc(`/_applicationHashIds/${hashId}`)
-    .set(
-      {
-        hashId,
-        applicationId: appId,
-        paymentId
-      },
-      { merge: true }
-    )
-
-  if (unionAppHashDoc !== null) {
-    await firestore
-      .doc(`/_applications/${unionAppHashDoc.applicationId}`)
-      .set({ unionCircleId: hashId }, { merge: true })
-  }
-
-  const webhookBody = {
-    username: `Sockbase: ${event.eventName}`,
-    embeds: [
-      {
-        title: 'サークル申し込みを受け付けました！',
-        url: '',
-        color: 65280,
-        fields: [
-          {
-            name: 'イベント名',
-            value: event.eventName
-          },
-          {
-            name: 'サークル名',
-            value: app.circle.name
-          },
-          {
-            name: '申し込みハッシュID',
-            value: hashId
-          }
-        ]
+      if (unionApp?.unionCircleId) {
+        throw new functions.https.HttpsError('already-exists', 'application_already_union')
       }
-    ]
-  }
-  await sendMessageToDiscord(event._organization.id, webhookBody)
+    }
 
-  const result: SockbaseApplicationAddedResult = {
-    hashId,
-    bankTransferCode
-  }
-  return result
-})
+    const eventId = app.eventId
+
+    const eventDoc = await firestore
+      .doc(`/events/${eventId}`)
+      .get()
+    const event = eventDoc.data() as SockbaseEvent | undefined
+    if (!event) {
+      throw new functions.https.HttpsError('not-found', 'Event')
+    }
+
+    const now = new Date()
+    const timestamp = now.getTime()
+
+    if (event.schedules.startApplication > timestamp || timestamp > event.schedules.endApplication) {
+      throw new functions.https.HttpsError('deadline-exceeded', 'application_out_of_term')
+    }
+
+    if (!event.permissions.allowAdult && app.circle.hasAdult) {
+      throw new functions.https.HttpsError('invalid-argument', 'invalid_argument_adult')
+    }
+
+    const appDoc: SockbaseApplicationDocument = {
+      ...app,
+      circle: {
+        ...app.circle,
+        hasAdult: event.permissions.allowAdult && app.circle.hasAdult
+      },
+      userId,
+      createdAt: now,
+      updatedAt: null,
+      hashId: null
+    }
+
+    const addResult = await firestore
+      .collection('_applications')
+      .withConverter(applicationConverter)
+      .add(appDoc)
+    const appId = addResult.id
+
+    await firestore
+      .doc(`/_applications/${appId}/private/meta`)
+      .set({ applicationStatus: 0 })
+
+    const space = event.spaces
+      .filter(s => s.id === app.spaceId)[0]
+
+    const bankTransferCode = generateBankTransferCode(now)
+    const paymentId = space.productInfo
+      ? await createPayment(
+        userId,
+        app.paymentMethod === 'online' ? 1 : 2,
+        bankTransferCode,
+        space.productInfo.productId,
+        space.price,
+        'circle',
+        appId
+      )
+      : null
+
+    const hashId = await generateHashId(eventId, appId, now)
+    await firestore
+      .doc(`/_applications/${appId}`)
+      .set(
+        { hashId },
+        { merge: true }
+      )
+    await firestore
+      .doc(`/_applicationHashIds/${hashId}`)
+      .set(
+        {
+          hashId,
+          applicationId: appId,
+          paymentId
+        },
+        { merge: true }
+      )
+
+    if (unionAppHashDoc !== null) {
+      await firestore
+        .doc(`/_applications/${unionAppHashDoc.applicationId}`)
+        .set({ unionCircleId: hashId }, { merge: true })
+    }
+
+    const webhookBody = {
+      username: `Sockbase: ${event.eventName}`,
+      embeds: [
+        {
+          title: 'サークル申し込みを受け付けました！',
+          url: '',
+          color: 65280,
+          fields: [
+            {
+              name: 'イベント名',
+              value: event.eventName
+            },
+            {
+              name: 'サークル名',
+              value: app.circle.name
+            },
+            {
+              name: '申し込みハッシュID',
+              value: hashId
+            }
+          ]
+        }
+      ]
+    }
+    await sendMessageToDiscord(event._organization.id, webhookBody)
+
+    const result: SockbaseApplicationAddedResult = {
+      hashId,
+      bankTransferCode
+    }
+    return result
+  })
 
 const generateHashId: (eventId: string, refId: string, now: Date) => Promise<string> =
   async (eventId, refId, now) => {
