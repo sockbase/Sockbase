@@ -21,6 +21,8 @@ import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
 import useValidate from '../../../hooks/useValidate'
 import useDayjs from '../../../hooks/useDayjs'
+import BlinkField from '../../../components/Parts/BlinkField'
+import Loading from '../../../components/Parts/Loading'
 
 const EditLinks: React.FC = () => {
   const { hashedAppId } = useParams<{ hashedAppId: string }>()
@@ -113,87 +115,91 @@ const EditLinks: React.FC = () => {
         {isAdmin
           ? <>
             <li><Link to="/dashboard/events">管理イベント</Link></li>
-            <li>{event?._organization.name}</li>
+            <li>{event?._organization.name ?? <BlinkField />}</li>
             <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName}</Link></li>
           </>
           : <>
             <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
-            <li>{event?.eventName}</li>
+            <li>{event?.eventName ?? <BlinkField />}</li>
           </>}
-        {hashedAppId && app && <li><Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link></li>}
+        <li>
+          {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
+        </li>
       </Breadcrumbs>
-      <PageTitle title="広報情報編集" description="サークルリスト等に掲載する情報を編集します" icon={<MdEdit />} />
-      <TwoColumnsLayout>
-        <>
-          {event && (event.schedules.fixedApplication <= new Date().getTime())
-            ? <Alert type="danger">
-              カタログ掲載情報は締切済みです。<br />
-              (Webサイトの更新は引き続き行えます。)
-            </Alert>
-            : event && <Alert>
-              カタログ掲載情報の確定日は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日 H時mm分')}</b>」です。<br />
-              確定日以降の情報は掲載されませんのでご注意ください。
-            </Alert>}
+      <PageTitle title={app?.circle.name} description="広報情報編集" icon={<MdEdit />} isLoading={!app} />
+      {app && event
+        ? <TwoColumnsLayout>
+          <>
+            {event && (event.schedules.fixedApplication <= new Date().getTime())
+              ? <Alert type="danger">
+                カタログ掲載情報は締切済みです。<br />
+                (Webサイトの更新は引き続き行えます。)
+              </Alert>
+              : event && <Alert>
+                カタログ掲載情報の確定日は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日 H時mm分')}</b>」です。<br />
+                確定日以降の情報は掲載されませんのでご注意ください。
+              </Alert>}
 
-          <FormSection>
-            <FormItem>
-              <FormLabel>Twitter</FormLabel>
-              <FormInput
-                placeholder='xxxxxxx'
-                value={links.twitterScreenName ?? ''}
-                onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value }))} />
-              <FormHelp hasError={!!links.twitterScreenName && !validator.isTwitterScreenName(links.twitterScreenName)}>
-                @を除いて入力してください
-              </FormHelp>
-            </FormItem>
-            <FormItem>
-              <FormLabel>pixiv</FormLabel>
-              <FormInput
-                placeholder='1234567890'
-                value={links.pixivUserId ?? ''}
-                onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value }))} />
-              <FormHelp hasError={!!links.pixivUserId && !validator.isOnlyNumber(links.pixivUserId)}>
-                ID部分のみを入力してください
-              </FormHelp>
-            </FormItem>
-            <FormItem>
-              <FormLabel>Webサイト</FormLabel>
-              <FormInput
-                placeholder='https://sumire.sockbase.net'
-                value={links.websiteURL ?? ''}
-                onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value }))} />
-              <FormHelp hasError={!!links.websiteURL && !validator.isURL(links.websiteURL)}>
-                http://から始めてください
-              </FormHelp>
-            </FormItem>
-            <FormItem>
-              <FormLabel>お品書きURL</FormLabel>
-              <FormInput
-                placeholder='https://oshina.sockbase.net'
-                value={links.menuURL ?? ''}
-                onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value }))} />
-              <FormHelp hasError={!!links.menuURL && !validator.isURL(links.menuURL)}>
-                http://から始めてください
-              </FormHelp>
-            </FormItem>
-          </FormSection>
+            <FormSection>
+              <FormItem>
+                <FormLabel>Twitter</FormLabel>
+                <FormInput
+                  placeholder='xxxxxxx'
+                  value={links.twitterScreenName ?? ''}
+                  onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value }))} />
+                <FormHelp hasError={!!links.twitterScreenName && !validator.isTwitterScreenName(links.twitterScreenName)}>
+                  @を除いて入力してください
+                </FormHelp>
+              </FormItem>
+              <FormItem>
+                <FormLabel>pixiv</FormLabel>
+                <FormInput
+                  placeholder='1234567890'
+                  value={links.pixivUserId ?? ''}
+                  onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value }))} />
+                <FormHelp hasError={!!links.pixivUserId && !validator.isOnlyNumber(links.pixivUserId)}>
+                  ID部分のみを入力してください
+                </FormHelp>
+              </FormItem>
+              <FormItem>
+                <FormLabel>Webサイト</FormLabel>
+                <FormInput
+                  placeholder='https://sumire.sockbase.net'
+                  value={links.websiteURL ?? ''}
+                  onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value }))} />
+                <FormHelp hasError={!!links.websiteURL && !validator.isURL(links.websiteURL)}>
+                  http://から始めてください
+                </FormHelp>
+              </FormItem>
+              <FormItem>
+                <FormLabel>お品書きURL</FormLabel>
+                <FormInput
+                  placeholder='https://oshina.sockbase.net'
+                  value={links.menuURL ?? ''}
+                  onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value }))} />
+                <FormHelp hasError={!!links.menuURL && !validator.isURL(links.menuURL)}>
+                  http://から始めてください
+                </FormHelp>
+              </FormItem>
+            </FormSection>
 
-          {/* {error && <Alert type="danger" title="エラーが発生しました">{error.message}</Alert>} */}
-          {errorCount !== 0 && <Alert type="danger">{errorCount}個の入力項目に不備があります。</Alert>}
+            {/* {error && <Alert type="danger" title="エラーが発生しました">{error.message}</Alert>} */}
+            {errorCount !== 0 && <Alert type="danger">{errorCount}個の入力項目に不備があります。</Alert>}
 
-          <FormSection>
-            <FormItem>
-              <LoadingCircleWrapper isLoading={isProgress} inlined>
-                <FormButton
-                  inlined
-                  disabled={isProgress || errorCount !== 0}
-                  onClick={handleSubmit}>情報を更新する</FormButton>
-              </LoadingCircleWrapper>
-            </FormItem>
-          </FormSection>
-        </>
-        <></>
-      </TwoColumnsLayout>
+            <FormSection>
+              <FormItem>
+                <LoadingCircleWrapper isLoading={isProgress} inlined>
+                  <FormButton
+                    inlined
+                    disabled={isProgress || errorCount !== 0}
+                    onClick={handleSubmit}>情報を更新する</FormButton>
+                </LoadingCircleWrapper>
+              </FormItem>
+            </FormSection>
+          </>
+          <></>
+        </TwoColumnsLayout>
+        : <Loading text="ユーザ情報" />}
     </DashboardLayout>
   )
 }
