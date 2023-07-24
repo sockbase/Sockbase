@@ -69,8 +69,9 @@ const StepContainerComponent: React.FC<Props> = (props) => {
         store={props.store}
         ticketInfo={ticketInfo}
         ticketResult={ticketResult}
+        email={props.userData?.email ?? userData?.email}
         nextStep={() => setStep(4)} />,
-      <Step4 key="step4" />
+      <Step4 key="step4" store={props.store} />
     ])
   }
   useEffect(onInitialize, [props.store, props.userData, ticketInfo, userData, ticketResult])

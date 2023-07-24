@@ -1,10 +1,12 @@
+import { type SockbaseStoreDocument } from 'sockbase'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
 import LinkButton from '../../../Parts/LinkButton'
 
 interface Props {
+  store: SockbaseStoreDocument
 }
-const Step4: React.FC<Props> = () => {
+const Step4: React.FC<Props> = (props) => {
   return (
     <>
       <h1>お申し込みが完了しました</h1>
@@ -24,7 +26,7 @@ const Step4: React.FC<Props> = () => {
           {/* <LinkButton color="default" to={`/dashboard/applications/${props.appResult.hashId}`}>マイページを開く</LinkButton> */}
         </FormItem>
         <FormItem>
-          <LinkButton to="">イベントサイトへ戻る</LinkButton>
+          <LinkButton to={props.store.storeWebURL}>イベントサイトへ戻る</LinkButton>
         </FormItem>
       </FormSection>
     </>
