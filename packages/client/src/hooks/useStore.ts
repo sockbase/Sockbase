@@ -10,6 +10,7 @@ const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStoreDocument> 
     return {
       id: snapshot.id,
       storeName: data.storeName,
+      storeWebURL: data.storeWebURL,
       descriptions: data.descriptions,
       rules: data.rules,
       schedules: data.schedules,

@@ -52,6 +52,7 @@ export interface SockbaseEventGenre {
  */
 export interface SockbaseStore {
   storeName: string
+  storeWebURL: string
   descriptions: string[]
   rules: string[]
   types: SockbaseStoreType[]
