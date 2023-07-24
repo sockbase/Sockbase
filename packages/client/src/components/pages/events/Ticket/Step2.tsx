@@ -110,7 +110,7 @@ const Step2: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <FormButton color="default" onClick={() => props.prevStep()}>修正する</FormButton>
+          <FormButton color="default" onClick={() => props.prevStep()} disabled={isProgressing}>修正する</FormButton>
         </FormItem>
         <FormItem>
           <LoadingCircleWrapper isLoading={isProgressing}>
