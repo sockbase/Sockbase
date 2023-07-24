@@ -1,20 +1,24 @@
 import { useMemo, useState } from 'react'
-import { type SockbaseStoreType, type SockbaseAccountSecure, type SockbaseTicket, type SockbaseStoreDocument } from 'sockbase'
+import { type SockbaseStoreType, type SockbaseAccountSecure, type SockbaseTicket, type SockbaseStoreDocument, type SockbaseAccount } from 'sockbase'
 import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
 import LoadingCircleWrapper from '../../../Parts/LoadingCircleWrapper'
 import sockbaseShared from 'shared'
+import useDayjs from '../../../../hooks/useDayjs'
 
 interface Props {
   store: SockbaseStoreDocument
   ticketInfo: SockbaseTicket | undefined
   userData: SockbaseAccountSecure | undefined
+  fetchedUserData: SockbaseAccount | null
   isLoggedIn: boolean
   prevStep: () => void
   nextStep: () => Promise<void>
 }
 const Step2: React.FC<Props> = (props) => {
+  const { formatByDate } = useDayjs()
+
   const [isProgressing, setProgressing] = useState(false)
 
   const selectedType = useMemo((): SockbaseStoreType | null => {
@@ -46,23 +50,23 @@ const Step2: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>氏名</th>
-            <td>{props.userData?.name}</td>
+            <td>{props.fetchedUserData?.name ?? props.userData?.name}</td>
           </tr>
           <tr>
             <th>生年月日</th>
-            <td>{new Date(props.userData?.birthday ?? 0).toLocaleDateString()}</td>
+            <td>{formatByDate(props.fetchedUserData?.birthday ?? props.userData?.birthday, 'YYYY年M月D日')}</td>
           </tr>
           <tr>
             <th>郵便番号</th>
-            <td>{props.userData?.postalCode}</td>
+            <td>{props.fetchedUserData?.postalCode ?? props.userData?.postalCode}</td>
           </tr>
           <tr>
             <th>住所</th>
-            <td>{props.userData?.address}</td>
+            <td>{props.fetchedUserData?.address ?? props.userData?.address}</td>
           </tr>
           <tr>
             <th>電話番号</th>
-            <td>{props.userData?.telephone}</td>
+            <td>{props.fetchedUserData?.telephone ?? props.userData?.telephone}</td>
           </tr>
         </tbody>
       </table>
