@@ -121,6 +121,8 @@ export const createTicket = functions.https.onCall(
         storeId,
         typeId: ticket.typeId,
         usableUserId: null,
+        used: false,
+        usedAt: null
       })
 
     const webhookBody = {
