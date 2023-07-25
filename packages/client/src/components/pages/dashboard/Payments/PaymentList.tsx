@@ -3,8 +3,9 @@ import type {
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
   SockbaseEvent,
-  SockbaseEventSpace,
-  SockbasePaymentDocument
+  SockbasePaymentDocument,
+  SockbaseStoreDocument,
+  SockbaseTicketDocument
 } from 'sockbase'
 import { Link } from 'react-router-dom'
 import PaymentStatusLabel from '../../../Parts/PaymentStatusLabel'
@@ -13,6 +14,8 @@ interface Props {
   payments: SockbasePaymentDocument[]
   apps: Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
   events: Record<string, SockbaseEvent>
+  tickets: Record<string, SockbaseTicketDocument>
+  stores: Record<string, SockbaseStoreDocument>
   email: string
 }
 const PaymentList: React.FC<Props> = (props) => {
@@ -23,19 +26,11 @@ const PaymentList: React.FC<Props> = (props) => {
         return `/dashboard/applications/${app.hashId ?? ''}`
       }
       else if (ticketId) {
-        return `/dashboard/tickets/${ticketId}`
+        const ticket = props.tickets[ticketId]
+        return `/dashboard/tickets/${ticket.hashId ?? ''}`
       }
 
       return ''
-    }
-
-  const getEventByAppId: (appId: string | null) => SockbaseEvent | null =
-    (appId) => {
-      if (!appId) return null
-
-      const app = props.apps[appId]
-      const event = props.events[app.eventId]
-      return event
     }
 
   const paymentMethod: (method: PaymentMethod) => string =
@@ -49,16 +44,48 @@ const PaymentList: React.FC<Props> = (props) => {
       }
     }
 
-  const getSpaceByAppId: (appId: string | null) => SockbaseEventSpace | null =
-    (appId) => {
-      if (!appId) return null
-
-      const app = props.apps[appId]
+  const getTargetName = (payment: SockbasePaymentDocument): string => {
+    if (payment.applicationId) {
+      const app = props.apps[payment.applicationId]
       const event = props.events[app.eventId]
-      const space = event.spaces
-        .filter(s => s.id === app.spaceId)[0]
-      return space
+      return event.eventName
     }
+    else if (payment.ticketId) {
+      const ticket = props.tickets[payment.ticketId]
+      const store = props.stores[ticket.storeId]
+      const type = store.types
+        .filter(t => t.id === ticket.typeId)[0]
+
+      return `${store.storeName}(${type.name})`
+    }
+
+    return '-'
+  }
+
+  const getPaymentLink = (payment: SockbasePaymentDocument): React.ReactNode => {
+    if (payment.status !== 0 || payment.paymentMethod !== 1) return '-'
+
+    const emailLink = `?prefilled_email=${encodeURIComponent(props.email)}`
+
+    if (payment.applicationId) {
+      const app = props.apps[payment.applicationId]
+      const space = props.events[app.eventId].spaces
+        .filter(s => s.id === app.spaceId)[0]
+
+      if (!space.productInfo) return '-'
+      return <a href={`${space.productInfo.paymentURL}${emailLink}`} target="_blank" rel="noreferrer">お支払いはこちら</a>
+    }
+    else if (payment.ticketId) {
+      const ticket = props.tickets[payment.ticketId]
+      const typeInfo = props.stores[ticket.storeId].types
+        .filter(t => t.id === ticket.typeId)[0]
+
+      if (!typeInfo.productInfo) return '-'
+      return <a href={`${typeInfo.productInfo.paymentURL}${emailLink}`} target="_blank" rel="noreferrer">お支払いはこちら</a>
+    }
+
+    return '-'
+  }
 
   return (
     <>
@@ -77,17 +104,15 @@ const PaymentList: React.FC<Props> = (props) => {
         <tbody>
           {props.payments.length !== 0
             ? props.payments
-              .sort((a, b) => (b.updatedAt?.getTime() ?? 9) - (a.updatedAt?.getTime() ?? 0))
+              .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
               .map(p => <tr key={p.id}>
-                <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getEventByAppId(p.applicationId)?.eventName}</Link></th>
+                <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getTargetName(p)}</Link></th>
                 <td>{p.paymentAmount.toLocaleString()}円</td>
                 <td>{paymentMethod(p.paymentMethod)}</td>
                 <td>{p.bankTransferCode}</td>
                 <td><PaymentStatusLabel status={p.status} /></td>
                 <td>{p.updatedAt?.toLocaleString() ?? '-'}</td>
-                <td>
-                  {p.status === 0 && p.paymentMethod === 1 && p.applicationId && <a href={`${getSpaceByAppId(p.applicationId)?.productInfo?.paymentURL ?? ''}?prefilled_email=${encodeURIComponent(props.email)}`} target="_blank" rel="noreferrer">お支払いはこちら</a>}
-                </td>
+                <td>{getPaymentLink(p)}</td>
               </tr>)
             : <tr><th colSpan={7}>決済情報はありません</th></tr>
           }

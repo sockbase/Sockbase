@@ -8,6 +8,7 @@ import type {
   SockbaseApplication,
   SockbaseApplicationAddedResult,
   SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
   SockbaseApplicationLinks,
   SockbaseApplicationLinksDocument,
   SockbaseApplicationMeta,
@@ -15,14 +16,9 @@ import type {
 } from 'sockbase'
 import { useCallback } from 'react'
 
-interface ApplicationHashIdDocument {
-  applicationId: string
-  hashId: string
-  paymentId: string
-}
-const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<ApplicationHashIdDocument> = {
-  toFirestore: (app: ApplicationHashIdDocument): FirestoreDB.DocumentData => ({}),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): ApplicationHashIdDocument => {
+const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
+  toFirestore: (app: SockbaseApplicationHashIdDocument): FirestoreDB.DocumentData => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseApplicationHashIdDocument => {
     const hashDoc = snapshot.data()
     return {
       applicationId: hashDoc.applicationId,
