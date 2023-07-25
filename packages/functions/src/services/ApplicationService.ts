@@ -137,7 +137,7 @@ export const createApplication = functions.https.onCall(
       )
       : null
 
-    const hashId = await generateHashId(eventId, appId, now)
+    const hashId = generateHashId(eventId, appId, now)
     await firestore
       .doc(`/_applications/${appId}`)
       .set(
@@ -180,21 +180,29 @@ export const createApplication = functions.https.onCall(
             {
               name: '申し込みハッシュID',
               value: hashId
+            },
+            {
+              name: 'スペース',
+              value: space.name
             }
           ]
         }
       ]
     }
-    await sendMessageToDiscord(event._organization.id, webhookBody)
+
+    sendMessageToDiscord(event._organization.id, webhookBody)
+      .then(() => console.log('sent webhook'))
+      .catch(err => { throw err })
 
     const result: SockbaseApplicationAddedResult = {
       hashId,
       bankTransferCode
     }
+
     return result
   })
 
-const generateHashId = async (eventId: string, refId: string, now: Date): Promise<string> => {
+const generateHashId = (eventId: string, refId: string, now: Date): string => {
   const salt = 'sockbase-yogurt-koharurikka516'
   const codeDigit = 8
   const refHashId = MD5(`${eventId}.${refId}.${salt}`)
