@@ -33,7 +33,8 @@ import DashboardContact from './pages/dashboard/Contact'
 import DashboardInquiryList from './pages/dashboard/manage/inquiries/InquiryList'
 import DashboardEditLinks from './pages/dashboard/CircleApplications/EditLinks'
 import DashboardTicketList from './pages/dashboard/Tickets/TicketList'
-import DashboardMyTickets from './pages/dashboard/Tickets/MyTickets'
+import DashboardMyTicketList from './pages/dashboard/Tickets/MyTicketList'
+import DashboardMyTicketDetail from './pages/dashboard/Tickets/MyTicketDetail'
 import DashboardTicketDetail from './pages/dashboard/Tickets/TicketDetail'
 import DebugDashboard from './pages/dashboard/Debug'
 import DashboardTemplate from './pages/DashboardTemplate'
@@ -179,7 +180,16 @@ const router = createBrowserRouter([
           },
           {
             path: 'mytickets',
-            element: <DashboardMyTickets />
+            children: [
+              {
+                index: true,
+                element: <DashboardMyTicketList />
+              },
+              {
+                path: ':hashedTicketId',
+                element: <DashboardMyTicketDetail />
+              }
+            ]
           },
           {
             path: 'payments',
