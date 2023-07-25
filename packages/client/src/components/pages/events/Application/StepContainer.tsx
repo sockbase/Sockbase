@@ -48,9 +48,7 @@ const StepContainer: React.FC<Props> = (props) => {
 
       if (!user) {
         const newUser = await createUser(leaderUserData.email, leaderUserData.password)
-          .catch(err => {
-            throw err
-          })
+          .catch(err => { throw err })
 
         await updateUserDataAsync(newUser.uid, leaderUserData)
       }
@@ -121,7 +119,7 @@ const StepContainer: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1>{props.event.eventName} サークル参加申し込み受付フォーム</h1>
+      <h1>{props.event.eventName} サークル参加申し込み受付</h1>
 
       {props.event.schedules.endApplication < new Date().getTime()
         ? <Alert type="danger" title="参加受付は終了しました">

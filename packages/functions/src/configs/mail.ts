@@ -1,5 +1,14 @@
 import dayjs from '../helpers/dayjs'
-import type { SockbaseAccountDocument, SockbaseApplicationDocument, SockbaseEvent, SockbaseEventSpace, SockbaseInquiryDocument, SockbasePaymentDocument, SockbaseStore, SockbaseTicketApplicaitonDocument } from 'sockbase'
+import type {
+  SockbaseAccountDocument,
+  SockbaseEvent,
+  SockbaseEventSpace,
+  SockbaseInquiryDocument,
+  SockbasePaymentDocument,
+  SockbaseStore,
+  SockbaseApplicationDocument,
+  SockbaseTicketDocument
+} from 'sockbase'
 import { convertTypeText } from '../models/inquiry'
 
 const suffix = [
@@ -86,7 +95,7 @@ const templates = {
       ...suffix
     ]
   }),
-  requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketApplicaitonDocument, store: SockbaseStore) => ({
+  requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketDocument, store: SockbaseStore) => ({
     subject: `[${store.storeName}] お支払いのお願い`,
     body: []
   }),

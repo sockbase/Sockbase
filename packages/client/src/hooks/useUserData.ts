@@ -32,6 +32,7 @@ interface IUseUserData {
   getMyUserDataAsync: () => Promise<SockbaseAccount | null>
   getUserDataByUserIdAsync: (userId: string) => Promise<SockbaseAccount>
   getUserDataByUserIdAndEventIdAsync: (userId: string, eventId: string) => Promise<SockbaseAccount>
+  getUserDataByUserIdAndStoreIdAsync: (userId: string, storeId: string) => Promise<SockbaseAccount>
 }
 const useUserData: () => IUseUserData = () => {
   const { user, getFirestore } = useFirebase()
@@ -76,24 +77,43 @@ const useUserData: () => IUseUserData = () => {
       }
     }
 
-  const getUserDataByUserIdAndEventIdAsync: (userId: string, eventId: string) => Promise<SockbaseAccount> =
-    async (userId, eventId) => {
-      const db = getFirestore()
-      const userRef = FirestoreDB.doc(db, `/events/${eventId}/_users/${userId}`)
-        .withConverter(userConverter)
-      const userDoc = await FirestoreDB.getDoc(userRef)
-      if (userDoc.exists()) {
-        return userDoc.data()
-      } else {
-        throw new Error('user not found')
-      }
+  const getUserDataByUserIdAndEventIdAsync = async (userId: string, eventId: string): Promise<SockbaseAccount> => {
+    const db = getFirestore()
+    const userRef = FirestoreDB.doc(db, `/events/${eventId}/_users/${userId}`)
+      .withConverter(userConverter)
+
+    const userDoc = await FirestoreDB.getDoc(userRef)
+
+    const user = userDoc.data()
+    if (!user) {
+      throw new Error('user not found')
     }
+
+    return user
+  }
+
+  const getUserDataByUserIdAndStoreIdAsync = async (userId: string, storeId: string): Promise<SockbaseAccount> => {
+    const db = getFirestore()
+    const userRef = FirestoreDB
+      .doc(db, `stores/${storeId}/_users/${userId}`)
+      .withConverter(userConverter)
+
+    const userDoc = await FirestoreDB.getDoc(userRef)
+
+    const user = userDoc.data()
+    if (!user) {
+      throw new Error('user not found')
+    }
+
+    return user
+  }
 
   return {
     updateUserDataAsync,
     getMyUserDataAsync,
     getUserDataByUserIdAsync,
-    getUserDataByUserIdAndEventIdAsync
+    getUserDataByUserIdAndEventIdAsync,
+    getUserDataByUserIdAndStoreIdAsync
   }
 }
 
