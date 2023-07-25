@@ -14,8 +14,20 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/events/$(eventId)).data
     }
 
+    function getStore(storeId) {
+      return get(/databases/$(database)/documents/stores/$(storeId)).data
+    }
+
     function getApplication(appId) {
       return get(/databases/$(database)/documents/_applications/$(appId)).data
+    }
+
+    function getTicket(ticketId) {
+      return get(/databases/$(database)/documents/_tickets/$(ticketId)).data
+    }
+
+    function getTicketByHashId(hashId) {
+      return getTicket(get(/databases/$(database)/documents/_ticketHashIds/$(hashId)).data.ticketId)
     }
     
   	match /users/{userId} {
@@ -25,6 +37,11 @@ service cloud.firestore {
     
     match /stores/{storeId} {
       allow read: if true;
+
+      match /_users/{userId} {
+        allow read: if request.auth.uid == userId
+          || isOrganizationAdmin(request.auth.uid, getStore(storeId)._organization.id);
+      }
     }
     
   	match /events/{eventId} {
@@ -85,6 +102,32 @@ service cloud.firestore {
         
       allow create: if request.auth.uid == request.resource.data.userId;
       allow write: if request.auth.uid == resource.data.userId;
+    }
+
+    match /_tickets/{ticketId} {
+      allow read: if request.auth.uid == resource.data.userId;
+
+      match /private {
+        match /meta {
+          allow read: if getTicket(ticketId).userId == request.auth.uid
+            || isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
+          allow write: if isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
+        }
+        match /usedStatus {
+          allow read: if getTicket(ticketId).userId == request.auth.uid
+            || isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
+        }
+      }
+    }
+
+    match /_ticketHashIds/{hashId} {
+      allow read: if request.auth != null;
+    }
+
+    match /_ticketUsers/{hashId} {
+      allow read: if request.auth.uid == resource.data.userId
+        || request.auth.uid == resource.data.usableUserId
+        || isOrganizationAdmin(request.auth.uid, getStore(getTicketByHashId(hashId).storeId)._organization.id);
     }
 
     match /_payments/{paymentId} {

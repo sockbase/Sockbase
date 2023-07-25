@@ -6,7 +6,6 @@ import type { SockbaseRole } from 'sockbase'
 import sockbaseShared from 'shared'
 
 import {
-  MdCottage,
   MdMenu,
   MdClose,
   MdLogout,
@@ -21,7 +20,8 @@ import {
   MdEditCalendar,
   MdStore,
   MdMail,
-  MdInbox
+  MdInbox,
+  MdWallet
 } from 'react-icons/md'
 
 import useWindowDimension from '../../../hooks/useWindowDimension'
@@ -54,10 +54,23 @@ const menu: MenuSection[] = [
         link: '/dashboard'
       },
       {
+        key: 'myTickets',
+        icon: <MdLocalActivity />,
+        text: 'マイチケット',
+        link: '/dashboard/mytickets',
+        isImportant: true
+      },
+      {
         key: 'circleHistories',
         icon: <MdEditNote />,
         text: 'サークル申し込み履歴',
         link: '/dashboard/applications'
+      },
+      {
+        key: 'ticketList',
+        icon: <MdWallet />,
+        text: '購入済みチケット一覧',
+        link: '/dashboard/tickets'
       },
       {
         key: 'paymentHistories',
@@ -111,18 +124,10 @@ const menu: MenuSection[] = [
     items: [
       {
         key: 'debug',
-        icon: <MdCottage />,
+        icon: <MdHome />,
         text: 'デバッグダッシュボード',
         link: '/dashboard/debug',
         isImportant: true
-      },
-      {
-        key: 'myTickets',
-        icon: <MdLocalActivity />,
-        text: 'マイチケット',
-        link: '',
-        isImportant: true,
-        isDisabled: true
       },
       {
         key: 'ticketHistories',

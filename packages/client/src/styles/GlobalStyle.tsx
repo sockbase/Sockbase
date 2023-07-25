@@ -56,34 +56,32 @@ table {
   
   width: 100%;
   border-collapse: collapse;
+
+
   tr {
-    background-color: #e8e8e8;
-    &:nth-child(2n + 1) {
-      background-color: #F8F8F8;
+    background-color: #ffffff;
+    &:nth-child(2n) {
+      background-color: #f8f8f8;
     }
   }
   th, td {
     padding: 10px;
     text-align: left;
-
-    &:nth-child(2n) {
-      background-color: #ffffff40;
-    }
   }
 
   thead {
-    border-bottom: 2px solid #c0c0c0;
     tr {
-      background-color: #ea6183 !important;
-      color: #ffffff !important;
+      background-color: #ffffff !important;
+      color: #000000 !important;
     }
   }
 
   tbody {
-    tr {
-      th {
-        width: 30%;
-      }
+    border-top: 2px solid #ea6183;
+    border-bottom: 2px solid #ea6183;
+
+    th {
+      width: 30%;
     }
   }
 }

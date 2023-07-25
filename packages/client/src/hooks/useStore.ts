@@ -1,14 +1,27 @@
 import * as FirestoreDB from 'firebase/firestore'
-import type { SockbaseStore } from 'sockbase'
-
+import * as FirebaseFunctions from 'firebase/functions'
+import type {
+  SockbaseStoreDocument,
+  SockbaseTicket,
+  SockbaseTicketAddedResult,
+  SockbaseTicketDocument,
+  SockbaseTicketHashIdDocument,
+  SockbaseTicketMeta,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketUser,
+  SockbaseTicketUserDocument
+} from 'sockbase'
 import useFirebase from './useFirebase'
+import { useCallback } from 'react'
 
-const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStore> = {
-  toFirestore: (store: SockbaseStore): FirestoreDB.DocumentData => ({}),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseStore => {
+const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStoreDocument> = {
+  toFirestore: (): FirestoreDB.DocumentData => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseStoreDocument => {
     const data = snapshot.data()
     return {
+      id: snapshot.id,
       storeName: data.storeName,
+      storeWebURL: data.storeWebURL,
       descriptions: data.descriptions,
       rules: data.rules,
       schedules: data.schedules,
@@ -18,13 +31,89 @@ const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStore> = {
   }
 }
 
-interface IUseStore {
-  getStoreByIdAsync: (storeId: string) => Promise<SockbaseStore>
+const ticketConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketDocument => {
+    const data = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: data.userId,
+      storeId: data.storeId,
+      typeId: data.typeId,
+      paymentMethod: data.paymentMethod,
+      paymentProductId: data.paymentProductId,
+      createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
+      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null,
+      hashId: data.hashId
+    }
+  }
 }
-const useStore: () => IUseStore = () => {
-  const { getFirestore } = useFirebase()
 
-  const getStoreByIdAsync: (storeId: string) => Promise<SockbaseStore> =
+const ticketMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketMeta> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketMeta => {
+    const data = snapshot.data()
+    return {
+      applicationStatus: data.applicationStatus
+    }
+  }
+}
+
+const ticketUserConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUserDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketUserDocument => {
+    const data = snapshot.data()
+    return {
+      hashId: snapshot.id,
+      userId: data.userId,
+      storeId: data.storeId,
+      typeId: data.typeId,
+      usableUserId: data.usableUserId
+    }
+  }
+}
+
+const ticketUsedStatusConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUsedStatus> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketUsedStatus => {
+    const data = snapshot.data()
+    return {
+      used: data.used,
+      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
+    }
+  }
+}
+
+const ticketHashIdConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketHashIdDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketHashIdDocument => {
+    const data = snapshot.data()
+    return {
+      hashId: data.hashId,
+      ticketId: data.ticketId,
+      paymentId: data.paymentId
+    }
+  }
+}
+
+interface IUseStore {
+  getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
+  getStoreByIdOptionalAsync: (storeId: string) => Promise<SockbaseStoreDocument | null>
+  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
+  getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
+  getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
+  getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
+  getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUser>
+  getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
+  getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
+  getMyTicketsAsync: () => Promise<SockbaseTicketDocument[] | undefined>
+  getUsableTicketsAsync: () => Promise<SockbaseTicketUserDocument[] | undefined>
+}
+
+const useStore: () => IUseStore = () => {
+  const { getFirestore, getFunctions, user } = useFirebase()
+
+  const getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument> =
     async (storeId) => {
       const db = getFirestore()
       const storeRef = FirestoreDB
@@ -39,8 +128,142 @@ const useStore: () => IUseStore = () => {
       return storeDoc.data()
     }
 
+  const getStoreByIdOptionalAsync = async (storeId: string): Promise<SockbaseStoreDocument | null> =>
+    await getStoreByIdAsync(storeId)
+      .then((store) => store)
+      .catch(() => null)
+
+  const createTicketAsync = async (ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
+    const functions = getFunctions()
+    const createApplicationFunction = FirebaseFunctions
+      .httpsCallable<SockbaseTicket, SockbaseTicketAddedResult>(functions, 'store-createTicket')
+
+    const appResult = await createApplicationFunction(ticket)
+    return appResult.data
+  }
+
+  const getTicketIdByHashIdAsync = async (ticketHashId: string): Promise<SockbaseTicketHashIdDocument> => {
+    const db = getFirestore()
+    const ticketHashRef = FirestoreDB
+      .doc(db, '_ticketHashIds', ticketHashId)
+      .withConverter(ticketHashIdConverter)
+    const ticketHashDoc = await FirestoreDB.getDoc(ticketHashRef)
+    const ticketHash = ticketHashDoc.data()
+    if (!ticketHash) {
+      throw new Error('ticketHash not found')
+    }
+
+    return ticketHash
+  }
+
+  const getTicketByIdAsync = async (ticketId: string): Promise<SockbaseTicketDocument> => {
+    const db = getFirestore()
+    const ticketRef = FirestoreDB
+      .doc(db, '_tickets', ticketId)
+      .withConverter(ticketConverter)
+
+    const ticketDoc = await FirestoreDB.getDoc(ticketRef)
+    if (!ticketDoc.exists()) {
+      throw new Error('store not found')
+    }
+
+    return ticketDoc.data()
+  }
+
+  const getTicketMetaByIdAsync = async (ticketId: string): Promise<SockbaseTicketMeta> => {
+    const db = getFirestore()
+    const ticketMetaRef = FirestoreDB
+      .doc(db, `_tickets/${ticketId}/private/meta`)
+      .withConverter(ticketMetaConverter)
+
+    const ticketMetaDoc = await FirestoreDB.getDoc(ticketMetaRef)
+    const ticketMeta = ticketMetaDoc.data()
+    if (!ticketMeta) {
+      throw new Error('ticketMeta not found')
+    }
+
+    return ticketMeta
+  }
+
+  const getTicketUserByHashIdAsync = async (ticketHashId: string): Promise<SockbaseTicketUser> => {
+    const db = getFirestore()
+    const ticketUserRef = FirestoreDB
+      .doc(db, `_ticketUsers/${ticketHashId}`)
+      .withConverter(ticketUserConverter)
+
+    const ticketUserDoc = await FirestoreDB.getDoc(ticketUserRef)
+    const ticketUser = ticketUserDoc.data()
+    if (!ticketUser) {
+      throw new Error('ticketUser not found')
+    }
+
+    return ticketUser
+  }
+
+  const getTicketUsedStatusByIdAsync = async (ticketId: string): Promise<SockbaseTicketUsedStatus> => {
+    const db = getFirestore()
+    const ticketUsedStatusRef = FirestoreDB
+      .doc(db, `_tickets/${ticketId}/private/usedStatus`)
+      .withConverter(ticketUsedStatusConverter)
+
+    const ticketUsedStatusDoc = await FirestoreDB.getDoc(ticketUsedStatusRef)
+    const ticketUsedStatus = ticketUsedStatusDoc.data()
+    if (!ticketUsedStatus) {
+      throw new Error('ticketUsedStatus not found')
+    }
+
+    return ticketUsedStatus
+  }
+
+  const getTicketsByUserIdAsync = async (userId: string): Promise<SockbaseTicketDocument[]> => {
+    const db = getFirestore()
+    const ticketsRef = FirestoreDB
+      .collection(db, '_tickets')
+      .withConverter(ticketConverter)
+
+    const ticketsQuery = FirestoreDB.query(ticketsRef, FirestoreDB.where('userId', '==', userId))
+    const ticketsSnapshot = await FirestoreDB.getDocs(ticketsQuery)
+    const ticketsDocs = ticketsSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+
+    return ticketsDocs
+  }
+
+  const getMyTicketsAsync = useCallback(async (): Promise<SockbaseTicketDocument[] | undefined> => {
+    if (!user) return
+    return await getTicketsByUserIdAsync(user.uid)
+  }, [user])
+
+  const getUsableTicketsAsync = useCallback(async (): Promise<SockbaseTicketUserDocument[] | undefined> => {
+    if (!user) return
+
+    const db = getFirestore()
+    const ticketUsersRef = FirestoreDB
+      .collection(db, '_ticketUsers')
+      .withConverter(ticketUserConverter)
+
+    const ticketUsersQuery = FirestoreDB.query(ticketUsersRef, FirestoreDB.where('usableUserId', '==', user.uid))
+    const ticketUsersSnapshot = await FirestoreDB.getDocs(ticketUsersQuery)
+    const ticketUsersDocs = ticketUsersSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+
+    return ticketUsersDocs
+  }, [user])
+
   return {
-    getStoreByIdAsync
+    getStoreByIdAsync,
+    getStoreByIdOptionalAsync,
+    createTicketAsync,
+    getTicketIdByHashIdAsync,
+    getTicketByIdAsync,
+    getTicketMetaByIdAsync,
+    getTicketUserByHashIdAsync,
+    getTicketUsedStatusByIdAsync,
+    getTicketsByUserIdAsync,
+    getMyTicketsAsync,
+    getUsableTicketsAsync
   }
 }
 

@@ -40,7 +40,7 @@ const ApplicationDetailContainer: React.FC = () => {
     updateApplicationStatusByIdAsync,
     getLinksByApplicationIdOptionalAsync
   } = useApplication()
-  const { getPaymentIdByHashId, getPayment } = usePayment()
+  const { getPaymentIdByHashId, getPaymentAsync } = usePayment()
   const { getEventByIdAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const { checkIsAdminByOrganizationId } = useRole()
@@ -67,7 +67,7 @@ const ApplicationDetailContainer: React.FC = () => {
           const fetchedApp = await getApplicationByIdAsync(fetchedAppId)
 
           const fetchedPaymentId = await getPaymentIdByHashId(hashedAppId)
-          getPayment(fetchedPaymentId)
+          getPaymentAsync(fetchedPaymentId)
             .then(fetchedPayment => setPayment(fetchedPayment))
             .catch(err => { throw err })
 

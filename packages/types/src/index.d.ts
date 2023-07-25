@@ -52,6 +52,7 @@ export interface SockbaseEventGenre {
  */
 export interface SockbaseStore {
   storeName: string
+  storeWebURL: string
   descriptions: string[]
   rules: string[]
   types: SockbaseStoreType[]
@@ -64,6 +65,13 @@ export interface SockbaseStore {
   _organization: SockbaseOrganization & {
     id: string
   }
+}
+
+/**
+ * チケットストア(DB取得)
+ */
+export type SockbaseStoreDocument = SockbaseStore & {
+  id: string
 }
 
 /**
@@ -138,6 +146,9 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
   hashId: string | null
 }
 
+/**
+ * サークル申し込み作成リザルト
+ */
 export interface SockbaseApplicationAddedResult {
   hashId: string
   bankTransferCode: string
@@ -151,7 +162,7 @@ export interface SockbaseApplicationMeta {
 }
 
 /**
- * 申し込みステータス
+ * サークル申し込みステータス
  * 
  * 0: 仮申し込み
  * 1: キャンセル済み
@@ -179,25 +190,94 @@ export type SockbaseApplicationLinksDocument = SockbaseApplicationLinks & {
 }
 
 /**
+ * サークル申し込みハッシュ情報
+ */
+export interface SockbaseApplicationHashIdDocument {
+  applicationId: string
+  hashId: string
+  paymentId: string
+}
+
+/**
  * チケット情報
  */
-export interface SockbaseTicketApplication {
+export interface SockbaseTicket {
   storeId: string
   typeId: string
   paymentMethod: string
   paymentProductId?: string
-  remarks: string
 }
 
 /**
  * チケット情報(DB取得)
  */
-export type SockbaseTicketApplicaitonDocument = SockbaseTicketApplication & {
+export type SockbaseTicketDocument = SockbaseTicket & {
+  id?: string
   userId: string
-  usableUserId?: string
   createdAt: Date | null
   updatedAt: Date | null
   hashId: string | null
+}
+
+/**
+ * チケット管理情報
+ * 情報はチケットIDで引く
+ */
+export interface SockbaseTicketMeta {
+  applicationStatus: SockbaseTicketStatusType
+}
+
+/**
+ * チケット申し込みステータス
+ * 
+ * 0: 仮申し込み
+ * 1: キャンセル済み
+ * 2: 申し込み確定
+ */
+export type SockbaseTicketStatusType = 0 | 1 | 2
+
+/**
+ * チケット利用者情報
+ * 情報はチケットハッシュIDで引く
+ */
+export interface SockbaseTicketUser {
+  userId: string
+  storeId: string
+  typeId: string
+  usableUserId: string | null
+}
+
+/**
+ * チケット利用者情報(DB取得)
+ */
+export type SockbaseTicketUserDocument = SockbaseTicketUser & {
+  hashId: string
+}
+
+/**
+ * チケット使用状況管理
+ * 情報はチケットIDで引く
+ */
+export interface SockbaseTicketUsedStatus {
+  used: boolean
+  usedAt: Date | null
+}
+
+/**
+ * チケットハッシュ情報
+ */
+export interface SockbaseTicketHashIdDocument {
+  ticketId: string
+  hashId: string
+  paymentId: string | null
+}
+
+/**
+ * チケット作成リザルト
+ */
+export interface SockbaseTicketAddedResult {
+  hashId: string
+  bankTransferCode: string
 }
 
 /**
