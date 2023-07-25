@@ -5,7 +5,7 @@ import { type Change } from 'firebase-functions'
 
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 
-import { applicationConverter, roleConverter } from '../libs/converters'
+import { applicationConverter, roleConverter, ticketConverter } from '../libs/converters'
 
 export const onChangeOrganizationRoles = functions.firestore
   .document('/organizations/{organizationId}/users/{userId}')
@@ -93,14 +93,22 @@ export const onChangeUser = functions.firestore
 
       const firestore = adminApp.firestore()
       await firestore.runTransaction(async tx => {
-        const appsQuery = await firestore.collection('/_applications')
+        const appsQuery = await firestore.collection('_applications')
           .withConverter(applicationConverter)
+          .where('userId', '==', userId)
+          .get()
+        const ticketsQuery = await firestore.collection('_tickets')
+          .withConverter(ticketConverter)
           .where('userId', '==', userId)
           .get()
 
         appsQuery.docs
           .map(app => app.data())
-          .map(data => firestore.doc(`/events/${data.eventId}/_users/${userId}`))
+          .map(data => firestore.doc(`events/${data.eventId}/_users/${userId}`))
+          .map(ref => tx.update(ref, { ...data }))
+        ticketsQuery.docs
+          .map(ticket => ticket.data())
+          .map(data => firestore.doc(`stores/${data.storeId}/_users/${userId}`))
           .map(ref => tx.update(ref, { ...data }))
       })
     }

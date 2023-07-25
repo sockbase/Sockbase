@@ -1,11 +1,38 @@
 import * as functions from 'firebase-functions'
-import { type SockbaseTicketAddedResult, type SockbaseTicket, type SockbaseTicketDocument } from 'sockbase'
+import {
+  type SockbaseTicketAddedResult,
+  type SockbaseTicket,
+  type SockbaseTicketDocument,
+  type SockbaseAccount
+} from 'sockbase'
 import firebaseAdmin from '../libs/FirebaseAdmin'
 import { storeConverter, ticketConverter } from '../libs/converters'
 import { MD5, enc } from 'crypto-js'
 import dayjs from '../helpers/dayjs'
 import { createPayment, generateBankTransferCode } from '../services/payment'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
+import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
+
+export const onChangeApplication = functions.firestore
+  .document('/_tickets/{ticketId}')
+  .onUpdate(async (change: functions.Change<QueryDocumentSnapshot>) => {
+    if (!change.after.exists) return
+
+    const adminApp = firebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const ticket = change.after.data() as SockbaseTicketDocument
+
+    const userDoc = await firestore
+      .doc(`/users/${ticket.userId}`)
+      .get()
+    if (!userDoc.exists) return
+
+    const userData = userDoc.data() as SockbaseAccount
+    await firestore
+      .doc(`/stores/${ticket.storeId}/_users/${ticket.userId}`)
+      .set(userData)
+  })
 
 export const createTicket = functions.https.onCall(
   async (ticket: SockbaseTicket, context): Promise<SockbaseTicketAddedResult> => {
@@ -51,6 +78,13 @@ export const createTicket = functions.https.onCall(
       .doc(`_tickets/${ticketId}/private/meta`)
       .set({ applicationStatus: 0 })
 
+    await firestore
+      .doc(`_tickets/${ticketId}/private/status`)
+      .set({
+        used: false,
+        usedAt: null
+      })
+
     const typeInfo = store.types
       .filter(t => t.id === ticket.typeId)[0]
     const bankTransferCode = generateBankTransferCode(now)
@@ -78,7 +112,16 @@ export const createTicket = functions.https.onCall(
         hashId,
         ticketId,
         paymentId
-      }, { merge: true })
+      })
+
+    await firestore
+      .doc(`_ticketUsers/${hashId}`)
+      .set({
+        userId,
+        storeId,
+        typeId: ticket.typeId,
+        usableUserId: null,
+      })
 
     const webhookBody = {
       username: `Sockbase: ${store.storeName}`,

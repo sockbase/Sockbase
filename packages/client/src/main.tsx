@@ -29,10 +29,12 @@ import DashboardApplicationDetail from './pages/dashboard/CircleApplications/App
 import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
 import DashboardSettings from './pages/dashboard/Settings'
 import DashboardContact from './pages/dashboard/Contact'
-import DebugDashboard from './pages/dashboard/Debug'
-import DashboardTemplate from './pages/DashboardTemplate'
 import DashboardInquiryList from './pages/dashboard/manage/inquiries/InquiryList'
 import DashboardEditLinks from './pages/dashboard/CircleApplications/EditLinks'
+import DashboardTicketList from './pages/dashboard/Tickets/TicketList'
+import DashboardTicketDetail from './pages/dashboard/Tickets/TicketDetail'
+import DebugDashboard from './pages/dashboard/Debug'
+import DashboardTemplate from './pages/DashboardTemplate'
 import FormTemplate from './pages/FormTemplate'
 import NotFound from './pages/NotFound'
 
@@ -153,6 +155,19 @@ const router = createBrowserRouter([
                     element: <DashboardEditLinks />
                   }
                 ]
+              }
+            ]
+          },
+          {
+            path: 'tickets',
+            children: [
+              {
+                index: true,
+                element: <DashboardTicketList />
+              },
+              {
+                path: ':hashedTicketId',
+                element: <DashboardTicketDetail />
               }
             ]
           },

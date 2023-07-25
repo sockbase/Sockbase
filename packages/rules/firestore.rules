@@ -14,6 +14,10 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/events/$(eventId)).data
     }
 
+    function getStore(storeId) {
+      return get(/databases/$(database)/documents/stores/$(storeId)).data
+    }
+
     function getApplication(appId) {
       return get(/databases/$(database)/documents/_applications/$(appId)).data
     }
@@ -25,6 +29,11 @@ service cloud.firestore {
     
     match /stores/{storeId} {
       allow read: if true;
+
+      match /_users/{userId} {
+        allow read: if request.auth.uid == userId
+          || isOrganizationAdmin(request.auth.uid, getStore(eventId)._organization.id);
+      }
     }
     
   	match /events/{eventId} {
@@ -89,6 +98,10 @@ service cloud.firestore {
 
     match /_tickets/{ticketId} {
       allow read: if request.auth.uid == resource.data.userId;
+    }
+
+    match /_ticketHashIds/{hashId} {
+      allow read: if request.auth != null;
     }
 
     match /_payments/{paymentId} {
