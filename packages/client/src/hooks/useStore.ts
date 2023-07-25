@@ -1,10 +1,10 @@
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseFunctions from 'firebase/functions'
-import type { SockbaseStoreDocument, SockbaseTicket, SockbaseTicketAddedResult } from 'sockbase'
+import type { SockbaseStoreDocument, SockbaseTicket, SockbaseTicketAddedResult, SockbaseTicketDocument } from 'sockbase'
 import useFirebase from './useFirebase'
 
 const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStoreDocument> = {
-  toFirestore: (store: SockbaseStoreDocument): FirestoreDB.DocumentData => ({}),
+  toFirestore: (): FirestoreDB.DocumentData => ({}),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseStoreDocument => {
     const data = snapshot.data()
     return {
@@ -20,10 +20,29 @@ const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStoreDocument> 
   }
 }
 
+const ticketConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketDocument => {
+    const data = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: data.userId,
+      storeId: data.storeId,
+      typeId: data.typeId,
+      paymentMethod: data.paymentMethod,
+      paymentProductId: data.paymentProductId,
+      createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
+      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null,
+      hashId: data.hashId
+    }
+  }
+}
+
 interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
   getStoreByIdOptionalAsync: (storeId: string) => Promise<SockbaseStoreDocument | null>
   createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
+  getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
 }
 
 const useStore: () => IUseStore = () => {
@@ -58,10 +77,25 @@ const useStore: () => IUseStore = () => {
     return appResult.data
   }
 
+  const getTicketByIdAsync = async (ticketId: string): Promise<SockbaseTicketDocument> => {
+    const db = getFirestore()
+    const ticketRef = FirestoreDB
+      .doc(db, '_tickets', ticketId)
+      .withConverter(ticketConverter)
+
+    const ticketDoc = await FirestoreDB.getDoc(ticketRef)
+    if (!ticketDoc.exists()) {
+      throw new Error('store not found')
+    }
+
+    return ticketDoc.data()
+  }
+
   return {
     getStoreByIdAsync,
     getStoreByIdOptionalAsync,
-    createTicketAsync
+    createTicketAsync,
+    getTicketByIdAsync
   }
 }
 

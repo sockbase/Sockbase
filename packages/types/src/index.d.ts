@@ -190,6 +190,15 @@ export type SockbaseApplicationLinksDocument = SockbaseApplicationLinks & {
 }
 
 /**
+ * サークル申し込みハッシュ情報
+ */
+export interface SockbaseApplicationHashIdDocument {
+  applicationId: string
+  hashId: string
+  paymentId: string
+}
+
+/**
  * チケット情報
  */
 export interface SockbaseTicket {
@@ -202,10 +211,9 @@ export interface SockbaseTicket {
 /**
  * チケット情報(DB取得)
  */
-export type SockbaseTicketApplicaitonDocument = SockbaseTicket & {
+export type SockbaseTicketDocument = SockbaseTicket & {
   id?: string
   userId: string
-  usableUserId?: string
   createdAt: Date | null
   updatedAt: Date | null
   hashId: string | null
@@ -216,6 +224,24 @@ export type SockbaseTicketApplicaitonDocument = SockbaseTicket & {
  */
 export interface SockbaseTicketMeta {
   applicationStatus: SockbaseApplicationStatus
+}
+
+/**
+ * チケット利用情報
+ */
+export interface SockbaseTicketUsable {
+  usableUserId: string
+  used: boolean
+  usedAt: Date | null
+}
+
+/**
+ * チケットハッシュ情報
+ */
+export interface SockbaseTicketHashIdDocument {
+  ticketId: string
+  hashId: string
+  paymentId: string | null
 }
 
 /**

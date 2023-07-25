@@ -178,6 +178,7 @@ export const storeConverter: firestore.FirestoreDataConverter<types.SockbaseStor
     return {
       id: snapshot.id,
       storeName: storeDoc.storeName,
+      storeWebURL: storeDoc.websiteURL,
       descriptions: storeDoc.descriptions,
       rules: storeDoc.rules,
       types: storeDoc.types,
@@ -187,9 +188,17 @@ export const storeConverter: firestore.FirestoreDataConverter<types.SockbaseStor
   }
 }
 
-export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTicketApplicaitonDocument> = {
-  toFirestore: () => ({}),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketApplicaitonDocument => {
+export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTicketDocument> = {
+  toFirestore: (ticket: types.SockbaseTicketDocument) => ({
+    storeId: ticket.storeId,
+    typeId: ticket.typeId,
+    paymentMethod: ticket.paymentMethod,
+    userId: ticket.userId,
+    createdAt: ticket.createdAt,
+    updateAt: ticket.updatedAt,
+    hashId: ticket.hashId
+  }),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketDocument => {
     const ticketDoc = snapshot.data()
     return {
       id: snapshot.id,
@@ -197,8 +206,8 @@ export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTic
       typeId: ticketDoc.typeId,
       paymentMethod: ticketDoc.paymentMethod,
       userId: ticketDoc.userId,
-      createdAt: ticketDoc.createdAt,
-      updatedAt: ticketDoc.updatedAt,
+      createdAt: ticketDoc.createdAt ? new Date(ticketDoc.createdAt.seconds * 1000) : null,
+      updatedAt: ticketDoc.updatedAt ? new Date(ticketDoc.updatedAt.seconds * 1000) : null,
       hashId: ticketDoc.hashId
     }
   }

@@ -4,7 +4,9 @@ import type {
   SockbaseApplicationMeta,
   SockbaseEvent,
   SockbaseEventSpace,
-  SockbasePaymentDocument
+  SockbasePaymentDocument,
+  SockbaseStoreDocument,
+  SockbaseTicketDocument
 } from 'sockbase'
 import { Link } from 'react-router-dom'
 import PaymentStatusLabel from '../../../Parts/PaymentStatusLabel'
@@ -13,6 +15,8 @@ interface Props {
   payments: SockbasePaymentDocument[]
   apps: Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
   events: Record<string, SockbaseEvent>
+  tickets: Record<string, SockbaseTicketDocument>
+  stores: Record<string, SockbaseStoreDocument>
   email: string
 }
 const PaymentList: React.FC<Props> = (props) => {
@@ -27,15 +31,6 @@ const PaymentList: React.FC<Props> = (props) => {
       }
 
       return ''
-    }
-
-  const getEventByAppId: (appId: string | null) => SockbaseEvent | null =
-    (appId) => {
-      if (!appId) return null
-
-      const app = props.apps[appId]
-      const event = props.events[app.eventId]
-      return event
     }
 
   const paymentMethod: (method: PaymentMethod) => string =
@@ -60,6 +55,24 @@ const PaymentList: React.FC<Props> = (props) => {
       return space
     }
 
+  const getTargetName = (payment: SockbasePaymentDocument): string => {
+    if (payment.applicationId) {
+      const app = props.apps[payment.applicationId]
+      const event = props.events[app.eventId]
+      return event.eventName
+    }
+    else if (payment.ticketId) {
+      const ticket = props.tickets[payment.ticketId]
+      const store = props.stores[ticket.storeId]
+      const type = store.types
+        .filter(t => t.id === ticket.typeId)[0]
+
+      return `${store.storeName}(${type.name})`
+    }
+
+    return '-'
+  }
+
   return (
     <>
       <table>
@@ -79,7 +92,7 @@ const PaymentList: React.FC<Props> = (props) => {
             ? props.payments
               .sort((a, b) => (b.updatedAt?.getTime() ?? 9) - (a.updatedAt?.getTime() ?? 0))
               .map(p => <tr key={p.id}>
-                <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getEventByAppId(p.applicationId)?.eventName}</Link></th>
+                <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getTargetName(p)}</Link></th>
                 <td>{p.paymentAmount.toLocaleString()}円</td>
                 <td>{paymentMethod(p.paymentMethod)}</td>
                 <td>{p.bankTransferCode}</td>
