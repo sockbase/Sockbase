@@ -2,6 +2,7 @@ import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseFunctions from 'firebase/functions'
 import type { SockbaseStoreDocument, SockbaseTicket, SockbaseTicketAddedResult, SockbaseTicketDocument, SockbaseTicketHashIdDocument } from 'sockbase'
 import useFirebase from './useFirebase'
+import { useCallback } from 'react'
 
 const storeConverter: FirestoreDB.FirestoreDataConverter<SockbaseStoreDocument> = {
   toFirestore: (): FirestoreDB.DocumentData => ({}),
@@ -57,10 +58,11 @@ interface IUseStore {
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
+  getMyTicketsAsync: () => Promise<SockbaseTicketDocument[] | undefined>
 }
 
 const useStore: () => IUseStore = () => {
-  const { getFirestore, getFunctions } = useFirebase()
+  const { getFirestore, getFunctions, user } = useFirebase()
 
   const getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument> =
     async (storeId) => {
@@ -134,13 +136,19 @@ const useStore: () => IUseStore = () => {
     return queryDocs
   }
 
+  const getMyTicketsAsync = useCallback(async (): Promise<SockbaseTicketDocument[] | undefined> => {
+    if (!user) return
+    return await getTicketsByUserIdAsync(user.uid)
+  }, [user])
+
   return {
     getStoreByIdAsync,
     getStoreByIdOptionalAsync,
     createTicketAsync,
     getTicketIdByHashIdAsync,
     getTicketByIdAsync,
-    getTicketsByUserIdAsync
+    getTicketsByUserIdAsync,
+    getMyTicketsAsync
   }
 }
 
