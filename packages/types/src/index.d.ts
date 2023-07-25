@@ -162,7 +162,7 @@ export interface SockbaseApplicationMeta {
 }
 
 /**
- * 申し込みステータス
+ * サークル申し込みステータス
  * 
  * 0: 仮申し込み
  * 1: キャンセル済み
@@ -221,16 +221,37 @@ export type SockbaseTicketDocument = SockbaseTicket & {
 
 /**
  * チケット管理情報
+ * 情報はチケットIDで引く
  */
 export interface SockbaseTicketMeta {
-  applicationStatus: SockbaseApplicationStatus
+  applicationStatus: SockbaseTicketStatusType
 }
 
 /**
- * チケット利用情報
+ * チケット申し込みステータス
+ * 
+ * 0: 仮申し込み
+ * 1: キャンセル済み
+ * 2: 申し込み確定
  */
-export interface SockbaseTicketUsable {
-  usableUserId: string
+export type SockbaseTicketStatusType = 0 | 1 | 2
+
+/**
+ * チケット利用情報
+ * 情報はチケットハッシュIDで引く
+ */
+export interface SockbaseTicketUser {
+  userId: string
+  storeId: string
+  typeId: string
+  usableUserId: string | null
+}
+
+/**
+ * チケット使用状況管理
+ * 情報はチケットIDで引く
+ */
+export interface SockbaseTicketStatus {
   used: boolean
   usedAt: Date | null
 }
