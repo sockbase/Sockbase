@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type SockbaseStore } from 'sockbase'
 
-import useStore from '../../../hooks/useStore'
-import useFirebase from '../../../hooks/useFirebase'
+import useStore from '../packages/client/src/hooks/useStore'
+import useFirebase from '../packages/client/src/hooks/useFirebase'
 
-import DefaultLayout from '../../../components/Layout/Default/Default'
+import DefaultLayout from '../packages/client/src/components/Layout/Default/Default'
 import StepContainerComponent from '../../../components/pages/stores/Application/StepContainer'
-import Alert from '../../../components/Parts/Alert'
-import Loading from '../../../components/Parts/Loading'
+import Alert from '../packages/client/src/components/Parts/Alert'
+import Loading from '../packages/client/src/components/Parts/Loading'
 
 const TicketApplication: React.FC = () => {
   const params = useParams<{ storeId: string }>()

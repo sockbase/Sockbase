@@ -4,6 +4,7 @@ import * as ApplicationService from './services/ApplicationService'
 import * as AccountService from './services/AccountService'
 import * as CheckoutWebhookService from './services/CheckoutWebhookService'
 import * as inquiry from './controllers/inquiry'
+import * as store from './controllers/store'
 
 export {
   HelloWorldService,
@@ -11,5 +12,6 @@ export {
   ApplicationService,
   AccountService,
   CheckoutWebhookService,
-  inquiry
+  inquiry,
+  store
 }

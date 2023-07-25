@@ -19,8 +19,8 @@ import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 import App from './pages/App'
 import TermsOfService from './pages/public/static/TermsOfService'
 import PrivacyPolicy from './pages/public/static/PrivacyPolicy'
-import EventApplication from './pages/public/events/Application'
-import TicketApplication from './pages/public/stores/Application'
+import EventApplication from './pages/public/EventApplication'
+import TicketApplication from './pages/public/TicketApplication'
 import Dashboard from './pages/dashboard/Dashboard'
 import DashboardEventList from './pages/dashboard/Events/EventList'
 import DashboardEventApplications from './pages/dashboard/Events/EventApplications'
@@ -29,10 +29,13 @@ import DashboardApplicationDetail from './pages/dashboard/CircleApplications/App
 import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
 import DashboardSettings from './pages/dashboard/Settings'
 import DashboardContact from './pages/dashboard/Contact'
-import DebugDashboard from './pages/dashboard/Debug'
-import DashboardTemplate from './pages/DashboardTemplate'
 import DashboardInquiryList from './pages/dashboard/manage/inquiries/InquiryList'
 import DashboardEditLinks from './pages/dashboard/CircleApplications/EditLinks'
+import DashboardTicketList from './pages/dashboard/Tickets/TicketList'
+import DashboardMyTickets from './pages/dashboard/Tickets/MyTickets'
+import DashboardTicketDetail from './pages/dashboard/Tickets/TicketDetail'
+import DebugDashboard from './pages/dashboard/Debug'
+import DashboardTemplate from './pages/DashboardTemplate'
 import FormTemplate from './pages/FormTemplate'
 import NotFound from './pages/NotFound'
 
@@ -155,6 +158,23 @@ const router = createBrowserRouter([
                 ]
               }
             ]
+          },
+          {
+            path: 'tickets',
+            children: [
+              {
+                index: true,
+                element: <DashboardTicketList />
+              },
+              {
+                path: ':hashedTicketId',
+                element: <DashboardTicketDetail />
+              }
+            ]
+          },
+          {
+            path: 'mytickets',
+            element: <DashboardMyTickets />
           },
           {
             path: 'payments',

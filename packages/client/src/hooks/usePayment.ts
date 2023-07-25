@@ -44,7 +44,7 @@ const paymentConverter: FirestoreDB.FirestoreDataConverter<SockbasePaymentDocume
 interface IUsePayment {
   getPaymentIdByHashId: (hashId: string) => Promise<string>
   getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]>
-  getPayment: (paymentId: string) => Promise<SockbasePaymentDocument>
+  getPaymentAsync: (paymentId: string) => Promise<SockbasePaymentDocument>
 }
 const usePayment: () => IUsePayment =
   () => {
@@ -80,24 +80,23 @@ const usePayment: () => IUsePayment =
         return queryDocs
       }
 
-    const getPayment: (paymentId: string) => Promise<SockbasePaymentDocument> =
-      async (paymentId) => {
-        const db = getFirestore()
-        const paymentRef = FirestoreDB.doc(db, `/_payments/${paymentId}`)
-          .withConverter(paymentConverter)
-        const paymentDoc = await FirestoreDB.getDoc(paymentRef)
-        if (!paymentDoc.exists()) {
-          throw new Error('payment not found')
-        }
-
-        const payment = paymentDoc.data()
-        return payment
+    const getPaymentAsync = async (paymentId: string): Promise<SockbasePaymentDocument> => {
+      const db = getFirestore()
+      const paymentRef = FirestoreDB.doc(db, `/_payments/${paymentId}`)
+        .withConverter(paymentConverter)
+      const paymentDoc = await FirestoreDB.getDoc(paymentRef)
+      if (!paymentDoc.exists()) {
+        throw new Error('payment not found')
       }
+
+      const payment = paymentDoc.data()
+      return payment
+    }
 
     return {
       getPaymentIdByHashId,
       getPaymentsByUserId,
-      getPayment
+      getPaymentAsync
     }
   }
 
