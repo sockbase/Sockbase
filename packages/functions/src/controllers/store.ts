@@ -79,7 +79,7 @@ export const createTicket = functions.https.onCall(
       .set({ applicationStatus: 0 })
 
     await firestore
-      .doc(`_tickets/${ticketId}/private/status`)
+      .doc(`_tickets/${ticketId}/private/usedStatus`)
       .set({
         used: false,
         usedAt: null

@@ -54,6 +54,8 @@ const DashboardPaymentList: React.FC = () => {
           const appIds = [...appIdsSet]
           const ticketIds = [...ticketIdsSet]
 
+          console.log(appIds, ticketIds)
+
           const fetchedApps = await Promise.all(
             appIds.map(async (appId) => ({ appId, data: await getApplicationByIdAsync(appId) }))
           )
@@ -94,6 +96,7 @@ const DashboardPaymentList: React.FC = () => {
             .reduce<Record<string, SockbaseStoreDocument>>(
               (p, c) => ({ ...p, [c.storeId]: c.data }),
               {})
+
 
           setPayments(fetchedPayments)
           setApps(objectMappedApps)

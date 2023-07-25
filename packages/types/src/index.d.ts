@@ -237,7 +237,7 @@ export interface SockbaseTicketMeta {
 export type SockbaseTicketStatusType = 0 | 1 | 2
 
 /**
- * チケット利用情報
+ * チケット利用者情報
  * 情報はチケットハッシュIDで引く
  */
 export interface SockbaseTicketUser {
@@ -248,10 +248,17 @@ export interface SockbaseTicketUser {
 }
 
 /**
+ * チケット利用者情報(DB取得)
+ */
+export type SockbaseTicketUserDocument = SockbaseTicketUser & {
+  hashId: string
+}
+
+/**
  * チケット使用状況管理
  * 情報はチケットIDで引く
  */
-export interface SockbaseTicketStatus {
+export interface SockbaseTicketUsedStatus {
   used: boolean
   usedAt: Date | null
 }

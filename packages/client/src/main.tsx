@@ -32,6 +32,7 @@ import DashboardContact from './pages/dashboard/Contact'
 import DashboardInquiryList from './pages/dashboard/manage/inquiries/InquiryList'
 import DashboardEditLinks from './pages/dashboard/CircleApplications/EditLinks'
 import DashboardTicketList from './pages/dashboard/Tickets/TicketList'
+import DashboardMyTickets from './pages/dashboard/Tickets/MyTickets'
 import DashboardTicketDetail from './pages/dashboard/Tickets/TicketDetail'
 import DebugDashboard from './pages/dashboard/Debug'
 import DashboardTemplate from './pages/DashboardTemplate'
@@ -170,6 +171,10 @@ const router = createBrowserRouter([
                 element: <DashboardTicketDetail />
               }
             ]
+          },
+          {
+            path: 'mytickets',
+            element: <DashboardMyTickets />
           },
           {
             path: 'payments',

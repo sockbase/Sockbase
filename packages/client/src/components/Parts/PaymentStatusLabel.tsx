@@ -29,4 +29,6 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
 
 export default PaymentStatusLabel
 
-const Label = styled.label``
+const Label = styled.label`
+  cursor: inherit;
+`
