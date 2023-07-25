@@ -21,6 +21,7 @@ import TermsOfService from './pages/public/static/TermsOfService'
 import PrivacyPolicy from './pages/public/static/PrivacyPolicy'
 import EventApplication from './pages/public/EventApplication'
 import TicketApplication from './pages/public/TicketApplication'
+import TicketAssign from './pages/public/TicketAssign'
 import Dashboard from './pages/dashboard/Dashboard'
 import DashboardEventList from './pages/dashboard/Events/EventList'
 import DashboardEventApplications from './pages/dashboard/Events/EventApplications'
@@ -88,6 +89,10 @@ const router = createBrowserRouter([
                   element: <TicketApplication />
                 }
               ]
+            },
+            {
+              path: 'assign-tickets',
+              element: <TicketAssign />
             },
             {
               path: 'formTemplate',
