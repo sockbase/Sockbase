@@ -252,6 +252,8 @@ export interface SockbaseTicketUser {
  */
 export type SockbaseTicketUserDocument = SockbaseTicketUser & {
   hashId: string
+  used: boolean
+  usedAt: Date | null
 }
 
 /**

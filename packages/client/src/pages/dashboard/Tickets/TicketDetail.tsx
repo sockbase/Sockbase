@@ -9,7 +9,7 @@ import {
   type SockbasePaymentDocument,
   type SockbaseTicketHashIdDocument,
   type SockbaseTicketUsedStatus,
-  type SockbaseTicketUser
+  type SockbaseTicketUserDocument
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
@@ -44,7 +44,7 @@ const TicketDetail: React.FC = () => {
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
-  const [ticketUser, setTicketUser] = useState<SockbaseTicketUser>()
+  const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus>()
 
   const onInitialize = (): void => {
