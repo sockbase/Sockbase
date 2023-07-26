@@ -3,7 +3,7 @@ import DefaultLayout from '../../components/Layout/Default/Default'
 import Loading from '../../components/Parts/Loading'
 
 const TicketAssign: React.FC = () => {
-  const [searchParams] = useSearchParams({ thi: 'hello' })
+  const [searchParams] = useSearchParams({ thi: '' })
 
   return (
     <DefaultLayout title="チケット受け取りページ">
