@@ -126,7 +126,7 @@ service cloud.firestore {
 
     match /_ticketUsers/{hashId} {
       allow read: if request.auth.uid == resource.data.userId
-        || request.auth.uid == resource.data.usableUserId
+        || (request.auth.uid == resource.data.usableUserId || resource.data.usableUserId == null)
         || isOrganizationAdmin(request.auth.uid, getStore(getTicketByHashId(hashId).storeId)._organization.id);
     }
 

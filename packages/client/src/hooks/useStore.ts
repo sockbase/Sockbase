@@ -105,6 +105,7 @@ interface IUseStore {
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
   getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
+  getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
   getMyTicketsAsync: () => Promise<SockbaseTicketDocument[] | undefined>
@@ -201,6 +202,10 @@ const useStore: () => IUseStore = () => {
     return ticketUser
   }
 
+  const getTicketUserByHashIdOptionalAsync = async (ticketHashId: string): Promise<SockbaseTicketUserDocument | null> =>
+    await getTicketUserByHashIdAsync(ticketHashId)
+      .catch(() => null)
+
   const getTicketUsedStatusByIdAsync = async (ticketId: string): Promise<SockbaseTicketUsedStatus> => {
     const db = getFirestore()
     const ticketUsedStatusRef = FirestoreDB
@@ -261,6 +266,7 @@ const useStore: () => IUseStore = () => {
     getTicketByIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
+    getTicketUserByHashIdOptionalAsync,
     getTicketUsedStatusByIdAsync,
     getTicketsByUserIdAsync,
     getMyTicketsAsync,
