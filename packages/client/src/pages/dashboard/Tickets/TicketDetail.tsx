@@ -23,6 +23,11 @@ import useUserData from '../../../hooks/useUserData'
 import usePayment from '../../../hooks/usePayment'
 import sockbaseShared from 'shared'
 import PaymentStatusLabel from '../../../components/Parts/PaymentStatusLabel'
+import FormSection from '../../../components/Form/FormSection'
+import FormItem from '../../../components/Form/FormItem'
+import FormButton from '../../../components/Form/Button'
+import FormInput from '../../../components/Form/Input'
+import LinkButton from '../../../components/Parts/LinkButton'
 
 const TicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -46,6 +51,8 @@ const TicketDetail: React.FC = () => {
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus>()
+
+  const [openAssignPanel, setOpenAssignPanel] = useState(false)
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
@@ -118,6 +125,10 @@ const TicketDetail: React.FC = () => {
     return `${store.storeName} (${type.name})`
   }, [ticket, store])
 
+  const assignURL = useMemo(() =>
+    ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}` || '',
+    [ticketHash])
+
   return (
     <DashboardLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
       <Breadcrumbs>
@@ -187,9 +198,47 @@ const TicketDetail: React.FC = () => {
               </tr>
             </tbody>
           </table>
-
         </>
-        <></>
+
+        <>
+          <h3>チケット割り当て</h3>
+          {ticketUser && !ticketUser.usableUserId && <>
+            <p>
+              このチケットを使う人を選択してください。
+            </p>
+            <FormSection>
+              <FormItem>
+                <FormButton>自分で使う</FormButton>
+              </FormItem>
+              <FormItem>
+                <FormButton color="default" onClick={() => setOpenAssignPanel(s => !s)}>他の方へ割り当てる</FormButton>
+              </FormItem>
+              {openAssignPanel && <>
+                <FormItem>
+                  チケットを割り当てたい方に以下のURLを送付してください。
+                </FormItem>
+                <FormItem>
+                  <FormInput disabled value={assignURL} />
+                </FormItem>
+              </>}
+            </FormSection>
+          </>}
+          {ticketUser?.usableUserId && ticket && <FormSection>
+            <FormItem>
+              このチケットは{ticketUser.usableUserId === ticket?.userId ? 'あなたに割り当てられています。' : '他のユーザへ分配されています。'}
+            </FormItem>
+            <FormItem>
+              <FormButton color="danger">チケットの{ticketUser.usableUserId === ticket?.userId ? '割り当て' : '分配'}を解除する</FormButton>
+            </FormItem>
+          </FormSection>}
+
+          <h3>チケットを表示</h3>
+          {hashedTicketId && <FormSection>
+            <FormItem>
+              <LinkButton to={`/tickets/${hashedTicketId}`}>チケットを表示</LinkButton>
+            </FormItem>
+          </FormSection>}
+        </>
       </TwoColumnsLayout>
     </DashboardLayout>
   )
