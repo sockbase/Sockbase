@@ -37,8 +37,6 @@ import DashboardMyTicketList from './pages/dashboard/Tickets/MyTicketList'
 import DashboardMyTicketDetail from './pages/dashboard/Tickets/MyTicketDetail'
 import DashboardTicketDetail from './pages/dashboard/Tickets/TicketDetail'
 import DebugDashboard from './pages/dashboard/Debug'
-import DashboardTemplate from './pages/DashboardTemplate'
-import FormTemplate from './pages/FormTemplate'
 import NotFound from './pages/NotFound'
 
 getFirebaseApp()
@@ -94,14 +92,6 @@ const router = createBrowserRouter([
             {
               path: 'assign-tickets',
               element: <TicketAssign />
-            },
-            {
-              path: 'formTemplate',
-              element: <FormTemplate />
-            },
-            {
-              path: 'dashboardTemplate',
-              element: <DashboardTemplate />
             }
           ]
           : [{}]],
