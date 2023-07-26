@@ -13,6 +13,9 @@ import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
 import BlinkField from '../../../components/Parts/BlinkField'
 import useStore from '../../../hooks/useStore'
 import useDayjs from '../../../hooks/useDayjs'
+import FormSection from '../../../components/Form/FormSection'
+import FormItem from '../../../components/Form/FormItem'
+import LinkButton from '../../../components/Parts/LinkButton'
 
 const MyTicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -97,8 +100,26 @@ const MyTicketDetail: React.FC = () => {
               </tr>
             </tbody>
           </table>
+
+          {ticketUser && (ticketUser.userId === ticketUser.usableUserId) && <>
+            <h3>チケット管理</h3>
+            <FormSection>
+              <FormItem>
+                <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default">チケット管理ページ</LinkButton>
+              </FormItem>
+            </FormSection>
+          </>}
         </>
-        <></>
+        <>
+          {ticketUser?.hashId && <>
+            <h3>チケットを表示</h3>
+            <FormSection>
+              <FormItem>
+                <LinkButton to={`/tickets/${ticketUser.hashId}`}>チケットを表示</LinkButton>
+              </FormItem>
+            </FormSection>
+          </>}
+        </>
       </TwoColumnsLayout>
     </DashboardLayout>
   )

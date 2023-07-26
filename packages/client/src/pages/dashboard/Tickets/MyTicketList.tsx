@@ -70,6 +70,7 @@ const MyTickets: React.FC = () => {
               <th>チケットストア</th>
               <th>参加種別</th>
               <th>状態</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -79,9 +80,10 @@ const MyTickets: React.FC = () => {
                 <th><Link to={`/dashboard/mytickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
                 <td>{getTypeName(t.storeId, t.typeId)}</td>
                 <td>{t.used ? '使用済み' : '未使用'}</td>
+                <td><Link to={`/tickets/${t.hashId}`}>チケットリンク</Link></td>
               </tr>)}
             {ticketUsers?.length === 0 && <tr>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 割り当てられているチケットはありません。<br />
                 ご自身で購入したチケットは <Link to="/dashboard/tickets">購入済みチケット一覧</Link> からご確認ください。
               </td>

@@ -31,6 +31,13 @@ ${props => {
           backgroundColor: '#1080e0'
         }
       }
+    } else if (props.color === 'danger') {
+      return {
+        backgroundColor: '#b83340',
+        '&:active': {
+          backgroundColor: '#8a2e38'
+        }
+      }
     } else {
       return {
         backgroundColor: '#ea6183',

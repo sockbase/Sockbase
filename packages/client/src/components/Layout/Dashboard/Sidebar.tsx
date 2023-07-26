@@ -61,16 +61,16 @@ const menu: MenuSection[] = [
         isImportant: true
       },
       {
-        key: 'circleHistories',
-        icon: <MdEditNote />,
-        text: 'サークル申し込み履歴',
-        link: '/dashboard/applications'
-      },
-      {
         key: 'ticketList',
         icon: <MdWallet />,
         text: '購入済みチケット一覧',
         link: '/dashboard/tickets'
+      },
+      {
+        key: 'circleHistories',
+        icon: <MdEditNote />,
+        text: 'サークル申し込み履歴',
+        link: '/dashboard/applications'
       },
       {
         key: 'paymentHistories',
