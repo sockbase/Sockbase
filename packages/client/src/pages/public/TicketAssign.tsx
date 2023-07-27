@@ -42,7 +42,7 @@ const TicketAssign: React.FC = () => {
   useEffect(onChangeHashId, [ticketHashId])
 
   const pageTitle = useMemo(
-    () => store ? `${store.storeName} チケット受け取りページ` : '読み込み中',
+    () => store ? `${store.storeName} 受け取りページ` : '読み込み中',
     [store])
 
   return (

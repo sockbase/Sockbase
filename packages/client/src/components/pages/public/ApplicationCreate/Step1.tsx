@@ -562,7 +562,8 @@ const Step1: React.FC<Props> = (props) => {
             onChange={e => setApp(s => ({ ...s, remarks: e.target.value }))}
           ></FormTextarea>
         </FormItem>
-      </FormSection >
+      </FormSection>
+
       <h2>注意事項</h2>
       <p>
         <a href="/tos" target="_blank">Sockbase利用規約</a>および<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>に同意しますか？
