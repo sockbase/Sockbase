@@ -232,12 +232,14 @@ const TicketDetail: React.FC = () => {
             </FormItem>
           </FormSection>}
 
-          <h3>チケットを表示</h3>
-          {hashedTicketId && <FormSection>
-            <FormItem>
-              <LinkButton to={`/tickets/${hashedTicketId}`}>チケットを表示</LinkButton>
-            </FormItem>
-          </FormSection>}
+          {hashedTicketId && ticketUser?.usableUserId && <>
+            <h3>チケットを表示</h3>
+            <FormSection>
+              <FormItem>
+                <LinkButton to={`/tickets/${hashedTicketId}`}>チケットを表示</LinkButton>
+              </FormItem>
+            </FormSection>
+          </>}
         </>
       </TwoColumnsLayout>
     </DashboardLayout>

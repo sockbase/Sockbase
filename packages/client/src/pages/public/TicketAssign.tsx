@@ -54,6 +54,9 @@ const TicketAssign: React.FC = () => {
 
   return (
     <DefaultLayout title={pageTitle}>
+      {userData?.email && <Alert>
+        {userData.email} としてログイン中です
+      </Alert>}
       {ticketHashId
         && (ticketUser === undefined || !store || userData === undefined)
         && <Loading text="チケット情報" />}
