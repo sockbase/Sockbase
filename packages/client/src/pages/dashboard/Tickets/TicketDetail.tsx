@@ -133,9 +133,9 @@ const TicketDetail: React.FC = () => {
     <DashboardLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/tickets">所持チケット一覧</Link></li>
+        <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>
       </Breadcrumbs>
-      <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="所持チケット情報" isLoading={!store} />
+      <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="購入済みチケット情報" isLoading={!store} />
 
       <TwoColumnsLayout>
         <>
