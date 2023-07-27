@@ -12,15 +12,23 @@ const TicketAssign: React.FC = () => {
 
   const { getTicketUserByHashIdOptionalAsync, getStoreByIdAsync } = useStore()
 
+  const [ticketHashId, setTicketHashId] = useState<string>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
 
   const onInitialize = (): void => {
-    const fetchAsync = async (): Promise<void> => {
-      const paramTicketHashId = searchParams.get('thi')
-      if (!paramTicketHashId) return
+    const paramTicketHashId = searchParams.get('thi')
+    if (!paramTicketHashId) return
 
-      const fetchedTicketUser = await getTicketUserByHashIdOptionalAsync(paramTicketHashId)
+    setTicketHashId(paramTicketHashId)
+  }
+  useEffect(onInitialize, [searchParams])
+
+  const onChangeHashId = (): void => {
+    const fetchAsync = async (): Promise<void> => {
+      if (!ticketHashId) return
+
+      const fetchedTicketUser = await getTicketUserByHashIdOptionalAsync(ticketHashId)
       setTicketUser(fetchedTicketUser)
       if (!fetchedTicketUser) return
 
@@ -31,7 +39,7 @@ const TicketAssign: React.FC = () => {
     fetchAsync()
       .catch(err => { throw err })
   }
-  useEffect(onInitialize, [searchParams])
+  useEffect(onChangeHashId, [ticketHashId])
 
   const pageTitle = useMemo(
     () => store ? `${store.storeName} チケット受け取りページ` : '読み込み中',
@@ -40,10 +48,11 @@ const TicketAssign: React.FC = () => {
   return (
     <DefaultLayout title={pageTitle}>
       {ticketUser && store && <StepContainer ticketUser={ticketUser} store={store} />}
-      {ticketUser === undefined && <Loading text="チケット情報" />}
-      {ticketUser === null && <Alert type="danger" title="チケット情報が見つかりませんでした">
-        URLが間違っています。
-      </Alert>}
+      {ticketHashId && ticketUser === undefined && <Loading text="チケット情報" />}
+      {(!ticketHashId || ticketUser === null) &&
+        <Alert type="danger" title="チケット情報が見つかりませんでした">
+          URLが間違っています。
+        </Alert>}
     </DefaultLayout>
   )
 }
