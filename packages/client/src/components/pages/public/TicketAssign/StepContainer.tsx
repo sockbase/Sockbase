@@ -34,7 +34,10 @@ const StepContainer: React.FC<Props> = (props) => {
         submitAssignTicket={submitAssignTicket}
         nextStep={() => setStep(2)}
         prevStep={() => setStep(0)} />,
-      <Step3 key="step3" ticketHashId={props.ticketHashId} />
+      <Step3 key="step3"
+        ticketHashId={props.ticketHashId}
+        store={props.store}
+        ticketUser={props.ticketUser} />
     ])
   }
   useEffect(onInitialize, [props.store, props.ticketUser, props.userData])

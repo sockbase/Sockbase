@@ -16,23 +16,26 @@ import useDayjs from '../../../hooks/useDayjs'
 import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 import LinkButton from '../../../components/Parts/LinkButton'
+import useFirebase from '../../../hooks/useFirebase'
+import Alert from '../../../components/Parts/Alert'
 
 const MyTicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
+  const { user } = useFirebase()
   const { formatByDate } = useDayjs()
   const {
-    getTicketUserByHashIdAsync,
+    getTicketUserByHashIdOptionalAsync,
     getStoreByIdAsync
   } = useStore()
 
-  const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
+  const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
       if (!hashedTicketId) return
 
-      getTicketUserByHashIdAsync(hashedTicketId)
+      getTicketUserByHashIdOptionalAsync(hashedTicketId)
         .then(fetchedTicketUser => setTicketUser(fetchedTicketUser))
         .catch(err => { throw err })
     }
@@ -58,7 +61,6 @@ const MyTicketDetail: React.FC = () => {
   }
   useEffect(onFetchedTicketUser, [ticketUser])
 
-
   const pageTitle = useMemo(() => {
     if (!ticketUser || !store) return undefined
     const type = store.types
@@ -75,52 +77,63 @@ const MyTicketDetail: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="マイチケット情報" isLoading={!store} />
 
-      <TwoColumnsLayout>
-        <>
-          <h3>ステータス</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>使用状況</th>
-                <td>{(ticketUser && (ticketUser?.used ? '使用済み' : '未使用')) ?? <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>使用日</th>
-                <td>{(ticketUser && (ticketUser?.usedAt ? formatByDate(ticketUser.usedAt, 'YYYY年M月D日 H時mm分') : '-')) ?? <BlinkField />}</td>
-              </tr>
-            </tbody>
-          </table>
+      {user && ticketUser?.userId === user.uid
+        && <Alert type="danger" title="チケットの割り当てが完了していません">
+          購入したチケットを使用するためには、まずチケットの割り当てを行う必要があります。<br />
+          <Link to={`/dashboard/tickets/${hashedTicketId}`}>こちら</Link> から割り当てを行ってください。
+        </Alert>}
+      {ticketUser === null || (user && (ticketUser?.userId !== user.uid && ticketUser?.usableUserId !== user.uid))
+        && <Alert type="danger" title="チケットの取得に失敗しました">
+          自分が購入していない, 割り当てられていないチケットの情報は表示できません。
+        </Alert>}
 
-          <h3>チケット情報</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>チケットID</th>
-                <td>{hashedTicketId} <CopyToClipboard content={hashedTicketId ?? ''} /></td>
-              </tr>
-            </tbody>
-          </table>
+      {user && ticketUser?.usableUserId
+        && <TwoColumnsLayout>
+          <>
+            <h3>ステータス</h3>
+            <table>
+              <tbody>
+                <tr>
+                  <th>使用状況</th>
+                  <td>{(ticketUser && (ticketUser?.used ? '使用済み' : '未使用')) ?? <BlinkField />}</td>
+                </tr>
+                <tr>
+                  <th>使用日</th>
+                  <td>{(ticketUser && (ticketUser?.usedAt ? formatByDate(ticketUser.usedAt, 'YYYY年M月D日 H時mm分') : '-')) ?? <BlinkField />}</td>
+                </tr>
+              </tbody>
+            </table>
 
-          {ticketUser && (ticketUser.userId === ticketUser.usableUserId) && <>
-            <h3>チケット管理</h3>
-            <FormSection>
-              <FormItem>
-                <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default">チケット管理ページ</LinkButton>
-              </FormItem>
-            </FormSection>
-          </>}
-        </>
-        <>
-          {ticketUser?.hashId && <>
-            <h3>チケットを表示</h3>
-            <FormSection>
-              <FormItem>
-                <LinkButton to={`/tickets/${ticketUser.hashId}`}>チケットを表示</LinkButton>
-              </FormItem>
-            </FormSection>
-          </>}
-        </>
-      </TwoColumnsLayout>
+            <h3>チケット情報</h3>
+            <table>
+              <tbody>
+                <tr>
+                  <th>チケットID</th>
+                  <td>{hashedTicketId} <CopyToClipboard content={hashedTicketId ?? ''} /></td>
+                </tr>
+              </tbody>
+            </table>
+
+            {ticketUser && (ticketUser.userId === ticketUser.usableUserId) && <>
+              <h3>チケット管理</h3>
+              <FormSection>
+                <FormItem>
+                  <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default">チケット管理ページ</LinkButton>
+                </FormItem>
+              </FormSection>
+            </>}
+          </>
+          <>
+            {ticketUser?.hashId && <>
+              <h3>チケットを表示</h3>
+              <FormSection>
+                <FormItem>
+                  <LinkButton to={`/tickets/${ticketUser.hashId}`}>チケットを表示</LinkButton>
+                </FormItem>
+              </FormSection>
+            </>}
+          </>
+        </TwoColumnsLayout>}
     </DashboardLayout>
   )
 }
