@@ -1,12 +1,12 @@
-// interface Props {
-// }
-
 import FormItem from "../../../Form/FormItem"
 import FormSection from "../../../Form/FormSection"
+import AnchorButton from "../../../Parts/AnchorButton"
 import LinkButton from "../../../Parts/LinkButton"
 
-// const Step3: React.FC<Props> = () => {
-const Step3: React.FC = () => {
+interface Props {
+  ticketHashId: string
+}
+const Step3: React.FC<Props> = (props) => {
   return (
     <>
       <h1>チケットを受け取りました</h1>
@@ -28,10 +28,10 @@ const Step3: React.FC = () => {
       <h2>関連リンク</h2>
       <FormSection>
         <FormItem>
-          <LinkButton to={`/dashboard/mytickets/`}>チケット画面を開く</LinkButton>
+          <AnchorButton href={`/tickets/${props.ticketHashId}`} target="_blank" rel="noreferrer">チケット画面を開く</AnchorButton>
         </FormItem>
         <FormItem>
-          <LinkButton to={`/dashboard/mytickets/`} color="default">チケット情報を確認する</LinkButton>
+          <LinkButton to={`/dashboard/mytickets/${props.ticketHashId}`} color="default">チケット情報を確認する</LinkButton>
         </FormItem>
       </FormSection>
     </>
