@@ -1,21 +1,19 @@
 import { useEffect, useState } from 'react'
 import StepProgress from '../../../Parts/StepProgress'
-import { type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
+import { type SockbaseAccount, type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
-import useFirebase from '../../../../hooks/useFirebase'
-import useUserData from '../../../../hooks/useUserData'
 
 const stepProgresses = ['入力', '確認', '完了']
 
 interface Props {
+  ticketHashId: string
   store: SockbaseStoreDocument
   ticketUser: SockbaseTicketUserDocument
+  userData: SockbaseAccount | null
 }
 const StepContainer: React.FC<Props> = (props) => {
-  const { getMyUserDataAsync } = useUserData()
-
   const [step, setStep] = useState(0)
   const [stepComponents, setStepComponents] = useState<React.ReactNode[]>()
 
@@ -32,13 +30,14 @@ const StepContainer: React.FC<Props> = (props) => {
       <Step2 key="step2"
         store={props.store}
         ticketUser={props.ticketUser}
+        userData={props.userData}
         submitAssignTicket={submitAssignTicket}
         nextStep={() => setStep(2)}
         prevStep={() => setStep(0)} />,
-      <Step3 key="step3" />
+      <Step3 key="step3" ticketHashId={props.ticketHashId} />
     ])
   }
-  useEffect(onInitialize, [])
+  useEffect(onInitialize, [props.store, props.ticketUser, props.userData])
 
   return (
     <>

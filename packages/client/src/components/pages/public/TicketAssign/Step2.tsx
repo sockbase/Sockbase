@@ -1,12 +1,13 @@
-import { type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
+import { useMemo } from 'react'
+import { type SockbaseAccount, type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
 import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
-import { useMemo } from 'react'
 
 interface Props {
   store: SockbaseStoreDocument
   ticketUser: SockbaseTicketUserDocument
+  userData: SockbaseAccount | null
   submitAssignTicket: () => Promise<void>
   nextStep: () => void
   prevStep: () => void
@@ -50,23 +51,23 @@ const Step2: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>メールアドレス</th>
-            <td></td>
+            <td>{props.userData?.email}</td>
           </tr>
           <tr>
             <th>氏名</th>
-            <td></td>
+            <td>{props.userData?.name}</td>
           </tr>
           <tr>
             <th>郵便番号</th>
-            <td></td>
+            <td>{props.userData?.postalCode}</td>
           </tr>
           <tr>
             <th>住所</th>
-            <td></td>
+            <td>{props.userData?.address}</td>
           </tr>
           <tr>
             <th>電話番号</th>
-            <td></td>
+            <td>{props.userData?.telephone}</td>
           </tr>
         </tbody>
       </table>
