@@ -35,7 +35,6 @@ const TicketLayout: React.FC<Props> = (props) => {
 export default TicketLayout
 
 const TicketLayoutContainer = styled.main`
-  height: 100%;
-
-  background-color: #ffffff;
+  height: 100vh;
+  height: 100dvh;
 `

@@ -4,6 +4,7 @@ const GlobalStyle = createGlobalStyle`
 html, body {
   font-family: "Noto Sans JP", sans-serif;
   height: 100vh;
+  height: 100dvh;
 }
 body {
   background-image: url('/bg-pattern.png');
