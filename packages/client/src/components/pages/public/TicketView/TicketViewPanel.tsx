@@ -32,7 +32,7 @@ const TicketViewPanel: React.FC<Props> = (props) => {
           <StoreName>{props.store.storeName}</StoreName>
           <TypeName>{typeName}</TypeName>
           <QRCodeArea>
-            <QRCode value="unchi" size={192} />
+            <QRCode value={props.ticketHashId} size={192} />
           </QRCodeArea>
         </TitleContainer>
         <ContentContainer>
