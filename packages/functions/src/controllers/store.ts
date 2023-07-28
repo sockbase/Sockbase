@@ -5,13 +5,13 @@ import {
   type SockbaseTicketDocument,
   type SockbaseAccount
 } from 'sockbase'
+import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
+import { createPayment, generateBankTransferCode } from '../services/payment'
 import firebaseAdmin from '../libs/FirebaseAdmin'
 import { storeConverter, ticketConverter } from '../libs/converters'
-import { MD5, enc } from 'crypto-js'
-import dayjs from '../helpers/dayjs'
-import { createPayment, generateBankTransferCode } from '../services/payment'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
-import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
+import dayjs from '../helpers/dayjs'
+import random from '../helpers/random'
 
 export const onChangeApplication = functions.firestore
   .document('/_tickets/{ticketId}')
@@ -101,7 +101,7 @@ export const createTicket = functions.https.onCall(
       )
       : null
 
-    const hashId = generateHashId(storeId, ticketId, now)
+    const hashId = generateTicketHashId(now)
     await firestore
       .doc(`_tickets/${ticketId}`)
       .set({ hashId }, { merge: true })
@@ -158,15 +158,12 @@ export const createTicket = functions.https.onCall(
     return result
   })
 
-const generateHashId = (storeId: string, refId: string, now: Date): string => {
-  const salt = 'sockbase-516koharurikka-broccoli'
+const generateTicketHashId = (now: Date): string => {
   const codeDigit = 32
-  const refHashId = MD5(`${storeId}.${refId}.${salt}`)
-    .toString(enc.Hex)
-    .slice(0, codeDigit)
+  const randomId = random.generateRandomCharacters(codeDigit)
 
   const formatedDateTime = dayjs(now).tz().format('YYYYMMDDHHmmssSSS')
-  const hashId = `${formatedDateTime}-${refHashId}`
+  const hashId = `${formatedDateTime}-${randomId}`
 
   return hashId
 }
