@@ -78,33 +78,32 @@ const router = createBrowserRouter([
           }
         ]
       },
+      {
+        path: 'stores',
+        children: [
+          {
+            path: ':storeId',
+            element: <TicketApplication />
+          }
+        ]
+      },
+      {
+        path: 'assign-tickets',
+        element: <TicketAssign />
+      },
+      {
+        path: 'tickets',
+        children: [
+          {
+            path: ':ticketHashId',
+            element: <TicketView />
+          }
+        ]
+      },
       ...[
         ...import.meta.env.DEV
-          ? [
-            {
-              path: 'stores',
-              children: [
-                {
-                  path: ':storeId',
-                  element: <TicketApplication />
-                }
-              ]
-            },
-            {
-              path: 'assign-tickets',
-              element: <TicketAssign />
-            },
-            {
-              path: 'tickets',
-              children: [
-                {
-                  path: ':ticketHashId',
-                  element: <TicketView />
-                }
-              ]
-            }
-          ]
-          : [{}]],
+          ? []
+          : []],
       {
         path: 'dashboard',
         children: [
