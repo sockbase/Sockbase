@@ -182,7 +182,7 @@ const Footer = styled.footer`
   gap: 10px;
 
   padding: 10px;
-  padding: calc(10px + env(safe-area-inset-bottom));
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
   background-color: #404040;
   text-align: right;
   border-radius: 0 0 5px 5px;

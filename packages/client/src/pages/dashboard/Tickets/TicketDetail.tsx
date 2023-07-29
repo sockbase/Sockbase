@@ -152,6 +152,8 @@ const TicketDetail: React.FC = () => {
 
   const handleUnassign = (): void => {
     if (!ticketHash) return
+    if (!confirm('チケットの割り当てを解除します。\n\nよろしいですか？')) return
+
     setProgressForUnassign(true)
 
     unassignTicketUserAsync(ticketHash.hashId)
@@ -239,8 +241,8 @@ const TicketDetail: React.FC = () => {
         </>
 
         <>
-          <h3>チケット割り当て</h3>
           {ticketUser && !ticketUser.usableUserId && <>
+            <h3>チケット割り当て</h3>
             <p>
               このチケットを使う人を選択してください。
             </p>
@@ -263,16 +265,6 @@ const TicketDetail: React.FC = () => {
               </>}
             </FormSection>
           </>}
-          {ticketUser?.usableUserId && ticket && <FormSection>
-            <FormItem>
-              このチケットは{ticketUser.usableUserId === ticket?.userId ? 'あなたに割り当てられています。' : '他のユーザへ分配されています。'}
-            </FormItem>
-            <FormItem>
-              <LoadingCircleWrapper isLoading={isProgressForUnassign}>
-                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}>チケットの{ticketUser.usableUserId === ticket?.userId ? '割り当て' : '分配'}を解除する</FormButton>
-              </LoadingCircleWrapper>
-            </FormItem>
-          </FormSection>}
 
           {hashedTicketId && ticketUser?.usableUserId && <>
             <h3>チケットを表示</h3>
@@ -282,6 +274,18 @@ const TicketDetail: React.FC = () => {
               </FormItem>
             </FormSection>
           </>}
+
+          {ticketUser?.usableUserId && ticket && <FormSection>
+            <h3>チケット割り当てを解除</h3>
+            <FormItem>
+              このチケットは{ticketUser.usableUserId === ticket?.userId ? 'あなたに割り当てられています。' : '他のユーザへ分配されています。'}
+            </FormItem>
+            <FormItem>
+              <LoadingCircleWrapper isLoading={isProgressForUnassign}>
+                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}>チケットの{ticketUser.usableUserId === ticket?.userId ? '割り当て' : '分配'}を解除する</FormButton>
+              </LoadingCircleWrapper>
+            </FormItem>
+          </FormSection>}
         </>
       </TwoColumnsLayout>
     </DashboardLayout>
