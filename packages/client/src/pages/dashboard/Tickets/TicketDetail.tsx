@@ -9,7 +9,7 @@ import {
   type SockbasePaymentDocument,
   type SockbaseTicketHashIdDocument,
   type SockbaseTicketUsedStatus,
-  type SockbaseTicketUser
+  type SockbaseTicketUserDocument
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
@@ -23,6 +23,12 @@ import useUserData from '../../../hooks/useUserData'
 import usePayment from '../../../hooks/usePayment'
 import sockbaseShared from 'shared'
 import PaymentStatusLabel from '../../../components/Parts/PaymentStatusLabel'
+import FormSection from '../../../components/Form/FormSection'
+import FormItem from '../../../components/Form/FormItem'
+import FormButton from '../../../components/Form/Button'
+import FormInput from '../../../components/Form/Input'
+import LinkButton from '../../../components/Parts/LinkButton'
+import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 
 const TicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -33,7 +39,9 @@ const TicketDetail: React.FC = () => {
     getStoreByIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
-    getTicketUsedStatusByIdAsync
+    getTicketUsedStatusByIdAsync,
+    assignTicketUserAsync,
+    unassignTicketUserAsync
   } = useStore()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
   const { getPaymentAsync } = usePayment()
@@ -44,8 +52,12 @@ const TicketDetail: React.FC = () => {
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
-  const [ticketUser, setTicketUser] = useState<SockbaseTicketUser>()
+  const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus>()
+
+  const [openAssignPanel, setOpenAssignPanel] = useState(false)
+  const [isProgressForAssignMe, setProgressForAssignMe] = useState(false)
+  const [isProgressForUnassign, setProgressForUnassign] = useState(false)
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
@@ -118,13 +130,52 @@ const TicketDetail: React.FC = () => {
     return `${store.storeName} (${type.name})`
   }, [ticket, store])
 
+  const assignURL = useMemo(() =>
+    ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}` || '',
+    [ticketHash])
+
+  const handleAssignMe = (): void => {
+    if (!ticket || !ticketHash) return
+    setProgressForAssignMe(true)
+
+    assignTicketUserAsync(ticket.userId, ticketHash.hashId)
+      .then(() => {
+        alert('割り当てに成功しました。')
+        setTicketUser(s => (s && { ...s, usableUserId: ticket.userId }))
+      })
+      .catch(err => {
+        alert('割り当て時にエラーが発生しました')
+        throw err
+      })
+      .finally(() => setProgressForAssignMe(false))
+  }
+
+  const handleUnassign = (): void => {
+    if (!ticketHash) return
+    if (!confirm('チケットの割り当てを解除します。\nよろしいですか？')) return
+
+    setProgressForUnassign(true)
+
+    unassignTicketUserAsync(ticketHash.hashId)
+      .then(() => {
+        alert('割り当て解除に成功しました。')
+        setTicketUser(s => (s && { ...s, usableUserId: null }))
+      })
+      .catch(err => {
+        alert('割り当て解除に失敗しました')
+        throw err
+      })
+      .finally(() => setProgressForUnassign(false))
+
+  }
+
   return (
     <DashboardLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/tickets">所持チケット一覧</Link></li>
+        <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>
       </Breadcrumbs>
-      <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="所持チケット情報" isLoading={!store} />
+      <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="購入済みチケット情報" isLoading={!store} />
 
       <TwoColumnsLayout>
         <>
@@ -187,9 +238,55 @@ const TicketDetail: React.FC = () => {
               </tr>
             </tbody>
           </table>
-
         </>
-        <></>
+
+        <>
+          {ticketUser && !ticketUser.usableUserId && <>
+            <h3>チケット割り当て</h3>
+            <p>
+              このチケットを使う人を選択してください。
+            </p>
+            <FormSection>
+              <FormItem>
+                <LoadingCircleWrapper isLoading={isProgressForAssignMe}>
+                  <FormButton onClick={handleAssignMe} disabled={isProgressForAssignMe}>自分で使う</FormButton>
+                </LoadingCircleWrapper>
+              </FormItem>
+              <FormItem>
+                <FormButton color="default" onClick={() => setOpenAssignPanel(s => !s)}>他の方へ割り当てる</FormButton>
+              </FormItem>
+              {openAssignPanel && <>
+                <FormItem>
+                  チケットを渡したい方へ以下のURLを送付してください。
+                </FormItem>
+                <FormItem>
+                  <FormInput disabled value={assignURL} />
+                </FormItem>
+              </>}
+            </FormSection>
+          </>}
+
+          {hashedTicketId && ticketUser?.usableUserId && <>
+            <h3>チケットを表示</h3>
+            <FormSection>
+              <FormItem>
+                <LinkButton to={`/tickets/${hashedTicketId}`}>チケットを表示</LinkButton>
+              </FormItem>
+            </FormSection>
+          </>}
+
+          {ticketUser?.usableUserId && ticket && <FormSection>
+            <h3>チケット割り当てを解除</h3>
+            <FormItem>
+              このチケットは{ticketUser.usableUserId === ticket.userId ? 'あなた' : '他の方'}に割り当てられています。
+            </FormItem>
+            <FormItem>
+              <LoadingCircleWrapper isLoading={isProgressForUnassign}>
+                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}>チケットの割り当てを解除する</FormButton>
+              </LoadingCircleWrapper>
+            </FormItem>
+          </FormSection>}
+        </>
       </TwoColumnsLayout>
     </DashboardLayout>
   )

@@ -40,6 +40,10 @@ const StyledStepProgress = styled.ol`
       height: 24px;
       background-color: #808080;
       border-radius: 50%;
+
+      transition: background-color 100ms linear,
+                  color 100ms linear,
+                  font-weight 100ms linear;
     }
     &::after {
       position: absolute;

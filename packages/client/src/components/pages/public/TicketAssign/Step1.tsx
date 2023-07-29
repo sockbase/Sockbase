@@ -1,36 +1,30 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { SockbaseStoreType, SockbaseStoreDocument, SockbaseTicket, SockbaseAccountSecure } from 'sockbase'
-import sockbaseShared from 'shared'
+import { type SockbaseTicketUserDocument, type SockbaseStoreDocument, type SockbaseAccountSecure } from 'sockbase'
 import FormButton from '../../../Form/Button'
-import FormCheckbox from '../../../Form/Checkbox'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
+import FormCheckbox from '../../../Form/Checkbox'
+import useDayjs from '../../../../hooks/useDayjs'
+import usePostalCode from '../../../../hooks/usePostalCode'
 import FormLabel from '../../../Form/Label'
-import FormRadio from '../../../Form/Radio'
-import Alert from '../../../Parts/Alert'
 import FormInput from '../../../Form/Input'
 import FormHelp from '../../../Form/Help'
 import useValidate from '../../../../hooks/useValidate'
-import usePostalCode from '../../../../hooks/usePostalCode'
+import Alert from '../../../Parts/Alert'
 
 interface Props {
-  store: SockbaseStoreDocument
   isLoggedIn: boolean
-  ticketInfo: SockbaseTicket | undefined
+  store: SockbaseStoreDocument
+  ticketUser: SockbaseTicketUserDocument
   userData: SockbaseAccountSecure | undefined
-  prevStep: () => void
-  nextStep: (ticketInfo: SockbaseTicket, userData: SockbaseAccountSecure) => void
+  nextStep: (userData: SockbaseAccountSecure) => void
 }
 const Step1: React.FC<Props> = (props) => {
-  const validator = useValidate()
+  const { formatByDate } = useDayjs()
   const { getAddressByPostalCode } = usePostalCode()
+  const validator = useValidate()
 
   const [isAgreed, setAgreed] = useState(false)
-  const [ticketInfo, setTicketInfo] = useState<SockbaseTicket>({
-    storeId: props.store.id,
-    typeId: '',
-    paymentMethod: ''
-  })
   const [userData, setUserData] = useState<SockbaseAccountSecure>({
     name: '',
     email: '',
@@ -44,12 +38,10 @@ const Step1: React.FC<Props> = (props) => {
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
 
   const onInitialize = (): void => {
-    console.log(props.ticketInfo, props.userData)
-    if (!props.ticketInfo || !props.userData) return
-    setTicketInfo(props.ticketInfo)
+    if (!props.userData) return
     setUserData(props.userData)
   }
-  useEffect(onInitialize, [props.ticketInfo, props.userData])
+  useEffect(onInitialize, [props.userData])
 
   const onChangeBirthday = (): void => {
     if (!displayBirthday) return
@@ -73,112 +65,66 @@ const Step1: React.FC<Props> = (props) => {
     }
 
   const handleSubmit = (): void => {
-    props.nextStep(ticketInfo, userData)
+    if (!isAgreed || errorCount > 0) return
+    props.nextStep(userData)
   }
 
-  const selectedType = useMemo((): SockbaseStoreType | null => {
-    if (!ticketInfo.typeId) return null
-    return props.store.types
-      .filter(t => t.id === ticketInfo.typeId)[0]
-  }, [ticketInfo])
+  const typeName = useMemo(() => {
+    if (!props.store || !props.ticketUser) return ''
+
+    const type = props.store.types
+      .filter(t => t.id === props.ticketUser.typeId)[0]
+    return type.name
+  }, [props.store, props.ticketUser])
 
   const errorCount = useMemo((): number => {
-    const validators = [
-      !validator.isEmpty(ticketInfo.typeId),
-      !validator.isEmpty(ticketInfo.paymentMethod)
+    if (props.isLoggedIn) return 0
+
+    const userDataValidators = [
+      !validator.isEmpty(userData.name),
+      validator.isPostalCode(userData.postalCode),
+      !validator.isEmpty(userData.address),
+      !validator.isEmpty(userData.telephone),
+      validator.isEmail(userData.email),
+      validator.isStrongPassword(userData.password),
+      userData.password === userData.rePassword
     ]
 
-    if (!props.isLoggedIn) {
-      const userDataValidators = [
-        !validator.isEmpty(userData.name),
-        validator.isPostalCode(userData.postalCode),
-        !validator.isEmpty(userData.address),
-        !validator.isEmpty(userData.telephone),
-        validator.isEmail(userData.email),
-        validator.isStrongPassword(userData.password),
-        userData.password === userData.rePassword
-      ]
-
-      return validators
-        .concat(userDataValidators)
-        .filter(v => !v)
-        .length
-    }
-
-    return validators
+    return userDataValidators
       .filter(v => !v)
       .length
-  }, [ticketInfo, userData, props.isLoggedIn])
+  }, [userData, props.isLoggedIn])
 
   return (
     <>
-      <FormSection>
-        <FormItem>
-          <FormButton color="default" onClick={() => props.prevStep()}>申し込み説明画面へ戻る</FormButton>
-        </FormItem>
-      </FormSection>
+      <h2>イベント情報</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>チケット名</th>
+            <td>{props.store.storeName}</td>
+          </tr>
+          <tr>
+            <th>参加種別</th>
+            <td>{typeName}</td>
+          </tr>
+          <tr>
+            <th>開催日時</th>
+            <td>{formatByDate(props.store.schedules.startEvent, 'YYYY年M月D日 H:mm')} ～ {formatByDate(props.store.schedules.endEvent, 'H:mm')}</td>
+          </tr>
+          <tr>
+            <th></th>
+            <td>
+              <a href={props.store.storeWebURL} target="_blank" rel="noreferrer">その他の開催情報…</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-      <h2>申し込む参加種別</h2>
-      <FormSection>
-        <FormItem>
-          <FormLabel>参加種別</FormLabel>
-          <FormRadio
-            name="type"
-            values={
-              props.store.types.map(t => ({
-                text: `${t.name} ${t.price.toLocaleString()}円 / ${t.description}`,
-                value: t.id
-              }))
-            }
-            value={ticketInfo.typeId}
-            onChange={v => setTicketInfo(s => ({ ...s, typeId: v }))} />
-        </FormItem>
-      </FormSection>
-
-      <h2>参加費お支払い方法</h2>
-      {
-        selectedType
-          ? <FormSection>
-            <FormItem>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>申し込む種別</th>
-                    <td>{selectedType.name}</td>
-                  </tr>
-                  <tr>
-                    <th>詳細情報</th>
-                    <td>{selectedType.description}</td>
-                  </tr>
-                  <tr>
-                    <th>お支払い額</th>
-                    <td>{selectedType.price.toLocaleString()}円</td>
-                  </tr>
-                </tbody>
-              </table>
-            </FormItem>
-            <FormItem>
-              <FormRadio
-                name="paymentMethod"
-                values={sockbaseShared.constants.payment.methods.map(i => ({
-                  text: i.description,
-                  value: i.id
-                }))}
-                value={ticketInfo.paymentMethod}
-                onChange={paymentMethod => setTicketInfo(s => ({ ...s, paymentMethod }))} />
-            </FormItem>
-            {ticketInfo.paymentMethod === 'bankTransfer' && <FormItem>
-              <Alert>
-                銀行振込の場合、申し込み完了までお時間をいただくことがございます。
-              </Alert>
-            </FormItem>}
-          </FormSection>
-          : <Alert>申し込みたい参加種別を選択してください</Alert>
-      }
+      <h2>使用者情報</h2>
 
       {!props.isLoggedIn
         ? <>
-          <h2>申し込み責任者情報</h2>
           <FormSection>
             <FormItem>
               <FormLabel>氏名</FormLabel>
@@ -269,10 +215,11 @@ const Step1: React.FC<Props> = (props) => {
             </FormItem>
           </FormSection>
         </>
-        : <></>}
+        : <p>
+          現在ログイン中のユーザ情報を引き継ぎます。
+        </p>}
 
       <h2>注意事項</h2>
-
       <p>
         <a href="/tos" target="_blank">Sockbase利用規約</a>および<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>に同意しますか？
       </p>
@@ -294,7 +241,7 @@ const Step1: React.FC<Props> = (props) => {
           </Alert>
         </FormItem>}
         <FormItem>
-          <FormButton onClick={handleSubmit} disabled={!isAgreed || errorCount > 0}>入力内容確認画面へ進む</FormButton>
+          <FormButton onClick={handleSubmit} disabled={!isAgreed || !!errorCount}>入力内容確認画面へ進む</FormButton>
         </FormItem>
       </FormSection>
     </>
