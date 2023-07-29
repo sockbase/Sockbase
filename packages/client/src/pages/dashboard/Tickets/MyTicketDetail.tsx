@@ -52,8 +52,6 @@ const MyTicketDetail: React.FC = () => {
       getStoreByIdAsync(ticketUser.storeId)
         .then(fetchedStore => setStore(fetchedStore))
         .catch(err => { throw err })
-
-      console.log(ticketUser)
     }
 
     fetchAsync()

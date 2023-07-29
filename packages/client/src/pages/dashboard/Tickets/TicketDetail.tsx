@@ -135,13 +135,13 @@ const TicketDetail: React.FC = () => {
     [ticketHash])
 
   const handleAssignMe = (): void => {
-    if (!ticketHash) return
+    if (!ticket || !ticketHash) return
     setProgressForAssignMe(true)
 
-    assignTicketUserAsync(ticketHash.hashId)
+    assignTicketUserAsync(ticket.userId, ticketHash.hashId)
       .then(() => {
         alert('割り当てに成功しました。')
-        setTicketUser(s => (s && { ...s, usableUserId: 'new' }))
+        setTicketUser(s => (s && { ...s, usableUserId: ticket.userId }))
       })
       .catch(err => {
         alert('割り当て時にエラーが発生しました')
@@ -278,11 +278,11 @@ const TicketDetail: React.FC = () => {
           {ticketUser?.usableUserId && ticket && <FormSection>
             <h3>チケット割り当てを解除</h3>
             <FormItem>
-              このチケットは{ticketUser.usableUserId === ticket?.userId ? 'あなたに割り当てられています。' : '他のユーザへ分配されています。'}
+              このチケットは{ticketUser.usableUserId === ticket.userId ? 'あなた' : '他の方'}に割り当てられています。
             </FormItem>
             <FormItem>
               <LoadingCircleWrapper isLoading={isProgressForUnassign}>
-                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}>チケットの{ticketUser.usableUserId === ticket?.userId ? '割り当て' : '分配'}を解除する</FormButton>
+                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}>チケットの割り当てを解除する</FormButton>
               </LoadingCircleWrapper>
             </FormItem>
           </FormSection>}

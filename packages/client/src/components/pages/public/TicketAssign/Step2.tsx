@@ -23,7 +23,7 @@ const Step2: React.FC<Props> = (props) => {
   const [isProgress, setProgress] = useState(false)
 
   const handleSubmit = (): void => {
-    setProgress(true)
+    // setProgress(true)
     props.submitAssignTicket()
       .then(() => props.nextStep())
       .catch(err => {
