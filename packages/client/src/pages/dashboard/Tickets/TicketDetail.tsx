@@ -152,7 +152,7 @@ const TicketDetail: React.FC = () => {
 
   const handleUnassign = (): void => {
     if (!ticketHash) return
-    if (!confirm('チケットの割り当てを解除します。\n\nよろしいですか？')) return
+    if (!confirm('チケットの割り当てを解除します。\nよろしいですか？')) return
 
     setProgressForUnassign(true)
 
