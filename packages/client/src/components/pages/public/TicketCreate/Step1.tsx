@@ -44,7 +44,6 @@ const Step1: React.FC<Props> = (props) => {
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
 
   const onInitialize = (): void => {
-    console.log(props.ticketInfo, props.userData)
     if (!props.ticketInfo || !props.userData) return
     setTicketInfo(props.ticketInfo)
     setUserData(props.userData)
@@ -73,6 +72,7 @@ const Step1: React.FC<Props> = (props) => {
     }
 
   const handleSubmit = (): void => {
+    if (!isAgreed || errorCount > 0) return
     props.nextStep(ticketInfo, userData)
   }
 
@@ -176,9 +176,9 @@ const Step1: React.FC<Props> = (props) => {
           : <Alert>申し込みたい参加種別を選択してください</Alert>
       }
 
+      <h2>申し込み責任者情報</h2>
       {!props.isLoggedIn
         ? <>
-          <h2>申し込み責任者情報</h2>
           <FormSection>
             <FormItem>
               <FormLabel>氏名</FormLabel>
@@ -269,7 +269,9 @@ const Step1: React.FC<Props> = (props) => {
             </FormItem>
           </FormSection>
         </>
-        : <></>}
+        : <p>
+          現在ログイン中のユーザ情報を引き継ぎます。
+        </p>}
 
       <h2>注意事項</h2>
 

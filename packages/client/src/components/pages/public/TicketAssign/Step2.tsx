@@ -1,22 +1,35 @@
-import { useMemo } from 'react'
-import { type SockbaseAccount, type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
+import { useMemo, useState } from 'react'
+import {
+  type SockbaseAccountSecure,
+  type SockbaseAccount,
+  type SockbaseStoreDocument,
+  type SockbaseTicketUserDocument
+} from 'sockbase'
 import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
+import LoadingCircleWrapper from '../../../Parts/LoadingCircleWrapper'
 
 interface Props {
   store: SockbaseStoreDocument
   ticketUser: SockbaseTicketUserDocument
-  userData: SockbaseAccount | null
+  loggedInUserData: SockbaseAccount | null
+  inputedUserData: SockbaseAccountSecure | undefined
   submitAssignTicket: () => Promise<void>
   nextStep: () => void
   prevStep: () => void
 }
 const Step2: React.FC<Props> = (props) => {
+  const [isProgress, setProgress] = useState(false)
+
   const handleSubmit = (): void => {
+    setProgress(true)
     props.submitAssignTicket()
       .then(() => props.nextStep())
-      .catch(err => { throw err })
+      .catch(err => {
+        setProgress(false)
+        throw err
+      })
   }
 
   const typeName = useMemo(() => {
@@ -51,23 +64,23 @@ const Step2: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>メールアドレス</th>
-            <td>{props.userData?.email}</td>
+            <td>{props.loggedInUserData?.email ?? props.inputedUserData?.email}</td>
           </tr>
           <tr>
             <th>氏名</th>
-            <td>{props.userData?.name}</td>
+            <td>{props.loggedInUserData?.name ?? props.inputedUserData?.name}</td>
           </tr>
           <tr>
             <th>郵便番号</th>
-            <td>{props.userData?.postalCode}</td>
+            <td>{props.loggedInUserData?.postalCode ?? props.inputedUserData?.postalCode}</td>
           </tr>
           <tr>
             <th>住所</th>
-            <td>{props.userData?.address}</td>
+            <td>{props.loggedInUserData?.address ?? props.inputedUserData?.address}</td>
           </tr>
           <tr>
             <th>電話番号</th>
-            <td>{props.userData?.telephone}</td>
+            <td>{props.loggedInUserData?.telephone ?? props.inputedUserData?.telephone}</td>
           </tr>
         </tbody>
       </table>
@@ -77,7 +90,9 @@ const Step2: React.FC<Props> = (props) => {
           <FormButton onClick={() => props.prevStep()} color="default">修正する</FormButton>
         </FormItem>
         <FormItem>
-          <FormButton onClick={handleSubmit}>チケットを受け取る</FormButton>
+          <LoadingCircleWrapper isLoading={isProgress}>
+            <FormButton onClick={handleSubmit} disabled={isProgress}>チケットを受け取る</FormButton>
+          </LoadingCircleWrapper>
         </FormItem>
       </FormSection>
     </>

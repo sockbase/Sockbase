@@ -1,20 +1,72 @@
-import { useMemo, useState } from 'react'
-import { type SockbaseTicketUserDocument, type SockbaseStoreDocument } from 'sockbase'
+import { useEffect, useMemo, useState } from 'react'
+import { type SockbaseTicketUserDocument, type SockbaseStoreDocument, type SockbaseAccountSecure } from 'sockbase'
 import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
-import useDayjs from '../../../../hooks/useDayjs'
 import FormCheckbox from '../../../Form/Checkbox'
+import useDayjs from '../../../../hooks/useDayjs'
+import usePostalCode from '../../../../hooks/usePostalCode'
+import FormLabel from '../../../Form/Label'
+import FormInput from '../../../Form/Input'
+import FormHelp from '../../../Form/Help'
+import useValidate from '../../../../hooks/useValidate'
 
 interface Props {
+  isLoggedIn: boolean
   store: SockbaseStoreDocument
   ticketUser: SockbaseTicketUserDocument
-  nextStep: () => void
+  userData: SockbaseAccountSecure | undefined
+  nextStep: (userData: SockbaseAccountSecure) => void
 }
 const Step1: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
+  const { getAddressByPostalCode } = usePostalCode()
+  const validator = useValidate()
 
   const [isAgreed, setAgreed] = useState(false)
+  const [userData, setUserData] = useState<SockbaseAccountSecure>({
+    name: '',
+    email: '',
+    birthday: new Date('1990-01-01').getTime(),
+    postalCode: '',
+    address: '',
+    telephone: '',
+    password: '',
+    rePassword: ''
+  })
+  const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
+
+  const onInitialize = (): void => {
+    if (!props.userData) return
+    setUserData(props.userData)
+  }
+  useEffect(onInitialize, [props.userData])
+
+  const onChangeBirthday = (): void => {
+    if (!displayBirthday) return
+    setUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
+  }
+  useEffect(onChangeBirthday, [displayBirthday])
+
+  const handleFilledPostalCode: (postalCode: string) => void =
+    (postalCode) => {
+      const sanitizedPostalCode = postalCode.replaceAll('-', '')
+
+      if (sanitizedPostalCode.length !== 7) return
+      getAddressByPostalCode(sanitizedPostalCode)
+        .then(address => setUserData(s => ({
+          ...s,
+          address
+        })))
+        .catch(err => {
+          throw err
+        })
+    }
+
+  const handleSubmit = (): void => {
+    if (!isAgreed || errorCount > 0) return
+    props.nextStep(userData)
+  }
 
   const typeName = useMemo(() => {
     if (!props.store || !props.ticketUser) return ''
@@ -23,6 +75,24 @@ const Step1: React.FC<Props> = (props) => {
       .filter(t => t.id === props.ticketUser.typeId)[0]
     return type.name
   }, [props.store, props.ticketUser])
+
+  const errorCount = useMemo((): number => {
+    if (props.isLoggedIn) return 0
+
+    const userDataValidators = [
+      !validator.isEmpty(userData.name),
+      validator.isPostalCode(userData.postalCode),
+      !validator.isEmpty(userData.address),
+      !validator.isEmpty(userData.telephone),
+      validator.isEmail(userData.email),
+      validator.isStrongPassword(userData.password),
+      userData.password === userData.rePassword
+    ]
+
+    return userDataValidators
+      .filter(v => !v)
+      .length
+  }, [userData, props.isLoggedIn])
 
   return (
     <>
@@ -52,9 +122,101 @@ const Step1: React.FC<Props> = (props) => {
 
       <h2>使用者情報</h2>
 
-      <p>
-        現在ログイン中のユーザ情報を引き継ぎます。
-      </p>
+      {!props.isLoggedIn
+        ? <>
+          <FormSection>
+            <FormItem>
+              <FormLabel>氏名</FormLabel>
+              <FormInput
+                placeholder='速部 すみれ'
+                value={userData.name}
+                onChange={e => setUserData(s => ({ ...s, name: e.target.value }))} />
+            </FormItem>
+            <FormItem>
+              <FormLabel>生年月日</FormLabel>
+              <FormInput type="date"
+                value={displayBirthday}
+                onChange={e => setDisplayBirthday(e.target.value)} />
+            </FormItem>
+          </FormSection>
+          <FormSection>
+            <FormItem>
+              <FormLabel>郵便番号</FormLabel>
+              <FormInput
+                placeholder='000-0000'
+                value={userData.postalCode}
+                onChange={e => {
+                  if (e.target.value.length > 8) return
+                  const postal = e.target.value.match(/(\d{3})(\d{4})/)
+                  handleFilledPostalCode(e.target.value)
+                  setUserData(s => ({
+                    ...s,
+                    postalCode:
+                      postal?.length === 3
+                        ? `${postal[1]}-${postal[2]}`
+                        : e.target.value
+                  }))
+                }}
+                hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)} />
+              <FormHelp>
+                ハイフンは自動で入力されます
+              </FormHelp>
+            </FormItem>
+            <FormItem>
+              <FormLabel>住所</FormLabel>
+              <FormInput
+                placeholder='東京都千代田区外神田9-9-9'
+                value={userData.address}
+                onChange={e => setUserData(s => ({ ...s, address: e.target.value }))} />
+            </FormItem>
+            <FormItem>
+              <FormLabel>電話番号</FormLabel>
+              <FormInput
+                placeholder='070-0123-4567'
+                value={userData.telephone}
+                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value }))} />
+            </FormItem>
+          </FormSection>
+
+          <h2>Sockbaseログイン情報</h2>
+          <p>
+            申し込み情報の確認等に使用するアカウントを作成します。
+          </p>
+          <FormSection>
+            <FormItem>
+              <FormLabel>メールアドレス</FormLabel>
+              <FormInput type="email"
+                placeholder='sumire@sockbase.net'
+                value={userData.email}
+                onChange={e => setUserData(s => ({ ...s, email: e.target.value }))}
+                hasError={!validator.isEmpty(userData.email) && !validator.isEmail(userData.email)} />
+            </FormItem>
+            <FormItem>
+              <FormLabel>パスワード</FormLabel>
+              <FormInput type="password"
+                placeholder='●●●●●●●●●●●●'
+                value={userData.password}
+                onChange={e => setUserData(s => ({ ...s, password: e.target.value }))}
+                hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)} />
+              <FormHelp hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)}>
+                アルファベット大文字を含め、英数12文字以上で設定してください。
+              </FormHelp>
+            </FormItem>
+            <FormItem>
+              <FormLabel>パスワード(確認)</FormLabel>
+              <FormInput type="password"
+                placeholder='●●●●●●●●●●●●'
+                value={userData.rePassword}
+                onChange={e => setUserData(s => ({ ...s, rePassword: e.target.value }))}
+                hasError={!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword} />
+              {!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword &&
+                <FormHelp hasError>パスワードの入力が間違っています</FormHelp>}
+            </FormItem>
+          </FormSection>
+        </>
+        : <p>
+          現在ログイン中のユーザ情報を引き継ぎます。
+        </p>}
 
       <h2>注意事項</h2>
       <p>
@@ -73,7 +235,7 @@ const Step1: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={() => props.nextStep()} disabled={!isAgreed}>入力内容確認画面へ進む</FormButton>
+          <FormButton onClick={handleSubmit} disabled={!isAgreed}>入力内容確認画面へ進む</FormButton>
         </FormItem>
       </FormSection>
     </>
