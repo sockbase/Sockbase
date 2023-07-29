@@ -98,6 +98,11 @@ const TicketViewPanel: React.FC<Props> = (props) => {
                 </>}
             </>
             : <>
+              {props.userId !== ticketUser?.usableUserId
+                && <Alert title="他の方に割り当てられているチケットです" type="danger">
+                  あなたが使用すると、割り当てた方が使用できなくなります。<br />
+                  自分のチケットは <Link to="/dashboard/mytickets">マイチケット</Link> から確認できます。
+                </Alert>}
               <p>
                 上のQRコードを入口スタッフまでご提示ください。
               </p>
