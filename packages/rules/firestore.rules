@@ -125,8 +125,16 @@ service cloud.firestore {
     }
 
     match /_ticketUsers/{hashId} {
+      function isOnlyUsableUserId() {
+        let diff = request.resource.data.diff(resource.data);
+        return diff.changedKeys().hasAll(['usableUserId']);
+      }
+
       allow read: if request.auth.uid == resource.data.userId
-        || request.auth.uid == resource.data.usableUserId
+        || (request.auth.uid == resource.data.usableUserId || resource.data.usableUserId == null)
+        || isOrganizationAdmin(request.auth.uid, getStore(getTicketByHashId(hashId).storeId)._organization.id);
+      allow write: if request.auth.uid == resource.data.userId
+        || (resource.data.usableUserId == null && isOnlyUsableUserId())
         || isOrganizationAdmin(request.auth.uid, getStore(getTicketByHashId(hashId).storeId)._organization.id);
     }
 

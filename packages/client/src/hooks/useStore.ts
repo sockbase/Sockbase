@@ -8,7 +8,6 @@ import type {
   SockbaseTicketHashIdDocument,
   SockbaseTicketMeta,
   SockbaseTicketUsedStatus,
-  SockbaseTicketUser,
   SockbaseTicketUserDocument
 } from 'sockbase'
 import useFirebase from './useFirebase'
@@ -60,7 +59,9 @@ const ticketMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketMeta
 }
 
 const ticketUserConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUserDocument> = {
-  toFirestore: () => ({}),
+  toFirestore: (data: SockbaseTicketUserDocument) => ({
+    usableUserId: data.usableUserId
+  }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketUserDocument => {
     const data = snapshot.data()
     return {
@@ -68,7 +69,9 @@ const ticketUserConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUser
       userId: data.userId,
       storeId: data.storeId,
       typeId: data.typeId,
-      usableUserId: data.usableUserId
+      usableUserId: data.usableUserId,
+      used: data.used,
+      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
     }
   }
 }
@@ -103,11 +106,14 @@ interface IUseStore {
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
   getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
-  getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUser>
+  getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
+  getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
   getMyTicketsAsync: () => Promise<SockbaseTicketDocument[] | undefined>
   getUsableTicketsAsync: () => Promise<SockbaseTicketUserDocument[] | undefined>
+  assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
+  unassignTicketUserAsync: (ticketHashId: string) => Promise<void>
 }
 
 const useStore: () => IUseStore = () => {
@@ -185,7 +191,7 @@ const useStore: () => IUseStore = () => {
     return ticketMeta
   }
 
-  const getTicketUserByHashIdAsync = async (ticketHashId: string): Promise<SockbaseTicketUser> => {
+  const getTicketUserByHashIdAsync = async (ticketHashId: string): Promise<SockbaseTicketUserDocument> => {
     const db = getFirestore()
     const ticketUserRef = FirestoreDB
       .doc(db, `_ticketUsers/${ticketHashId}`)
@@ -199,6 +205,10 @@ const useStore: () => IUseStore = () => {
 
     return ticketUser
   }
+
+  const getTicketUserByHashIdOptionalAsync = async (ticketHashId: string): Promise<SockbaseTicketUserDocument | null> =>
+    await getTicketUserByHashIdAsync(ticketHashId)
+      .catch(() => null)
 
   const getTicketUsedStatusByIdAsync = async (ticketId: string): Promise<SockbaseTicketUsedStatus> => {
     const db = getFirestore()
@@ -252,6 +262,31 @@ const useStore: () => IUseStore = () => {
     return ticketUsersDocs
   }, [user])
 
+  const assignTicketUserAsync = async (userId: string, ticketHashId: string): Promise<void> => {
+    const db = getFirestore()
+    const ticketUserRef = FirestoreDB
+      .doc(db, `_ticketUsers/${ticketHashId}`)
+      .withConverter(ticketUserConverter)
+
+    await FirestoreDB.setDoc(
+      ticketUserRef,
+      { usableUserId: userId },
+      { merge: true })
+  }
+
+  const unassignTicketUserAsync = async (ticketHashId: string): Promise<void> => {
+    const db = getFirestore()
+    const ticketUserRef = FirestoreDB
+      .doc(db, `_ticketUsers/${ticketHashId}`)
+      .withConverter(ticketUserConverter)
+
+    await FirestoreDB.setDoc(
+      ticketUserRef,
+      { usableUserId: null },
+      { merge: true }
+    )
+  }
+
   return {
     getStoreByIdAsync,
     getStoreByIdOptionalAsync,
@@ -260,10 +295,13 @@ const useStore: () => IUseStore = () => {
     getTicketByIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
+    getTicketUserByHashIdOptionalAsync,
     getTicketUsedStatusByIdAsync,
     getTicketsByUserIdAsync,
     getMyTicketsAsync,
-    getUsableTicketsAsync
+    getUsableTicketsAsync,
+    assignTicketUserAsync,
+    unassignTicketUserAsync
   }
 }
 

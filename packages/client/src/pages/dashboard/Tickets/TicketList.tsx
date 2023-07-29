@@ -103,9 +103,10 @@ const TicketList: React.FC = () => {
                 <td>{getTypeName(t.storeId, t.typeId)}</td>
                 <td>{t.id && getTicketApplicationStatus(t.id)}</td>
                 <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年M月D日 H時mm分')}</td>
+                <td><Link to={`/tickets/${t.hashId}`}>チケットリンク</Link></td>
               </tr>)}
             {tickets?.length === 0 && <tr>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 購入したチケットはありません。<br />
                 他のユーザーから譲り受けたチケットは <Link to="/dashboard/mytickets">マイチケット</Link> からご確認ください。
               </td>

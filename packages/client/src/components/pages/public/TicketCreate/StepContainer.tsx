@@ -13,6 +13,8 @@ import Step3 from './Step3'
 import Step4 from './Step4'
 import Introduction from './Introduction'
 import useStore from '../../../../hooks/useStore'
+import useFirebase from '../../../../hooks/useFirebase'
+import useUserData from '../../../../hooks/useUserData'
 
 const stepProgresses = ['入力', '確認', '決済', '完了']
 
@@ -23,6 +25,8 @@ interface Props {
 }
 const StepContainerComponent: React.FC<Props> = (props) => {
   const { createTicketAsync } = useStore()
+  const { createUser } = useFirebase()
+  const { updateUserDataAsync } = useUserData()
 
   const [step, setStep] = useState(0)
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
@@ -37,6 +41,11 @@ const StepContainerComponent: React.FC<Props> = (props) => {
 
   const handleSubmit = async (): Promise<void> => {
     if (!ticketInfo || !userData) return
+
+    if (!props.isLoggedIn) {
+      const newUser = await createUser(userData.email, userData.password)
+      await updateUserDataAsync(newUser.uid, userData)
+    }
 
     const result = await createTicketAsync(ticketInfo)
     setTicketResult(result)
