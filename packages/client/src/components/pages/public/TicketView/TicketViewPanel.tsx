@@ -50,7 +50,7 @@ const TicketViewPanel: React.FC<Props> = (props) => {
   const handleAssignMe = (): void => {
     if (!ticketUser || ticketUser.userId !== props.userId) return
     setProgress(true)
-    assignTicketUserAsync(props.ticketHashId)
+    assignTicketUserAsync(props.userId, props.ticketHashId)
       .then(() => {
         setTicketUser(s => (s && { ...s, usableUserId: props.userId }))
       })
@@ -64,7 +64,7 @@ const TicketViewPanel: React.FC<Props> = (props) => {
   return (
     <Container>
       <TicketContainer>
-        <TitleContainer disabled={ticketUser?.usableUserId !== null}>
+        <TitleContainer disabled={ticketUser?.usableUserId === null}>
           <StoreName>{props.store.storeName}</StoreName>
           <TypeName>{typeName}</TypeName>
           <QRCodeArea>
@@ -143,7 +143,7 @@ const TitleContainer = styled.section<{ disabled?: boolean, color?: string }>`
   padding: 20px;
   background-color: ${props => props.disabled
     ? '#c0c0c0'
-    : props.color || '#202020'};
+    : props.color || '#404040'};
   color: #ffffff;
   text-align: center;
   border-radius: 5px 5px 0 0;

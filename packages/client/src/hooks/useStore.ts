@@ -112,7 +112,7 @@ interface IUseStore {
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
   getMyTicketsAsync: () => Promise<SockbaseTicketDocument[] | undefined>
   getUsableTicketsAsync: () => Promise<SockbaseTicketUserDocument[] | undefined>
-  assignTicketUserAsync: (ticketHashId: string) => Promise<void>
+  assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
   unassignTicketUserAsync: (ticketHashId: string) => Promise<void>
 }
 
@@ -262,9 +262,7 @@ const useStore: () => IUseStore = () => {
     return ticketUsersDocs
   }, [user])
 
-  const assignTicketUserAsync = useCallback(async (ticketHashId: string): Promise<void> => {
-    if (!user) return
-
+  const assignTicketUserAsync = async (userId: string, ticketHashId: string): Promise<void> => {
     const db = getFirestore()
     const ticketUserRef = FirestoreDB
       .doc(db, `_ticketUsers/${ticketHashId}`)
@@ -272,9 +270,9 @@ const useStore: () => IUseStore = () => {
 
     await FirestoreDB.setDoc(
       ticketUserRef,
-      { usableUserId: user.uid },
+      { usableUserId: userId },
       { merge: true })
-  }, [user])
+  }
 
   const unassignTicketUserAsync = async (ticketHashId: string): Promise<void> => {
     const db = getFirestore()

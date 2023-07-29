@@ -10,6 +10,7 @@ import FormLabel from '../../../Form/Label'
 import FormInput from '../../../Form/Input'
 import FormHelp from '../../../Form/Help'
 import useValidate from '../../../../hooks/useValidate'
+import Alert from '../../../Parts/Alert'
 
 interface Props {
   isLoggedIn: boolean
@@ -234,8 +235,13 @@ const Step1: React.FC<Props> = (props) => {
       </FormSection>
 
       <FormSection>
+        {errorCount > 0 && <FormItem>
+          <Alert type="danger">
+            {errorCount}個の入力項目に不備があります。
+          </Alert>
+        </FormItem>}
         <FormItem>
-          <FormButton onClick={handleSubmit} disabled={!isAgreed}>入力内容確認画面へ進む</FormButton>
+          <FormButton onClick={handleSubmit} disabled={!isAgreed || !!errorCount}>入力内容確認画面へ進む</FormButton>
         </FormItem>
       </FormSection>
     </>

@@ -21,7 +21,6 @@ const InquiryList: React.FC = () => {
         async () => {
           const fetchedInquiries = await getInquiries()
           setInquiries(fetchedInquiries)
-          console.log(fetchedInquiries)
         }
 
       fetchInquiries()

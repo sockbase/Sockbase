@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   type SockbaseAccountSecure,
   type SockbaseAccount,
@@ -10,6 +10,8 @@ import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import useStore from '../../../../hooks/useStore'
+import useFirebase from '../../../../hooks/useFirebase'
+import useUserData from '../../../../hooks/useUserData'
 
 const stepProgresses = ['入力', '確認', '完了']
 
@@ -22,15 +24,26 @@ interface Props {
 }
 const StepContainer: React.FC<Props> = (props) => {
   const { assignTicketUserAsync } = useStore()
+  const { createUser, user } = useFirebase()
+  const { updateUserDataAsync } = useUserData()
 
   const [step, setStep] = useState(0)
   const [stepComponents, setStepComponents] = useState<React.ReactNode[]>()
 
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
-  const submitAssignTicket = async (): Promise<void> => {
-    await assignTicketUserAsync(props.ticketHashId)
-  }
+  const submitAssignTicket = useCallback(async (): Promise<void> => {
+    if (!userData || user === undefined) return
+
+    if (user) {
+      await assignTicketUserAsync(user.uid, props.ticketHashId)
+      return
+    }
+
+    const newUser = await createUser(userData.email, userData.password)
+    await updateUserDataAsync(newUser.uid, userData)
+    await assignTicketUserAsync(newUser.uid, props.ticketHashId)
+  }, [userData, user])
 
   const onInitialize = (): void => {
     setStepComponents([
@@ -57,7 +70,7 @@ const StepContainer: React.FC<Props> = (props) => {
         ticketUser={props.ticketUser} />
     ])
   }
-  useEffect(onInitialize, [props.isLoggedIn, props.store, props.ticketUser, props.userData])
+  useEffect(onInitialize, [props.isLoggedIn, props.store, props.ticketUser, props.userData, userData])
 
   return (
     <>
