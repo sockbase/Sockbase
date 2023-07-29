@@ -23,7 +23,7 @@ const Step2: React.FC<Props> = (props) => {
   const [isProgress, setProgress] = useState(false)
 
   const handleSubmit = (): void => {
-    // setProgress(true)
+    setProgress(true)
     props.submitAssignTicket()
       .then(() => props.nextStep())
       .catch(err => {
@@ -87,7 +87,7 @@ const Step2: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={() => props.prevStep()} color="default">修正する</FormButton>
+          <FormButton onClick={() => props.prevStep()} color="default" disabled={isProgress}>修正する</FormButton>
         </FormItem>
         <FormItem>
           <LoadingCircleWrapper isLoading={isProgress}>
