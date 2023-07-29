@@ -28,6 +28,7 @@ import FormItem from '../../../components/Form/FormItem'
 import FormButton from '../../../components/Form/Button'
 import FormInput from '../../../components/Form/Input'
 import LinkButton from '../../../components/Parts/LinkButton'
+import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 
 const TicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -38,7 +39,9 @@ const TicketDetail: React.FC = () => {
     getStoreByIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
-    getTicketUsedStatusByIdAsync
+    getTicketUsedStatusByIdAsync,
+    assignTicketUserAsync,
+    unassignTicketUserAsync
   } = useStore()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
   const { getPaymentAsync } = usePayment()
@@ -53,6 +56,8 @@ const TicketDetail: React.FC = () => {
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus>()
 
   const [openAssignPanel, setOpenAssignPanel] = useState(false)
+  const [isProgressForAssignMe, setProgressForAssignMe] = useState(false)
+  const [isProgressForUnassign, setProgressForUnassign] = useState(false)
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
@@ -128,6 +133,39 @@ const TicketDetail: React.FC = () => {
   const assignURL = useMemo(() =>
     ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}` || '',
     [ticketHash])
+
+  const handleAssignMe = (): void => {
+    if (!ticketHash) return
+    setProgressForAssignMe(true)
+
+    assignTicketUserAsync(ticketHash.hashId)
+      .then(() => {
+        alert('割り当てに成功しました。')
+        setTicketUser(s => (s && { ...s, usableUserId: 'new' }))
+      })
+      .catch(err => {
+        alert('割り当て時にエラーが発生しました')
+        throw err
+      })
+      .finally(() => setProgressForAssignMe(false))
+  }
+
+  const handleUnassign = (): void => {
+    if (!ticketHash) return
+    setProgressForUnassign(true)
+
+    unassignTicketUserAsync(ticketHash.hashId)
+      .then(() => {
+        alert('割り当て解除に成功しました。')
+        setTicketUser(s => (s && { ...s, usableUserId: null }))
+      })
+      .catch(err => {
+        alert('割り当て解除に失敗しました')
+        throw err
+      })
+      .finally(() => setProgressForUnassign(false))
+
+  }
 
   return (
     <DashboardLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
@@ -208,14 +246,16 @@ const TicketDetail: React.FC = () => {
             </p>
             <FormSection>
               <FormItem>
-                <FormButton>自分で使う</FormButton>
+                <LoadingCircleWrapper isLoading={isProgressForAssignMe}>
+                  <FormButton onClick={handleAssignMe} disabled={isProgressForAssignMe}>自分で使う</FormButton>
+                </LoadingCircleWrapper>
               </FormItem>
               <FormItem>
                 <FormButton color="default" onClick={() => setOpenAssignPanel(s => !s)}>他の方へ割り当てる</FormButton>
               </FormItem>
               {openAssignPanel && <>
                 <FormItem>
-                  チケットを割り当てたい方に以下のURLを送付してください。
+                  チケットを渡したい方へ以下のURLを送付してください。
                 </FormItem>
                 <FormItem>
                   <FormInput disabled value={assignURL} />
@@ -228,7 +268,9 @@ const TicketDetail: React.FC = () => {
               このチケットは{ticketUser.usableUserId === ticket?.userId ? 'あなたに割り当てられています。' : '他のユーザへ分配されています。'}
             </FormItem>
             <FormItem>
-              <FormButton color="danger">チケットの{ticketUser.usableUserId === ticket?.userId ? '割り当て' : '分配'}を解除する</FormButton>
+              <LoadingCircleWrapper isLoading={isProgressForUnassign}>
+                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}>チケットの{ticketUser.usableUserId === ticket?.userId ? '割り当て' : '分配'}を解除する</FormButton>
+              </LoadingCircleWrapper>
             </FormItem>
           </FormSection>}
 

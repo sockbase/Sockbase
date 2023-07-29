@@ -77,7 +77,7 @@ const MyTicketDetail: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="マイチケット情報" isLoading={!store} />
 
-      {user && ticketUser?.userId === user.uid
+      {user && ticketUser?.userId === user.uid && !ticketUser.usableUserId
         && <Alert type="danger" title="チケットの割り当てが完了していません">
           購入したチケットを使用するためには、まずチケットの割り当てを行う必要があります。<br />
           <Link to={`/dashboard/tickets/${hashedTicketId}`}>こちら</Link> から割り当てを行ってください。

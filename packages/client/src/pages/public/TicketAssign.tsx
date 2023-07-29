@@ -7,9 +7,14 @@ import Loading from '../../components/Parts/Loading'
 import Alert from '../../components/Parts/Alert'
 import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
+import useFirebase from '../../hooks/useFirebase'
+import FormSection from '../../components/Form/FormSection'
+import FormItem from '../../components/Form/FormItem'
+import LinkButton from '../../components/Parts/LinkButton'
 
 const TicketAssign: React.FC = () => {
   const [searchParams] = useSearchParams({ thi: '' })
+  const { isLoggedIn, user } = useFirebase()
   const { getTicketUserByHashIdOptionalAsync, getStoreByIdAsync } = useStore()
   const { getMyUserDataAsync } = useUserData()
 
@@ -60,14 +65,22 @@ const TicketAssign: React.FC = () => {
       {ticketHashId
         && (ticketUser === undefined || !store || userData === undefined)
         && <Loading text="チケット情報" />}
-      {ticketHashId
+      {ticketHashId && isLoggedIn
         && ticketUser && !ticketUser.usableUserId && store && userData !== undefined
-        && <StepContainer ticketHashId={ticketHashId} ticketUser={ticketUser} store={store} userData={userData} />}
+        && <StepContainer isLoggedIn={isLoggedIn} ticketHashId={ticketHashId} ticketUser={ticketUser} store={store} userData={userData} />}
 
       {ticketHashId && ticketUser?.usableUserId
-        && <Alert type="danger" title="受け取り済みのチケットです">
-          このチケットは既に受け取り済みです。
-        </Alert>}
+        && <>
+          <Alert type="danger" title="受け取り済みのチケットです">
+            このチケットは既に受け取り済みです。
+          </Alert>
+          {user?.uid === ticketUser.usableUserId && <FormSection>
+            <FormItem>
+              <LinkButton to={`/tickets/${ticketHashId}`}>チケットを開く</LinkButton>
+            </FormItem>
+          </FormSection>}
+        </>
+      }
       {(!ticketHashId || ticketUser === null)
         && <Alert type="danger" title="チケット情報が見つかりませんでした">
           URLが間違っています。
