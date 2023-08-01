@@ -251,7 +251,7 @@ const TicketDetail: React.FC = () => {
         </>
 
         <>
-          {ticketUser && !ticketUser.usableUserId && <>
+          {ticketUser && !ticketUser.usableUserId && ticketUsedStatus && !ticketUsedStatus?.used && <>
             <h3>チケット割り当て</h3>
             <p>
               このチケットを使う人を選択してください。
@@ -276,7 +276,7 @@ const TicketDetail: React.FC = () => {
             </FormSection>
           </>}
 
-          {hashedTicketId && ticketUser?.usableUserId && <>
+          {hashedTicketId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && <>
             <h3>チケットを表示</h3>
             <FormSection>
               <FormItem>
