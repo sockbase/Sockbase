@@ -99,7 +99,7 @@ const updateStatus = async (
   return true
 }
 
-const collectPayments = async (userId: string, status: number): Promise<types.SockbasePaymentDocument | null> => {
+const collectPayments = async (userId: string, status: number, productItemIds: Array<string | undefined>): Promise<types.SockbasePaymentDocument | null> => {
   const paymentSnapshot = await firestore.collection('_payments')
     .withConverter(paymentConverter)
     .where('userId', '==', userId)
@@ -108,8 +108,9 @@ const collectPayments = async (userId: string, status: number): Promise<types.So
     .get()
   const payments = paymentSnapshot.docs
     .map(p => p.data())
+    .filter(p => productItemIds.includes(p.paymentProductId))
 
-  return payments.length === 1 ? payments[0] : null
+  return payments.length > 0 ? payments[0] : null
 }
 
 const getUser = async (email: string): Promise<UserRecord> => {
@@ -163,14 +164,18 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     return
   }
 
-  const payment = await collectPayments(user.uid, Status.Pending)
+  const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
+  const productItemIds = lineItems.data
+    .filter(p => p.price)
+    .map(p => p.price?.id)
+
+  const payment = await collectPayments(user.uid, Status.Pending, productItemIds)
   if (!payment) {
     res.status(404).send({ error: 'NotFound', detail: 'required payment is not found' })
     noticeMessage(paymentId, `required payment is not found`)
     return
   }
 
-  const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
   switch (event.type) {
     case HANDLEABLE_EVENTS.checkoutCompleted: {
       // クレカなどの即決済時のみ処理する

@@ -54,7 +54,7 @@ const templates = {
       ...suffix
     ]
   }),
-  requestCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace) => ({
+  requestCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace, email: string) => ({
     subject: `[${event.eventName}] サークル参加費 お支払いのお願い`,
     body: [
       `この度は、${event.eventName}への参加申し込みをいただき、誠にありがとうございます。`,
@@ -67,8 +67,15 @@ const templates = {
       `お支払い期限: ${dayjs(event.schedules.endApplication).tz().format('YYYY年M月D日')}`,
       `お支払い補助番号: ${payment.bankTransferCode}`,
       '',
-      ...payment.paymentMethod === 2
+      ...payment.paymentMethod === 1
         ? [
+          '[オンライン決済]',
+          '下記URLからお支払いください。',
+          '＜重要＞ フォームに入力されているメールアドレスは変更しないでください。お支払いを確認することができなくなります。',
+          `${space.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(email ?? '')}`,
+          ''
+        ]
+        : [
           '[銀行振込情報/ ゆうちょ銀行からのお振り込み]',
           '加入者名: ノートセンディング',
           '口座記号・口座番号: 10740-30814531',
@@ -82,8 +89,7 @@ const templates = {
           '',
           `※お振り込みの特定のため、ご依頼人名の先頭に「${payment.bankTransferCode}」と入力してください。`,
           ''
-        ]
-        : [],
+        ],
       '[申し込み情報]',
       `イベント名: ${event.eventName}`,
       `サークル名: ${app.circle.name}`,
@@ -157,7 +163,7 @@ const templates = {
       ...suffix
     ]
   }),
-  requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketDocument, store: SockbaseStore, type: SockbaseStoreType) => ({
+  requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketDocument, store: SockbaseStore, type: SockbaseStoreType, email: string) => ({
     subject: `[${store.storeName}] お支払いのお願い`,
     body: [
       `この度は、${store.storeName}への参加申し込みをいただき、誠にありがとうございます。`,
@@ -170,8 +176,15 @@ const templates = {
       `お支払い期限: ${dayjs(store.schedules.endApplication).tz().format('YYYY年M月D日')}`,
       `お支払い補助番号: ${payment.bankTransferCode}`,
       '',
-      ...payment.paymentMethod === 2
+      ...payment.paymentMethod === 1
         ? [
+          '[オンライン決済]',
+          '下記URLからお支払いください。',
+          '＜重要＞ フォームに入力されているメールアドレスは変更しないでください。お支払いを確認することができなくなります。',
+          `${type.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(email ?? '')}`,
+          ''
+        ]
+        : [
           '[銀行振込情報/ ゆうちょ銀行からのお振り込み]',
           '加入者名: ノートセンディング',
           '口座記号・口座番号: 10740-30814531',
@@ -185,8 +198,7 @@ const templates = {
           '',
           `※お振り込みの特定のため、ご依頼人名の先頭に「${payment.bankTransferCode}」と入力してください。`,
           ''
-        ]
-        : [],
+        ],
       '[申し込み情報]',
       `イベント名: ${store.storeName}`,
       `チケット種別: ${type.name}`,

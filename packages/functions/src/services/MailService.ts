@@ -138,10 +138,14 @@ export const requestPayment = functions.firestore
     const payment = snapshot.data() as SockbasePaymentDocument
     const user = await getUser(payment.userId)
 
+    if (!user.email) {
+      throw new Error('invalid email')
+    }
+
     const template = payment.applicationId
-      ? await requestCirclePaymentAsync(payment.applicationId, payment)
+      ? await requestCirclePaymentAsync(payment.applicationId, payment, user.email)
       : payment.ticketId
-        ? await requestTicketPaymentAsync(payment.ticketId, payment)
+        ? await requestTicketPaymentAsync(payment.ticketId, payment, user.email)
         : null
 
     if (!template) return
@@ -181,7 +185,10 @@ export const acceptPayment = functions.firestore
     await firestore.collection('_mails')
       .add({
         to: user.email,
-        message: template
+        message: {
+          subject: template.subject,
+          text: template.body.join('\n')
+        }
       })
   })
 
@@ -208,7 +215,7 @@ export const acceptInquiry = functions.firestore
   })
 
 const requestCirclePaymentAsync =
-  async (appId: string, payment: SockbasePaymentDocument): Promise<{ subject: string, body: string[] }> => {
+  async (appId: string, payment: SockbasePaymentDocument, email: string): Promise<{ subject: string, body: string[] }> => {
     const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
@@ -233,7 +240,7 @@ const requestCirclePaymentAsync =
     const space = event.spaces
       .filter(s => s.id === app.spaceId)[0]
 
-    return mailConfig.templates.requestCirclePayment(payment, app, event, space)
+    return mailConfig.templates.requestCirclePayment(payment, app, event, space, email)
   }
 
 const acceptCirclePaymentAsync =
@@ -264,7 +271,7 @@ const acceptCirclePaymentAsync =
   }
 
 const requestTicketPaymentAsync =
-  async (ticketId: string, payment: SockbasePaymentDocument): Promise<{ subject: string; body: string[] }> => {
+  async (ticketId: string, payment: SockbasePaymentDocument, email: string): Promise<{ subject: string; body: string[] }> => {
     const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
@@ -287,7 +294,7 @@ const requestTicketPaymentAsync =
     const type = store.types
       .filter(t => t.id === ticket.typeId)[0]
 
-    return mailConfig.templates.requestTicketPayment(payment, ticket, store, type)
+    return mailConfig.templates.requestTicketPayment(payment, ticket, store, type, email)
   }
 
 const acceptTicketPaymentAsync =
