@@ -80,7 +80,7 @@ const MyTicketDetail: React.FC = () => {
           購入したチケットを使用するためには、まずチケットの割り当てを行う必要があります。<br />
           <Link to={`/dashboard/tickets/${hashedTicketId}`}>こちら</Link> から割り当てを行ってください。
         </Alert>}
-      {ticketUser === null || (user && (ticketUser?.userId !== user.uid && ticketUser?.usableUserId !== user.uid))
+      {ticketUser === null || (ticketUser && user && (ticketUser.userId !== user.uid && ticketUser.usableUserId !== user.uid))
         && <Alert type="danger" title="チケットの取得に失敗しました">
           自分が購入していない, 割り当てられていないチケットの情報は表示できません。
         </Alert>}

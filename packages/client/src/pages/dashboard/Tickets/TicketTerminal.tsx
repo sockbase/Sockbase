@@ -54,6 +54,20 @@ const TicketTerminal: React.FC = () => {
   const [isProgressForUsedStatus, setProgressForUsedStatus] = useState(false)
   const [usedStatusError, setUsedStatusError] = useState<string | null>()
 
+  const onChangedHashId = (): void => {
+    if (ticketHashId) return
+
+    setUsedStatusError(undefined)
+    setStore(undefined)
+    setTicketHash(undefined)
+    setUsedStatus(undefined)
+    setTicket(undefined)
+    setPayment(undefined)
+    setOwnerUser(undefined)
+    setUsableUser(undefined)
+  }
+  useEffect(onChangedHashId, [ticketHashId])
+
   const handleSearch = (): void => {
     const fetchAsync = async (): Promise<void> => {
       if (!ticketHashId) return
