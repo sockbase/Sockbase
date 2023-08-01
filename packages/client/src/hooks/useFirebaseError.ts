@@ -21,6 +21,8 @@ const useFirebaseError: () => IUseFirebaseError =
           return '隣接希望サークルが他のサークルとの隣接を希望しているため申請できません。'
         } else if (errorMessage.includes('user_not_found')) {
           return 'ユーザが見つかりませんでした'
+        } else if (errorMessage === 'Missing or insufficient permissions.') {
+          return '権限がありません'
         } else if (errorMessage.includes('invalid_argument')) {
           return `不正なリクエストです: ${errorMessage}`
         } else {

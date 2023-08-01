@@ -101,6 +101,18 @@ const StoreDetail: React.FC = () => {
     return type
   }
 
+  const usedTicketCount = useMemo(() => {
+    if (!usedStatuses) return 0
+    return Object.values(usedStatuses)
+      .filter(s => s.used)
+      .length
+  }, [usedStatuses])
+
+  const totalTicketCount = useMemo(() => {
+    if (!tickets) return 0
+    return tickets.length
+  }, [tickets])
+
   return (
     <DashboardLayout title={pageTitle}>
       <Breadcrumbs>
@@ -111,6 +123,9 @@ const StoreDetail: React.FC = () => {
 
       <p>
         <LinkButton to={`/dashboard/stores/${storeId}/create`} inlined>チケット作成</LinkButton>
+      </p>
+      <p>
+        使用されたチケット: {usedTicketCount} / {totalTicketCount}枚 ({Math.round(usedTicketCount / totalTicketCount * 100)}%)
       </p>
 
       {(!store || !tickets) && <Loading text="チケットストア情報" />}

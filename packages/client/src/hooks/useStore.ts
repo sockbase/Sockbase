@@ -79,7 +79,10 @@ const ticketUserConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUser
 }
 
 const ticketUsedStatusConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUsedStatus> = {
-  toFirestore: () => ({}),
+  toFirestore: (usedStatus: SockbaseTicketUsedStatus) => ({
+    used: usedStatus.used,
+    usedAt: FirestoreDB.serverTimestamp()
+  }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketUsedStatus => {
     const data = snapshot.data()
     return {
@@ -112,6 +115,7 @@ interface IUseStore {
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
   getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
+  updateTicketUsedStatusByIdAsync: (ticketId: string, used: boolean) => Promise<void>
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
   getTicketsByStoreIdAsync: (storeId: string) => Promise<SockbaseTicketDocument[]>
   getMyTicketsAsync: () => Promise<SockbaseTicketDocument[] | undefined>
@@ -238,6 +242,16 @@ const useStore: () => IUseStore = () => {
     return ticketUsedStatus
   }
 
+  const updateTicketUsedStatusByIdAsync = async (ticketId: string, used: boolean): Promise<void> => {
+    const db = getFirestore()
+    const ticketUsedStatusRef = FirestoreDB
+      .doc(db, `_tickets/${ticketId}/private/usedStatus`)
+      .withConverter(ticketUsedStatusConverter)
+
+    await FirestoreDB.setDoc(ticketUsedStatusRef, { used }, { merge: true })
+      .catch(err => { throw err })
+  }
+
   const getTicketsByUserIdAsync = async (userId: string): Promise<SockbaseTicketDocument[]> => {
     const db = getFirestore()
     const ticketsRef = FirestoreDB
@@ -326,6 +340,7 @@ const useStore: () => IUseStore = () => {
     getTicketUserByHashIdAsync,
     getTicketUserByHashIdOptionalAsync,
     getTicketUsedStatusByIdAsync,
+    updateTicketUsedStatusByIdAsync,
     getTicketsByUserIdAsync,
     getTicketsByStoreIdAsync,
     getMyTicketsAsync,
