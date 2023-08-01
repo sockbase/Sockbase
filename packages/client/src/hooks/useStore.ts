@@ -44,7 +44,8 @@ const ticketConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketDocument
       paymentProductId: data.paymentProductId,
       createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
       updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null,
-      hashId: data.hashId
+      hashId: data.hashId,
+      createdUserId: data.createdUserId
     }
   }
 }
