@@ -117,6 +117,7 @@ service cloud.firestore {
         match /usedStatus {
           allow read: if getTicket(ticketId).userId == request.auth.uid
             || isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
+          allow write: if isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
         }
       }
     }

@@ -11,7 +11,6 @@ import {
   MdLogout,
   MdHome,
   MdLocalActivity,
-  MdAccountBalanceWallet,
   MdEditNote,
   MdPayments,
   MdSettings,
@@ -96,7 +95,14 @@ const menu: MenuSection[] = [
     sectionKey: 'support',
     sectionName: 'イベント開催支援',
     requiredRole: sockbaseShared.enumerations.user.permissionRoles.staff,
-    items: []
+    items: [
+      {
+        key: 'terminal',
+        icon: <MdQrCodeScanner />,
+        text: 'チケット照会ターミナル',
+        link: '/dashboard/tickets/terminal'
+      },
+    ]
   },
   {
     sectionKey: 'system',
@@ -134,20 +140,6 @@ const menu: MenuSection[] = [
         text: 'デバッグダッシュボード',
         link: '/dashboard/debug',
         isImportant: true
-      },
-      {
-        key: 'ticketHistories',
-        icon: <MdAccountBalanceWallet />,
-        text: 'チケット申し込み履歴',
-        link: '',
-        isDisabled: true
-      },
-      {
-        key: 'terminal',
-        icon: <MdQrCodeScanner />,
-        text: 'チケット照会ターミナル',
-        link: '',
-        isDisabled: true
       },
       {
         key: 'omnisearch',
