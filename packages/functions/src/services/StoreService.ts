@@ -5,6 +5,7 @@ import {
   type SockbaseTicketAddedResult,
   type SockbaseTicketCreatedResult
 } from 'sockbase'
+import { type FirebaseError } from 'firebase-admin'
 import firebaseAdmin from '../libs/FirebaseAdmin'
 import { createPayment, generateBankTransferCode } from '../services/payment'
 import { storeConverter, ticketConverter } from '../libs/converters'
@@ -155,7 +156,14 @@ export const createTicketForAdminAsync = async (userId: string, storeId: string,
 
   const user = await auth
     .getUserByEmail(email)
-    .catch(err => { throw err })
+    .catch((err: FirebaseError) => {
+      if (err.code.includes('')) {
+        throw new functions.https.HttpsError('not-found', 'user_not_found')
+      } else {
+        console.error(err)
+        throw new functions.https.HttpsError('internal', 'auth')
+      }
+    })
 
   const hashId = generateTicketHashId(now)
   const ticketDoc: SockbaseTicketDocument = {
