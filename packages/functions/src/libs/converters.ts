@@ -21,7 +21,7 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
     createdAt: payment.createdAt,
     updatedAt: payment.updatedAt
   }),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot<types.SockbasePaymentDocument>): types.SockbasePaymentDocument => {
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbasePaymentDocument => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -34,8 +34,8 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
       status: data.status,
       applicationId: data.applicationId,
       ticketId: data.ticketId,
-      createdAt: data.createdAt,
-      updatedAt: data.updatedAt
+      createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
+      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null
     }
   }
 }

@@ -64,13 +64,15 @@ const TicketViewPanel: React.FC<Props> = (props) => {
   return (
     <Container>
       <TicketContainer>
-        <TitleContainer disabled={ticketUser?.usableUserId === null}>
-          <StoreName>{props.store.storeName}</StoreName>
-          <TypeName>{typeName}</TypeName>
-          <QRCodeArea>
-            <QRCode value={props.ticketHashId} size={192} />
-          </QRCodeArea>
-        </TitleContainer>
+        <TitleWrapper disabled={ticketUser?.usableUserId === null}>
+          <TitleContainer>
+            <StoreName>{props.store.storeName}</StoreName>
+            <TypeName>{typeName}</TypeName>
+            <QRCodeArea>
+              <QRCode value={props.ticketHashId} size={192} />
+            </QRCodeArea>
+          </TitleContainer>
+        </TitleWrapper>
         <ContentContainer>
           {ticketUser && ticketUser.usableUserId === null
             ? <>
@@ -120,7 +122,7 @@ const TicketViewPanel: React.FC<Props> = (props) => {
           </LogotypeArea>
         </Footer>
       </TicketContainer>
-    </Container>
+    </Container >
   )
 }
 
@@ -144,17 +146,37 @@ const TicketContainer = styled.div`
     grid-template-rows: auto 1fr auto;
   }
 `
-const TitleContainer = styled.section<{ disabled?: boolean, color?: string }>`
-  padding: 20px;
+const TitleWrapper = styled.section<{ disabled?: boolean, color?: string }>`
   background-color: ${props => props.disabled
     ? '#c0c0c0'
     : props.color || '#404040'};
+  border-radius: 5px 5px 0 0;
+  @media screen and (max-width: 840px) {
+    border-radius: 0;
+  }
+`
+
+const loopBackgroundKeyframes = keyframes`
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 256px -256px;
+  }
+`
+const TitleContainer = styled.section`
+  padding: 20px;
   color: #ffffff;
   text-align: center;
   border-radius: 5px 5px 0 0;
   @media screen and (max-width: 840px) {
     border-radius: 0;
   }
+  
+  background-image: url('/assets/bg-pattern2.png');
+  background-position: 0 0;
+  background-repeat: repeat;
+  animation: ${loopBackgroundKeyframes} 5s linear infinite;
 `
 const StoreName = styled.div``
 const TypeName = styled.div`
@@ -172,15 +194,6 @@ const ContentContainer = styled.section`
   padding: 20px;
   background-color:#ffffff;
 `
-
-const blinkKeyframe = keyframes`
-  0% {
-    background-color: #404040;
-  }
-  100% {
-    background-color: var(--primary-color);
-  }
-`
 const Footer = styled.footer`
   display: flex;
   justify-content: flex-end;
@@ -195,8 +208,6 @@ const Footer = styled.footer`
   @media screen and (max-width: 840px) {
     border-radius: 0;
   }
-
-  animation: ${blinkKeyframe} 0.5s ease-in-out alternate infinite;
 `
 
 const UpdatedDate = styled.section`

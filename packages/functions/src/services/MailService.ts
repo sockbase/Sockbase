@@ -1,10 +1,10 @@
 import { type UserRecord, getAuth } from 'firebase-admin/auth'
-import type { SockbaseApplicationDocument, SockbaseInquiryDocument, SockbasePaymentDocument } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbaseInquiryDocument, SockbasePaymentDocument, SockbaseTicketDocument } from 'sockbase'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import * as functions from 'firebase-functions'
 
 import mailConfig from '../configs/mail'
-import { applicationConverter, applicationHashIdConverter, eventConverter } from '../libs/converters'
+import { applicationConverter, applicationHashIdConverter, eventConverter, storeConverter, ticketConverter } from '../libs/converters'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { getUserDataAsync } from '../models/user'
 
@@ -38,6 +38,37 @@ export const acceptApplication = functions.firestore
       .filter(s => s.id === app.spaceId)[0]
 
     const template = mailConfig.templates.acceptApplication(event, app, space)
+    await firestore.collection('_mails')
+      .add({
+        to: user.email,
+        message: {
+          subject: template.subject,
+          text: template.body.join('\n')
+        }
+      })
+  })
+
+export const acceptTicket = functions.firestore
+  .document('/_tickets/{ticketId}')
+  .onCreate(async (snapshot: QueryDocumentSnapshot) => {
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const ticket = snapshot.data() as SockbaseTicketDocument
+    const user = await getUser(ticket.userId)
+
+    const storeDoc = await firestore.doc(`/stores/${ticket.storeId}`)
+      .withConverter(storeConverter)
+      .get()
+    const store = storeDoc.data()
+    if (!store) {
+      throw new Error('store not found')
+    }
+
+    const type = store.types
+      .filter(t => t.id === ticket.typeId)[0]
+
+    const template = mailConfig.templates.acceptTicket(store, type, ticket)
     await firestore.collection('_mails')
       .add({
         to: user.email,
@@ -107,9 +138,18 @@ export const requestPayment = functions.firestore
     const payment = snapshot.data() as SockbasePaymentDocument
     const user = await getUser(payment.userId)
 
-    if (!payment.applicationId) return
+    if (!user.email) {
+      throw new Error('invalid email')
+    }
 
-    const template = await requestCirclePaymentAsync(payment.applicationId, payment)
+    const template = payment.applicationId
+      ? await requestCirclePaymentAsync(payment.applicationId, payment, user.email)
+      : payment.ticketId
+        ? await requestTicketPaymentAsync(payment.ticketId, payment, user.email)
+        : null
+
+    if (!template) return
+
     await firestore.collection('_mails')
       .add({
         to: user.email,
@@ -129,27 +169,41 @@ export const acceptPayment = functions.firestore
     const firestore = adminApp.firestore()
 
     const payment = change.after.data() as SockbasePaymentDocument
+
     const user = await getUser(payment.userId)
 
     if (payment.status !== 1) return
-    if (!payment.applicationId) return
 
-    const appDoc = await firestore.doc(`/_applications/${payment.applicationId}`)
-      .withConverter(applicationConverter)
-      .get()
-    const app = appDoc.data()
-    if (!app) return
+    const template = payment.applicationId
+      ? await acceptCirclePaymentAsync(payment.applicationId, payment)
+      : payment.ticketId
+        ? await acceptTicketPaymentAsync(payment.ticketId, payment)
+        : null
 
-    const eventDoc = await firestore.doc(`/events/${app.eventId}`)
-      .withConverter(eventConverter)
-      .get()
-    const event = eventDoc.data()
-    if (!event) return
+    if (!template) return
 
-    const space = event.spaces
-      .filter(s => s.id === app.spaceId)[0]
+    await firestore.collection('_mails')
+      .add({
+        to: user.email,
+        message: {
+          subject: template.subject,
+          text: template.body.join('\n')
+        }
+      })
+  })
 
-    const template = mailConfig.templates.acceptCirclePayment(payment, app, event, space)
+export const acceptInquiry = functions.firestore
+  .document('/_inquiries/{inquiryId}')
+  .onCreate(async (snapshot: QueryDocumentSnapshot) => {
+    const inquiry = snapshot.data() as SockbaseInquiryDocument
+
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const user = await getUser(inquiry.userId)
+    const userData = await getUserDataAsync(user.uid)
+
+    const template = mailConfig.templates.acceptInquiry(inquiry, userData)
     await firestore.collection('_mails')
       .add({
         to: user.email,
@@ -161,7 +215,7 @@ export const acceptPayment = functions.firestore
   })
 
 const requestCirclePaymentAsync =
-  async (appId: string, payment: SockbasePaymentDocument): Promise<{ subject: string, body: string[] }> => {
+  async (appId: string, payment: SockbasePaymentDocument, email: string): Promise<{ subject: string, body: string[] }> => {
     const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
@@ -186,27 +240,86 @@ const requestCirclePaymentAsync =
     const space = event.spaces
       .filter(s => s.id === app.spaceId)[0]
 
-    return mailConfig.templates.requestCirclePayment(payment, app, event, space)
+    return mailConfig.templates.requestCirclePayment(payment, app, event, space, email)
   }
 
-export const acceptInquiry = functions.firestore
-  .document('/_inquiries/{inquiryId}')
-  .onCreate(async (snapshot: QueryDocumentSnapshot) => {
-    const inquiry = snapshot.data() as SockbaseInquiryDocument
-
+const acceptCirclePaymentAsync =
+  async (appId: string, payment: SockbasePaymentDocument): Promise<{ subject: string; body: string[] }> => {
     const adminApp = FirebaseAdmin.getFirebaseAdmin()
     const firestore = adminApp.firestore()
 
-    const user = await getUser(inquiry.userId)
-    const userData = await getUserDataAsync(user.uid)
+    const appDoc = await firestore.doc(`/_applications/${appId}`)
+      .withConverter(applicationConverter)
+      .get()
+    const app = appDoc.data()
+    if (!app) {
+      throw new Error('application not found')
+    }
 
-    const template = mailConfig.templates.acceptInquiry(inquiry, userData)
-    await firestore.collection('_mails')
-      .add({
-        to: user.email,
-        message: {
-          subject: template.subject,
-          text: template.body.join('\n')
-        }
-      })
-  })
+    const eventDoc = await firestore.doc(`/events/${app.eventId}`)
+      .withConverter(eventConverter)
+      .get()
+    const event = eventDoc.data()
+    if (!event) {
+      throw new Error('event not found')
+    }
+
+    const space = event.spaces
+      .filter(s => s.id === app.spaceId)[0]
+
+    return mailConfig.templates.acceptCirclePayment(payment, app, event, space)
+  }
+
+const requestTicketPaymentAsync =
+  async (ticketId: string, payment: SockbasePaymentDocument, email: string): Promise<{ subject: string; body: string[] }> => {
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const ticketDoc = await firestore.doc(`/_tickets/${ticketId}`)
+      .withConverter(ticketConverter)
+      .get()
+    const ticket = ticketDoc.data()
+    if (!ticket) {
+      throw new Error('ticket not found')
+    }
+
+    const storeDoc = await firestore.doc(`/stores/${ticket.storeId}`)
+      .withConverter(storeConverter)
+      .get()
+    const store = storeDoc.data()
+    if (!store) {
+      throw new Error('store not found')
+    }
+
+    const type = store.types
+      .filter(t => t.id === ticket.typeId)[0]
+
+    return mailConfig.templates.requestTicketPayment(payment, ticket, store, type, email)
+  }
+
+const acceptTicketPaymentAsync =
+  async (ticketId: string, payment: SockbasePaymentDocument): Promise<{ subject: string; body: string[] }> => {
+    const adminApp = FirebaseAdmin.getFirebaseAdmin()
+    const firestore = adminApp.firestore()
+
+    const ticketDoc = await firestore.doc(`/_tickets/${ticketId}`)
+      .withConverter(ticketConverter)
+      .get()
+    const ticket = ticketDoc.data()
+    if (!ticket) {
+      throw new Error('ticket not found')
+    }
+
+    const storeDoc = await firestore.doc(`/stores/${ticket.storeId}`)
+      .withConverter(storeConverter)
+      .get()
+    const store = storeDoc.data()
+    if (!store) {
+      throw new Error('store not found')
+    }
+
+    const type = store.types
+      .filter(t => t.id === ticket.typeId)[0]
+
+    return mailConfig.templates.acceptTicketPayment(payment, store, type, ticket)
+  }

@@ -39,10 +39,10 @@ const TicketView: React.FC = () => {
     <TicketLayout ticketUser={ticketUser} store={store}>
       {(!ticketUser || !store)
         && <LoadingContainer>
-          <Loading text="チケット情報" />
+          {ticketUser === undefined && <Loading text="チケット情報" />}
           {ticketUser === null
             && <Alert title="チケットの取得に失敗しました">
-              チケットの取得に失敗しました
+              URLが間違っている可能性があります。
             </Alert>}
         </LoadingContainer>}
       {ticketHashId && ticketUser && store && user !== undefined

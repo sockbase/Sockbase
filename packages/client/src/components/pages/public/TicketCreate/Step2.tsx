@@ -6,6 +6,8 @@ import FormSection from '../../../Form/FormSection'
 import LoadingCircleWrapper from '../../../Parts/LoadingCircleWrapper'
 import sockbaseShared from 'shared'
 import useDayjs from '../../../../hooks/useDayjs'
+import useFirebaseError from '../../../../hooks/useFirebaseError'
+import Alert from '../../../Parts/Alert'
 
 interface Props {
   store: SockbaseStoreDocument
@@ -19,8 +21,10 @@ interface Props {
 }
 const Step2: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
+  const { localize } = useFirebaseError()
 
   const [isProgressing, setProgressing] = useState(false)
+  const [error, setError] = useState<string | null>()
 
   const selectedType = useMemo((): SockbaseStoreType | null => {
     if (!props.store || !props.ticketInfo) return null
@@ -39,7 +43,10 @@ const Step2: React.FC<Props> = (props) => {
 
     props.submitTicket()
       .then(() => props.nextStep())
-      .catch(() => setProgressing(false))
+      .catch((err: Error) => {
+        setError(localize(err.message))
+        setProgressing(false)
+      })
   }
 
   return (
@@ -107,6 +114,10 @@ const Step2: React.FC<Props> = (props) => {
       <p>
         修正する場合は「修正」ボタンを押してください。
       </p>
+
+      {error && <Alert type="danger" title="エラーが発生しました">
+        {error}
+      </Alert>}
 
       <FormSection>
         <FormItem>
