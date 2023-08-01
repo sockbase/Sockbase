@@ -110,6 +110,12 @@ const menu: MenuSection[] = [
         link: '/dashboard/events'
       },
       {
+        key: 'manageStores',
+        icon: <MdStore />,
+        text: 'チケットストア管理',
+        link: '/dashboard/stores'
+      },
+      {
         key: 'manageInquiries',
         icon: <MdInbox />,
         text: '問い合わせ管理',
@@ -147,13 +153,6 @@ const menu: MenuSection[] = [
         key: 'omnisearch',
         icon: <MdManageSearch />,
         text: '横断検索',
-        link: '',
-        isDisabled: true
-      },
-      {
-        key: 'manageStores',
-        icon: <MdStore />,
-        text: 'チケットストア管理',
         link: '',
         isDisabled: true
       }

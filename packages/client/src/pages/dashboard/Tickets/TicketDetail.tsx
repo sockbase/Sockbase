@@ -121,14 +121,16 @@ const TicketDetail: React.FC = () => {
   }
   useEffect(onFetchedTicket, [ticket])
 
+  const type = useMemo(() => {
+    if (!store || !ticket) return
+    return store.types
+      .filter(t => t.id === ticket.typeId)[0]
+  }, [store, ticket])
 
   const pageTitle = useMemo(() => {
-    if (!ticket || !store) return undefined
-    const type = store.types
-      .filter(t => t.id === ticket.typeId)[0]
-
+    if (!store || !type) return undefined
     return `${store.storeName} (${type.name})`
-  }, [ticket, store])
+  }, [store, type])
 
   const assignURL = useMemo(() =>
     ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}` || '',
@@ -190,7 +192,7 @@ const TicketDetail: React.FC = () => {
                     || <BlinkField />}
                 </td>
               </tr>
-              <tr>
+              {type?.productInfo && <tr>
                 <th>お支払い状況</th>
                 <td>
                   {(payment?.status !== undefined
@@ -199,7 +201,7 @@ const TicketDetail: React.FC = () => {
                     </Link>)
                     || <BlinkField />}
                 </td>
-              </tr>
+              </tr>}
               <tr>
                 <th>割り当て状況</th>
                 <td>{(ticketUser && (ticketUser.usableUserId ? '割り当て済み' : '未割り当て')) ?? <BlinkField />}</td>

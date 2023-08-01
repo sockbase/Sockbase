@@ -217,6 +217,7 @@ export type SockbaseTicketDocument = SockbaseTicket & {
   createdAt: Date | null
   updatedAt: Date | null
   hashId: string | null
+  createdUserId: string | null
 }
 
 /**
@@ -280,6 +281,14 @@ export interface SockbaseTicketHashIdDocument {
 export interface SockbaseTicketAddedResult {
   hashId: string
   bankTransferCode: string
+}
+
+/**
+ * チケット作成リザルト(管理用)
+ */
+export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
+  email: string
+  createdAt: number
 }
 
 /**
