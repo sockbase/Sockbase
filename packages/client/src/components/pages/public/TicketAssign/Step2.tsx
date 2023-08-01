@@ -9,6 +9,8 @@ import FormButton from '../../../Form/Button'
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
 import LoadingCircleWrapper from '../../../Parts/LoadingCircleWrapper'
+import Alert from '../../../Parts/Alert'
+import useFirebaseError from '../../../../hooks/useFirebaseError'
 
 interface Props {
   store: SockbaseStoreDocument
@@ -20,15 +22,18 @@ interface Props {
   prevStep: () => void
 }
 const Step2: React.FC<Props> = (props) => {
+  const { localize } = useFirebaseError()
+
   const [isProgress, setProgress] = useState(false)
+  const [error, setError] = useState<string>()
 
   const handleSubmit = (): void => {
     setProgress(true)
     props.submitAssignTicket()
       .then(() => props.nextStep())
       .catch(err => {
+        setError(localize(err.message))
         setProgress(false)
-        throw err
       })
   }
 
@@ -84,6 +89,10 @@ const Step2: React.FC<Props> = (props) => {
           </tr>
         </tbody>
       </table>
+
+      {error && <Alert type="danger" title="エラーが発生しました">
+        {error}
+      </Alert>}
 
       <FormSection>
         <FormItem>
