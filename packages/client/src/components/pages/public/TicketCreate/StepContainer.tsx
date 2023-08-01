@@ -15,6 +15,8 @@ import Introduction from './Introduction'
 import useStore from '../../../../hooks/useStore'
 import useFirebase from '../../../../hooks/useFirebase'
 import useUserData from '../../../../hooks/useUserData'
+import Alert from '../../../Parts/Alert'
+import useDayjs from '../../../../hooks/useDayjs'
 
 const stepProgresses = ['入力', '確認', '決済', '完了']
 
@@ -27,6 +29,7 @@ const StepContainerComponent: React.FC<Props> = (props) => {
   const { createTicketAsync } = useStore()
   const { createUser } = useFirebase()
   const { updateUserDataAsync } = useUserData()
+  const { formatByDate } = useDayjs()
 
   const [step, setStep] = useState(0)
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
@@ -89,18 +92,22 @@ const StepContainerComponent: React.FC<Props> = (props) => {
     <>
       <h1>{props.store.storeName} 申し込み受付</h1>
 
-      <ul>
-        {props.store.descriptions.map((d, k) => <li key={k}>{d}</li>)}
-      </ul>
-
-      <StepProgress steps={
-        stepProgresses.map((i, k) => ({
-          text: i,
-          isActive: k === step - 1
-        }))
-      } />
-
-      {stepComponents?.[step] ?? ''}
+      {props.store.schedules.endApplication < new Date().getTime()
+        ? <Alert type="danger" title="申し込み受付は終了しました">
+          このチケットストアへの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication, 'YYYY年M月D日')}</b> をもって終了しました。
+        </Alert>
+        : <>
+          <ul>
+            {props.store.descriptions.map((d, k) => <li key={k}>{d}</li>)}
+          </ul>
+          <StepProgress steps={
+            stepProgresses.map((i, k) => ({
+              text: i,
+              isActive: k === step - 1
+            }))
+          } />
+          {stepComponents?.[step] ?? ''}
+        </>}
     </>
   )
 }

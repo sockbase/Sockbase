@@ -112,6 +112,23 @@ const Introduction: React.FC<Props> = (props) => {
 
       <h2>申し込み管理システムについて</h2>
 
+      <p>
+        今回のイベントは、<a href="https://nectarition.jp">ねくたりしょん</a>が運用する「Sockbase」を利用しています。<br />
+        イベントの内容に関するご質問は、イベント主催である「<a href={props.store._organization.contactUrl}>{props.store._organization.name}</a>」へ直接お問い合わせください。
+      </p>
+
+      {import.meta.env.VITE_SOCKBASE_MANAGE_ORGANIZATION_ID === props.store._organization.id
+        ? <p>
+          申し込み情報はプライバシーポリシーに則って管理いたします。
+        </p>
+        : <p>
+          申し込み情報はねくたりしょんが保管し、イベント主催である「{props.store._organization.name}」に提供いたします。
+        </p>}
+
+      <p>
+        詳しくは<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>をご確認ください。
+      </p>
+
       <FormSection>
         <FormItem>
           <FormButton onClick={() => props.nextStep()}>申し込みへ進む</FormButton>
