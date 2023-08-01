@@ -59,6 +59,10 @@ const TicketCreate: React.FC = () => {
   const createTicket = (): void => {
     if (!storeId || !createTicketData.email || !createTicketData.typeId) return
 
+
+    const typeName = getType(createTicketData.typeId)?.name
+    if (!confirm(`以下のチケットを作成します\n\nメールアドレス: ${createTicketData.email}\nチケット種別: ${typeName}\n\nよろしいですか？`)) return
+
     setProgress(true)
     setError(null)
 
@@ -136,8 +140,8 @@ const TicketCreate: React.FC = () => {
                 <option value="">チケット種別を選択してください</option>
                 {store?.types
                   .filter(t => !t.productInfo)
-                  .map(t => <option key={t.id} value={t.id}>
-                    {t.name}
+                  .map((t, i) => <option key={t.id} value={t.id}>
+                    {i + 1}: {t.name}
                   </option>)}
               </FormSelect>
               <FormHelp>
