@@ -7,7 +7,7 @@ html, body {
   height: 100dvh;
 }
 body {
-  background-image: url('/bg-pattern.png');
+  background-image: url('/assets/bg-pattern.png');
   background-position: center;
 }
 input, select, textarea {
