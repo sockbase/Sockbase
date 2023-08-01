@@ -297,7 +297,6 @@ export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdA
 export interface SockbaseAccount {
   name: string
   email: string
-  isEmailVerified?: boolean
   birthday: number
   postalCode: string
   address: string

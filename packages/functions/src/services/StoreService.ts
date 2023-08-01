@@ -8,7 +8,7 @@ import {
 import { type FirebaseError } from 'firebase-admin'
 import firebaseAdmin from '../libs/FirebaseAdmin'
 import { createPayment, generateBankTransferCode } from '../services/payment'
-import { storeConverter, ticketConverter } from '../libs/converters'
+import { storeConverter, ticketConverter, userConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
@@ -32,6 +32,20 @@ export const createTicketAsync = async (userId: string, ticket: SockbaseTicket):
   else if (store.schedules.startApplication >= timestamp || timestamp > store.schedules.endApplication) {
     throw new functions.https.HttpsError('deadline-exceeded', 'store_out_of_term')
   }
+
+  const userDoc = await firestore
+    .doc(`/users/${userId}`)
+    .withConverter(userConverter)
+    .get()
+  const userData = userDoc.data()
+  if (!userData) {
+    throw new functions.https.HttpsError('not-found', 'user')
+  }
+
+  await firestore
+    .doc(`stores/${ticket.storeId}/_users/${userId}`)
+    .withConverter(userConverter)
+    .set(userData)
 
   const hashId = generateTicketHashId(now)
   const ticketDoc: SockbaseTicketDocument = {
@@ -164,6 +178,20 @@ export const createTicketForAdminAsync = async (userId: string, storeId: string,
         throw new functions.https.HttpsError('internal', 'auth')
       }
     })
+
+  const userDoc = await firestore
+    .doc(`/users/${userId}`)
+    .withConverter(userConverter)
+    .get()
+  const userData = userDoc.data()
+  if (!userData) {
+    throw new functions.https.HttpsError('not-found', 'user')
+  }
+
+  await firestore
+    .doc(`stores/${storeId}/_users/${userId}`)
+    .withConverter(userConverter)
+    .set(userData)
 
   const hashId = generateTicketHashId(now)
   const ticketDoc: SockbaseTicketDocument = {

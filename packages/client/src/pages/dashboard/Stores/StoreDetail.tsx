@@ -23,11 +23,11 @@ const StoreDetail: React.FC = () => {
 
   const { formatByDate } = useDayjs()
   const { getStoreByIdAsync, getTicketsByStoreIdAsync, getTicketUsedStatusByIdAsync } = useStore()
-  const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
+  const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
 
   const [store, setStore] = useState<SockbaseStoreDocument>()
   const [tickets, setTickets] = useState<SockbaseTicketDocument[]>()
-  const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount>>()
+  const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount | null>>()
   const [usedStatuses, setUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
 
   const onInitialize = (): void => {
@@ -60,7 +60,7 @@ const StoreDetail: React.FC = () => {
         .map(t => t?.id ?? '')
 
       Promise.all(
-        userIds.map(async (userId) => ({ id: userId, data: await getUserDataByUserIdAndStoreIdAsync(userId, storeId) }))
+        userIds.map(async (userId) => ({ id: userId, data: await getUserDataByUserIdAndStoreIdOptionalAsync(userId, storeId) }))
       )
         .then(fetchedUsers => mapObjectUsers(fetchedUsers))
         .catch(err => { throw err })
@@ -71,9 +71,9 @@ const StoreDetail: React.FC = () => {
         .then(fetchedUsedStatuses => mapObjectTicketUsedStatuses(fetchedUsedStatuses))
         .catch(err => { throw err })
 
-      const mapObjectUsers = (users: Array<{ id: string, data: SockbaseAccount }>): void => {
+      const mapObjectUsers = (users: Array<{ id: string, data: SockbaseAccount | null }>): void => {
         const objectMappedUsers = users
-          .reduce<Record<string, SockbaseAccount>>((p, c) => ({ ...p, [c.id]: c.data }), {})
+          .reduce<Record<string, SockbaseAccount | null>>((p, c) => ({ ...p, [c.id]: c.data }), {})
         setUserDatas(objectMappedUsers)
       }
 
@@ -135,7 +135,11 @@ const StoreDetail: React.FC = () => {
                   <td>{i + 1}</td>
                   <td><Link to={`/dashboard/tickets/${t.hashId}`}>{getType(t.typeId)?.name}</Link></td>
                   <td>{(t?.id && usedStatuses?.[t.id].used ? '済' : '未') ?? <BlinkField />}</td>
-                  <td>{userDatas?.[t.userId].name ?? <BlinkField />}</td>
+                  <td>
+                    {userDatas
+                      ? userDatas?.[t.userId]?.name || '-'
+                      : <BlinkField />}
+                  </td>
                   <td>{t.hashId}</td>
                   <td>{formatByDate(t.updatedAt ?? t.createdAt, 'YYYY/MM/DD H:mm:ss')}</td>
                 </tr>)
