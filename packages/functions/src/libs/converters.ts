@@ -44,7 +44,6 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
   toFirestore: (account: types.SockbaseAccountDocument): firestore.DocumentData => ({
     name: account.name,
     email: account.email,
-    isEmailVerified: account.isEmailVerified,
     birthday: account.birthday,
     postalCode: account.postalCode,
     address: account.address,
@@ -58,7 +57,6 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
       id: snapshot.id,
       name: data.name,
       email: data.email,
-      isEmailVerified: data.isEmailVerified,
       birthday: data.birthday,
       postalCode: data.postalCode,
       address: data.address,

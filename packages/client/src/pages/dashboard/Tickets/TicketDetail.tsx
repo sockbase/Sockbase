@@ -43,13 +43,13 @@ const TicketDetail: React.FC = () => {
     assignTicketUserAsync,
     unassignTicketUserAsync
   } = useStore()
-  const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
+  const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
   const { getPaymentAsync } = usePayment()
 
   const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument>()
   const [ticket, setTicket] = useState<SockbaseTicketDocument>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
-  const [userData, setUserData] = useState<SockbaseAccount>()
+  const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
@@ -111,7 +111,7 @@ const TicketDetail: React.FC = () => {
         .then(fetchedStore => setStore(fetchedStore))
         .catch(err => { throw err })
 
-      getUserDataByUserIdAndStoreIdAsync(ticket.userId, ticket.storeId)
+      getUserDataByUserIdAndStoreIdOptionalAsync(ticket.userId, ticket.storeId)
         .then(fetchedUserData => setUserData(fetchedUserData))
         .catch(err => { throw err })
     }
@@ -218,11 +218,19 @@ const TicketDetail: React.FC = () => {
             <tbody>
               <tr>
                 <th>購入者氏名</th>
-                <td>{userData?.name ?? <BlinkField />}</td>
+                <td>
+                  {userData !== undefined
+                    ? userData?.name || '-'
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>メールアドレス</th>
-                <td>{userData?.email ?? <BlinkField />}</td>
+                <td>
+                  {userData !== undefined
+                    ? userData?.email || '-'
+                    : <BlinkField />}
+                </td>
               </tr>
             </tbody>
           </table>
