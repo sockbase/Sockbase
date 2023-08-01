@@ -68,8 +68,6 @@ const TicketCreate: React.FC = () => {
 
     createTicketForAdminAsync(storeId, createTicketData)
       .then(ticket => {
-        console.log(ticket)
-
         alert('追加しました')
         setCreatedTickets(s => ([...s, ticket]))
 
