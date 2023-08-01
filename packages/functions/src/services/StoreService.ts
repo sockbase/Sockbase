@@ -157,7 +157,7 @@ export const createTicketForAdminAsync = async (userId: string, storeId: string,
   const user = await auth
     .getUserByEmail(email)
     .catch((err: FirebaseError) => {
-      if (err.code.includes('')) {
+      if (err.code === 'auth/user-not-found') {
         throw new functions.https.HttpsError('not-found', 'user_not_found')
       } else {
         console.error(err)
