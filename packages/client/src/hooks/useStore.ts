@@ -4,6 +4,7 @@ import type {
   SockbaseStoreDocument,
   SockbaseTicket,
   SockbaseTicketAddedResult,
+  SockbaseTicketCreatedResult,
   SockbaseTicketDocument,
   SockbaseTicketHashIdDocument,
   SockbaseTicketMeta,
@@ -103,6 +104,7 @@ interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
   getStoreByIdOptionalAsync: (storeId: string) => Promise<SockbaseStoreDocument | null>
   createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
+  createTicketForAdminAsync: (storeId: string, createTicketData: { email: string; typeId: string; }) => Promise<SockbaseTicketCreatedResult>
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
   getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
@@ -110,6 +112,7 @@ interface IUseStore {
   getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
+  getTicketsByStoreIdAsync: (storeId: string) => Promise<SockbaseTicketDocument[]>
   getMyTicketsAsync: () => Promise<SockbaseTicketDocument[] | undefined>
   getUsableTicketsAsync: () => Promise<SockbaseTicketUserDocument[] | undefined>
   assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
@@ -141,11 +144,20 @@ const useStore: () => IUseStore = () => {
 
   const createTicketAsync = async (ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
     const functions = getFunctions()
-    const createApplicationFunction = FirebaseFunctions
+    const createTicketFunction = FirebaseFunctions
       .httpsCallable<SockbaseTicket, SockbaseTicketAddedResult>(functions, 'store-createTicket')
 
-    const appResult = await createApplicationFunction(ticket)
+    const appResult = await createTicketFunction(ticket)
     return appResult.data
+  }
+
+  const createTicketForAdminAsync = async (storeId: string, createTicketData: { email: string; typeId: string; }): Promise<SockbaseTicketCreatedResult> => {
+    const funcstions = getFunctions()
+    const createTicketForAdminFunction = FirebaseFunctions
+      .httpsCallable<{ storeId: string; createTicketData: { email: string; typeId: string; } }, SockbaseTicketCreatedResult>(funcstions, 'store-createTicketForAdmin')
+
+    const ticketResult = await createTicketForAdminFunction({ storeId, createTicketData })
+    return ticketResult.data
   }
 
   const getTicketIdByHashIdAsync = async (ticketHashId: string): Promise<SockbaseTicketHashIdDocument> => {
@@ -240,6 +252,21 @@ const useStore: () => IUseStore = () => {
     return ticketsDocs
   }
 
+  const getTicketsByStoreIdAsync = async (storeId: string): Promise<SockbaseTicketDocument[]> => {
+    const db = getFirestore()
+    const ticketsRef = FirestoreDB
+      .collection(db, '_tickets')
+      .withConverter(ticketConverter)
+
+    const ticketsQuery = FirestoreDB.query(ticketsRef, FirestoreDB.where('storeId', '==', storeId))
+    const ticketsSnapshot = await FirestoreDB.getDocs(ticketsQuery)
+    const ticketsDocs = ticketsSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+
+    return ticketsDocs
+  }
+
   const getMyTicketsAsync = useCallback(async (): Promise<SockbaseTicketDocument[] | undefined> => {
     if (!user) return
     return await getTicketsByUserIdAsync(user.uid)
@@ -291,6 +318,7 @@ const useStore: () => IUseStore = () => {
     getStoreByIdAsync,
     getStoreByIdOptionalAsync,
     createTicketAsync,
+    createTicketForAdminAsync,
     getTicketIdByHashIdAsync,
     getTicketByIdAsync,
     getTicketMetaByIdAsync,
@@ -298,6 +326,7 @@ const useStore: () => IUseStore = () => {
     getTicketUserByHashIdOptionalAsync,
     getTicketUsedStatusByIdAsync,
     getTicketsByUserIdAsync,
+    getTicketsByStoreIdAsync,
     getMyTicketsAsync,
     getUsableTicketsAsync,
     assignTicketUserAsync,

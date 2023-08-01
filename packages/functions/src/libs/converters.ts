@@ -196,7 +196,8 @@ export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTic
     userId: ticket.userId,
     createdAt: ticket.createdAt,
     updateAt: ticket.updatedAt,
-    hashId: ticket.hashId
+    hashId: ticket.hashId,
+    createdUserId: ticket.createdUserId
   }),
   fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketDocument => {
     const ticketDoc = snapshot.data()
@@ -208,7 +209,8 @@ export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTic
       userId: ticketDoc.userId,
       createdAt: ticketDoc.createdAt ? new Date(ticketDoc.createdAt.seconds * 1000) : null,
       updatedAt: ticketDoc.updatedAt ? new Date(ticketDoc.updatedAt.seconds * 1000) : null,
-      hashId: ticketDoc.hashId
+      hashId: ticketDoc.hashId,
+      createdUserId: ticketDoc.createdUserId
     }
   }
 }

@@ -37,6 +37,9 @@ import DashboardTicketList from './pages/dashboard/Tickets/TicketList'
 import DashboardMyTicketList from './pages/dashboard/Tickets/MyTicketList'
 import DashboardMyTicketDetail from './pages/dashboard/Tickets/MyTicketDetail'
 import DashboardTicketDetail from './pages/dashboard/Tickets/TicketDetail'
+import DashboardStoreDetail from './pages/dashboard/Stores/StoreDetail'
+import DashboardStoreList from './pages/dashboard/Stores/StoreList'
+import DashboardTicketCreate from './pages/dashboard/Stores/TicketCreate'
 import DebugDashboard from './pages/dashboard/Debug'
 import NotFound from './pages/NotFound'
 
@@ -174,6 +177,28 @@ const router = createBrowserRouter([
               {
                 path: ':hashedTicketId',
                 element: <DashboardTicketDetail />
+              }
+            ]
+          },
+          {
+            path: 'stores',
+            children: [
+              {
+                index: true,
+                element: <DashboardStoreList />
+              },
+              {
+                path: ':storeId',
+                children: [
+                  {
+                    index: true,
+                    element: <DashboardStoreDetail />,
+                  },
+                  {
+                    path: 'create',
+                    element: <DashboardTicketCreate />
+                  }
+                ]
               }
             ]
           },
