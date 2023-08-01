@@ -39,10 +39,7 @@ const StoreDetail: React.FC = () => {
         .catch(err => { throw err })
 
       getTicketsByStoreIdAsync(storeId)
-        .then(fetchedTickets => {
-          console.log(fetchedTickets)
-          setTickets(fetchedTickets)
-        })
+        .then(fetchedTickets => setTickets(fetchedTickets))
         .catch(err => { throw err })
     }
     fetchAsync()
