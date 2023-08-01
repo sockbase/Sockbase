@@ -116,7 +116,7 @@ const StoreDetail: React.FC = () => {
         <LinkButton to={`/dashboard/stores/${storeId}/create`} inlined>チケット作成</LinkButton>
       </p>
 
-      {(!store || !tickets || !userDatas) && <Loading text="チケットストア情報" />}
+      {(!store || !tickets) && <Loading text="チケットストア情報" />}
 
       {store && tickets
         && <table>
