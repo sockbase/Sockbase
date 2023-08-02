@@ -229,12 +229,12 @@ export const ticketUsedStatusConverter: firestore.FirestoreDataConverter<types.S
 
 export const ticketUserConverter: firestore.FirestoreDataConverter<types.SockbaseTicketUserDocument> = {
   toFirestore: (ticketUser: types.SockbaseTicketUserDocument) => ({
-    storeId: ticketUser.storeId,
-    typeId: ticketUser.typeId,
-    usableUserId: ticketUser.usableUserId,
+    // storeId: ticketUser.storeId,
+    // typeId: ticketUser.typeId,
+    // usableUserId: ticketUser.usableUserId,
     used: ticketUser.used,
     usedAt: ticketUser.usedAt,
-    userId: ticketUser.userId
+    // userId: ticketUser.userId
   }),
   fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketUserDocument => {
     const ticketUserDoc = snapshot.data()
