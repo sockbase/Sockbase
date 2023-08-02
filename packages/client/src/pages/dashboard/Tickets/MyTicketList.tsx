@@ -19,6 +19,7 @@ const MyTickets: React.FC = () => {
 
   const [ticketUsers, setTicketUsers] = useState<SockbaseTicketUserDocument[]>()
   const [stores, setStores] = useState<SockbaseStoreDocument[]>()
+  const [sortedTicketUsers, setSortedTicketUsers] = useState<SockbaseTicketUserDocument[]>()
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
@@ -42,6 +43,19 @@ const MyTickets: React.FC = () => {
   }
   useEffect(onInitialize, [getUsableTicketsAsync])
 
+  const onTicketUserFetched = (): void => {
+    if (!ticketUsers) return
+    const _sortedTicketUsers = [
+      ...ticketUsers
+        .filter(t => !t.used),
+      ...ticketUsers
+        .filter(t => t.used)
+        .sort((a, b) => (b.usedAt?.getTime() ?? 9) - (a.usedAt?.getTime() ?? 0)),
+    ]
+    setSortedTicketUsers(_sortedTicketUsers)
+  }
+  useEffect(onTicketUserFetched, [ticketUsers])
+
   const getStore = (storeId: string): SockbaseStoreDocument | undefined => {
     if (!stores) return
     const store = stores
@@ -62,10 +76,10 @@ const MyTickets: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title="マイチケット" icon={<MdLocalActivity />} description="あなたに割り当てられているチケットを表示中" />
 
-      {ticketUsers
+      {sortedTicketUsers
         ? <TicketsRack>
-          {ticketUsers
-            ? ticketUsers
+          {sortedTicketUsers
+            ? sortedTicketUsers
               .map(t => <TicketCard
                 key={t.hashId}
                 ticketUser={t}

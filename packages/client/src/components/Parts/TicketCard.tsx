@@ -17,7 +17,7 @@ const TicketCard: React.FC<Props> = (props) => {
 
   return (
     <Container key={props.ticketUser.hashId} to={`/dashboard/mytickets/${props.ticketUser.hashId}`}>
-      <Header color={props.ticketUser.used ? '#808080' : props.type?.color ?? '#404040'}>
+      <Header color={props.ticketUser.used ? '#c0c0c0' : props.type?.color ?? '#404040'}>
         {props.store?.storeName}
       </Header>
       <Content>
@@ -67,7 +67,7 @@ const UsedStatus = styled.div`
   color: #404040;
 `
 const TicketId = styled.div`
-  font-size: 0.5em;
+  font-size: 0.75em;
   word-break: break-all;
   color: #808080;
 `
