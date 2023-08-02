@@ -85,7 +85,7 @@ const Step1: React.FC<Props> = (props) => {
   const errorCount = useMemo((): number => {
     const validators = [
       !validator.isEmpty(ticketInfo.typeId),
-      !validator.isEmpty(ticketInfo.paymentMethod)
+      !selectedType?.productInfo || !validator.isEmpty(ticketInfo.paymentMethod)
     ]
 
     if (!props.isLoggedIn) {
@@ -135,9 +135,9 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      <h2>参加費お支払い方法</h2>
-      {
-        selectedType
+      {selectedType?.productInfo && <>
+        <h2>参加費お支払い方法</h2>
+        {selectedType
           ? <FormSection>
             <FormItem>
               <table>
@@ -173,9 +173,8 @@ const Step1: React.FC<Props> = (props) => {
               </Alert>
             </FormItem>}
           </FormSection>
-          : <Alert>申し込みたい参加種別を選択してください</Alert>
-      }
-
+          : <Alert>申し込みたい参加種別を選択してください</Alert>}
+      </>}
       <h2>申し込み責任者情報</h2>
       {!props.isLoggedIn
         ? <>
