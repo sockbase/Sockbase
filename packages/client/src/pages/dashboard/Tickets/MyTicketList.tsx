@@ -70,7 +70,7 @@ const MyTickets: React.FC = () => {
               <th>チケットストア</th>
               <th>参加種別</th>
               <th>状態</th>
-              <th></th>
+              <th>チケットID</th>
             </tr>
           </thead>
           <tbody>
@@ -80,7 +80,7 @@ const MyTickets: React.FC = () => {
                 <th><Link to={`/dashboard/mytickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
                 <td>{getTypeName(t.storeId, t.typeId)}</td>
                 <td>{t.used ? '使用済み' : '未使用'}</td>
-                <td><Link to={`/tickets/${t.hashId}`}>チケットリンク</Link></td>
+                <td>{t.hashId}</td>
               </tr>)}
             {ticketUsers?.length === 0 && <tr>
               <td colSpan={4}>

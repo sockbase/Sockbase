@@ -55,6 +55,8 @@ export const acceptTicket = functions.firestore
     const firestore = adminApp.firestore()
 
     const ticket = snapshot.data() as SockbaseTicketDocument
+    if (ticket.createdUserId) return
+
     const user = await getUser(ticket.userId)
 
     const storeDoc = await firestore.doc(`/stores/${ticket.storeId}`)

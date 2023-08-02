@@ -105,7 +105,8 @@ service cloud.firestore {
     }
 
     match /_tickets/{ticketId} {
-      allow read: if request.auth.uid == resource.data.userId;
+      allow read: if request.auth.uid == resource.data.userId
+        || isOrganizationAdmin(request.auth.uid, getStore(resource.data.storeId)._organization.id);
 
       match /private {
         match /meta {
@@ -116,6 +117,7 @@ service cloud.firestore {
         match /usedStatus {
           allow read: if getTicket(ticketId).userId == request.auth.uid
             || isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
+          allow write: if isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
         }
       }
     }

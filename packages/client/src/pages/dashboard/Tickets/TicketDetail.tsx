@@ -43,13 +43,13 @@ const TicketDetail: React.FC = () => {
     assignTicketUserAsync,
     unassignTicketUserAsync
   } = useStore()
-  const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
+  const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
   const { getPaymentAsync } = usePayment()
 
   const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument>()
   const [ticket, setTicket] = useState<SockbaseTicketDocument>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
-  const [userData, setUserData] = useState<SockbaseAccount>()
+  const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
@@ -111,7 +111,7 @@ const TicketDetail: React.FC = () => {
         .then(fetchedStore => setStore(fetchedStore))
         .catch(err => { throw err })
 
-      getUserDataByUserIdAndStoreIdAsync(ticket.userId, ticket.storeId)
+      getUserDataByUserIdAndStoreIdOptionalAsync(ticket.userId, ticket.storeId)
         .then(fetchedUserData => setUserData(fetchedUserData))
         .catch(err => { throw err })
     }
@@ -121,14 +121,16 @@ const TicketDetail: React.FC = () => {
   }
   useEffect(onFetchedTicket, [ticket])
 
+  const type = useMemo(() => {
+    if (!store || !ticket) return
+    return store.types
+      .filter(t => t.id === ticket.typeId)[0]
+  }, [store, ticket])
 
   const pageTitle = useMemo(() => {
-    if (!ticket || !store) return undefined
-    const type = store.types
-      .filter(t => t.id === ticket.typeId)[0]
-
+    if (!store || !type) return undefined
     return `${store.storeName} (${type.name})`
-  }, [ticket, store])
+  }, [store, type])
 
   const assignURL = useMemo(() =>
     ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}` || '',
@@ -190,7 +192,7 @@ const TicketDetail: React.FC = () => {
                     || <BlinkField />}
                 </td>
               </tr>
-              <tr>
+              {type?.productInfo && <tr>
                 <th>お支払い状況</th>
                 <td>
                   {(payment?.status !== undefined
@@ -199,7 +201,7 @@ const TicketDetail: React.FC = () => {
                     </Link>)
                     || <BlinkField />}
                 </td>
-              </tr>
+              </tr>}
               <tr>
                 <th>割り当て状況</th>
                 <td>{(ticketUser && (ticketUser.usableUserId ? '割り当て済み' : '未割り当て')) ?? <BlinkField />}</td>
@@ -216,11 +218,19 @@ const TicketDetail: React.FC = () => {
             <tbody>
               <tr>
                 <th>購入者氏名</th>
-                <td>{userData?.name ?? <BlinkField />}</td>
+                <td>
+                  {userData !== undefined
+                    ? userData?.name || '-'
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>メールアドレス</th>
-                <td>{userData?.email ?? <BlinkField />}</td>
+                <td>
+                  {userData !== undefined
+                    ? userData?.email || '-'
+                    : <BlinkField />}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -241,7 +251,7 @@ const TicketDetail: React.FC = () => {
         </>
 
         <>
-          {ticketUser && !ticketUser.usableUserId && <>
+          {ticketUser && !ticketUser.usableUserId && ticketUsedStatus && !ticketUsedStatus?.used && <>
             <h3>チケット割り当て</h3>
             <p>
               このチケットを使う人を選択してください。
@@ -266,7 +276,7 @@ const TicketDetail: React.FC = () => {
             </FormSection>
           </>}
 
-          {hashedTicketId && ticketUser?.usableUserId && <>
+          {hashedTicketId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && <>
             <h3>チケットを表示</h3>
             <FormSection>
               <FormItem>
