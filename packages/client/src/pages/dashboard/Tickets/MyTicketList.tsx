@@ -77,22 +77,22 @@ const MyTickets: React.FC = () => {
       <PageTitle title="マイチケット" icon={<MdLocalActivity />} description="あなたに割り当てられているチケットを表示中" />
 
       {sortedTicketUsers
-        ? <TicketsRack>
-          {sortedTicketUsers.length !== 0
-            ? sortedTicketUsers
+        ? sortedTicketUsers.length !== 0
+          ? <TicketsRack>
+            {sortedTicketUsers
               .map(t => <TicketCard
                 key={t.hashId}
                 ticketUser={t}
                 store={getStore(t.storeId)}
-                type={getType(t.storeId, t.typeId)} />)
-            : <p>
-              割り当てられているチケットはありません。<br />
-              ご自身で購入したチケットは <Link to="/dashboard/tickets">購入済みチケット一覧</Link> からご確認ください。
-            </p>}
-        </TicketsRack>
+                type={getType(t.storeId, t.typeId)} />)}
+          </TicketsRack>
+          : <p>
+            割り当てられているチケットはありません。<br />
+            ご自身で購入したチケットは <Link to="/dashboard/tickets">購入済みチケット一覧</Link> からご確認ください。
+          </p>
         : <Loading text="チケット一覧" />}
 
-    </DashboardLayout>
+    </DashboardLayout >
   )
 }
 
