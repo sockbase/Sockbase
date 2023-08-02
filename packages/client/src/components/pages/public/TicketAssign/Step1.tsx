@@ -40,6 +40,7 @@ const Step1: React.FC<Props> = (props) => {
   const onInitialize = (): void => {
     if (!props.userData) return
     setUserData(props.userData)
+    setDisplayBirthday(s => formatByDate(props.userData?.birthday, 'YYYY-MM-DD'))
   }
   useEffect(onInitialize, [props.userData])
 

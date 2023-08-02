@@ -12,6 +12,7 @@ import FormInput from '../../../Form/Input'
 import FormHelp from '../../../Form/Help'
 import useValidate from '../../../../hooks/useValidate'
 import usePostalCode from '../../../../hooks/usePostalCode'
+import useDayjs from '../../../../hooks/useDayjs'
 
 interface Props {
   store: SockbaseStoreDocument
@@ -24,6 +25,7 @@ interface Props {
 const Step1: React.FC<Props> = (props) => {
   const validator = useValidate()
   const { getAddressByPostalCode } = usePostalCode()
+  const { formatByDate } = useDayjs()
 
   const [isAgreed, setAgreed] = useState(false)
   const [ticketInfo, setTicketInfo] = useState<SockbaseTicket>({
@@ -47,6 +49,7 @@ const Step1: React.FC<Props> = (props) => {
     if (!props.ticketInfo || !props.userData) return
     setTicketInfo(props.ticketInfo)
     setUserData(props.userData)
+    setDisplayBirthday(s => formatByDate(props.userData?.birthday, 'YYYY-MM-DD'))
   }
   useEffect(onInitialize, [props.ticketInfo, props.userData])
 
