@@ -31,6 +31,7 @@ import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 import LinkButton from '../../../components/Parts/LinkButton'
 import FormButton from '../../../components/Form/Button'
+import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 
 const ApplicationDetailContainer: React.FC = () => {
   const {
@@ -184,7 +185,7 @@ const ApplicationDetailContainer: React.FC = () => {
               </tr>
               <tr>
                 <th>申し込み状況</th>
-                <td>{app && sockbaseShared.constants.application.statusText[app.meta.applicationStatus] || <BlinkField />}</td>
+                <td>{app && <ApplicationStatusLabel status={app.meta.applicationStatus} /> || <BlinkField />}</td>
               </tr>
               <tr>
                 <th>お支払い状況</th>
