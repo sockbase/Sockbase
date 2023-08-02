@@ -75,7 +75,11 @@ export const createTicketAsync = async (userId: string, ticket: SockbaseTicket):
     })
 
   const type = store.types
+    .filter(t => !t.private)
     .filter(t => t.id === ticket.typeId)[0]
+  if (!type) {
+    throw new functions.https.HttpsError('not-found', 'type');
+  }
 
   const bankTransferCode = generateBankTransferCode(now)
 

@@ -125,10 +125,12 @@ const Step1: React.FC<Props> = (props) => {
           <FormRadio
             name="type"
             values={
-              props.store.types.map(t => ({
-                text: `${t.name} ${t.price.toLocaleString()}円 / ${t.description}`,
-                value: t.id
-              }))
+              props.store.types
+                .filter(t => !t.private)
+                .map(t => ({
+                  text: `${t.name} ${t.price.toLocaleString()}円 / ${t.description}`,
+                  value: t.id
+                }))
             }
             value={ticketInfo.typeId}
             onChange={v => setTicketInfo(s => ({ ...s, typeId: v }))} />
