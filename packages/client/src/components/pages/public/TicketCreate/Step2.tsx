@@ -80,32 +80,31 @@ const Step2: React.FC<Props> = (props) => {
         </tbody>
       </table>
 
-      <h2>参加費</h2>
+      {selectedType?.productInfo && <>
+        <h2>参加費</h2>
+        <h3>選択された参加種別</h3>
+        <table>
+          <tbody>
+            <tr>
+              <th>参加種別</th>
+              <td>{selectedType?.name}</td>
+            </tr>
+            <tr>
+              <th>詳細</th>
+              <td>{selectedType?.description}</td>
+            </tr>
+            <tr>
+              <th>参加費</th>
+              <td>{selectedType?.price.toLocaleString()}円</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <h3>選択された参加種別</h3>
-
-      <table>
-        <tbody>
-          <tr>
-            <th>参加種別</th>
-            <td>{selectedType?.name}</td>
-          </tr>
-          <tr>
-            <th>詳細</th>
-            <td>{selectedType?.description}</td>
-          </tr>
-          <tr>
-            <th>参加費</th>
-            <td>{selectedType?.price.toLocaleString()}円</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3>決済方法</h3>
-
-      <p>
-        {selectedPaymentMethod}
-      </p>
+        <h3>決済方法</h3>
+        <p>
+          {selectedPaymentMethod}
+        </p>
+      </>}
 
       <h1>申し込み情報送信</h1>
       <p>
