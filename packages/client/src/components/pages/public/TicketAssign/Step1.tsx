@@ -49,20 +49,19 @@ const Step1: React.FC<Props> = (props) => {
   }
   useEffect(onChangeBirthday, [displayBirthday])
 
-  const handleFilledPostalCode: (postalCode: string) => void =
-    (postalCode) => {
-      const sanitizedPostalCode = postalCode.replaceAll('-', '')
-      if (sanitizedPostalCode.length !== 7) return
+  const handleFilledPostalCode = (postalCode: string): void => {
+    const sanitizedPostalCode = postalCode.replaceAll('-', '')
+    if (sanitizedPostalCode.length !== 7) return
 
-      getAddressByPostalCode(sanitizedPostalCode)
-        .then(address => setUserData(s => ({
-          ...s,
-          address
-        })))
-        .catch(err => {
-          throw err
-        })
-    }
+    getAddressByPostalCode(sanitizedPostalCode)
+      .then(address => setUserData(s => ({
+        ...s,
+        address
+      })))
+      .catch(err => {
+        throw err
+      })
+  }
 
   const handleSubmit = (): void => {
     if (!isAgreed || errorCount > 0) return
