@@ -8,7 +8,7 @@ import type {
   SockbaseTicketDocument
 } from 'sockbase'
 import { Link } from 'react-router-dom'
-import PaymentStatusLabel from '../../../Parts/PaymentStatusLabel'
+import PaymentStatusLabel from '../../../Parts/StatusLabel/PaymentStatusLabel'
 
 interface Props {
   payments: SockbasePaymentDocument[]

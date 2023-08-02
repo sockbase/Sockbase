@@ -5,7 +5,8 @@ import {
   type SockbaseTicketMeta,
   type SockbaseStoreDocument,
   type SockbaseTicketDocument,
-  type SockbaseStoreType
+  type SockbaseStoreType,
+  type SockbaseApplicationStatus
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import PageTitle from '../../../components/Layout/Dashboard/PageTitle'
@@ -13,8 +14,8 @@ import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import useStore from '../../../hooks/useStore'
 import useDayjs from '../../../hooks/useDayjs'
 import Loading from '../../../components/Parts/Loading'
-import sockbaseShared from 'shared'
-import StoreTypeLabel from '../../../components/Parts/StoreTypeLabel'
+import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel'
+import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 
 const TicketList: React.FC = () => {
   const { getMyTicketsAsync, getStoreByIdAsync, getTicketMetaByIdAsync } = useStore()
@@ -72,11 +73,11 @@ const TicketList: React.FC = () => {
       .filter(t => t.id === typeId)[0]
   }
 
-  const getTicketApplicationStatus = (ticketId: string): string => {
-    if (!ticketMetas) return ''
+  const getTicketApplicationStatus = (ticketId: string): SockbaseApplicationStatus => {
+    if (!ticketMetas) return 0
     const ticketMeta = ticketMetas.filter(t => t.ticketId === ticketId)[0]
 
-    return sockbaseShared.constants.application.statusText[ticketMeta.applicationStatus]
+    return ticketMeta.applicationStatus
   }
 
   return (
@@ -104,7 +105,7 @@ const TicketList: React.FC = () => {
                 <td>{tickets.length - i}</td>
                 <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
                 <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
-                <td>{t.id && getTicketApplicationStatus(t.id)}</td>
+                <td>{t.id && <ApplicationStatusLabel status={getTicketApplicationStatus(t.id)} />}</td>
                 <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年M月D日 H時mm分')}</td>
               </tr>)}
             {tickets?.length === 0 && <tr>

@@ -93,7 +93,6 @@ const useUserData: () => IUseUserData = () => {
   }
 
   const getUserDataByUserIdAndStoreIdAsync = async (userId: string, storeId: string): Promise<SockbaseAccount> => {
-    console.log(userId)
     const db = getFirestore()
     const userRef = FirestoreDB
       .doc(db, `stores/${storeId}/_users/${userId}`)

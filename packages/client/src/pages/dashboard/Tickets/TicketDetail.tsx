@@ -21,14 +21,15 @@ import useStore from '../../../hooks/useStore'
 import useDayjs from '../../../hooks/useDayjs'
 import useUserData from '../../../hooks/useUserData'
 import usePayment from '../../../hooks/usePayment'
-import sockbaseShared from 'shared'
-import PaymentStatusLabel from '../../../components/Parts/PaymentStatusLabel'
+import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
 import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 import FormButton from '../../../components/Form/Button'
 import FormInput from '../../../components/Form/Input'
 import LinkButton from '../../../components/Parts/LinkButton'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
+import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
+import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 
 const TicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -188,7 +189,7 @@ const TicketDetail: React.FC = () => {
                 <th>申し込み状況</th>
                 <td>
                   {(ticketMeta?.applicationStatus !== undefined
-                    && sockbaseShared.constants.application.statusText[ticketMeta.applicationStatus])
+                    && <ApplicationStatusLabel status={ticketMeta?.applicationStatus} />)
                     || <BlinkField />}
                 </td>
               </tr>
@@ -208,7 +209,7 @@ const TicketDetail: React.FC = () => {
               </tr>
               <tr>
                 <th>使用状況</th>
-                <td>{(ticketUsedStatus && (ticketUsedStatus?.used ? '使用済み' : '未使用')) ?? <BlinkField />}</td>
+                <td>{(ticketUsedStatus && <TicketUsedStatusLabel status={ticketUsedStatus.used} />) ?? <BlinkField />}</td>
               </tr>
             </tbody>
           </table>

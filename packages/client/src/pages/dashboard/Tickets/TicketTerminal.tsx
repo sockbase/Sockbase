@@ -9,7 +9,8 @@ import {
   type SockbaseStoreDocument,
   type SockbaseTicketDocument,
   type SockbaseTicketHashIdDocument,
-  type SockbaseTicketUserDocument
+  type SockbaseTicketUserDocument,
+  type SockbaseTicketMeta
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
@@ -29,7 +30,10 @@ import BlinkField from '../../../components/Parts/BlinkField'
 import useFirebaseError from '../../../hooks/useFirebaseError'
 import useQRReader from '../../../hooks/useQRReader'
 import FormCheckbox from '../../../components/Form/Checkbox'
-import StoreTypeLabel from '../../../components/Parts/StoreTypeLabel'
+import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel'
+import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
+import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 
 const TicketTerminal: React.FC = () => {
   const { formatByDate } = useDayjs()
@@ -39,6 +43,7 @@ const TicketTerminal: React.FC = () => {
     getStoreByIdAsync,
     getTicketIdByHashIdAsync,
     getTicketUsedStatusByIdAsync,
+    getTicketMetaByIdAsync,
     getTicketByIdAsync,
     updateTicketUsedStatusByIdAsync
   } = useStore()
@@ -52,6 +57,7 @@ const TicketTerminal: React.FC = () => {
   const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument | null>()
   const [usedStatus, setUsedStatus] = useState<SockbaseTicketUsedStatus | null>()
   const [ticket, setTicket] = useState<SockbaseTicketDocument | null>()
+  const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta | null>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
   const [ownerUser, setOwnerUser] = useState<SockbaseAccount | null>()
   const [usableUser, setUsableUser] = useState<SockbaseAccount | null>()
@@ -69,6 +75,7 @@ const TicketTerminal: React.FC = () => {
     setStore(undefined)
     setTicketHash(undefined)
     setUsedStatus(undefined)
+    setTicketMeta(undefined)
     setTicket(undefined)
     setPayment(undefined)
     setOwnerUser(undefined)
@@ -82,6 +89,7 @@ const TicketTerminal: React.FC = () => {
       setStore(null)
       setTicketHash(null)
       setUsedStatus(null)
+      setTicketMeta(null)
       setTicket(null)
       setPayment(null)
       setOwnerUser(null)
@@ -119,6 +127,9 @@ const TicketTerminal: React.FC = () => {
     getTicketUsedStatusByIdAsync(ticketHash.ticketId)
       .then(fetchedUsedStatus => setUsedStatus(fetchedUsedStatus))
       .catch(err => { throw err })
+    getTicketMetaByIdAsync(ticketHash.ticketId)
+      .then(fetchedMeta => setTicketMeta(fetchedMeta))
+      .catch(err => { throw err })
 
     if (ticketHash.paymentId) {
       getPaymentAsync(ticketHash.paymentId)
@@ -146,7 +157,9 @@ const TicketTerminal: React.FC = () => {
 
     updateTicketUsedStatusByIdAsync(ticketHash.ticketId, used)
       .then(() => {
-        setTicketHash(s => (s && { ...s, used, usedAt: new Date() }))
+        const now = new Date()
+        setTicketHash(s => (s && { ...s, used, usedAt: now }))
+        setTicketUser(s => (s && { ...s, used, usedAt: now }))
         alert(`使用ステータスを ${used ? '使用済み' : '未使用'} に変更しました。`)
       })
       .catch((err: Error) => {
@@ -171,6 +184,13 @@ const TicketTerminal: React.FC = () => {
     return store.types
       .filter(t => t.id === ticketUser.typeId)[0]
   }, [ticketUser, store])
+
+  const canUseTicket = useMemo(() => {
+    if (ticketMeta?.applicationStatus !== 2) return false
+    if (!ticketUser?.usableUserId) return false
+    if (type?.productInfo && payment?.status !== 1) return false
+    return true
+  }, [ticketMeta, ticketUser, type, payment])
 
   return (
     <DashboardLayout title="チケット照会ターミナル">
@@ -219,66 +239,103 @@ const TicketTerminal: React.FC = () => {
             正しいチケットIDを入力してください。
           </Alert>}
         </>
-        <>
-          {ticketUser && <table>
-            <tbody>
-              <tr>
-                <th>チケットストア</th>
-                <td>{store !== null ? store?.storeName : <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>参加種別</th>
-                <td>{(type && <StoreTypeLabel type={type} />) ?? <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>申し込み日時</th>
-                <td>
-                  {ticket !== null
-                    ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年M月D日 H時mm分')
-                    : <BlinkField />}
-                </td>
-              </tr>
-              <tr>
-                <th>使用日時</th>
-                <td>
-                  {ticketUser !== null
-                    ? ticketUser?.usedAt && formatByDate(ticketUser.usedAt, 'YYYY年M月D日 H時mm分')
-                    : <BlinkField />}
-                </td>
-              </tr>
-              {type?.productInfo
-                && <tr>
-                  <th>決済状況</th>
-                  <td>{payment !== null ? payment?.status : <BlinkField />}</td>
-                </tr>}
-              <tr>
-                <th>使用者</th>
-                <td>{usableUser !== null ? usableUser?.name : <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>購入者</th>
-                <td>{ownerUser !== null ? ownerUser?.name : <BlinkField />}</td>
-              </tr>
-            </tbody>
-          </table>}
 
-          {usedStatus
-            && <FormSection>
-              {!usedStatus.used
-                ? <FormItem>
-                  <FormButton onClick={() => updateTicketUsedStatus(true)} disabled={isProgressForUsedStatus}>
-                    使用済みにする
-                  </FormButton>
-                </FormItem>
-                : <FormItem>
-                  <FormButton onClick={() => updateTicketUsedStatus(false)} color="default" disabled={isProgressForUsedStatus}>
-                    未使用にする
-                  </FormButton>
-                </FormItem>}
-            </FormSection>}
-          {usedStatusError && <Alert type="danger" title="エラーが発生しました">
-            {usedStatusError}
-          </Alert>}
+        <>
+          {ticketUser && <>
+            {ticketMeta && type
+              && (ticketMeta.applicationStatus !== 2 || !ticketUser.usableUserId || (type.productInfo && payment?.status !== 1))
+              && <Alert type="danger" title="このチケットは使用できません。">
+                <ul>
+                  {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。</li>}
+                  {!ticketUser.usableUserId && <li>チケットの割り当てが行われていません。</li>}
+                  {type.productInfo && payment?.status !== 1 && <li>支払いが完了していません。</li>}
+                </ul>
+              </Alert>}
+
+            {usedStatus
+              && <FormSection>
+                {!usedStatus.used
+                  ? <FormItem>
+                    <FormButton onClick={() => updateTicketUsedStatus(true)} disabled={isProgressForUsedStatus || !canUseTicket}>
+                      使用済みにする
+                    </FormButton>
+                  </FormItem>
+                  : <FormItem>
+                    <FormButton onClick={() => updateTicketUsedStatus(false)} color="default" disabled={isProgressForUsedStatus}>
+                      未使用にする
+                    </FormButton>
+                  </FormItem>}
+              </FormSection>}
+            {usedStatusError && <Alert type="danger" title="エラーが発生しました">
+              {usedStatusError}
+            </Alert>}
+
+            <table>
+              <tbody>
+                <tr>
+                  <th>チケットストア</th>
+                  <td>{store !== null ? store?.storeName : <BlinkField />}</td>
+                </tr>
+                <tr>
+                  <th>参加種別</th>
+                  <td>{(type && <StoreTypeLabel type={type} />) ?? <BlinkField />}</td>
+                </tr>
+                <tr>
+                  <th>申し込みステータス</th>
+                  <td>
+                    {ticketMeta !== null
+                      ? <ApplicationStatusLabel status={ticketMeta?.applicationStatus} />
+                      : <BlinkField />}
+                  </td>
+                </tr>
+                {type?.productInfo
+                  && <tr>
+                    <th>決済状況</th>
+                    <td>
+                      {payment !== null
+                        ? <PaymentStatusLabel status={payment?.status} />
+                        : <BlinkField />}
+                    </td>
+                  </tr>}
+                <tr>
+                  <th>申し込み日時</th>
+                  <td>
+                    {ticket !== null
+                      ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年M月D日 H時mm分')
+                      : <BlinkField />}
+                  </td>
+                </tr>
+                <tr>
+                  <th>購入者</th>
+                  <td>{ownerUser !== null ? ownerUser?.name : <BlinkField />}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table>
+              <tbody>
+                <tr>
+                  <th>使用ステータス</th>
+                  <td>
+                    {ticketUser !== null
+                      ? <TicketUsedStatusLabel status={ticketUser.used} />
+                      : <BlinkField />}
+                  </td>
+                </tr>
+                <tr>
+                  <th>使用者</th>
+                  <td>{usableUser !== null ? usableUser?.name : <BlinkField />}</td>
+                </tr>
+                <tr>
+                  <th>使用日時</th>
+                  <td>
+                    {ticketUser !== null
+                      ? ticketUser?.usedAt && formatByDate(ticketUser.usedAt, 'YYYY年M月D日 H時mm分') || '未使用'
+                      : <BlinkField />}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </>}
         </>
       </TwoColumnsLayout>
     </DashboardLayout >
