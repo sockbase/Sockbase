@@ -78,7 +78,7 @@ const MyTickets: React.FC = () => {
 
       {sortedTicketUsers
         ? <TicketsRack>
-          {sortedTicketUsers
+          {sortedTicketUsers.length !== 0
             ? sortedTicketUsers
               .map(t => <TicketCard
                 key={t.hashId}
