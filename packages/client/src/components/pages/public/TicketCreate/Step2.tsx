@@ -33,7 +33,7 @@ const Step2: React.FC<Props> = (props) => {
   }, [props.store, props.ticketInfo])
 
   const selectedPaymentMethod = useMemo((): string => {
-    if (!props.ticketInfo) return ''
+    if (!props.ticketInfo?.paymentMethod) return ''
     return sockbaseShared.constants.payment.methods
       .filter(p => p.id === props.ticketInfo?.paymentMethod)[0].description
   }, [props.ticketInfo])
@@ -87,15 +87,15 @@ const Step2: React.FC<Props> = (props) => {
           <tbody>
             <tr>
               <th>参加種別</th>
-              <td>{selectedType?.name}</td>
+              <td>{selectedType.name}</td>
             </tr>
             <tr>
               <th>詳細</th>
-              <td>{selectedType?.description}</td>
+              <td>{selectedType.description}</td>
             </tr>
             <tr>
               <th>参加費</th>
-              <td>{selectedType?.price.toLocaleString()}円</td>
+              <td>{selectedType.price.toLocaleString()}円</td>
             </tr>
           </tbody>
         </table>
