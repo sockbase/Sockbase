@@ -17,6 +17,7 @@ import useDayjs from '../../../hooks/useDayjs'
 import useUserData from '../../../hooks/useUserData'
 import BlinkField from '../../../components/Parts/BlinkField'
 import LinkButton from '../../../components/Parts/LinkButton'
+import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 
 const StoreDetail: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
@@ -149,7 +150,7 @@ const StoreDetail: React.FC = () => {
                 .map((t, i) => <tr key={t.id}>
                   <td>{i + 1}</td>
                   <td><Link to={`/dashboard/tickets/${t.hashId}`}>{getType(t.typeId)?.name}</Link></td>
-                  <td>{(t?.id && usedStatuses?.[t.id].used ? '済' : '未') ?? <BlinkField />}</td>
+                  <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
                   <td>
                     {userDatas
                       ? userDatas?.[t.userId]?.name || '-'
