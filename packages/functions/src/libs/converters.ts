@@ -212,3 +212,40 @@ export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTic
     }
   }
 }
+
+export const ticketUsedStatusConverter: firestore.FirestoreDataConverter<types.SockbaseTicketUsedStatus> = {
+  toFirestore: (usedStatus: types.SockbaseTicketUsedStatus) => ({
+    used: usedStatus.used,
+    usedAt: usedStatus.usedAt
+  }),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketUsedStatus => {
+    const ticketDoc = snapshot.data()
+    return {
+      used: ticketDoc.used,
+      usedAt: ticketDoc.usedAt ? new Date(ticketDoc.usedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const ticketUserConverter: firestore.FirestoreDataConverter<types.SockbaseTicketUserDocument> = {
+  toFirestore: (ticketUser: types.SockbaseTicketUserDocument) => ({
+    // storeId: ticketUser.storeId,
+    // typeId: ticketUser.typeId,
+    // usableUserId: ticketUser.usableUserId,
+    used: ticketUser.used,
+    usedAt: ticketUser.usedAt,
+    // userId: ticketUser.userId
+  }),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketUserDocument => {
+    const ticketUserDoc = snapshot.data()
+    return {
+      hashId: snapshot.id,
+      storeId: ticketUserDoc.storeId,
+      typeId: ticketUserDoc.typeId,
+      usableUserId: ticketUserDoc.usableUserId,
+      used: ticketUserDoc.used,
+      usedAt: ticketUserDoc.usedAt ? new Date(ticketUserDoc.usedAt.seconds * 1000) : null,
+      userId: ticketUserDoc.userId
+    }
+  }
+}

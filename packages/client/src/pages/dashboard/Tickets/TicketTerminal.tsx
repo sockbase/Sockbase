@@ -231,10 +231,18 @@ const TicketTerminal: React.FC = () => {
                 <td>{(type && <StoreTypeLabel type={type} />) ?? <BlinkField />}</td>
               </tr>
               <tr>
-                <th>申し込み日</th>
+                <th>申し込み日時</th>
                 <td>
                   {ticket !== null
                     ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年M月D日 H時mm分')
+                    : <BlinkField />}
+                </td>
+              </tr>
+              <tr>
+                <th>使用日時</th>
+                <td>
+                  {ticketUser !== null
+                    ? ticketUser?.usedAt && formatByDate(ticketUser.usedAt, 'YYYY年M月D日 H時mm分')
                     : <BlinkField />}
                 </td>
               </tr>

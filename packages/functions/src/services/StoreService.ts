@@ -3,15 +3,16 @@ import {
   type SockbaseTicketDocument,
   type SockbaseTicket,
   type SockbaseTicketAddedResult,
-  type SockbaseTicketCreatedResult
+  type SockbaseTicketCreatedResult,
+  type SockbaseTicketUsedStatus
 } from 'sockbase'
 import { type FirebaseError } from 'firebase-admin'
-import firebaseAdmin from '../libs/FirebaseAdmin'
 import { createPayment, generateBankTransferCode } from '../services/payment'
-import { storeConverter, ticketConverter, userConverter } from '../libs/converters'
+import { storeConverter, ticketConverter, ticketUserConverter, userConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
+import firebaseAdmin from '../libs/FirebaseAdmin'
 
 export const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
   const now = new Date()
@@ -252,4 +253,26 @@ export const createTicketForAdminAsync = async (userId: string, storeId: string,
     createdAt: ticketDoc.createdAt?.getTime() ?? 0,
     email: user.email ?? ''
   }
+}
+
+export const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: SockbaseTicketUsedStatus): Promise<void> => {
+  const adminApp = firebaseAdmin.getFirebaseAdmin()
+  const firestore = adminApp.firestore()
+
+  const ticketDoc = await firestore
+    .doc(`_tickets/${ticketId}`)
+    .withConverter(ticketConverter)
+    .get()
+  const ticket = ticketDoc.data()
+  if (!ticket) {
+    throw new Error('ticket not found')
+  }
+
+  await firestore
+    .doc(`_ticketUsers/${ticket.hashId}`)
+    .withConverter(ticketUserConverter)
+    .set({
+      used: ticketUsed.used,
+      usedAt: ticketUsed.usedAt
+    }, { merge: true })
 }

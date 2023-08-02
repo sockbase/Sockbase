@@ -90,6 +90,7 @@ const TicketList: React.FC = () => {
         ? <table>
           <thead>
             <tr>
+              <th>#</th>
               <th>チケットストア</th>
               <th>参加種別</th>
               <th>申し込み状況</th>
@@ -99,12 +100,12 @@ const TicketList: React.FC = () => {
           <tbody>
             {tickets
               .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
-              .map(t => <tr key={t.id}>
+              .map((t, i) => <tr key={t.id}>
+                <td>{tickets.length - i}</td>
                 <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
                 <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
                 <td>{t.id && getTicketApplicationStatus(t.id)}</td>
                 <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年M月D日 H時mm分')}</td>
-                <td><Link to={`/tickets/${t.hashId}`}>チケットリンク</Link></td>
               </tr>)}
             {tickets?.length === 0 && <tr>
               <td colSpan={4}>
