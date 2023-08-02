@@ -20,6 +20,7 @@ import FormButton from '../../../Form/Button'
 import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
 import CircleCutImage from '../../../Parts/CircleCutImage'
+import useDayjs from '../../../../hooks/useDayjs'
 
 interface Props {
   eventId: string
@@ -38,6 +39,7 @@ const Step1: React.FC<Props> = (props) => {
     data: circleCutDataWithHook,
     openAsDataURL: openCircleCut
   } = useFile()
+  const { formatByDate } = useDayjs()
 
   const [circleCutFile, setCircleCutFile] = useState<File | null>()
   const [circleCutData, setCircleCutData] = useState<string>()
@@ -90,6 +92,7 @@ const Step1: React.FC<Props> = (props) => {
       }
       if (props.leaderUserData) {
         setLeaderUserData(props.leaderUserData)
+        setDisplayBirthday(s => formatByDate(props.leaderUserData?.birthday, 'YYYY-MM-DD'))
       }
       if (props.circleCutFile) {
         setCircleCutFile(props.circleCutFile)
