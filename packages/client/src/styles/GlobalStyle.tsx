@@ -2,7 +2,7 @@ import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
 html, body {
-  font-family: "Noto Sans JP", sans-serif;
+  font-family: "LINE Seed JP", sans-serif;
   height: 100vh;
   height: 100dvh;
 }
@@ -11,7 +11,7 @@ body {
   background-position: center;
 }
 input, select, textarea {
-  font-family: "Noto Sans JP", sans-serif;
+  font-family: "LINE Seed JP", sans-serif;
   font-size: 1rem;
 }
 #root {

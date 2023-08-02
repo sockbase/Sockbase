@@ -44,7 +44,6 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
   toFirestore: (account: types.SockbaseAccountDocument): firestore.DocumentData => ({
     name: account.name,
     email: account.email,
-    isEmailVerified: account.isEmailVerified,
     birthday: account.birthday,
     postalCode: account.postalCode,
     address: account.address,
@@ -58,7 +57,6 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
       id: snapshot.id,
       name: data.name,
       email: data.email,
-      isEmailVerified: data.isEmailVerified,
       birthday: data.birthday,
       postalCode: data.postalCode,
       address: data.address,
@@ -196,7 +194,8 @@ export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTic
     userId: ticket.userId,
     createdAt: ticket.createdAt,
     updateAt: ticket.updatedAt,
-    hashId: ticket.hashId
+    hashId: ticket.hashId,
+    createdUserId: ticket.createdUserId
   }),
   fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketDocument => {
     const ticketDoc = snapshot.data()
@@ -208,7 +207,8 @@ export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTic
       userId: ticketDoc.userId,
       createdAt: ticketDoc.createdAt ? new Date(ticketDoc.createdAt.seconds * 1000) : null,
       updatedAt: ticketDoc.updatedAt ? new Date(ticketDoc.updatedAt.seconds * 1000) : null,
-      hashId: ticketDoc.hashId
+      hashId: ticketDoc.hashId,
+      createdUserId: ticketDoc.createdUserId
     }
   }
 }
