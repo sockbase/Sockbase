@@ -18,7 +18,6 @@ const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
     return {
       name: data.name,
       email: data.email,
-      isEmailVerified: data.isEmailVerified,
       birthday: new Date(data.birthday).getTime(),
       postalCode: data.postalCode,
       address: data.address,
@@ -33,6 +32,7 @@ interface IUseUserData {
   getUserDataByUserIdAsync: (userId: string) => Promise<SockbaseAccount>
   getUserDataByUserIdAndEventIdAsync: (userId: string, eventId: string) => Promise<SockbaseAccount>
   getUserDataByUserIdAndStoreIdAsync: (userId: string, storeId: string) => Promise<SockbaseAccount>
+  getUserDataByUserIdAndStoreIdOptionalAsync: (userId: string, storeId: string) => Promise<SockbaseAccount | null>
 }
 const useUserData: () => IUseUserData = () => {
   const { user, getFirestore } = useFirebase()
@@ -108,12 +108,17 @@ const useUserData: () => IUseUserData = () => {
     return user
   }
 
+  const getUserDataByUserIdAndStoreIdOptionalAsync = async (userId: string, storeId: string): Promise<SockbaseAccount | null> =>
+    await getUserDataByUserIdAndStoreIdAsync(userId, storeId)
+      .catch(() => null)
+
   return {
     updateUserDataAsync,
     getMyUserDataAsync,
     getUserDataByUserIdAsync,
     getUserDataByUserIdAndEventIdAsync,
-    getUserDataByUserIdAndStoreIdAsync
+    getUserDataByUserIdAndStoreIdAsync,
+    getUserDataByUserIdAndStoreIdOptionalAsync
   }
 }
 

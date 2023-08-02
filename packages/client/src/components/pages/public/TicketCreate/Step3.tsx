@@ -25,7 +25,7 @@ const Step3: React.FC<Props> = (props) => {
   }, [props.store, props.ticketInfo])
 
   const selectedPaymentMethod = useMemo((): string => {
-    if (!props.ticketInfo) return ''
+    if (!props.ticketInfo?.paymentMethod) return ''
     return sockbaseShared.constants.payment.methods
       .filter(p => p.id === props.ticketInfo?.paymentMethod)[0].description
   }, [props.ticketInfo])

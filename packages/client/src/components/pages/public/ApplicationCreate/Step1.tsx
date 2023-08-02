@@ -20,6 +20,7 @@ import FormButton from '../../../Form/Button'
 import FormCheckbox from '../../../Form/Checkbox'
 import FormTextarea from '../../../Form/Textarea'
 import CircleCutImage from '../../../Parts/CircleCutImage'
+import useDayjs from '../../../../hooks/useDayjs'
 
 interface Props {
   eventId: string
@@ -38,6 +39,7 @@ const Step1: React.FC<Props> = (props) => {
     data: circleCutDataWithHook,
     openAsDataURL: openCircleCut
   } = useFile()
+  const { formatByDate } = useDayjs()
 
   const [circleCutFile, setCircleCutFile] = useState<File | null>()
   const [circleCutData, setCircleCutData] = useState<string>()
@@ -90,6 +92,7 @@ const Step1: React.FC<Props> = (props) => {
       }
       if (props.leaderUserData) {
         setLeaderUserData(props.leaderUserData)
+        setDisplayBirthday(s => formatByDate(props.leaderUserData?.birthday, 'YYYY-MM-DD'))
       }
       if (props.circleCutFile) {
         setCircleCutFile(props.circleCutFile)
@@ -438,23 +441,16 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>郵便番号</FormLabel>
               <FormInput
-                placeholder='000-0000'
+                placeholder='0000000'
                 value={leaderUserData.postalCode}
                 onChange={e => {
-                  if (e.target.value.length > 8) return
-                  const postal = e.target.value.match(/(\d{3})(\d{4})/)
+                  if (e.target.value.length > 7) return
                   handleFilledPostalCode(e.target.value)
-                  setLeaderUserData(s => ({
-                    ...s,
-                    postalCode:
-                      postal?.length === 3
-                        ? `${postal[1]}-${postal[2]}`
-                        : e.target.value
-                  }))
+                  setLeaderUserData(s => ({ ...s, postalCode: e.target.value }))
                 }}
                 hasError={!validator.isEmpty(leaderUserData.postalCode) && !validator.isPostalCode(leaderUserData.postalCode)} />
               <FormHelp>
-                ハイフンは自動で入力されます
+                ハイフンは入力不要です
               </FormHelp>
             </FormItem>
             <FormItem>
@@ -467,7 +463,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
-                placeholder='070-0123-4567'
+                placeholder='07001234567'
                 value={leaderUserData.telephone}
                 onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value }))} />
             </FormItem>
@@ -562,7 +558,8 @@ const Step1: React.FC<Props> = (props) => {
             onChange={e => setApp(s => ({ ...s, remarks: e.target.value }))}
           ></FormTextarea>
         </FormItem>
-      </FormSection >
+      </FormSection>
+
       <h2>注意事項</h2>
       <p>
         <a href="/tos" target="_blank">Sockbase利用規約</a>および<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>に同意しますか？

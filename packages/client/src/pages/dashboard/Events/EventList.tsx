@@ -3,7 +3,7 @@ import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import DashboardEventList from '../../../components/pages/dashboard/Events/EventList'
 import PageTitle from '../../../components/Layout/Dashboard/PageTitle'
-import { MdTableChart } from 'react-icons/md'
+import { MdEditCalendar } from 'react-icons/md'
 
 const DashboardEventListContainer: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const DashboardEventListContainer: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
-        icon={<MdTableChart />}
+        icon={<MdEditCalendar />}
         title="管理イベント"
         description="管理中のイベント一覧" />
 

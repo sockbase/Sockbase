@@ -22,10 +22,27 @@ const Step4: React.FC<Props> = (props) => {
         銀行振込の場合、お振込みいただいてから1週間程度お時間をいただくことがございます。<br />
         1週間経っても反映されない場合は、こちらからお問い合わせください。
       </p>
+
+      <h2>チケットの使い方</h2>
+
+      <h3>自分で使う場合</h3>
+      <ol>
+        <li>
+          <a href={`/dashboard/tickets/${props.ticketResult?.hashId}`} target="_blank" rel="noreferrer">マイページ</a> を開き、「自分で使う」をクリックします。
+        </li>
+        <li>
+          「チケットを表示」をクリックし、表示された画面を入口スタッフまでご提示ください。
+        </li>
+      </ol>
+
+      <h3>他の方に譲渡する場合</h3>
+      <ol>
+        <li><a href={`/dashboard/tickets/${props.ticketResult?.hashId}`} target="_blank" rel="noreferrer">マイページ</a> を開き、「他の方へ割り当てる」をクリックします。</li>
+        <li>表示されたURLを譲渡したい方へ渡します。</li>
+        <li>参加者情報を入力していただきます。</li>
+      </ol>
+
       <FormSection>
-        <FormItem>
-          <LinkButton color="default" to={`/dashboard/tickets/${props.ticketResult?.hashId}`}>マイページを開く</LinkButton>
-        </FormItem>
         <FormItem>
           <LinkButton to={props.store.storeWebURL}>イベントサイトへ戻る</LinkButton>
         </FormItem>

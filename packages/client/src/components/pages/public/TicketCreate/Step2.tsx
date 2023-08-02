@@ -6,6 +6,8 @@ import FormSection from '../../../Form/FormSection'
 import LoadingCircleWrapper from '../../../Parts/LoadingCircleWrapper'
 import sockbaseShared from 'shared'
 import useDayjs from '../../../../hooks/useDayjs'
+import useFirebaseError from '../../../../hooks/useFirebaseError'
+import Alert from '../../../Parts/Alert'
 
 interface Props {
   store: SockbaseStoreDocument
@@ -19,8 +21,10 @@ interface Props {
 }
 const Step2: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
+  const { localize } = useFirebaseError()
 
   const [isProgressing, setProgressing] = useState(false)
+  const [error, setError] = useState<string | null>()
 
   const selectedType = useMemo((): SockbaseStoreType | null => {
     if (!props.store || !props.ticketInfo) return null
@@ -29,7 +33,7 @@ const Step2: React.FC<Props> = (props) => {
   }, [props.store, props.ticketInfo])
 
   const selectedPaymentMethod = useMemo((): string => {
-    if (!props.ticketInfo) return ''
+    if (!props.ticketInfo?.paymentMethod) return ''
     return sockbaseShared.constants.payment.methods
       .filter(p => p.id === props.ticketInfo?.paymentMethod)[0].description
   }, [props.ticketInfo])
@@ -39,7 +43,10 @@ const Step2: React.FC<Props> = (props) => {
 
     props.submitTicket()
       .then(() => props.nextStep())
-      .catch(() => setProgressing(false))
+      .catch((err: Error) => {
+        setError(localize(err.message))
+        setProgressing(false)
+      })
   }
 
   return (
@@ -73,32 +80,31 @@ const Step2: React.FC<Props> = (props) => {
         </tbody>
       </table>
 
-      <h2>参加費</h2>
+      {selectedType?.productInfo && <>
+        <h2>参加費</h2>
+        <h3>選択された参加種別</h3>
+        <table>
+          <tbody>
+            <tr>
+              <th>参加種別</th>
+              <td>{selectedType.name}</td>
+            </tr>
+            <tr>
+              <th>詳細</th>
+              <td>{selectedType.description}</td>
+            </tr>
+            <tr>
+              <th>参加費</th>
+              <td>{selectedType.price.toLocaleString()}円</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <h3>選択された参加種別</h3>
-
-      <table>
-        <tbody>
-          <tr>
-            <th>参加種別</th>
-            <td>{selectedType?.name}</td>
-          </tr>
-          <tr>
-            <th>詳細</th>
-            <td>{selectedType?.description}</td>
-          </tr>
-          <tr>
-            <th>参加費</th>
-            <td>{selectedType?.price.toLocaleString()}円</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3>決済方法</h3>
-
-      <p>
-        {selectedPaymentMethod}
-      </p>
+        <h3>決済方法</h3>
+        <p>
+          {selectedPaymentMethod}
+        </p>
+      </>}
 
       <h1>申し込み情報送信</h1>
       <p>
@@ -107,6 +113,10 @@ const Step2: React.FC<Props> = (props) => {
       <p>
         修正する場合は「修正」ボタンを押してください。
       </p>
+
+      {error && <Alert type="danger" title="エラーが発生しました">
+        {error}
+      </Alert>}
 
       <FormSection>
         <FormItem>

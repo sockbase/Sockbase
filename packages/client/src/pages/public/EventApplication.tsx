@@ -6,7 +6,7 @@ import useEvent from '../../hooks/useEvent'
 import useFirebase from '../../hooks/useFirebase'
 
 import DefaultLayout from '../../components/Layout/Default/Default'
-import StepContainerComponent from '../../components/pages/events/Application/StepContainer'
+import StepContainerComponent from '../../components/pages/public/ApplicationCreate/StepContainer'
 import Alert from '../../components/Parts/Alert'
 import Loading from '../../components/Parts/Loading'
 

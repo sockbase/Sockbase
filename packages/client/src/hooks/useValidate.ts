@@ -34,7 +34,7 @@ const useValidate: () => IUseValidate =
       (value) => isMatchRegex(value, /^[ぁ-んー]+$/)
 
     const isPostalCode: (value: string) => boolean =
-      (value) => isMatchRegex(value, /^\d{3}-\d{4}$/)
+      (value) => isMatchRegex(value, /^\d{3}\d{4}$/)
 
     const isDate: (value: string) => boolean =
       (value) => validator.isDate(value)

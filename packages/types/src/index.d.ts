@@ -86,6 +86,8 @@ export interface SockbaseStoreType {
     productId: string
     paymentURL: string
   } | null
+  color: string
+  private: boolean
 }
 
 /**
@@ -217,6 +219,7 @@ export type SockbaseTicketDocument = SockbaseTicket & {
   createdAt: Date | null
   updatedAt: Date | null
   hashId: string | null
+  createdUserId: string | null
 }
 
 /**
@@ -252,6 +255,8 @@ export interface SockbaseTicketUser {
  */
 export type SockbaseTicketUserDocument = SockbaseTicketUser & {
   hashId: string
+  used: boolean
+  usedAt: Date | null
 }
 
 /**
@@ -281,12 +286,19 @@ export interface SockbaseTicketAddedResult {
 }
 
 /**
+ * チケット作成リザルト(管理用)
+ */
+export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
+  email: string
+  createdAt: number
+}
+
+/**
  * アカウント
  */
 export interface SockbaseAccount {
   name: string
   email: string
-  isEmailVerified?: boolean
   birthday: number
   postalCode: string
   address: string
