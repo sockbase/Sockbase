@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MdQrCodeScanner } from 'react-icons/md'
 import {
@@ -26,6 +27,8 @@ import useUserData from '../../../hooks/useUserData'
 import Alert from '../../../components/Parts/Alert'
 import BlinkField from '../../../components/Parts/BlinkField'
 import useFirebaseError from '../../../hooks/useFirebaseError'
+import useQRReader from '../../../hooks/useQRReader'
+import FormCheckbox from '../../../components/Form/Checkbox'
 
 const TicketTerminal: React.FC = () => {
   const { formatByDate } = useDayjs()
@@ -40,6 +43,7 @@ const TicketTerminal: React.FC = () => {
   } = useStore()
   const { getPaymentAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
+  const { data: qrData, QRReaderComponent } = useQRReader()
 
   const [ticketHashId, setTicketHashId] = useState('')
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
@@ -53,6 +57,9 @@ const TicketTerminal: React.FC = () => {
 
   const [isProgressForUsedStatus, setProgressForUsedStatus] = useState(false)
   const [usedStatusError, setUsedStatusError] = useState<string | null>()
+
+  const [isActiveQRReader, setActiveQRReader] = useState(false)
+  const [isHoldQRReader, setHoldQRReader] = useState(true)
 
   const onChangedHashId = (): void => {
     if (ticketHashId) return
@@ -68,10 +75,8 @@ const TicketTerminal: React.FC = () => {
   }
   useEffect(onChangedHashId, [ticketHashId])
 
-  const handleSearch = (): void => {
+  const searchTicket = (hashId: string): void => {
     const fetchAsync = async (): Promise<void> => {
-      if (!ticketHashId) return
-
       setUsedStatusError(null)
       setStore(null)
       setTicketHash(null)
@@ -81,7 +86,7 @@ const TicketTerminal: React.FC = () => {
       setOwnerUser(null)
       setUsableUser(null)
 
-      const fetchedTicketUser = await getTicketUserByHashIdOptionalAsync(ticketHashId)
+      const fetchedTicketUser = await getTicketUserByHashIdOptionalAsync(hashId)
       setTicketUser(fetchedTicketUser)
 
       if (!fetchedTicketUser) return
@@ -150,6 +155,16 @@ const TicketTerminal: React.FC = () => {
       .finally(() => setProgressForUsedStatus(false))
   }
 
+  const onScan = (): void => {
+    if (!qrData) return
+    setTicketHashId(qrData)
+    searchTicket(qrData)
+
+    if (isHoldQRReader) return
+    setActiveQRReader(false)
+  }
+  useEffect(onScan, [qrData])
+
   const type = useMemo(() => {
     if (!ticketUser || !store) return
     return store.types
@@ -165,25 +180,45 @@ const TicketTerminal: React.FC = () => {
 
       <TwoColumnsLayout>
         <>
-          <h2>チケット情報入力</h2>
+          <FormSection>
+            <FormItem>
+              <FormCheckbox
+                name="isActiveQRReader"
+                label="QRリーダーを開く"
+                checked={isActiveQRReader}
+                onChange={(c) => setActiveQRReader(c)} />
+            </FormItem>
+            {isActiveQRReader && <FormItem>
+              <FormCheckbox
+                name="isHoldQRReader"
+                label="読み取り後にQRリーダを保持する"
+                checked={isHoldQRReader}
+                onChange={(c) => setHoldQRReader(c)} />
+            </FormItem>}
+          </FormSection>
+
+          {isActiveQRReader && <ReaderWrap>
+            <QRReaderComponent />
+          </ReaderWrap>}
+
           <FormSection>
             <FormItem>
               <FormLabel>チケットID</FormLabel>
               <FormInput
                 value={ticketHashId}
                 onChange={e => setTicketHashId(e.target.value)}
-                placeholder="20231104235959999-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+                placeholder="20231104235959999-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+                disabled={isActiveQRReader} />
             </FormItem>
-            <FormItem>
-              <FormButton onClick={handleSearch} disabled={!ticketHashId}>照会</FormButton>
-            </FormItem>
+            {!isActiveQRReader && <FormItem>
+              <FormButton onClick={() => searchTicket(ticketHashId)} disabled={!ticketHashId}>照会</FormButton>
+            </FormItem>}
           </FormSection>
           {ticketUser === null && <Alert type="danger" title="チケット情報が見つかりませんでした">
             正しいチケットIDを入力してください。
           </Alert>}
         </>
         <>
-          <h2>操作</h2>
           {usedStatus
             && <FormSection>
               {!usedStatus.used
@@ -202,8 +237,7 @@ const TicketTerminal: React.FC = () => {
             {usedStatusError}
           </Alert>}
 
-          <h2>照会結果</h2>
-          <table>
+          {ticketUser && <table>
             <tbody>
               <tr>
                 <th>チケットストア</th>
@@ -235,7 +269,7 @@ const TicketTerminal: React.FC = () => {
                 <td>{ownerUser !== null ? ownerUser?.name : <BlinkField />}</td>
               </tr>
             </tbody>
-          </table>
+          </table>}
         </>
       </TwoColumnsLayout>
     </DashboardLayout >
@@ -243,3 +277,10 @@ const TicketTerminal: React.FC = () => {
 }
 
 export default TicketTerminal
+
+const ReaderWrap = styled.div`
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
