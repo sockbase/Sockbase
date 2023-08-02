@@ -2,30 +2,22 @@ import * as functions from 'firebase-functions'
 import {
   type SockbaseTicketAddedResult,
   type SockbaseTicket,
-  type SockbaseTicketCreatedResult
+  type SockbaseTicketCreatedResult,
+  type SockbaseTicketUsedStatus
 } from 'sockbase'
-import { createTicketAsync, createTicketForAdminAsync } from '../services/StoreService'
+import { createTicketAsync, createTicketForAdminAsync, updateTicketUsedStatusAsync } from '../services/StoreService'
+import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
 
-// export const onChangeApplication = functions.firestore
-//   .document('/_tickets/{ticketId}')
-//   .onUpdate(async (change: functions.Change<QueryDocumentSnapshot>) => {
-//     if (!change.after.exists) return
+export const onTicketUserUpdated = functions.firestore
+  .document(`_tickets/{ticketId}/private/usedStatus`)
+  .onUpdate(async (change: functions.Change<QueryDocumentSnapshot>, context: functions.EventContext<{ ticketId: string }>) => {
+    if (!change.after.exists) return
 
-//     const adminApp = firebaseAdmin.getFirebaseAdmin()
-//     const firestore = adminApp.firestore()
+    const ticketId = context.params.ticketId
+    const ticketUsedStatus = change.after.data() as SockbaseTicketUsedStatus
 
-//     const ticket = change.after.data() as SockbaseTicketDocument
-
-//     const userDoc = await firestore
-//       .doc(`/users/${ticket.userId}`)
-//       .get()
-//     if (!userDoc.exists) return
-
-//     const userData = userDoc.data() as SockbaseAccount
-//     await firestore
-//       .doc(`/stores/${ticket.storeId}/_users/${ticket.userId}`)
-//       .set(userData)
-//   })
+    await updateTicketUsedStatusAsync(ticketId, ticketUsedStatus)
+  })
 
 export const createTicket = functions.https.onCall(
   async (ticket: SockbaseTicket, context: functions.https.CallableContext): Promise<SockbaseTicketAddedResult> => {
