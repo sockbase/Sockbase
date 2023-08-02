@@ -4,7 +4,8 @@ import { MdWallet } from 'react-icons/md'
 import {
   type SockbaseTicketMeta,
   type SockbaseStoreDocument,
-  type SockbaseTicketDocument
+  type SockbaseTicketDocument,
+  type SockbaseStoreType
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import PageTitle from '../../../components/Layout/Dashboard/PageTitle'
@@ -13,6 +14,7 @@ import useStore from '../../../hooks/useStore'
 import useDayjs from '../../../hooks/useDayjs'
 import Loading from '../../../components/Parts/Loading'
 import sockbaseShared from 'shared'
+import StoreTypeLabel from '../../../components/Parts/StoreTypeLabel'
 
 const TicketList: React.FC = () => {
   const { getMyTicketsAsync, getStoreByIdAsync, getTicketMetaByIdAsync } = useStore()
@@ -62,13 +64,12 @@ const TicketList: React.FC = () => {
     return store.storeName
   }
 
-  const getTypeName = (storeId: string, typeId: string): string => {
-    if (!stores) return ''
+  const getType = (storeId: string, typeId: string): SockbaseStoreType | undefined => {
+    if (!stores) return
     const store = stores
       .filter(s => s.id === storeId)[0]
-    const type = store.types
+    return store.types
       .filter(t => t.id === typeId)[0]
-    return type.name
   }
 
   const getTicketApplicationStatus = (ticketId: string): string => {
@@ -100,7 +101,7 @@ const TicketList: React.FC = () => {
               .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
               .map(t => <tr key={t.id}>
                 <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
-                <td>{getTypeName(t.storeId, t.typeId)}</td>
+                <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
                 <td>{t.id && getTicketApplicationStatus(t.id)}</td>
                 <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年M月D日 H時mm分')}</td>
                 <td><Link to={`/tickets/${t.hashId}`}>チケットリンク</Link></td>
