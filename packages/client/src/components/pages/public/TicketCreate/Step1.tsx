@@ -59,8 +59,8 @@ const Step1: React.FC<Props> = (props) => {
   const handleFilledPostalCode: (postalCode: string) => void =
     (postalCode) => {
       const sanitizedPostalCode = postalCode.replaceAll('-', '')
-
       if (sanitizedPostalCode.length !== 7) return
+
       getAddressByPostalCode(sanitizedPostalCode)
         .then(address => setUserData(s => ({
           ...s,
@@ -199,24 +199,15 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>郵便番号</FormLabel>
               <FormInput
-                placeholder='000-0000'
+                placeholder='0000000'
                 value={userData.postalCode}
                 onChange={e => {
-                  if (e.target.value.length > 8) return
-                  const postal = e.target.value.match(/(\d{3})(\d{4})/)
+                  if (e.target.value.length > 7) return
                   handleFilledPostalCode(e.target.value)
-                  setUserData(s => ({
-                    ...s,
-                    postalCode:
-                      postal?.length === 3
-                        ? `${postal[1]}-${postal[2]}`
-                        : e.target.value
-                  }))
+                  setUserData(s => ({ ...s, postalCode: e.target.value }))
                 }}
                 hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)} />
-              <FormHelp>
-                ハイフンは自動で入力されます
-              </FormHelp>
+              <FormHelp>ハイフンは入力不要です</FormHelp>
             </FormItem>
             <FormItem>
               <FormLabel>住所</FormLabel>
@@ -228,7 +219,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
-                placeholder='070-0123-4567'
+                placeholder='07001234567'
                 value={userData.telephone}
                 onChange={e => setUserData(s => ({ ...s, telephone: e.target.value }))} />
             </FormItem>
