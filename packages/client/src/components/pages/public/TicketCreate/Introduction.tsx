@@ -96,11 +96,13 @@ const Introduction: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {
-            props.store.types.map(t => <tr key={t.id}>
-              <th>{t.name}</th>
-              <td>{t.price.toLocaleString()}円</td>
-              <td>{t.description}</td>
-            </tr>)
+            props.store.types
+              .filter(t => !t.private)
+              .map(t => <tr key={t.id}>
+                <th>{t.name}</th>
+                <td>{t.price.toLocaleString()}円</td>
+                <td>{t.description}</td>
+              </tr>)
           }
         </tbody>
       </table>
@@ -111,6 +113,23 @@ const Introduction: React.FC<Props> = (props) => {
       </ul>
 
       <h2>申し込み管理システムについて</h2>
+
+      <p>
+        今回のイベントは、<a href="https://nectarition.jp">ねくたりしょん</a>が運用する「Sockbase」を利用しています。<br />
+        イベントの内容に関するご質問は、イベント主催である「<a href={props.store._organization.contactUrl}>{props.store._organization.name}</a>」へ直接お問い合わせください。
+      </p>
+
+      {import.meta.env.VITE_SOCKBASE_MANAGE_ORGANIZATION_ID === props.store._organization.id
+        ? <p>
+          申し込み情報はプライバシーポリシーに則って管理いたします。
+        </p>
+        : <p>
+          申し込み情報はねくたりしょんが保管し、イベント主催である「{props.store._organization.name}」に提供いたします。
+        </p>}
+
+      <p>
+        詳しくは<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>をご確認ください。
+      </p>
 
       <FormSection>
         <FormItem>

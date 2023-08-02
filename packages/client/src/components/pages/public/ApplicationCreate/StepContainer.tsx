@@ -48,8 +48,6 @@ const StepContainer: React.FC<Props> = (props) => {
 
       if (!user) {
         const newUser = await createUser(leaderUserData.email, leaderUserData.password)
-          .catch(err => { throw err })
-
         await updateUserDataAsync(newUser.uid, leaderUserData)
       }
 
@@ -123,7 +121,7 @@ const StepContainer: React.FC<Props> = (props) => {
 
       {props.event.schedules.endApplication < new Date().getTime()
         ? <Alert type="danger" title="参加受付は終了しました">
-          このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication, 'YYYY年M月D日 H時mm分')}</b> をもって終了しました。
+          このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication, 'YYYY年M月D日')}</b> をもって終了しました。
         </Alert>
         : <>
           {props.event.descriptions.map((i, k) => <p key={k}>{i}</p>)}

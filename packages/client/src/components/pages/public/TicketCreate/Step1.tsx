@@ -12,6 +12,7 @@ import FormInput from '../../../Form/Input'
 import FormHelp from '../../../Form/Help'
 import useValidate from '../../../../hooks/useValidate'
 import usePostalCode from '../../../../hooks/usePostalCode'
+import useDayjs from '../../../../hooks/useDayjs'
 
 interface Props {
   store: SockbaseStoreDocument
@@ -24,6 +25,7 @@ interface Props {
 const Step1: React.FC<Props> = (props) => {
   const validator = useValidate()
   const { getAddressByPostalCode } = usePostalCode()
+  const { formatByDate } = useDayjs()
 
   const [isAgreed, setAgreed] = useState(false)
   const [ticketInfo, setTicketInfo] = useState<SockbaseTicket>({
@@ -44,10 +46,10 @@ const Step1: React.FC<Props> = (props) => {
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
 
   const onInitialize = (): void => {
-    console.log(props.ticketInfo, props.userData)
     if (!props.ticketInfo || !props.userData) return
     setTicketInfo(props.ticketInfo)
     setUserData(props.userData)
+    setDisplayBirthday(s => formatByDate(props.userData?.birthday, 'YYYY-MM-DD'))
   }
   useEffect(onInitialize, [props.ticketInfo, props.userData])
 
@@ -60,8 +62,8 @@ const Step1: React.FC<Props> = (props) => {
   const handleFilledPostalCode: (postalCode: string) => void =
     (postalCode) => {
       const sanitizedPostalCode = postalCode.replaceAll('-', '')
-
       if (sanitizedPostalCode.length !== 7) return
+
       getAddressByPostalCode(sanitizedPostalCode)
         .then(address => setUserData(s => ({
           ...s,
@@ -73,6 +75,7 @@ const Step1: React.FC<Props> = (props) => {
     }
 
   const handleSubmit = (): void => {
+    if (!isAgreed || errorCount > 0) return
     props.nextStep(ticketInfo, userData)
   }
 
@@ -85,7 +88,7 @@ const Step1: React.FC<Props> = (props) => {
   const errorCount = useMemo((): number => {
     const validators = [
       !validator.isEmpty(ticketInfo.typeId),
-      !validator.isEmpty(ticketInfo.paymentMethod)
+      !selectedType?.productInfo || !validator.isEmpty(ticketInfo.paymentMethod)
     ]
 
     if (!props.isLoggedIn) {
@@ -125,19 +128,21 @@ const Step1: React.FC<Props> = (props) => {
           <FormRadio
             name="type"
             values={
-              props.store.types.map(t => ({
-                text: `${t.name} ${t.price.toLocaleString()}円 / ${t.description}`,
-                value: t.id
-              }))
+              props.store.types
+                .filter(t => !t.private)
+                .map(t => ({
+                  text: `${t.name} ${t.price.toLocaleString()}円 / ${t.description}`,
+                  value: t.id
+                }))
             }
             value={ticketInfo.typeId}
             onChange={v => setTicketInfo(s => ({ ...s, typeId: v }))} />
         </FormItem>
       </FormSection>
 
-      <h2>参加費お支払い方法</h2>
-      {
-        selectedType
+      {selectedType?.productInfo && <>
+        <h2>参加費お支払い方法</h2>
+        {selectedType
           ? <FormSection>
             <FormItem>
               <table>
@@ -173,12 +178,11 @@ const Step1: React.FC<Props> = (props) => {
               </Alert>
             </FormItem>}
           </FormSection>
-          : <Alert>申し込みたい参加種別を選択してください</Alert>
-      }
-
+          : <Alert>申し込みたい参加種別を選択してください</Alert>}
+      </>}
+      <h2>申し込み責任者情報</h2>
       {!props.isLoggedIn
         ? <>
-          <h2>申し込み責任者情報</h2>
           <FormSection>
             <FormItem>
               <FormLabel>氏名</FormLabel>
@@ -198,24 +202,15 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>郵便番号</FormLabel>
               <FormInput
-                placeholder='000-0000'
+                placeholder='0000000'
                 value={userData.postalCode}
                 onChange={e => {
-                  if (e.target.value.length > 8) return
-                  const postal = e.target.value.match(/(\d{3})(\d{4})/)
+                  if (e.target.value.length > 7) return
                   handleFilledPostalCode(e.target.value)
-                  setUserData(s => ({
-                    ...s,
-                    postalCode:
-                      postal?.length === 3
-                        ? `${postal[1]}-${postal[2]}`
-                        : e.target.value
-                  }))
+                  setUserData(s => ({ ...s, postalCode: e.target.value }))
                 }}
                 hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)} />
-              <FormHelp>
-                ハイフンは自動で入力されます
-              </FormHelp>
+              <FormHelp>ハイフンは入力不要です</FormHelp>
             </FormItem>
             <FormItem>
               <FormLabel>住所</FormLabel>
@@ -227,7 +222,7 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
-                placeholder='070-0123-4567'
+                placeholder='07001234567'
                 value={userData.telephone}
                 onChange={e => setUserData(s => ({ ...s, telephone: e.target.value }))} />
             </FormItem>
@@ -269,7 +264,9 @@ const Step1: React.FC<Props> = (props) => {
             </FormItem>
           </FormSection>
         </>
-        : <></>}
+        : <p>
+          現在ログイン中のユーザ情報を引き継ぎます。
+        </p>}
 
       <h2>注意事項</h2>
 

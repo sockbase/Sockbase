@@ -4,11 +4,11 @@ import type {
   SockbaseStoreDocument,
   SockbaseTicket,
   SockbaseTicketAddedResult,
+  SockbaseTicketCreatedResult,
   SockbaseTicketDocument,
   SockbaseTicketHashIdDocument,
   SockbaseTicketMeta,
   SockbaseTicketUsedStatus,
-  SockbaseTicketUser,
   SockbaseTicketUserDocument
 } from 'sockbase'
 import useFirebase from './useFirebase'
@@ -44,7 +44,8 @@ const ticketConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketDocument
       paymentProductId: data.paymentProductId,
       createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
       updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null,
-      hashId: data.hashId
+      hashId: data.hashId,
+      createdUserId: data.createdUserId
     }
   }
 }
@@ -60,7 +61,9 @@ const ticketMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketMeta
 }
 
 const ticketUserConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUserDocument> = {
-  toFirestore: () => ({}),
+  toFirestore: (data: SockbaseTicketUserDocument) => ({
+    usableUserId: data.usableUserId
+  }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketUserDocument => {
     const data = snapshot.data()
     return {
@@ -68,13 +71,18 @@ const ticketUserConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUser
       userId: data.userId,
       storeId: data.storeId,
       typeId: data.typeId,
-      usableUserId: data.usableUserId
+      usableUserId: data.usableUserId,
+      used: data.used,
+      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
     }
   }
 }
 
 const ticketUsedStatusConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketUsedStatus> = {
-  toFirestore: () => ({}),
+  toFirestore: (usedStatus: SockbaseTicketUsedStatus) => ({
+    used: usedStatus.used,
+    usedAt: FirestoreDB.serverTimestamp()
+  }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketUsedStatus => {
     const data = snapshot.data()
     return {
@@ -100,14 +108,20 @@ interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
   getStoreByIdOptionalAsync: (storeId: string) => Promise<SockbaseStoreDocument | null>
   createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
+  createTicketForAdminAsync: (storeId: string, createTicketData: { email: string; typeId: string; }) => Promise<SockbaseTicketCreatedResult>
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
   getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
-  getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUser>
+  getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
+  getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
+  updateTicketUsedStatusByIdAsync: (ticketId: string, used: boolean) => Promise<void>
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
+  getTicketsByStoreIdAsync: (storeId: string) => Promise<SockbaseTicketDocument[]>
   getMyTicketsAsync: () => Promise<SockbaseTicketDocument[] | undefined>
   getUsableTicketsAsync: () => Promise<SockbaseTicketUserDocument[] | undefined>
+  assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
+  unassignTicketUserAsync: (ticketHashId: string) => Promise<void>
 }
 
 const useStore: () => IUseStore = () => {
@@ -135,11 +149,20 @@ const useStore: () => IUseStore = () => {
 
   const createTicketAsync = async (ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
     const functions = getFunctions()
-    const createApplicationFunction = FirebaseFunctions
+    const createTicketFunction = FirebaseFunctions
       .httpsCallable<SockbaseTicket, SockbaseTicketAddedResult>(functions, 'store-createTicket')
 
-    const appResult = await createApplicationFunction(ticket)
+    const appResult = await createTicketFunction(ticket)
     return appResult.data
+  }
+
+  const createTicketForAdminAsync = async (storeId: string, createTicketData: { email: string; typeId: string; }): Promise<SockbaseTicketCreatedResult> => {
+    const funcstions = getFunctions()
+    const createTicketForAdminFunction = FirebaseFunctions
+      .httpsCallable<{ storeId: string; createTicketData: { email: string; typeId: string; } }, SockbaseTicketCreatedResult>(funcstions, 'store-createTicketForAdmin')
+
+    const ticketResult = await createTicketForAdminFunction({ storeId, createTicketData })
+    return ticketResult.data
   }
 
   const getTicketIdByHashIdAsync = async (ticketHashId: string): Promise<SockbaseTicketHashIdDocument> => {
@@ -185,7 +208,7 @@ const useStore: () => IUseStore = () => {
     return ticketMeta
   }
 
-  const getTicketUserByHashIdAsync = async (ticketHashId: string): Promise<SockbaseTicketUser> => {
+  const getTicketUserByHashIdAsync = async (ticketHashId: string): Promise<SockbaseTicketUserDocument> => {
     const db = getFirestore()
     const ticketUserRef = FirestoreDB
       .doc(db, `_ticketUsers/${ticketHashId}`)
@@ -199,6 +222,10 @@ const useStore: () => IUseStore = () => {
 
     return ticketUser
   }
+
+  const getTicketUserByHashIdOptionalAsync = async (ticketHashId: string): Promise<SockbaseTicketUserDocument | null> =>
+    await getTicketUserByHashIdAsync(ticketHashId)
+      .catch(() => null)
 
   const getTicketUsedStatusByIdAsync = async (ticketId: string): Promise<SockbaseTicketUsedStatus> => {
     const db = getFirestore()
@@ -215,6 +242,16 @@ const useStore: () => IUseStore = () => {
     return ticketUsedStatus
   }
 
+  const updateTicketUsedStatusByIdAsync = async (ticketId: string, used: boolean): Promise<void> => {
+    const db = getFirestore()
+    const ticketUsedStatusRef = FirestoreDB
+      .doc(db, `_tickets/${ticketId}/private/usedStatus`)
+      .withConverter(ticketUsedStatusConverter)
+
+    await FirestoreDB.setDoc(ticketUsedStatusRef, { used }, { merge: true })
+      .catch(err => { throw err })
+  }
+
   const getTicketsByUserIdAsync = async (userId: string): Promise<SockbaseTicketDocument[]> => {
     const db = getFirestore()
     const ticketsRef = FirestoreDB
@@ -222,6 +259,21 @@ const useStore: () => IUseStore = () => {
       .withConverter(ticketConverter)
 
     const ticketsQuery = FirestoreDB.query(ticketsRef, FirestoreDB.where('userId', '==', userId))
+    const ticketsSnapshot = await FirestoreDB.getDocs(ticketsQuery)
+    const ticketsDocs = ticketsSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+
+    return ticketsDocs
+  }
+
+  const getTicketsByStoreIdAsync = async (storeId: string): Promise<SockbaseTicketDocument[]> => {
+    const db = getFirestore()
+    const ticketsRef = FirestoreDB
+      .collection(db, '_tickets')
+      .withConverter(ticketConverter)
+
+    const ticketsQuery = FirestoreDB.query(ticketsRef, FirestoreDB.where('storeId', '==', storeId))
     const ticketsSnapshot = await FirestoreDB.getDocs(ticketsQuery)
     const ticketsDocs = ticketsSnapshot.docs
       .filter(doc => doc.exists())
@@ -252,18 +304,49 @@ const useStore: () => IUseStore = () => {
     return ticketUsersDocs
   }, [user])
 
+  const assignTicketUserAsync = async (userId: string, ticketHashId: string): Promise<void> => {
+    const db = getFirestore()
+    const ticketUserRef = FirestoreDB
+      .doc(db, `_ticketUsers/${ticketHashId}`)
+      .withConverter(ticketUserConverter)
+
+    await FirestoreDB.setDoc(
+      ticketUserRef,
+      { usableUserId: userId },
+      { merge: true })
+  }
+
+  const unassignTicketUserAsync = async (ticketHashId: string): Promise<void> => {
+    const db = getFirestore()
+    const ticketUserRef = FirestoreDB
+      .doc(db, `_ticketUsers/${ticketHashId}`)
+      .withConverter(ticketUserConverter)
+
+    await FirestoreDB.setDoc(
+      ticketUserRef,
+      { usableUserId: null },
+      { merge: true }
+    )
+  }
+
   return {
     getStoreByIdAsync,
     getStoreByIdOptionalAsync,
     createTicketAsync,
+    createTicketForAdminAsync,
     getTicketIdByHashIdAsync,
     getTicketByIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
+    getTicketUserByHashIdOptionalAsync,
     getTicketUsedStatusByIdAsync,
+    updateTicketUsedStatusByIdAsync,
     getTicketsByUserIdAsync,
+    getTicketsByStoreIdAsync,
     getMyTicketsAsync,
-    getUsableTicketsAsync
+    getUsableTicketsAsync,
+    assignTicketUserAsync,
+    unassignTicketUserAsync
   }
 }
 

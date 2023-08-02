@@ -4,7 +4,9 @@ import { MdWallet } from 'react-icons/md'
 import {
   type SockbaseTicketMeta,
   type SockbaseStoreDocument,
-  type SockbaseTicketDocument
+  type SockbaseTicketDocument,
+  type SockbaseStoreType,
+  type SockbaseApplicationStatus
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import PageTitle from '../../../components/Layout/Dashboard/PageTitle'
@@ -12,7 +14,8 @@ import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import useStore from '../../../hooks/useStore'
 import useDayjs from '../../../hooks/useDayjs'
 import Loading from '../../../components/Parts/Loading'
-import sockbaseShared from 'shared'
+import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel'
+import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 
 const TicketList: React.FC = () => {
   const { getMyTicketsAsync, getStoreByIdAsync, getTicketMetaByIdAsync } = useStore()
@@ -62,20 +65,19 @@ const TicketList: React.FC = () => {
     return store.storeName
   }
 
-  const getTypeName = (storeId: string, typeId: string): string => {
-    if (!stores) return ''
+  const getType = (storeId: string, typeId: string): SockbaseStoreType | undefined => {
+    if (!stores) return
     const store = stores
       .filter(s => s.id === storeId)[0]
-    const type = store.types
+    return store.types
       .filter(t => t.id === typeId)[0]
-    return type.name
   }
 
-  const getTicketApplicationStatus = (ticketId: string): string => {
-    if (!ticketMetas) return ''
+  const getTicketApplicationStatus = (ticketId: string): SockbaseApplicationStatus => {
+    if (!ticketMetas) return 0
     const ticketMeta = ticketMetas.filter(t => t.ticketId === ticketId)[0]
 
-    return sockbaseShared.constants.application.statusText[ticketMeta.applicationStatus]
+    return ticketMeta.applicationStatus
   }
 
   return (
@@ -89,6 +91,7 @@ const TicketList: React.FC = () => {
         ? <table>
           <thead>
             <tr>
+              <th>#</th>
               <th>チケットストア</th>
               <th>参加種別</th>
               <th>申し込み状況</th>
@@ -98,14 +101,15 @@ const TicketList: React.FC = () => {
           <tbody>
             {tickets
               .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
-              .map(t => <tr key={t.id}>
+              .map((t, i) => <tr key={t.id}>
+                <td>{tickets.length - i}</td>
                 <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
-                <td>{getTypeName(t.storeId, t.typeId)}</td>
-                <td>{t.id && getTicketApplicationStatus(t.id)}</td>
+                <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
+                <td>{t.id && <ApplicationStatusLabel status={getTicketApplicationStatus(t.id)} />}</td>
                 <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年M月D日 H時mm分')}</td>
               </tr>)}
             {tickets?.length === 0 && <tr>
-              <td colSpan={3}>
+              <td colSpan={4}>
                 購入したチケットはありません。<br />
                 他のユーザーから譲り受けたチケットは <Link to="/dashboard/mytickets">マイチケット</Link> からご確認ください。
               </td>

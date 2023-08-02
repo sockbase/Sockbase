@@ -11,6 +11,7 @@ import useValidate from '../../../hooks/useValidate'
 import useFirebaseError from '../../../hooks/useFirebaseError'
 import Alert from '../../Parts/Alert'
 import LoadingCircleWrapper from '../../Parts/LoadingCircleWrapper'
+import usePostalCode from '../../../hooks/usePostalCode'
 
 interface Props {
   userData: SockbaseAccount
@@ -19,6 +20,7 @@ interface Props {
 const DashboardSettings: React.FC<Props> = (props) => {
   const dayjs = useDayjs()
   const validator = useValidate()
+  const { getAddressByPostalCode } = usePostalCode()
   const { localize: localizeFirebaseError } = useFirebaseError()
 
   const [isProgress, setProgress] = useState(false)
@@ -73,6 +75,20 @@ const DashboardSettings: React.FC<Props> = (props) => {
         .catch(err => setError(new Error(localizeFirebaseError(err))))
     }
 
+  const handleFilledPostalCode = (postalCode: string): void => {
+    const sanitizedPostalCode = postalCode.replaceAll('-', '')
+    if (sanitizedPostalCode.length !== 7) return
+
+    getAddressByPostalCode(sanitizedPostalCode)
+      .then(address => setUserData(s => (s && {
+        ...s,
+        address
+      })))
+      .catch(err => {
+        throw err
+      })
+  }
+
   return (
     <>
       {userData && <TwoColumnsLayout>
@@ -105,9 +121,13 @@ const DashboardSettings: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>郵便番号</FormLabel>
               <FormInput
-                placeholder='000-0000'
+                placeholder='0000000'
                 value={userData?.postalCode}
-                onChange={e => setUserData(s => s && ({ ...s, postalCode: e.target.value }))}
+                onChange={e => {
+                  if (e.target.value.length > 7) return
+                  handleFilledPostalCode(e.target.value)
+                  setUserData(s => (s && { ...s, postalCode: e.target.value }))
+                }}
                 hasError={!validator.isPostalCode(userData.postalCode)} />
             </FormItem>
             <FormItem>
@@ -121,7 +141,7 @@ const DashboardSettings: React.FC<Props> = (props) => {
             <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
-                placeholder='070-0123-4567'
+                placeholder='07001234567'
                 value={userData?.telephone}
                 onChange={e => setUserData(s => s && ({ ...s, telephone: e.target.value }))}
                 hasError={validator.isEmpty(userData.telephone)} />
