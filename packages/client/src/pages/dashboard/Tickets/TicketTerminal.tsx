@@ -29,6 +29,7 @@ import BlinkField from '../../../components/Parts/BlinkField'
 import useFirebaseError from '../../../hooks/useFirebaseError'
 import useQRReader from '../../../hooks/useQRReader'
 import FormCheckbox from '../../../components/Form/Checkbox'
+import StoreTypeLabel from '../../../components/Parts/StoreTypeLabel'
 
 const TicketTerminal: React.FC = () => {
   const { formatByDate } = useDayjs()
@@ -219,24 +220,6 @@ const TicketTerminal: React.FC = () => {
           </Alert>}
         </>
         <>
-          {usedStatus
-            && <FormSection>
-              {!usedStatus.used
-                ? <FormItem>
-                  <FormButton onClick={() => updateTicketUsedStatus(true)} disabled={isProgressForUsedStatus}>
-                    使用済みにする
-                  </FormButton>
-                </FormItem>
-                : <FormItem>
-                  <FormButton onClick={() => updateTicketUsedStatus(false)} color="default" disabled={isProgressForUsedStatus}>
-                    未使用にする
-                  </FormButton>
-                </FormItem>}
-            </FormSection>}
-          {usedStatusError && <Alert type="danger" title="エラーが発生しました">
-            {usedStatusError}
-          </Alert>}
-
           {ticketUser && <table>
             <tbody>
               <tr>
@@ -245,7 +228,7 @@ const TicketTerminal: React.FC = () => {
               </tr>
               <tr>
                 <th>参加種別</th>
-                <td>{type !== null ? type?.name : <BlinkField />}</td>
+                <td>{(type && <StoreTypeLabel type={type} />) ?? <BlinkField />}</td>
               </tr>
               <tr>
                 <th>申し込み日</th>
@@ -270,6 +253,24 @@ const TicketTerminal: React.FC = () => {
               </tr>
             </tbody>
           </table>}
+
+          {usedStatus
+            && <FormSection>
+              {!usedStatus.used
+                ? <FormItem>
+                  <FormButton onClick={() => updateTicketUsedStatus(true)} disabled={isProgressForUsedStatus}>
+                    使用済みにする
+                  </FormButton>
+                </FormItem>
+                : <FormItem>
+                  <FormButton onClick={() => updateTicketUsedStatus(false)} color="default" disabled={isProgressForUsedStatus}>
+                    未使用にする
+                  </FormButton>
+                </FormItem>}
+            </FormSection>}
+          {usedStatusError && <Alert type="danger" title="エラーが発生しました">
+            {usedStatusError}
+          </Alert>}
         </>
       </TwoColumnsLayout>
     </DashboardLayout >

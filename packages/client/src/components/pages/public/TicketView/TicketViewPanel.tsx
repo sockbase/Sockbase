@@ -39,12 +39,11 @@ const TicketViewPanel: React.FC<Props> = (props) => {
   }
   useEffect(onInitialize, [props.ticketUser])
 
-  const typeName = useMemo(() => {
-    if (!props.ticketUser || !props.store) return ''
+  const type = useMemo(() => {
+    if (!props.ticketUser || !props.store) return
 
-    const type = props.store.types
+    return props.store.types
       .filter(t => t.id === props.ticketUser.typeId)[0]
-    return type.name
   }, [props.ticketUser, props.store])
 
   const handleAssignMe = (): void => {
@@ -64,10 +63,10 @@ const TicketViewPanel: React.FC<Props> = (props) => {
   return (
     <Container>
       <TicketContainer>
-        <TitleWrapper disabled={ticketUser?.usableUserId === null}>
+        <TitleWrapper color={type?.color || '#808080'} disabled={ticketUser?.usableUserId === null}>
           <TitleContainer>
             <StoreName>{props.store.storeName}</StoreName>
-            <TypeName>{typeName}</TypeName>
+            <TypeName>{type?.name}</TypeName>
             <QRCodeArea>
               <QRCode value={props.ticketHashId} size={192} />
             </QRCodeArea>
@@ -146,7 +145,7 @@ const TicketContainer = styled.div`
     grid-template-rows: auto 1fr auto;
   }
 `
-const TitleWrapper = styled.section<{ disabled?: boolean, color?: string }>`
+const TitleWrapper = styled.section<{ disabled?: boolean, color: string }>`
   background-color: ${props => props.disabled
     ? '#c0c0c0'
     : props.color || '#404040'};

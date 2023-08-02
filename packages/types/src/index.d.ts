@@ -86,6 +86,7 @@ export interface SockbaseStoreType {
     productId: string
     paymentURL: string
   } | null
+  color: string
 }
 
 /**
