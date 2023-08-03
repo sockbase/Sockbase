@@ -26,12 +26,12 @@ import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentSta
 import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 import FormButton from '../../../components/Form/Button'
-import FormInput from '../../../components/Form/Input'
 import LinkButton from '../../../components/Parts/LinkButton'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import useRole from '../../../hooks/useRole'
+import FormTextarea from '../../../components/Form/Textarea'
 
 const TicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -298,13 +298,16 @@ const TicketDetail: React.FC = () => {
                   チケットを渡したい方へ以下のURLを送付してください。
                 </FormItem>
                 <FormItem>
-                  <FormInput disabled value={assignURL} />
+                  <FormTextarea disabled>{assignURL}</FormTextarea>
+                </FormItem>
+                <FormItem>
+                  リンクをコピー <CopyToClipboard content={assignURL} />
                 </FormItem>
               </>}
             </FormSection>
           </>}
 
-          {hashedTicketId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && <>
+          {hashedTicketId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && !ticketUsedStatus?.used && <>
             <h3>チケットを表示</h3>
             <FormSection>
               <FormItem>
@@ -313,7 +316,7 @@ const TicketDetail: React.FC = () => {
             </FormSection>
           </>}
 
-          {ticketUser?.usableUserId && ticket && <FormSection>
+          {ticketUser?.usableUserId && ticket && !ticketUsedStatus?.used && <FormSection>
             <h3>チケット割り当てを解除</h3>
             <FormItem>
               このチケットは{ticketUser.usableUserId === ticket.userId ? 'あなた' : '他の方'}に割り当てられています。
