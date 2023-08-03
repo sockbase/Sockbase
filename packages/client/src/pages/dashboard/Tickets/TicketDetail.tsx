@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { MdLocalPlay } from 'react-icons/md'
+import { MdWallet } from 'react-icons/md'
 import {
   type SockbaseTicketMeta,
   type SockbaseAccount,
@@ -205,7 +205,7 @@ const TicketDetail: React.FC = () => {
           : <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>}
 
       </Breadcrumbs>
-      <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="購入済みチケット情報" isLoading={!store} />
+      <PageTitle title={pageTitle} icon={<MdWallet />} description="購入済みチケット情報" isLoading={!store} />
 
       <TwoColumnsLayout>
         <>
