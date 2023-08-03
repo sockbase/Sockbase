@@ -52,7 +52,9 @@ const ticketConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketDocument
 }
 
 const ticketMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketMeta> = {
-  toFirestore: () => ({}),
+  toFirestore: (ticketMeta: SockbaseTicketMeta) => ({
+    applicationStatus: ticketMeta.applicationStatus
+  }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketMeta => {
     const data = snapshot.data()
     return {
