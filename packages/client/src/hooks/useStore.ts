@@ -1,6 +1,7 @@
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseFunctions from 'firebase/functions'
 import type {
+  SockbaseApplicationStatus,
   SockbaseStoreDocument,
   SockbaseTicket,
   SockbaseTicketAddedResult,
@@ -51,7 +52,9 @@ const ticketConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketDocument
 }
 
 const ticketMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseTicketMeta> = {
-  toFirestore: () => ({}),
+  toFirestore: (ticketMeta: SockbaseTicketMeta) => ({
+    applicationStatus: ticketMeta.applicationStatus
+  }),
   fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseTicketMeta => {
     const data = snapshot.data()
     return {
@@ -115,6 +118,7 @@ interface IUseStore {
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
   getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
+  updateTicketApplicationStatusAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void>
   updateTicketUsedStatusByIdAsync: (ticketId: string, used: boolean) => Promise<void>
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
   getTicketsByStoreIdAsync: (storeId: string) => Promise<SockbaseTicketDocument[]>
@@ -242,6 +246,15 @@ const useStore: () => IUseStore = () => {
     return ticketUsedStatus
   }
 
+  const updateTicketApplicationStatusAsync = async (ticketId: string, status: SockbaseApplicationStatus): Promise<void> => {
+    const db = getFirestore()
+    const ticketMetaRef = FirestoreDB
+      .doc(db, `_tickets/${ticketId}/private/meta`)
+      .withConverter(ticketMetaConverter)
+
+    await FirestoreDB.setDoc(ticketMetaRef, { applicationStatus: status }, { merge: true })
+  }
+
   const updateTicketUsedStatusByIdAsync = async (ticketId: string, used: boolean): Promise<void> => {
     const db = getFirestore()
     const ticketUsedStatusRef = FirestoreDB
@@ -340,6 +353,7 @@ const useStore: () => IUseStore = () => {
     getTicketUserByHashIdAsync,
     getTicketUserByHashIdOptionalAsync,
     getTicketUsedStatusByIdAsync,
+    updateTicketApplicationStatusAsync,
     updateTicketUsedStatusByIdAsync,
     getTicketsByUserIdAsync,
     getTicketsByStoreIdAsync,
