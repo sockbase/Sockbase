@@ -18,6 +18,7 @@ import FormItem from '../../../components/Form/FormItem'
 import LinkButton from '../../../components/Parts/LinkButton'
 import useFirebase from '../../../hooks/useFirebase'
 import Alert from '../../../components/Parts/Alert'
+import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 
 const MyTicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -88,12 +89,18 @@ const MyTicketDetail: React.FC = () => {
       {user && ticketUser?.usableUserId
         && <TwoColumnsLayout>
           <>
+            {ticketUser.hashId && !ticketUser.used && <FormSection>
+              <FormItem>
+                <LinkButton to={`/tickets/${ticketUser.hashId}`}>チケットを表示</LinkButton>
+              </FormItem>
+            </FormSection>}
+
             <h3>ステータス</h3>
             <table>
               <tbody>
                 <tr>
                   <th>使用状況</th>
-                  <td>{(ticketUser && (ticketUser?.used ? '使用済み' : '未使用')) ?? <BlinkField />}</td>
+                  <td>{(ticketUser && <TicketUsedStatusLabel status={ticketUser.used} />) ?? <BlinkField />}</td>
                 </tr>
                 <tr>
                   <th>使用日</th>
@@ -111,25 +118,13 @@ const MyTicketDetail: React.FC = () => {
                 </tr>
               </tbody>
             </table>
-
-            {ticketUser && (ticketUser.userId === ticketUser.usableUserId) && <>
-              <h3>チケット管理</h3>
-              <FormSection>
-                <FormItem>
-                  <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default">チケット管理ページ</LinkButton>
-                </FormItem>
-              </FormSection>
-            </>}
+            {ticketUser.userId === ticketUser.usableUserId && <FormSection>
+              <FormItem>
+                <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default">チケット管理ページ</LinkButton>
+              </FormItem>
+            </FormSection>}
           </>
           <>
-            {ticketUser?.hashId && <>
-              <h3>チケットを表示</h3>
-              <FormSection>
-                <FormItem>
-                  <LinkButton to={`/tickets/${ticketUser.hashId}`}>チケットを表示</LinkButton>
-                </FormItem>
-              </FormSection>
-            </>}
           </>
         </TwoColumnsLayout>}
     </DashboardLayout>
