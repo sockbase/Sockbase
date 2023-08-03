@@ -18,6 +18,7 @@ import FormItem from '../../../components/Form/FormItem'
 import LinkButton from '../../../components/Parts/LinkButton'
 import useFirebase from '../../../hooks/useFirebase'
 import Alert from '../../../components/Parts/Alert'
+import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 
 const MyTicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -93,7 +94,7 @@ const MyTicketDetail: React.FC = () => {
               <tbody>
                 <tr>
                   <th>使用状況</th>
-                  <td>{(ticketUser && (ticketUser?.used ? '使用済み' : '未使用')) ?? <BlinkField />}</td>
+                  <td>{(ticketUser && <TicketUsedStatusLabel status={ticketUser.used} />) ?? <BlinkField />}</td>
                 </tr>
                 <tr>
                   <th>使用日</th>
@@ -112,7 +113,7 @@ const MyTicketDetail: React.FC = () => {
               </tbody>
             </table>
 
-            {ticketUser && (ticketUser.userId === ticketUser.usableUserId) && <>
+            {ticketUser.userId === ticketUser.usableUserId && <>
               <h3>チケット管理</h3>
               <FormSection>
                 <FormItem>
@@ -122,7 +123,7 @@ const MyTicketDetail: React.FC = () => {
             </>}
           </>
           <>
-            {ticketUser?.hashId && <>
+            {ticketUser.hashId && !ticketUser.used && <>
               <h3>チケットを表示</h3>
               <FormSection>
                 <FormItem>

@@ -72,6 +72,10 @@ const StepContainer: React.FC<Props> = (props) => {
   }
   useEffect(onInitialize, [props.isLoggedIn, props.store, props.ticketUser, props.userData, userData])
 
+  const onChangeStep: () => void =
+    () => window.scrollTo(0, 0)
+  useEffect(onChangeStep, [step])
+
   return (
     <>
       <h1>{props.store.storeName} 受け取りページ</h1>
