@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
+import ApplicationStatusLabel from '../../../Parts/StatusLabel/ApplicationStatusLabel'
 
 interface Props {
   event: SockbaseEvent
@@ -36,6 +37,8 @@ const EventApplications: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
+            <th>#</th>
+            <th></th>
             <th>サークル名</th>
             <th>ペンネーム</th>
             <th>申し込みスペース</th>
@@ -48,8 +51,10 @@ const EventApplications: React.FC<Props> = (props) => {
             Object.entries(props.apps)
               .filter(([_, app]) => !!app.hashId)
               .sort(([_a, a], [_b, b]) => (a.createdAt?.getTime() ?? 9) - (b.createdAt?.getTime() ?? 0))
-              .map(([appId, app]) => (
+              .map(([appId, app], i) => (
                 app.hashId && <tr key={app.hashId}>
+                  <td>{Object.entries(props.apps).length - i}</td>
+                  <td><ApplicationStatusLabel status={props.metas[appId].applicationStatus} /></td>
                   <th><Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link></th>
                   <td>{app.circle.penName}</td>
                   <td>{spaceName(app.spaceId)}</td>
