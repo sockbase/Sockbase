@@ -1,15 +1,11 @@
 import styled from 'styled-components'
 import { MdEditNote, MdHome, MdLocalActivity, MdMail, MdPayments, MdSettings, MdWallet } from 'react-icons/md'
 import PageTitle from '../../Layout/Dashboard/PageTitle'
-import Breadcrumbs from '../../Parts/Breadcrumbs'
 import TopCard from '../../Parts/TopCard'
 
 const Dashboard: React.FC = () => {
   return (
     <>
-      <Breadcrumbs>
-        <li>マイページ</li>
-      </Breadcrumbs>
       <PageTitle
         icon={<MdHome />}
         title="ホーム"
