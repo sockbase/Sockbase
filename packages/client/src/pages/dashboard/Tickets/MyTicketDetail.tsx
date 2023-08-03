@@ -89,6 +89,12 @@ const MyTicketDetail: React.FC = () => {
       {user && ticketUser?.usableUserId
         && <TwoColumnsLayout>
           <>
+            {ticketUser.hashId && !ticketUser.used && <FormSection>
+              <FormItem>
+                <LinkButton to={`/tickets/${ticketUser.hashId}`}>チケットを表示</LinkButton>
+              </FormItem>
+            </FormSection>}
+
             <h3>ステータス</h3>
             <table>
               <tbody>
@@ -112,25 +118,13 @@ const MyTicketDetail: React.FC = () => {
                 </tr>
               </tbody>
             </table>
-
-            {ticketUser.userId === ticketUser.usableUserId && <>
-              <h3>チケット管理</h3>
-              <FormSection>
-                <FormItem>
-                  <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default">チケット管理ページ</LinkButton>
-                </FormItem>
-              </FormSection>
-            </>}
+            {ticketUser.userId === ticketUser.usableUserId && <FormSection>
+              <FormItem>
+                <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default">チケット管理ページ</LinkButton>
+              </FormItem>
+            </FormSection>}
           </>
           <>
-            {ticketUser.hashId && !ticketUser.used && <>
-              <h3>チケットを表示</h3>
-              <FormSection>
-                <FormItem>
-                  <LinkButton to={`/tickets/${ticketUser.hashId}`}>チケットを表示</LinkButton>
-                </FormItem>
-              </FormSection>
-            </>}
           </>
         </TwoColumnsLayout>}
     </DashboardLayout>
