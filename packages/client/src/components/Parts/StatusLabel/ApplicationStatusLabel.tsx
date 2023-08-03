@@ -38,12 +38,12 @@ const Container = styled.label<{ status: SockbaseApplicationStatus }>`
       `
     } else if (p.status === 1) {
       return `
-        background-color: #d31f1f;
+        background-color: #b83340;
         color: #000000;
       `
     } else if (p.status === 2) {
       return `
-        background-color: #32c041;
+        background-color: #20a0f0;
         color: #000000;
       `
     }

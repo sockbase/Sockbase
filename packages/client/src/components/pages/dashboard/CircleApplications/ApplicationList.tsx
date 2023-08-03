@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
-import sockbaseShared from 'shared'
+import ApplicationStatusLabel from '../../../Parts/StatusLabel/ApplicationStatusLabel'
 
 interface Props {
   apps: Record<string, SockbaseApplicationDocument>
@@ -13,8 +13,8 @@ const ApplicationList: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
+            <th></th>
             <th>イベント名</th>
-            <th>ステータス</th>
             <th>サークル名</th>
             <th>ペンネーム</th>
             <th>申し込み日時</th>
@@ -28,8 +28,8 @@ const ApplicationList: React.FC<Props> = (props) => {
                 .sort(([_a, a], [_b, b]) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
                 .map(([appId, app]) => (
                   app.hashId && <tr key={app.hashId}>
+                    <td><ApplicationStatusLabel status={props.metas[appId].applicationStatus} /></td>
                     <th><Link to={`/dashboard/applications/${app.hashId}`}>{props.events[app.eventId].eventName}</Link></th>
-                    <td>{sockbaseShared.constants.application.statusText[props.metas[appId].applicationStatus]}</td>
                     <td>{app.circle.name}</td>
                     <td>{app.circle.penName}</td>
                     <td>{app.createdAt?.toLocaleString() ?? '-'}</td>
