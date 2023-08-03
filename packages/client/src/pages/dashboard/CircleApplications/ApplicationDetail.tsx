@@ -10,6 +10,7 @@ import {
   type SockbaseApplicationLinksDocument
 } from 'sockbase'
 import sockbaseShared from 'shared'
+import { MdEdit } from 'react-icons/md'
 import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
 import usePayment from '../../../hooks/usePayment'
@@ -17,10 +18,8 @@ import useUserData from '../../../hooks/useUserData'
 import useRole from '../../../hooks/useRole'
 import useDayjs from '../../../hooks/useDayjs'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
-// import ApplicationDetail from '../../../components/pages/dashboard/CircleApplications/ApplicationDetail'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import Alert from '../../../components/Parts/Alert'
-import { MdEdit } from 'react-icons/md'
 import PageTitle from '../../../components/Layout/Dashboard/PageTitle'
 import BlinkField from '../../../components/Parts/BlinkField'
 import TwoColumnsLayout from '../../../components/Layout/TwoColumns/TwoColumns'
@@ -89,7 +88,7 @@ const ApplicationDetailContainer: React.FC = () => {
           throw err
         })
     }
-  useEffect(onInitialize, [hashedAppId, checkIsAdminByOrganizationId])
+  useEffect(onInitialize, [hashedAppId])
 
   const onFetchedApp = (): void => {
     const fetch = async (): Promise<void> => {
@@ -108,11 +107,11 @@ const ApplicationDetailContainer: React.FC = () => {
     fetch()
       .catch(err => { throw err })
   }
-  useEffect(onFetchedApp, [app])
+  useEffect(onFetchedApp, [app, checkIsAdminByOrganizationId])
 
   const handleChangeStatus: (status: SockbaseApplicationStatus) => void =
     (status) => {
-      if (!appId) return
+      if (!appId || !isAdmin) return
       updateApplicationStatusByIdAsync(appId, status)
         .then(() => {
           alert('ステータスの変更に成功しました。')

@@ -9,7 +9,8 @@ import {
   type SockbasePaymentDocument,
   type SockbaseTicketHashIdDocument,
   type SockbaseTicketUsedStatus,
-  type SockbaseTicketUserDocument
+  type SockbaseTicketUserDocument,
+  type SockbaseApplicationStatus
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
@@ -30,6 +31,7 @@ import LinkButton from '../../../components/Parts/LinkButton'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import useRole from '../../../hooks/useRole'
 
 const TicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -42,10 +44,12 @@ const TicketDetail: React.FC = () => {
     getTicketUserByHashIdAsync,
     getTicketUsedStatusByIdAsync,
     assignTicketUserAsync,
-    unassignTicketUserAsync
+    unassignTicketUserAsync,
+    updateTicketApplicationStatusAsync
   } = useStore()
   const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
   const { getPaymentAsync } = usePayment()
+  const { checkIsAdminByOrganizationId } = useRole()
 
   const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument>()
   const [ticket, setTicket] = useState<SockbaseTicketDocument>()
@@ -55,6 +59,8 @@ const TicketDetail: React.FC = () => {
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus>()
+
+  const [isAdmin, setAdmin] = useState<boolean | null>()
 
   const [openAssignPanel, setOpenAssignPanel] = useState(false)
   const [isProgressForAssignMe, setProgressForAssignMe] = useState(false)
@@ -109,7 +115,11 @@ const TicketDetail: React.FC = () => {
       if (!ticket?.id) return
 
       getStoreByIdAsync(ticket.storeId)
-        .then(fetchedStore => setStore(fetchedStore))
+        .then(fetchedStore => {
+          setStore(fetchedStore)
+          const fetchedIsAdmin = checkIsAdminByOrganizationId(fetchedStore._organization.id)
+          setAdmin(fetchedIsAdmin)
+        })
         .catch(err => { throw err })
 
       getUserDataByUserIdAndStoreIdOptionalAsync(ticket.userId, ticket.storeId)
@@ -120,7 +130,7 @@ const TicketDetail: React.FC = () => {
     fetchAsync()
       .catch(err => { throw err })
   }
-  useEffect(onFetchedTicket, [ticket])
+  useEffect(onFetchedTicket, [ticket, checkIsAdminByOrganizationId])
 
   const type = useMemo(() => {
     if (!store || !ticket) return
@@ -169,14 +179,31 @@ const TicketDetail: React.FC = () => {
         throw err
       })
       .finally(() => setProgressForUnassign(false))
+  }
 
+  const handleChangeStatus = (status: SockbaseApplicationStatus): void => {
+    if (!ticket?.id || !isAdmin) return
+    updateTicketApplicationStatusAsync(ticket.id, status)
+      .then(() => {
+        alert('ステータスの変更に成功しました。')
+        setTicketMeta(s => (s && { ...s, applicationStatus: status }))
+      })
+      .catch(err => {
+        throw err
+      })
   }
 
   return (
     <DashboardLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>
+        {isAdmin
+          ? <>
+            <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
+            <li><Link to={`/dashboard/stores/${store?.id}`}>{store?.storeName ?? <BlinkField />}</Link></li>
+          </>
+          : <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>}
+
       </Breadcrumbs>
       <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="購入済みチケット情報" isLoading={!store} />
 
@@ -297,6 +324,27 @@ const TicketDetail: React.FC = () => {
               </LoadingCircleWrapper>
             </FormItem>
           </FormSection>}
+
+          {isAdmin !== undefined && isAdmin && <>
+            <h3>操作</h3>
+            <FormSection>
+              {ticketMeta?.applicationStatus !== 0 && <FormItem>
+                <FormButton
+                  color="default"
+                  onClick={() => handleChangeStatus(0)}>仮申し込み状態にする</FormButton>
+              </FormItem>}
+              {ticketMeta?.applicationStatus !== 2 && <FormItem>
+                <FormButton
+                  color="info"
+                  onClick={() => handleChangeStatus(2)}>申し込み確定状態にする</FormButton>
+              </FormItem>}
+              {ticketMeta?.applicationStatus !== 1 && <FormItem>
+                <FormButton
+                  color="danger"
+                  onClick={() => handleChangeStatus(1)}>キャンセル状態にする</FormButton>
+              </FormItem>}
+            </FormSection>
+          </>}
         </>
       </TwoColumnsLayout>
     </DashboardLayout>

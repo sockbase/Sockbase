@@ -6,7 +6,8 @@ import {
   type SockbaseStoreDocument,
   type SockbaseStoreType,
   type SockbaseAccount,
-  type SockbaseTicketUsedStatus
+  type SockbaseTicketUsedStatus,
+  type SockbaseTicketMeta
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
@@ -18,18 +19,25 @@ import useUserData from '../../../hooks/useUserData'
 import BlinkField from '../../../components/Parts/BlinkField'
 import LinkButton from '../../../components/Parts/LinkButton'
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
+import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 
 const StoreDetail: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
 
   const { formatByDate } = useDayjs()
-  const { getStoreByIdAsync, getTicketsByStoreIdAsync, getTicketUsedStatusByIdAsync } = useStore()
+  const {
+    getStoreByIdAsync,
+    getTicketsByStoreIdAsync,
+    getTicketUsedStatusByIdAsync,
+    getTicketMetaByIdAsync
+  } = useStore()
   const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
 
   const [store, setStore] = useState<SockbaseStoreDocument>()
   const [tickets, setTickets] = useState<SockbaseTicketDocument[]>()
   const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount | null>>()
   const [usedStatuses, setUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
+  const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
@@ -72,6 +80,12 @@ const StoreDetail: React.FC = () => {
         .then(fetchedUsedStatuses => mapObjectTicketUsedStatuses(fetchedUsedStatuses))
         .catch(err => { throw err })
 
+      Promise.all(
+        ticketIds.map(async (ticketId) => ({ id: ticketId, data: await getTicketMetaByIdAsync(ticketId) }))
+      )
+        .then(fetchedTicketMetas => mapObjectTicketMetas(fetchedTicketMetas))
+        .catch(err => { throw err })
+
       const mapObjectUsers = (users: Array<{ id: string, data: SockbaseAccount | null }>): void => {
         const objectMappedUsers = users
           .reduce<Record<string, SockbaseAccount | null>>((p, c) => ({ ...p, [c.id]: c.data }), {})
@@ -84,6 +98,11 @@ const StoreDetail: React.FC = () => {
         setUsedStatuses(objectMappedUsedStatuses)
       }
 
+      const mapObjectTicketMetas = (ticketMetas: Array<{ id: string, data: SockbaseTicketMeta }>): void => {
+        const objectMappedTicketMetas = ticketMetas
+          .reduce<Record<string, SockbaseTicketMeta>>((p, c) => ({ ...p, [c.id]: c.data }), {})
+        setTicketMetas(objectMappedTicketMetas)
+      }
     }
     fetchAsync()
       .catch(err => { throw err })
@@ -136,8 +155,9 @@ const StoreDetail: React.FC = () => {
           <thead>
             <tr>
               <th>#</th>
-              <th>種別</th>
               <th>使用状態</th>
+              <th>申し込み状態</th>
+              <th>種別</th>
               <th>購入者</th>
               <th>チケットID</th>
               <th>更新日</th>
@@ -148,9 +168,10 @@ const StoreDetail: React.FC = () => {
               ? tickets
                 .sort((a, b) => (b.updatedAt?.getTime() ?? b.createdAt?.getTime() ?? 9) - (a.updatedAt?.getTime() ?? a.createdAt?.getTime() ?? 0))
                 .map((t, i) => <tr key={t.id}>
-                  <td>{i + 1}</td>
-                  <td><Link to={`/dashboard/tickets/${t.hashId}`}>{getType(t.typeId)?.name}</Link></td>
+                  <td>{tickets.length - i}</td>
                   <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
+                  <td>{t?.id && <ApplicationStatusLabel status={ticketMetas?.[t.id].applicationStatus} />}</td>
+                  <td><Link to={`/dashboard/tickets/${t.hashId}`}>{getType(t.typeId)?.name}</Link></td>
                   <td>
                     {userDatas
                       ? userDatas?.[t.userId]?.name || '-'
