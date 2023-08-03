@@ -63,13 +63,14 @@ const TicketViewPanel: React.FC<Props> = (props) => {
   return (
     <Container>
       <TicketContainer>
-        <TitleWrapper color={type?.color || '#808080'} disabled={ticketUser?.usableUserId === null}>
+        <TitleWrapper color={type?.color || '#808080'} disabled={!ticketUser?.usableUserId || ticketUser?.used}>
           <TitleContainer>
             <StoreName>{props.store.storeName}</StoreName>
             <TypeName>{type?.name}</TypeName>
             <QRCodeArea>
               <QRCode value={props.ticketHashId} size={192} />
             </QRCodeArea>
+            <Code>{props.ticketHashId}</Code>
           </TitleContainer>
         </TitleWrapper>
         <ContentContainer>
@@ -99,7 +100,11 @@ const TicketViewPanel: React.FC<Props> = (props) => {
                 </>}
             </>
             : <>
-              {props.userId !== ticketUser?.usableUserId
+              {props.ticketUser.used
+                ? <Alert type="danger" title="使用済みです">
+                  このチケットは既に使用されています。
+                </Alert>
+                : ticketUser && props.userId !== ticketUser.usableUserId
                 && <Alert title="他の方に割り当てられているチケットです" type="danger">
                   あなたが使用すると、割り当てた方が使用できなくなります。<br />
                   自分のチケットは <Link to="/dashboard/mytickets">マイチケット</Link> から確認できます。
@@ -188,6 +193,9 @@ const QRCodeArea = styled.section`
 const QRCode = styled(ReactQRCode)`
   padding: 20px;
   background-color: #ffffff;
+`
+const Code = styled.div`
+  margin-top: 20px;
 `
 const ContentContainer = styled.section`
   padding: 20px;
