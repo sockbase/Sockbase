@@ -403,3 +403,23 @@ export type InquiryType = 'other'
  * done: 2
  */
 export type InquiryStatus = 0 | 1 | 2
+
+/**
+ * チャットルーム
+ */
+export interface SockbaseChatRoom {
+  messages: SockbaseChatMessage[]
+}
+
+/**
+ * チャットメッセージ
+ */
+export interface SockbaseChatMessage {
+  userId: string
+  content: string
+}
+
+export type SockbaseChatMessageDocument = SockbaseChatMessage & {
+  id: string
+  createdAt: number
+}

@@ -17,6 +17,7 @@ import {
 import { type Firestore, getFirestore as getFirebaseFirestore } from 'firebase/firestore'
 import { type FirebaseStorage, getStorage as getFirebaseStorage } from 'firebase/storage'
 import { type Functions, getFunctions as getFirebaseFunctions } from 'firebase/functions'
+import { type Database, getDatabase as getFirebaseDatabase } from 'firebase/database'
 import type { SockbaseRole } from 'sockbase'
 import { getFirebaseApp } from '../libs/FirebaseApp'
 
@@ -33,6 +34,7 @@ interface IUseFirebase {
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
   getFunctions: () => Functions
+  getDatabase: () => Database
 }
 
 const useFirebase: () => IUseFirebase =
@@ -117,6 +119,11 @@ const useFirebase: () => IUseFirebase =
         return getFirebaseFunctions(app)
       }
 
+    const getDatabase = (): Database => {
+      const app = getFirebaseApp()
+      return getFirebaseDatabase(app)
+    }
+
     const onAuthenticationUpdated: () => Unsubscribe =
       () => {
         const auth = getAuth()
@@ -159,7 +166,8 @@ const useFirebase: () => IUseFirebase =
       sendVerifyMail,
       getFirestore,
       getStorage,
-      getFunctions
+      getFunctions,
+      getDatabase
     }
   }
 

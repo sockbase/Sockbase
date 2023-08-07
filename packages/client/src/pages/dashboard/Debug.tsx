@@ -4,9 +4,22 @@ import useFirebase from '../../hooks/useFirebase'
 
 import { MdCottage } from 'react-icons/md'
 import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import useChat from '../../hooks/useChat'
+import { useEffect } from 'react'
 
 const DashboardContainer: React.FC = () => {
   const { user, roles } = useFirebase()
+  const { startStream, messages } = useChat()
+
+  useEffect(() => {
+    if (!user) return
+
+    startStream(user.uid)
+  }, [user])
+
+  useEffect(() => {
+    console.log(messages)
+  }, [messages])
 
   return (
     <DashboardLayout title="デバッグボード">
