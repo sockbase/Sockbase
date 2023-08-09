@@ -31,6 +31,7 @@ import DashboardApplicationDetail from './pages/dashboard/CircleApplications/App
 import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
 import DashboardSettings from './pages/dashboard/Settings'
 import DashboardContact from './pages/dashboard/Contact'
+import DashboardSupportChat from './pages/dashboard/SupportChat'
 import DashboardInquiryList from './pages/dashboard/manage/inquiries/InquiryList'
 import DashboardEditLinks from './pages/dashboard/CircleApplications/EditLinks'
 import DashboardTicketList from './pages/dashboard/Tickets/TicketList'
@@ -130,6 +131,15 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <DashboardContact />
+              }
+            ]
+          },
+          {
+            path: 'chat',
+            children: [
+              {
+                index: true,
+                element: <DashboardSupportChat />
               }
             ]
           },

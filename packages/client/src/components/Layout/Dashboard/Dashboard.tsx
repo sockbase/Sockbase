@@ -86,7 +86,9 @@ const StyledContainer = styled.section`
   grid-template-columns: 25% 1fr;
 
   @media screen and (max-width: 840px) {
-    display: block;
+    /* display: block; */
+    grid-template-columns: auto;
+    grid-template-rows: auto;
     overflow-y: auto;
   }
 `
