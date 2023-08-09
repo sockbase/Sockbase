@@ -417,6 +417,7 @@ export interface SockbaseChatRoom {
 export interface SockbaseChatMessage {
   userId: string
   content: string
+  _createdAt: object
 }
 
 export type SockbaseChatMessageDocument = SockbaseChatMessage & {

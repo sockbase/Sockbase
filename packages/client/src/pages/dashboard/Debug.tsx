@@ -5,11 +5,18 @@ import useFirebase from '../../hooks/useFirebase'
 import { MdCottage } from 'react-icons/md'
 import PageTitle from '../../components/Layout/Dashboard/PageTitle'
 import useChat from '../../hooks/useChat'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import FormSection from '../../components/Form/FormSection'
+import FormItem from '../../components/Form/FormItem'
+import FormInput from '../../components/Form/Input'
+import FormButton from '../../components/Form/Button'
 
 const DashboardContainer: React.FC = () => {
   const { user, roles } = useFirebase()
-  const { startStream, messages } = useChat()
+  const { startStream, messages, sendMessageAsync } = useChat()
+
+  const [message, setMessage] = useState('')
+  const [isProgress, setProgress] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -20,6 +27,16 @@ const DashboardContainer: React.FC = () => {
   useEffect(() => {
     console.log(messages)
   }, [messages])
+
+  const handleSendMessage = (): void => {
+    if (!message) return
+    setProgress(true)
+
+    sendMessageAsync(message)
+      .then(() => setMessage(''))
+      .catch(err => { throw err })
+      .finally(() => setProgress(false))
+  }
 
   return (
     <DashboardLayout title="デバッグボード">
@@ -48,6 +65,26 @@ const DashboardContainer: React.FC = () => {
       {
         roles && Object.entries(roles).map(([k, v]) => <li key={k}>{k}: {v}</li>)
       }
+
+      <h2>チャット</h2>
+      <FormSection>
+        <FormItem>
+          <FormInput
+            placeholder='メッセージ'
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            disabled={isProgress} />
+        </FormItem>
+        <FormItem>
+          <FormButton
+            onClick={handleSendMessage}
+            inlined
+            disabled={!message || isProgress}>送信</FormButton>
+        </FormItem>
+      </FormSection>
+      <ul>
+        {messages.map(m => <li key={m.id}>{m.userId}: {m.content}</li>)}
+      </ul>
 
     </DashboardLayout>
   )
