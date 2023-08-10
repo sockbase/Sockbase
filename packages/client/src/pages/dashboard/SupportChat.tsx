@@ -15,9 +15,56 @@ const SupportChat: React.FC = () => {
         <PageTitle title="サポートチャット" description="緊急の対応が必要な場合はこちらからお問い合わせください" icon={<MdChat />} />
 
         <ChatContainer>
-          <MessageArea>
-            MessageArea
-          </MessageArea>
+          <MessagesArea>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+            <Message>
+              <MessageBody>ハロー・ワールド</MessageBody>
+              <MessageMeta>2023/08/10 19:39:14</MessageMeta>
+            </Message>
+          </MessagesArea>
           <InputArea>
             <InputField />
             <SendButton><MdSend /></SendButton>
@@ -42,8 +89,20 @@ const ChatContainer = styled.div`
   justify-content: stretch;
 `
 
-const MessageArea = styled.section`
+const MessagesArea = styled.section`
+  max-height: 100%;
+  overflow-y: scroll;
 `
+
+const Message = styled.article`
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 10px;
+  }
+`
+const MessageBody = styled.div``
+const MessageMeta = styled.div``
+
 const InputArea = styled.section`
   display: grid;
   grid-template-columns: 1fr 48px;
