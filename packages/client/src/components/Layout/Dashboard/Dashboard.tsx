@@ -86,15 +86,19 @@ const StyledContainer = styled.section`
   grid-template-columns: 25% 1fr;
 
   @media screen and (max-width: 840px) {
-    /* display: block; */
-    grid-template-columns: auto;
-    grid-template-rows: auto;
-    overflow-y: auto;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr;
+    /* overflow-y: auto; */
   }
 `
 const StyledWrapAlert = styled.section`
   grid-row: 1;
   grid-column: 2;
+
+  @media screen and (max-width: 840px) {
+    grid-row: 2;
+    grid-column: 1 / 3;
+  }
 `
 const Alert = styled.div`
   padding: 10px 10%;
@@ -108,8 +112,15 @@ const StyledSidebar = styled.nav`
   overflow-y: auto;
   grid-row: 1 / 3;
   grid-column: 1;
+
+  @media screen and (max-width: 840px) {
+    grid-row: 1;
+    grid-column: 1 / 3;
+  }
 `
 const StyledWrapMain = styled.main`
+  min-height: 100%;
+
   padding: 20px;
   overflow-y: auto;
   @media screen and (max-width: 840px) {
@@ -118,8 +129,14 @@ const StyledWrapMain = styled.main`
 
   grid-row: 2;
   grid-column: 2;
+
+  @media screen and (max-width: 840px) {
+    grid-row: 3;
+    grid-column: 1 / 3;
+  }
 `
 const StyledMain = styled.div`
+  height: 100%;
   min-height: 100%;
   padding: 20px;
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
