@@ -201,6 +201,25 @@ export interface SockbaseApplicationHashIdDocument {
 }
 
 /**
+ * スペース情報
+ */
+export interface SockbaseSpace {
+  eventId: string
+  spaceGroupOrder: number
+  spaceOrder: number
+  spaceName: string
+  applicationHashId: string
+  links: SockbaseApplicationLinks | null
+}
+
+/**
+ * スペース情報(DB取得)
+ */
+export type SockbaseSpaceDocument = SockbaseAccount & {
+  id: string
+}
+
+/**
  * チケット情報
  */
 export interface SockbaseTicket {
