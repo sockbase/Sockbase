@@ -14,6 +14,10 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/events/$(eventId)).data
     }
 
+    function getSpace(spaceId) {
+      return get(/databases/$(database)/documents/spaces/$(spaceId)).data
+    }
+
     function getStore(storeId) {
       return get(/databases/$(database)/documents/stores/$(storeId)).data
     }
@@ -102,6 +106,11 @@ service cloud.firestore {
         
       allow create: if request.auth.uid == request.resource.data.userId;
       allow write: if request.auth.uid == resource.data.userId;
+    }
+
+    match /spaces/{spaceId} {
+      allow read: if request.time.toMillis() >= getEvent(getSpace(spaceId).eventId).schedules.publishSpaces
+        || isOrganizationAdmin(request.auth.uid, getEvent(getSpace(spaceId).eventId)._organization.id);
     }
 
     match /_tickets/{ticketId} {
