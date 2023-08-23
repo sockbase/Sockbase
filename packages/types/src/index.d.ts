@@ -198,6 +198,7 @@ export interface SockbaseApplicationHashIdDocument {
   applicationId: string
   hashId: string
   paymentId: string
+  spaceId: string | null
 }
 
 /**
@@ -208,14 +209,12 @@ export interface SockbaseSpace {
   spaceGroupOrder: number
   spaceOrder: number
   spaceName: string
-  applicationHashId: string
-  links: SockbaseApplicationLinks | null
 }
 
 /**
  * スペース情報(DB取得)
  */
-export type SockbaseSpaceDocument = SockbaseAccount & {
+export type SockbaseSpaceDocument = SockbaseSpace & {
   id: string
 }
 

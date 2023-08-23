@@ -3,7 +3,7 @@ import * as FirebaseStorage from 'firebase/storage'
 
 import useFirebase from './useFirebase'
 
-import type { SockbaseEvent } from 'sockbase'
+import type { SockbaseEvent, SockbaseSpaceDocument } from 'sockbase'
 
 const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
   toFirestore: (event: SockbaseEvent): FirestoreDB.DocumentData => ({
@@ -44,9 +44,25 @@ const eventConverter: FirestoreDB.FirestoreDataConverter<SockbaseEvent> = {
   }
 }
 
+const spaceConverter: FirestoreDB.FirestoreDataConverter<SockbaseSpaceDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): SockbaseSpaceDocument => {
+    const space = snapshot.data()
+    return {
+      id: snapshot.id,
+      eventId: space.eventId,
+      spaceGroupOrder: space.spaceGroupOrder,
+      spaceOrder: space.spaceOrder,
+      spaceName: space.spaceName
+    }
+  }
+}
+
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent>
   getEventEyecatch: (eventId: string) => Promise<string | null>
+  getSpaceAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
+  getSpaceOptionalAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
 }
 const useEvent: () => IUseEvent = () => {
   const { getFirestore, getStorage } = useFirebase()
@@ -75,9 +91,30 @@ const useEvent: () => IUseEvent = () => {
       return eyecatchURL
     }
 
+  const getSpaceAsync = async (spaceId: string): Promise<SockbaseSpaceDocument> => {
+    const db = getFirestore()
+    const spaceRef = FirestoreDB
+      .doc(db, `spaces/${spaceId}`)
+      .withConverter(spaceConverter)
+    const spaceDoc = await FirestoreDB.getDoc(spaceRef)
+    const space = spaceDoc.data()
+    if (!space) {
+      throw new Error('space not found')
+    }
+    return space
+  }
+
+  const getSpaceOptionalAsync = async (spaceId: string): Promise<SockbaseSpaceDocument | null> => {
+    console.log(spaceId)
+    return await getSpaceAsync(spaceId)
+      .catch(() => null)
+  }
+
   return {
     getEventByIdAsync,
-    getEventEyecatch
+    getEventEyecatch,
+    getSpaceAsync,
+    getSpaceOptionalAsync
   }
 }
 

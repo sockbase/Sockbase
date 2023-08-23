@@ -57,17 +57,17 @@ const EditLinks: React.FC = () => {
       if (!hashedAppId) return
 
       const fetchedAppId = await getApplicationIdByHashedIdAsync(hashedAppId)
-      const fetchedApp = await getApplicationByIdAsync(fetchedAppId)
+      const fetchedApp = await getApplicationByIdAsync(fetchedAppId.applicationId)
       const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
       const fetchedIsAdmin = checkIsAdminByOrganizationId(fetchedEvent._organization.id)
 
-      setAppId(fetchedAppId)
+      setAppId(fetchedAppId.applicationId)
       setApp(fetchedApp)
       setEventId(fetchedApp.eventId)
       setEvent(fetchedEvent)
       setAdmin(fetchedIsAdmin)
 
-      const fetchedLinks = await getLinksByApplicationIdOptionalAsync(fetchedAppId)
+      const fetchedLinks = await getLinksByApplicationIdOptionalAsync(fetchedAppId.applicationId)
       if (!fetchedLinks) return
 
       setLinks({

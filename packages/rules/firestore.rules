@@ -104,6 +104,10 @@ service cloud.firestore {
       allow write: if request.auth.uid == resource.data.userId;
     }
 
+    match /spaces/{spaceId} {
+      allow read: if isSystemAdmin(request.auth.uid);
+    }
+
     match /_tickets/{ticketId} {
       allow read: if request.auth.uid == resource.data.userId
         || isOrganizationAdmin(request.auth.uid, getStore(resource.data.storeId)._organization.id);

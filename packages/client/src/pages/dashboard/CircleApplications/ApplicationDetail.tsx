@@ -7,7 +7,8 @@ import {
   type SockbaseApplicationMeta,
   type SockbaseApplicationStatus,
   type SockbaseEvent,
-  type SockbaseApplicationLinksDocument
+  type SockbaseApplicationLinksDocument,
+  type SockbaseSpaceDocument
 } from 'sockbase'
 import sockbaseShared from 'shared'
 import { MdEdit } from 'react-icons/md'
@@ -41,7 +42,7 @@ const ApplicationDetailContainer: React.FC = () => {
     getLinksByApplicationIdOptionalAsync
   } = useApplication()
   const { getPaymentIdByHashId, getPaymentAsync } = usePayment()
-  const { getEventByIdAsync } = useEvent()
+  const { getEventByIdAsync, getSpaceOptionalAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const { checkIsAdminByOrganizationId } = useRole()
   const { formatByDate } = useDayjs()
@@ -54,40 +55,46 @@ const ApplicationDetailContainer: React.FC = () => {
   const [eventId, setEventId] = useState<string>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [links, setLinks] = useState<SockbaseApplicationLinksDocument | null>()
+  const [space, setSpace] = useState<SockbaseSpaceDocument | null>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
   const [isAdmin, setAdmin] = useState<boolean | null>()
 
-  const onInitialize: () => void =
-    () => {
-      const fetchApplicationAsync: () => Promise<void> =
-        async () => {
-          if (!hashedAppId) return
+  const onInitialize = (): void => {
+    const fetchApplicationAsync: () => Promise<void> =
+      async () => {
+        if (!hashedAppId) return
 
-          const fetchedAppId = await getApplicationIdByHashedIdAsync(hashedAppId)
-          const fetchedApp = await getApplicationByIdAsync(fetchedAppId)
+        const fetchedAppHashDoc = await getApplicationIdByHashedIdAsync(hashedAppId)
+        const fetchedApp = await getApplicationByIdAsync(fetchedAppHashDoc.applicationId)
 
-          const fetchedPaymentId = await getPaymentIdByHashId(hashedAppId)
-          getPaymentAsync(fetchedPaymentId)
-            .then(fetchedPayment => setPayment(fetchedPayment))
+        const fetchedPaymentId = await getPaymentIdByHashId(hashedAppId)
+        getPaymentAsync(fetchedPaymentId)
+          .then(fetchedPayment => setPayment(fetchedPayment))
+          .catch(err => { throw err })
+
+        getCircleCutURLByHashedIdAsync(hashedAppId)
+          .then(fetchedCircleCutURL => setCircleCutURL(fetchedCircleCutURL))
+          .catch(err => { throw err })
+
+        getLinksByApplicationIdOptionalAsync(fetchedAppHashDoc.applicationId)
+          .then(fetchedLinks => setLinks(fetchedLinks))
+          .catch(err => { throw err })
+
+        if (fetchedAppHashDoc.spaceId) {
+          getSpaceOptionalAsync(fetchedAppHashDoc.spaceId)
+            .then(fetchedSpace => setSpace(fetchedSpace))
             .catch(err => { throw err })
-
-          getCircleCutURLByHashedIdAsync(hashedAppId)
-            .then(fetchedCircleCutURL => setCircleCutURL(fetchedCircleCutURL))
-            .catch(err => { throw err })
-
-          getLinksByApplicationIdOptionalAsync(fetchedAppId)
-            .then(fetchedLinks => setLinks(fetchedLinks))
-            .catch(err => { throw err })
-
-          setAppId(fetchedAppId)
-          setApp(fetchedApp)
-          setEventId(fetchedApp.eventId)
         }
-      fetchApplicationAsync()
-        .catch(err => {
-          throw err
-        })
-    }
+
+        setAppId(fetchedAppHashDoc.applicationId)
+        setApp(fetchedApp)
+        setEventId(fetchedApp.eventId)
+      }
+    fetchApplicationAsync()
+      .catch(err => {
+        throw err
+      })
+  }
   useEffect(onInitialize, [hashedAppId])
 
   const onFetchedApp = (): void => {
@@ -171,6 +178,10 @@ const ApplicationDetailContainer: React.FC = () => {
       {!links && event && <Alert type="danger" title="広報情報を入力してください">
         広報情報は<Link to={`/dashboard/applications/${hashedAppId}/links`}>こちら</Link>から入力できます。<br />
         カタログ等に掲載する情報は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日 H時mm分')}</b>」時点のものとさせていただきます。
+      </Alert>}
+
+      {space && <Alert type="success" title="スペース配置情報">
+        あなたのサークル「{app?.circle.name}」は <b>{space.spaceName}</b> に配置されています。
       </Alert>}
 
       <TwoColumnsLayout>
