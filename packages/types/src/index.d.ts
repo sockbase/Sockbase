@@ -198,6 +198,24 @@ export interface SockbaseApplicationHashIdDocument {
   applicationId: string
   hashId: string
   paymentId: string
+  spaceId: string | null
+}
+
+/**
+ * スペース情報
+ */
+export interface SockbaseSpace {
+  eventId: string
+  spaceGroupOrder: number
+  spaceOrder: number
+  spaceName: string
+}
+
+/**
+ * スペース情報(DB取得)
+ */
+export type SockbaseSpaceDocument = SockbaseSpace & {
+  id: string
 }
 
 /**
