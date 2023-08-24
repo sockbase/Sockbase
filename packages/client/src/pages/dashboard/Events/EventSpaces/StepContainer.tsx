@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { type RawAssignEventSpace, type RawEventSpace } from '../../../../@types'
-import { type SockbaseSpaceDocument } from 'sockbase'
+import { type SockbaseApplicationDocument, type SockbaseSpaceDocument } from 'sockbase'
 import SpaceCreate from './SpaceCreate'
 import SpaceCreateConfirm from './SpaceCreateConfirm'
 import SpaceAssign from './SpaceAssign'
@@ -11,6 +11,7 @@ import useEvent from '../../../../hooks/useEvent'
 interface Props {
   eventId: string
   spaces: SockbaseSpaceDocument[]
+  apps: Record<string, SockbaseApplicationDocument>
 }
 const EventSpacesStepContainer: React.FC<Props> = (props) => {
   const { createSpacesAsync, assignSpacesAsync } = useEvent()
@@ -55,11 +56,13 @@ const EventSpacesStepContainer: React.FC<Props> = (props) => {
         nextStep={() => setStep(2)} />,
       <SpaceAssign key="space-assign"
         spacesData={_spacesData}
+        rawAssignSpaces={rawAssignSpaces}
         nextStep={(rawSpaces: RawAssignEventSpace[]) => {
           setRawAssignSpaces(rawSpaces)
           setStep(3)
         }} />,
       <SpaceAssignConfirm key="space-assign-confirm"
+        apps={props.apps}
         spacesData={_spacesData}
         rawAssignSpaces={rawAssignSpaces}
         handleSubmit={assignSpaces}
@@ -68,7 +71,7 @@ const EventSpacesStepContainer: React.FC<Props> = (props) => {
       <SpaceView key="space-view" />
     ])
   }
-  useEffect(onInitialize, [props.spaces, rawSpaces, spacesData, rawAssignSpaces])
+  useEffect(onInitialize, [props.spaces, rawSpaces, spacesData, rawAssignSpaces, props.apps])
 
   return (
     <>

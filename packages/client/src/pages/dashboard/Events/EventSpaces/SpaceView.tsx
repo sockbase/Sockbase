@@ -1,7 +1,8 @@
 const SpaceView: React.FC = () => {
   return (
     <>
-      <table>
+      WIP
+      {/* <table>
         <thead>
           <tr>
             <th>スペース</th>
@@ -14,7 +15,7 @@ const SpaceView: React.FC = () => {
             <th colSpan={3}>サークルが配置されていません</th>
           </tr>
         </tbody>
-      </table>
+      </table> */}
     </>
   )
 }
