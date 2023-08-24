@@ -1,6 +1,12 @@
 import { useEffect, useState, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
+import {
+  type SockbaseSpaceDocument,
+  type SockbaseApplicationDocument,
+  type SockbaseApplicationHashIdDocument,
+  type SockbaseApplicationMeta,
+  type SockbaseEvent
+} from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import EventApplications from '../../../components/pages/dashboard/Events/EventApplications'
 import useApplication from '../../../hooks/useApplication'
@@ -14,12 +20,19 @@ import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
 
 const EventApplicationsContainer: React.FC = () => {
   const { eventId } = useParams()
-  const { getApplicationsByEventIdAsync, getApplicationMetaByIdAsync, exportCSV } = useApplication()
-  const { getEventByIdAsync } = useEvent()
+  const {
+    getApplicationsByEventIdAsync,
+    getApplicationMetaByIdAsync,
+    getApplicationIdByHashedIdAsync,
+    exportCSV
+  } = useApplication()
+  const { getEventByIdAsync, getSpacesAsync } = useEvent()
 
   const [event, setEvent] = useState<SockbaseEvent>()
   const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
+  const [appHashs, setAppHashs] = useState<SockbaseApplicationHashIdDocument[]>()
   const [metas, setMetas] = useState<Record<string, SockbaseApplicationMeta>>()
+  const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
   const [appsCSV, setAppsCSV] = useState<string>()
 
   const onInitialize: () => void =
@@ -27,24 +40,48 @@ const EventApplicationsContainer: React.FC = () => {
       const fetchAppsAsync: () => Promise<void> =
         async () => {
           if (!eventId) return
-          const fetchedEvent = await getEventByIdAsync(eventId)
-          setEvent(fetchedEvent)
+
+          getEventByIdAsync(eventId)
+            .then(fetchedEvent => setEvent(fetchedEvent))
+            .catch(err => { throw err })
+
+          getSpacesAsync(eventId)
+            .then(fetchedSpaces => setSpaces(fetchedSpaces))
+            .catch(err => { throw err })
 
           const fetchedApps = await getApplicationsByEventIdAsync(eventId)
           setApps(fetchedApps)
 
           const appIds = Object.keys(fetchedApps)
-          const fetchedMetas = await Promise.all(
-            appIds.map(async (appId) => ({
-              appId,
-              data: await getApplicationMetaByIdAsync(appId)
-            }))
-          )
-          const objectMappedMetas = fetchedMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({
-            ...p,
-            [c.appId]: c.data
-          }), {})
-          setMetas(objectMappedMetas)
+          const appHashIds = Object.values(fetchedApps)
+            .map(a => a.hashId)
+
+          Promise.all(appIds.map(async (appId) => ({
+            appId,
+            data: await getApplicationMetaByIdAsync(appId)
+          })))
+            .then(fetchedMetas => {
+              const objectMappedMetas = fetchedMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({
+                ...p,
+                [c.appId]: c.data
+              }), {})
+              setMetas(objectMappedMetas)
+            })
+            .catch(err => { throw err })
+
+          Promise.all(appHashIds.map(async (hashId) => {
+            if (!hashId) return
+            return await getApplicationIdByHashedIdAsync(hashId)
+          }))
+            .then(fetchedHashs => {
+              const filteredHashs = fetchedHashs
+                .reduce<SockbaseApplicationHashIdDocument[]>((p, c) => {
+                  if (c === undefined) return p
+                  return [...p, c]
+                }, [])
+              setAppHashs(filteredHashs)
+            })
+            .catch(err => { throw err })
 
           const appsCSV = exportCSV(Object.values(fetchedApps))
           setAppsCSV(appsCSV)
@@ -78,8 +115,13 @@ const EventApplicationsContainer: React.FC = () => {
         配置データCSVをコピー <CopyToClipboard content={appsCSV} />
       </p>}
 
-      {event && apps && metas
-        ? <EventApplications event={event} apps={apps} metas={metas} />
+      {event && apps && metas && appHashs && spaces
+        ? <EventApplications
+          event={event}
+          apps={apps}
+          metas={metas}
+          appHashs={appHashs}
+          spaces={spaces} />
         : <Loading text="申し込み一覧" />}
     </DashboardLayout>
   )
