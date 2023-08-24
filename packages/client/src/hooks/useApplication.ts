@@ -1,80 +1,15 @@
+import { useCallback } from 'react'
+import type * as sockbase from 'sockbase'
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseStorage from 'firebase/storage'
 import * as FirebaseFunctions from 'firebase/functions'
-
 import useFirebase from './useFirebase'
-
-import type * as sockbase from 'sockbase'
-import { useCallback } from 'react'
-
-const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseApplicationHashIdDocument> = {
-  toFirestore: (app: sockbase.SockbaseApplicationHashIdDocument): FirestoreDB.DocumentData => ({}),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): sockbase.SockbaseApplicationHashIdDocument => {
-    const hashDoc = snapshot.data()
-    return {
-      applicationId: hashDoc.applicationId,
-      hashId: hashDoc.hashId,
-      paymentId: hashDoc.paymentId,
-      spaceId: hashDoc.spaceId
-    }
-  }
-}
-
-const applicationConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseApplicationDocument> = {
-  toFirestore: (app: sockbase.SockbaseApplicationDocument): FirestoreDB.DocumentData => ({}),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): sockbase.SockbaseApplicationDocument => {
-    const app = snapshot.data()
-    return {
-      hashId: app.hashId,
-      userId: app.userId,
-      eventId: app.eventId,
-      spaceId: app.spaceId,
-      circle: app.circle,
-      overview: app.overview,
-      unionCircleId: app.unionCircleId,
-      petitCode: app.petitCode,
-      paymentMethod: app.paymentMethod,
-      remarks: app.remarks,
-      createdAt: app.createdAt ? new Date(app.createdAt.seconds * 1000) : null,
-      updatedAt: app.updatedAt ? new Date(app.updatedAt.seconds * 1000) : null
-    }
-  }
-}
-
-const applicationMetaConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseApplicationMeta> = {
-  toFirestore: (meta: sockbase.SockbaseApplicationMeta) => ({
-    applicationStatus: meta.applicationStatus
-  }),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): sockbase.SockbaseApplicationMeta => {
-    const meta = snapshot.data()
-    return {
-      applicationStatus: meta.applicationStatus
-    }
-  }
-}
-
-const applicationLinksConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseApplicationLinksDocument> = {
-  toFirestore: (links: sockbase.SockbaseApplicationLinksDocument) => ({
-    userId: links.userId,
-    applicationId: links.applicationId,
-    twitterScreenName: links.twitterScreenName,
-    pixivUserId: links.pixivUserId,
-    websiteURL: links.websiteURL,
-    menuURL: links.menuURL
-  }),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot): sockbase.SockbaseApplicationLinksDocument => {
-    const links = snapshot.data()
-    return {
-      id: snapshot.id,
-      userId: links.userId,
-      applicationId: links.applicationId,
-      twitterScreenName: links.twitterScreenName,
-      pixivUserId: links.pixivUserId,
-      websiteURL: links.websiteURL,
-      menuURL: links.menuURL
-    }
-  }
-}
+import {
+  applicationConverter,
+  applicationHashIdConverter,
+  applicationLinksConverter,
+  applicationMetaConverter
+} from '../libs/converters'
 
 interface IUseApplication {
   getApplicationIdByHashedIdAsync: (hashedAppId: string) => Promise<sockbase.SockbaseApplicationHashIdDocument>

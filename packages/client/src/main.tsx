@@ -26,6 +26,7 @@ import TicketView from './pages/public/TicketView'
 import Dashboard from './pages/dashboard/Dashboard'
 import DashboardEventList from './pages/dashboard/Events/EventList'
 import DashboardEventApplications from './pages/dashboard/Events/EventApplications'
+import DashboardEventSpaces from './pages/dashboard/Events/EventSpaces/EventSpaces'
 import DashboardApplicationList from './pages/dashboard/CircleApplications/ApplicationList'
 import DashboardApplicationDetail from './pages/dashboard/CircleApplications/ApplicationDetail'
 import DashboardPaymentList from './pages/dashboard/Payments/PaymentList'
@@ -142,7 +143,16 @@ const router = createBrowserRouter([
               },
               {
                 path: ':eventId',
-                element: <DashboardEventApplications />
+                children: [
+                  {
+                    index: true,
+                    element: <DashboardEventApplications />
+                  },
+                  {
+                    path: 'spaces',
+                    element: <DashboardEventSpaces />
+                  }
+                ]
               }
             ]
           },
