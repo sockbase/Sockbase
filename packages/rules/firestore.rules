@@ -62,6 +62,7 @@ service cloud.firestore {
     }
 
     match /_applicationHashIds/{hashId} {
+      allow write: if isSystemAdmin(request.auth.uid);
       allow read: if request.auth != null;
     }
     
@@ -109,6 +110,7 @@ service cloud.firestore {
     }
 
     match /spaces/{spaceId} {
+      allow create: if isOrganizationAdmin(request.auth.uid, getEvent(request.resource.data.eventId)._organization.id);
       allow read: if request.time.toMillis() >= getEvent(getSpace(spaceId).eventId).schedules.publishSpaces
         || isOrganizationAdmin(request.auth.uid, getEvent(getSpace(spaceId).eventId)._organization.id);
     }
