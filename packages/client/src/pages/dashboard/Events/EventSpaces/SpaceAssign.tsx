@@ -6,15 +6,26 @@ import FormLabel from '../../../../components/Form/Label'
 import FormTextarea from '../../../../components/Form/Textarea'
 import TwoColumnsLayout from '../../../../components/Layout/TwoColumns/TwoColumns'
 import CopyToClipboard from '../../../../components/Parts/CopyToClipboard'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { type RawAssignEventSpace } from '../../../../@types'
 
 interface Props {
   spacesData: SockbaseSpaceDocument[]
+  rawAssignSpaces: RawAssignEventSpace[]
   nextStep: (spaces: RawAssignEventSpace[]) => void
 }
 const SpaceAssign: React.FC<Props> = (props) => {
   const [rawSpaceAssignData, setRawSpaceAssignData] = useState('')
+
+  const onInitialize = (): void => {
+    if (props.rawAssignSpaces.length === 0) return
+    setRawSpaceAssignData(
+      props.rawAssignSpaces
+        .map(s => `${s.applicationHashId},${s.spaceId}`)
+        .join('\n')
+    )
+  }
+  useEffect(onInitialize, [props.rawAssignSpaces])
 
   const handleSubmit = (): void => {
     if (!rawSpaceAssignData) return
