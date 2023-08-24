@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { type SockbaseEvent, type SockbaseSpaceDocument } from 'sockbase'
+import { type SockbaseApplicationDocument, type SockbaseEvent, type SockbaseSpaceDocument } from 'sockbase'
 import DashboardLayout from '../../../../components/Layout/Dashboard/Dashboard'
 import Breadcrumbs from '../../../../components/Parts/Breadcrumbs'
 import PageTitle from '../../../../components/Layout/Dashboard/PageTitle'
@@ -8,13 +8,16 @@ import { MdAssignmentTurnedIn } from 'react-icons/md'
 import useEvent from '../../../../hooks/useEvent'
 import BlinkField from '../../../../components/Parts/BlinkField'
 import EventSpacesStepContainer from './StepContainer'
+import useApplication from '../../../../hooks/useApplication'
 
 const EventSpaces: React.FC = () => {
   const { eventId } = useParams()
   const { getEventByIdAsync, getSpacesAsync } = useEvent()
+  const { getApplicationsByEventIdAsync } = useApplication()
 
   const [event, setEvent] = useState<SockbaseEvent>()
   const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
+  const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
@@ -26,6 +29,10 @@ const EventSpaces: React.FC = () => {
 
       getSpacesAsync(eventId)
         .then(fetchedSpaces => setSpaces(fetchedSpaces))
+        .catch(err => { throw err })
+
+      getApplicationsByEventIdAsync(eventId)
+        .then(fetchedApps => setApps(fetchedApps))
         .catch(err => { throw err })
     }
     fetchAsync()
@@ -48,7 +55,10 @@ const EventSpaces: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title={event?.eventName} description="スペース配置" icon={<MdAssignmentTurnedIn />} isLoading={!event} />
 
-      {eventId && spaces && <EventSpacesStepContainer eventId={eventId} spaces={spaces} />}
+      {eventId && spaces && apps && <EventSpacesStepContainer
+        eventId={eventId}
+        spaces={spaces}
+        apps={apps} />}
     </DashboardLayout>
   )
 }

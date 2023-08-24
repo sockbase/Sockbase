@@ -1,12 +1,14 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbaseApplicationHashIdDocument, SockbaseApplicationMeta, SockbaseEvent, SockbaseSpaceDocument } from 'sockbase'
 import ApplicationStatusLabel from '../../../Parts/StatusLabel/ApplicationStatusLabel'
 
 interface Props {
   event: SockbaseEvent
   apps: Record<string, SockbaseApplicationDocument>
   metas: Record<string, SockbaseApplicationMeta>
+  appHashs: SockbaseApplicationHashIdDocument[]
+  spaces: SockbaseSpaceDocument[]
 }
 const EventApplications: React.FC<Props> = (props) => {
   const circleCount = useMemo(() => {
@@ -28,6 +30,19 @@ const EventApplications: React.FC<Props> = (props) => {
     Object.values(props.apps)
       .filter(a => a.hashId === appHashId)[0].circle.name
 
+  const getSpace = (appHashId: string): SockbaseSpaceDocument | null => {
+    const appHashs = props.appHashs.filter(h => h.hashId === appHashId)
+    if (appHashs.length !== 1) return null
+
+    const appHash = appHashs[0]
+    if (!appHash.spaceId) return null
+
+    const spaces = props.spaces.filter(s => s.id === appHash.spaceId)
+    if (spaces.length !== 1) return null
+
+    return spaces[0]
+  }
+
   return (
     <>
       <p>
@@ -39,6 +54,7 @@ const EventApplications: React.FC<Props> = (props) => {
           <tr>
             <th>#</th>
             <th></th>
+            <th>配置</th>
             <th>サークル名</th>
             <th>ペンネーム</th>
             <th>申し込みスペース</th>
@@ -55,6 +71,7 @@ const EventApplications: React.FC<Props> = (props) => {
                 app.hashId && <tr key={app.hashId}>
                   <td>{Object.entries(props.apps).length - i}</td>
                   <td><ApplicationStatusLabel status={props.metas[appId].applicationStatus} /></td>
+                  <td>{getSpace(app.hashId)?.spaceName ?? '-'}</td>
                   <th><Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link></th>
                   <td>{app.circle.penName}</td>
                   <td>{spaceName(app.spaceId)}</td>
