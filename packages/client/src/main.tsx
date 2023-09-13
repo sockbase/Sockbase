@@ -19,6 +19,7 @@ import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 import App from './pages/App'
 import TermsOfService from './pages/public/static/TermsOfService'
 import PrivacyPolicy from './pages/public/static/PrivacyPolicy'
+import PasswordReset from './pages/public/PasswordReset'
 import EventApplication from './pages/public/EventApplication'
 import TicketApplication from './pages/public/TicketApplication'
 import TicketAssign from './pages/public/TicketAssign'
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
       {
         path: 'privacy-policy',
         element: <PrivacyPolicy />
+      },
+      {
+        path: 'reset-password',
+        element: <PasswordReset />
       },
       {
         path: 'events',

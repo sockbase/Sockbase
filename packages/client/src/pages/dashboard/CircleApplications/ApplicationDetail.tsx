@@ -116,21 +116,22 @@ const ApplicationDetailContainer: React.FC = () => {
   }
   useEffect(onFetchedApp, [app, checkIsAdminByOrganizationId])
 
-  const handleChangeStatus: (status: SockbaseApplicationStatus) => void =
-    (status) => {
-      if (!appId || !isAdmin) return
-      updateApplicationStatusByIdAsync(appId, status)
-        .then(() => {
-          alert('ステータスの変更に成功しました。')
-          setApp(s => {
-            if (!s) return
-            return { ...s, meta: { ...s.meta, applicationStatus: status } }
-          })
+  const handleChangeStatus = (status: SockbaseApplicationStatus): void => {
+    if (!appId || !isAdmin) return
+    if (!confirm(`ステータスを変更します。\nよろしいですか？`)) return
+
+    updateApplicationStatusByIdAsync(appId, status)
+      .then(() => {
+        alert('ステータスの変更に成功しました。')
+        setApp(s => {
+          if (!s) return
+          return { ...s, meta: { ...s.meta, applicationStatus: status } }
         })
-        .catch(err => {
-          throw err
-        })
-    }
+      })
+      .catch(err => {
+        throw err
+      })
+  }
 
   const title = useMemo(() => {
     if (!event) return '申し込み情報を読み込み中'

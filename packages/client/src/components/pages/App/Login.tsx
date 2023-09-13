@@ -41,7 +41,7 @@ const Login: React.FC<Props> = (props) => {
             disabled={!props.email || !props.password || props.isProcessing}>ログイン</FormButton>
         </FormItem>
         <FormItem>
-          <LinkButton color="default" to="">パスワードを忘れた場合</LinkButton>
+          <LinkButton color="default" to="/reset-password">パスワードを忘れた場合</LinkButton>
         </FormItem>
         {props.error &&
           <FormItem>
