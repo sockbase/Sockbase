@@ -13,6 +13,7 @@ import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import useStore from '../../../hooks/useStore'
 import Loading from '../../../components/Parts/Loading'
 import TicketCard from '../../../components/Parts/TicketCard'
+import Alert from '../../../components/Parts/Alert'
 
 const MyTickets: React.FC = () => {
   const { getUsableTicketsAsync, getStoreByIdAsync } = useStore()
@@ -78,14 +79,19 @@ const MyTickets: React.FC = () => {
 
       {sortedTicketUsers
         ? sortedTicketUsers.length !== 0
-          ? <TicketsRack>
-            {sortedTicketUsers
-              .map(t => <TicketCard
-                key={t.hashId}
-                ticketUser={t}
-                store={getStore(t.storeId)}
-                type={getType(t.storeId, t.typeId)} />)}
-          </TicketsRack>
+          ? <>
+            <Alert title="購入したチケットが見つからない場合">
+              購入したチケットは <Link to="/dashboard/tickets">購入済みチケット一覧</Link> で確認できます。
+            </Alert>
+            <TicketsRack>
+              {sortedTicketUsers
+                .map(t => <TicketCard
+                  key={t.hashId}
+                  ticketUser={t}
+                  store={getStore(t.storeId)}
+                  type={getType(t.storeId, t.typeId)} />)}
+            </TicketsRack>
+          </>
           : <p>
             割り当てられているチケットはありません。<br />
             ご自身で購入したチケットは <Link to="/dashboard/tickets">購入済みチケット一覧</Link> からご確認ください。
