@@ -34,6 +34,10 @@ import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
+import useSound from 'use-sound'
+import OKSound from '../../../assets/se/ok.mp3'
+import NGSound from '../../../assets/se/ng.mp3'
+import useValidate from '../../../hooks/useValidate'
 
 const TicketTerminal: React.FC = () => {
   const { formatByDate } = useDayjs()
@@ -50,6 +54,10 @@ const TicketTerminal: React.FC = () => {
   const { getPaymentAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
   const { data: qrData, QRReaderComponent } = useQRReader()
+  const validator = useValidate()
+
+  const [playSEOK] = useSound(OKSound)
+  const [playSENG] = useSound(NGSound)
 
   const [ticketHashId, setTicketHashId] = useState('')
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
@@ -83,7 +91,7 @@ const TicketTerminal: React.FC = () => {
   }
   useEffect(onChangedHashId, [ticketHashId])
 
-  const searchTicket = (hashId: string): void => {
+  const searchTicketAsync = async (hashId: string): Promise<void> => {
     const fetchAsync = async (): Promise<void> => {
       setUsedStatusError(null)
       setStore(null)
@@ -171,13 +179,32 @@ const TicketTerminal: React.FC = () => {
 
   const onScan = (): void => {
     if (!qrData) return
+
+    if (!validator.isTicketHashId(qrData)) {
+      playSENG()
+      return
+    }
+
     setTicketHashId(qrData)
-    searchTicket(qrData)
+    searchTicketAsync(qrData)
+      .then(() => {
+        playSEOK()
+      })
+      .catch(err => {
+        playSENG()
+        throw err
+      })
 
     if (isHoldQRReader) return
     setActiveQRReader(false)
   }
   useEffect(onScan, [qrData])
+
+  const handleSearch = (): void => {
+    if (!ticketHashId) return
+    searchTicketAsync(ticketHashId)
+      .catch(err => { throw err })
+  }
 
   const type = useMemo(() => {
     if (!ticketUser || !store) return
@@ -232,7 +259,7 @@ const TicketTerminal: React.FC = () => {
                 disabled={isActiveQRReader} />
             </FormItem>
             {!isActiveQRReader && <FormItem>
-              <FormButton onClick={() => searchTicket(ticketHashId)} disabled={!ticketHashId}>照会</FormButton>
+              <FormButton onClick={handleSearch} disabled={!ticketHashId}>照会</FormButton>
             </FormItem>}
           </FormSection>
           {ticketUser === null && <Alert type="danger" title="チケット情報が見つかりませんでした">
