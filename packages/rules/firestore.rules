@@ -6,8 +6,12 @@ service cloud.firestore {
       return isSystemAdmin;
     }
   	function isOrganizationAdmin(userId, organizationId) {
-    	let isOrganizationAdmin = get(/databases/$(database)/documents/organizations/$(organizationId)/users/$(userId)).data.role == 2;
+    	let isOrganizationAdmin = get(/databases/$(database)/documents/organizations/$(organizationId)/users/$(userId)).data.role >= 2;
       return isOrganizationAdmin || isSystemAdmin(userId);
+    }
+    function isOrganizationStaff(userId, organizationId) {
+      let isOrganizationStaff = get(/databases/$(database)/documents/organizations/$(organizationId)/users/$(userId)).data.role >= 1;
+      return isOrganizationStaff || isSystemAdmin(userId);
     }
 
     function getEvent(eventId) {
@@ -44,7 +48,7 @@ service cloud.firestore {
 
       match /_users/{userId} {
         allow read: if request.auth.uid == userId
-          || isOrganizationAdmin(request.auth.uid, getStore(storeId)._organization.id);
+          || isOrganizationStaff(request.auth.uid, getStore(storeId)._organization.id);
       }
     }
     
@@ -117,18 +121,18 @@ service cloud.firestore {
 
     match /_tickets/{ticketId} {
       allow read: if request.auth.uid == resource.data.userId
-        || isOrganizationAdmin(request.auth.uid, getStore(resource.data.storeId)._organization.id);
+        || isOrganizationStaff(request.auth.uid, getStore(resource.data.storeId)._organization.id);
 
       match /private {
         match /meta {
           allow read: if getTicket(ticketId).userId == request.auth.uid
-            || isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
+            || isOrganizationStaff(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
           allow write: if isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
         }
         match /usedStatus {
           allow read: if getTicket(ticketId).userId == request.auth.uid
-            || isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
-          allow write: if isOrganizationAdmin(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
+            || isOrganizationStaff(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
+          allow write: if isOrganizationStaff(request.auth.uid, getStore(getTicket(ticketId).storeId)._organization.id);
         }
       }
     }
@@ -145,7 +149,7 @@ service cloud.firestore {
 
       allow read: if request.auth.uid == resource.data.userId
         || (request.auth.uid == resource.data.usableUserId || resource.data.usableUserId == null)
-        || isOrganizationAdmin(request.auth.uid, getStore(getTicketByHashId(hashId).storeId)._organization.id);
+        || isOrganizationStaff(request.auth.uid, getStore(getTicketByHashId(hashId).storeId)._organization.id);
       allow write: if request.auth.uid == resource.data.userId
         || (resource.data.usableUserId == null && isOnlyUsableUserId())
         || isOrganizationAdmin(request.auth.uid, getStore(getTicketByHashId(hashId).storeId)._organization.id);
@@ -153,7 +157,7 @@ service cloud.firestore {
 
     match /_payments/{paymentId} {
       allow read: if request.auth.uid == resource.data.userId
-        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id);
+        || isOrganizationStaff(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id);
       allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id);
     }
 
