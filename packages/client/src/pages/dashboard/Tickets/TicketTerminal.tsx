@@ -74,7 +74,7 @@ const TicketTerminal: React.FC = () => {
   const [usedStatusError, setUsedStatusError] = useState<string | null>()
 
   const [isActiveQRReader, setActiveQRReader] = useState(false)
-  const [isHoldQRReader, setHoldQRReader] = useState(true)
+  const [isHoldQRReader, setHoldQRReader] = useState(false)
 
   const onChangedHashId = (): void => {
     if (ticketHashId) return
@@ -245,30 +245,31 @@ const TicketTerminal: React.FC = () => {
             </FormItem>}
           </FormSection>
 
-          {isActiveQRReader && <ReaderWrap>
-            <QRReaderComponent />
-          </ReaderWrap>}
-
           <FormSection>
             <FormItem>
               <FormLabel>チケットID</FormLabel>
               <FormInput
                 value={ticketHashId}
                 onChange={e => setTicketHashId(e.target.value)}
-                placeholder="20231104235959999-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-                disabled={isActiveQRReader} />
+                placeholder="チケットID" />
             </FormItem>
-            {!isActiveQRReader && <FormItem>
+            <FormItem>
               <FormButton onClick={handleSearch} disabled={!ticketHashId}>照会</FormButton>
-            </FormItem>}
+            </FormItem>
           </FormSection>
           {ticketUser === null && <Alert type="danger" title="チケット情報が見つかりませんでした">
             正しいチケットIDを入力してください。
           </Alert>}
+
+          {isActiveQRReader && <ReaderWrap>
+            <QRReaderComponent />
+          </ReaderWrap>}
+
         </>
 
         <>
           {ticketUser && <>
+            <h2>チケット情報</h2>
             {ticketMeta && type
               && (ticketMeta.applicationStatus !== 2 || !ticketUser.usableUserId || (type.productInfo && payment?.status !== 1))
               && <Alert type="danger" title="このチケットは使用できません。">
