@@ -2,6 +2,7 @@ import { type SockbaseTicketAddedResult, type SockbaseStoreDocument } from 'sock
 import FormItem from '../../../Form/FormItem'
 import FormSection from '../../../Form/FormSection'
 import LinkButton from '../../../Parts/LinkButton'
+import AnchorButton from '../../../Parts/AnchorButton'
 
 interface Props {
   store: SockbaseStoreDocument
@@ -27,24 +28,20 @@ const Step4: React.FC<Props> = (props) => {
 
       <h3>自分で使う場合</h3>
       <ol>
-        <li>
-          <a href={`/dashboard/tickets/${props.ticketResult?.hashId}`} target="_blank" rel="noreferrer">マイページ</a> を開き、「自分で使う」をクリックします。
-        </li>
-        <li>
-          「チケットを表示」をクリックし、表示された画面を入口スタッフまでご提示ください。
-        </li>
+        <li>チケット情報ページを開き、「自分で使う」をクリックします。</li>
+        <li>「チケットを表示」をクリックし、表示された画面を入口スタッフまでご提示ください。</li>
       </ol>
 
       <h3>他の方に譲渡する場合</h3>
       <ol>
-        <li><a href={`/dashboard/tickets/${props.ticketResult?.hashId}`} target="_blank" rel="noreferrer">マイページ</a> を開き、「他の方へ割り当てる」をクリックします。</li>
+        <li>チケット情報ページを開き、「他の方へ割り当てる」をクリックします。</li>
         <li>表示されたURLを譲渡したい方へ渡します。</li>
         <li>参加者情報を入力していただきます。</li>
       </ol>
 
       <FormSection>
         <FormItem>
-          <LinkButton to={props.store.storeWebURL}>イベントサイトへ戻る</LinkButton>
+          <AnchorButton href={`/dashboard/tickets/${props.ticketResult?.hashId}`} target="_blank" rel="noreferrer">チケット情報ページを開く</AnchorButton>
         </FormItem>
       </FormSection>
     </>
