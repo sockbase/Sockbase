@@ -196,6 +196,7 @@ const QRCode = styled(ReactQRCode)`
 `
 const Code = styled.div`
   margin-top: 20px;
+  font-size: 0.8em;
 `
 const ContentContainer = styled.section`
   padding: 20px;
