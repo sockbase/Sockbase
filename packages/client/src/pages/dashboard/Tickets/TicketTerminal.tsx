@@ -34,6 +34,10 @@ import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
+import useSound from 'use-sound'
+import OKSound from '../../../assets/se/ok.mp3'
+import NGSound from '../../../assets/se/ng.mp3'
+import useValidate from '../../../hooks/useValidate'
 
 const TicketTerminal: React.FC = () => {
   const { formatByDate } = useDayjs()
@@ -50,6 +54,10 @@ const TicketTerminal: React.FC = () => {
   const { getPaymentAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
   const { data: qrData, QRReaderComponent } = useQRReader()
+  const validator = useValidate()
+
+  const [playSEOK] = useSound(OKSound)
+  const [playSENG] = useSound(NGSound)
 
   const [ticketHashId, setTicketHashId] = useState('')
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
@@ -66,7 +74,7 @@ const TicketTerminal: React.FC = () => {
   const [usedStatusError, setUsedStatusError] = useState<string | null>()
 
   const [isActiveQRReader, setActiveQRReader] = useState(false)
-  const [isHoldQRReader, setHoldQRReader] = useState(true)
+  const [isHoldQRReader, setHoldQRReader] = useState(false)
 
   const onChangedHashId = (): void => {
     if (ticketHashId) return
@@ -83,7 +91,7 @@ const TicketTerminal: React.FC = () => {
   }
   useEffect(onChangedHashId, [ticketHashId])
 
-  const searchTicket = (hashId: string): void => {
+  const searchTicketAsync = async (hashId: string): Promise<void> => {
     const fetchAsync = async (): Promise<void> => {
       setUsedStatusError(null)
       setStore(null)
@@ -171,13 +179,32 @@ const TicketTerminal: React.FC = () => {
 
   const onScan = (): void => {
     if (!qrData) return
+
+    if (!validator.isTicketHashId(qrData)) {
+      playSENG()
+      return
+    }
+
     setTicketHashId(qrData)
-    searchTicket(qrData)
+    searchTicketAsync(qrData)
+      .then(() => {
+        playSEOK()
+      })
+      .catch(err => {
+        playSENG()
+        throw err
+      })
 
     if (isHoldQRReader) return
     setActiveQRReader(false)
   }
   useEffect(onScan, [qrData])
+
+  const handleSearch = (): void => {
+    if (!ticketHashId) return
+    searchTicketAsync(ticketHashId)
+      .catch(err => { throw err })
+  }
 
   const type = useMemo(() => {
     if (!ticketUser || !store) return
@@ -218,30 +245,31 @@ const TicketTerminal: React.FC = () => {
             </FormItem>}
           </FormSection>
 
-          {isActiveQRReader && <ReaderWrap>
-            <QRReaderComponent />
-          </ReaderWrap>}
-
           <FormSection>
             <FormItem>
               <FormLabel>チケットID</FormLabel>
               <FormInput
                 value={ticketHashId}
                 onChange={e => setTicketHashId(e.target.value)}
-                placeholder="20231104235959999-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-                disabled={isActiveQRReader} />
+                placeholder="チケットID" />
             </FormItem>
-            {!isActiveQRReader && <FormItem>
-              <FormButton onClick={() => searchTicket(ticketHashId)} disabled={!ticketHashId}>照会</FormButton>
-            </FormItem>}
+            <FormItem>
+              <FormButton onClick={handleSearch} disabled={!ticketHashId}>照会</FormButton>
+            </FormItem>
           </FormSection>
           {ticketUser === null && <Alert type="danger" title="チケット情報が見つかりませんでした">
             正しいチケットIDを入力してください。
           </Alert>}
+
+          {isActiveQRReader && <ReaderWrap>
+            <QRReaderComponent />
+          </ReaderWrap>}
+
         </>
 
         <>
           {ticketUser && <>
+            <h2>チケット情報</h2>
             {ticketMeta && type
               && (ticketMeta.applicationStatus !== 2 || !ticketUser.usableUserId || (type.productInfo && payment?.status !== 1))
               && <Alert type="danger" title="このチケットは使用できません。">

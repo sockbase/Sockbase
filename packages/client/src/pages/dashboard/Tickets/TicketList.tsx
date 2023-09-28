@@ -16,6 +16,7 @@ import useDayjs from '../../../hooks/useDayjs'
 import Loading from '../../../components/Parts/Loading'
 import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel'
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import Alert from '../../../components/Parts/Alert'
 
 const TicketList: React.FC = () => {
   const { getMyTicketsAsync, getStoreByIdAsync, getTicketMetaByIdAsync } = useStore()
@@ -87,6 +88,10 @@ const TicketList: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title="購入済みチケット一覧" icon={<MdWallet />} description="あなたが購入したチケットを表示中" />
 
+      <Alert title="受け取ったチケットが見つからない場合">
+        受け取ったチケットは <Link to="/dashboard/mytickets">マイチケット</Link> で確認できます。
+      </Alert>
+
       {tickets && ticketMetas
         ? <table>
           <thead>
@@ -98,20 +103,21 @@ const TicketList: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {tickets
-              .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
-              .map((t) => <tr key={t.id}>
-                <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
-                <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
-                <td>{t.id && <ApplicationStatusLabel status={getTicketApplicationStatus(t.id)} />}</td>
-                <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年M月D日 H時mm分')}</td>
-              </tr>)}
-            {tickets?.length === 0 && <tr>
-              <td colSpan={4}>
-                購入したチケットはありません。<br />
-                他のユーザーから譲り受けたチケットは <Link to="/dashboard/mytickets">マイチケット</Link> からご確認ください。
-              </td>
-            </tr>}
+            {tickets?.length > 0
+              ? tickets
+                .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
+                .map((t) => <tr key={t.id}>
+                  <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
+                  <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
+                  <td>{t.id && <ApplicationStatusLabel status={getTicketApplicationStatus(t.id)} />}</td>
+                  <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年M月D日 H時mm分')}</td>
+                </tr>)
+              : <tr>
+                <td colSpan={4}>
+                  購入したチケットはありません。<br />
+                  他のユーザーから譲り受けたチケットは <Link to="/dashboard/mytickets">マイチケット</Link> からご確認ください。
+                </td>
+              </tr>}
           </tbody>
         </table>
         : <Loading text="チケット一覧" />}

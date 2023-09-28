@@ -28,7 +28,7 @@ interface IUseFirebase {
   loginByEmail: (email: string, password: string) => Promise<UserCredential>
   logout: () => void
   createUser: (email: string, password: string) => Promise<User>
-  sendPasswordResetURL: (email: string) => void
+  sendPasswordResetURLAsync: (email: string) => Promise<void>
   sendVerifyMail: () => Promise<void>
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
@@ -89,14 +89,13 @@ const useFirebase: () => IUseFirebase =
           })
       }
 
-    const sendPasswordResetURL: (email: string) => void =
-      (email) => {
-        const auth = getAuth()
-        sendPasswordResetEmail(auth, email)
-          .catch((err: FirebaseError) => {
-            throw err
-          })
-      }
+    const sendPasswordResetURLAsync = async (email: string): Promise<void> => {
+      const auth = getAuth()
+      await sendPasswordResetEmail(auth, email)
+        .catch((err: FirebaseError) => {
+          throw err
+        })
+    }
 
     const sendVerifyMail: () => Promise<void> =
       useCallback(async () => {
@@ -155,7 +154,7 @@ const useFirebase: () => IUseFirebase =
       loginByEmail,
       logout,
       createUser,
-      sendPasswordResetURL,
+      sendPasswordResetURLAsync,
       sendVerifyMail,
       getFirestore,
       getStorage,
