@@ -183,6 +183,8 @@ const TicketDetail: React.FC = () => {
 
   const handleChangeStatus = (status: SockbaseApplicationStatus): void => {
     if (!ticket?.id || !isAdmin) return
+    if (!confirm(`ステータスを変更します。\nよろしいですか？`)) return
+
     updateTicketApplicationStatusAsync(ticket.id, status)
       .then(() => {
         alert('ステータスの変更に成功しました。')

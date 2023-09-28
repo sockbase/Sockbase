@@ -10,6 +10,7 @@ interface IUseValidate {
   isDate: (value: string) => boolean
   isEmail: (value: string) => boolean
   isApplicationHashId: (value: string) => boolean
+  isTicketHashId: (value: string) => boolean
   isStrongPassword: (value: string) => boolean
   isTwitterScreenName: (value: string) => boolean
   isURL: (value: string) => boolean
@@ -45,6 +46,9 @@ const useValidate: () => IUseValidate =
     const isApplicationHashId: (value: string) => boolean =
       (value) => isMatchRegex(value, /^\d{17}-[0-9a-f]{8}$/)
 
+    const isTicketHashId: (value: string) => boolean =
+      (value) => isMatchRegex(value, /^\d{17}-[123456789ABCEFGHJKLNPRSTUWXYZabcdefghkmnprstvwxz]{32}$/)
+
     const isStrongPassword: (value: string) => boolean =
       (value) => isMatchRegex(value, /(?=.*[A-Z])[a-zA-Z0-9]+/) && value.length >= 12
 
@@ -69,6 +73,7 @@ const useValidate: () => IUseValidate =
       isPostalCode,
       isDate,
       isEmail,
+      isTicketHashId,
       isApplicationHashId,
       isStrongPassword,
       isTwitterScreenName,
