@@ -1,13 +1,13 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
-import type { PaymentStatus } from 'sockbase'
+import type { PaymentStatus, SockbasePaymentDocument } from 'sockbase'
 
 interface Props {
-  status: PaymentStatus | undefined
+  payment: SockbasePaymentDocument
 }
 const PaymentStatusLabel: React.FC<Props> = (props) => {
   const statusText = useMemo(() => {
-    switch (props.status) {
+    switch (props.payment.status) {
       case 0:
         return 'お支払い待ち'
 
@@ -20,11 +20,21 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
       case 3:
         return 'お支払い失敗'
     }
-  }, [props.status])
+  }, [props.payment.status])
+
+  const paymentMethodText = useMemo(() => {
+    switch (props.payment.paymentMethod) {
+      case 1:
+        return 'オンライン決済'
+
+      case 2:
+        return '銀行振込'
+    }
+  }, [props.payment.paymentMethod])
 
   return (
-    <Container status={props.status ?? 0}>
-      {statusText}
+    <Container status={props.payment.status ?? 0}>
+      {statusText}（{paymentMethodText}）
     </Container>
   )
 }

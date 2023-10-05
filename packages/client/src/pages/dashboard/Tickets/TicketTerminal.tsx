@@ -320,8 +320,8 @@ const TicketTerminal: React.FC = () => {
                   && <tr>
                     <th>決済状況</th>
                     <td>
-                      {payment !== null
-                        ? <PaymentStatusLabel status={payment?.status} />
+                      {payment
+                        ? <PaymentStatusLabel payment={payment} />
                         : <BlinkField />}
                     </td>
                   </tr>}

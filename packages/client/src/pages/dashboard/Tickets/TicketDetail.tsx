@@ -227,7 +227,7 @@ const TicketDetail: React.FC = () => {
                 <td>
                   {(payment?.status !== undefined
                     && <Link to="/dashboard/payments">
-                      <PaymentStatusLabel status={payment.status} />
+                      <PaymentStatusLabel payment={payment} />
                     </Link>)
                     || <BlinkField />}
                 </td>
