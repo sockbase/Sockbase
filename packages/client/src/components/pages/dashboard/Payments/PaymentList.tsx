@@ -110,7 +110,7 @@ const PaymentList: React.FC<Props> = (props) => {
                 <td>{p.paymentAmount.toLocaleString()}円</td>
                 <td>{paymentMethod(p.paymentMethod)}</td>
                 <td>{p.bankTransferCode}</td>
-                <td><PaymentStatusLabel status={p.status} /></td>
+                <td><PaymentStatusLabel payment={p} /></td>
                 <td>{p.updatedAt?.toLocaleString() ?? '-'}</td>
                 <td>{getPaymentLink(p)}</td>
               </tr>)

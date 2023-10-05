@@ -202,7 +202,7 @@ const ApplicationDetailContainer: React.FC = () => {
                 <th>お支払い状況</th>
                 <td>
                   <Link to="/dashboard/payments">
-                    {(payment?.status !== undefined && <PaymentStatusLabel status={payment.status} />) || <BlinkField />}
+                    {(payment?.status !== undefined && <PaymentStatusLabel payment={payment} />) || <BlinkField />}
                   </Link>
                 </td>
               </tr>
