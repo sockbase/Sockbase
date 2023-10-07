@@ -36,7 +36,7 @@ export const onCreate = functions.firestore
             },
             {
               name: 'ユーザID',
-              value: user.id || '',
+              value: user.id,
               inline: true
             },
             {
