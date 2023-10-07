@@ -34,11 +34,11 @@ export const onCreate = functions.firestore
               value: user.email,
               inline: true
             },
-            // {
-            //   name: 'ユーザID',
-            //   value: user.id,
-            //   inline: true
-            // },
+            {
+              name: 'ユーザID',
+              value: user.id || '',
+              inline: true
+            },
             {
               name: 'お問い合わせ種類',
               value: convertTypeText(inquiry.inquiryType),
