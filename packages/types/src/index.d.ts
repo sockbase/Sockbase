@@ -362,8 +362,9 @@ export type PaymentMethod = 1 | 2
  * paid: 1
  * refunded: 2
  * paymentFailure: 3
+ * cancel: 4
  */
-export type PaymentStatus = 0 | 1 | 2 | 3
+export type PaymentStatus = 0 | 1 | 2 | 3 | 4
 
 /**
  * 決済情報
