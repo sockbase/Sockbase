@@ -20,6 +20,7 @@ import BlinkField from '../../../components/Parts/BlinkField'
 import LinkButton from '../../../components/Parts/LinkButton'
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel'
 import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 import FormSelect from '../../../components/Form/Select'
@@ -212,7 +213,7 @@ const StoreDetail: React.FC = () => {
                   <td>{filteredTickets.length - i}</td>
                   <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
                   <td>{t?.id && <ApplicationStatusLabel status={ticketMetas?.[t.id].applicationStatus} />}</td>
-                  <td><Link to={`/dashboard/tickets/${t.hashId}`}>{getType(t.typeId)?.name}</Link></td>
+                  <td><Link to={`/dashboard/tickets/${t.hashId}`}><StoreTypeLabel type={getType(t.typeId)} /></Link></td>
                   <td>
                     {userDatas
                       ? userDatas?.[t.userId]?.name || '-'
