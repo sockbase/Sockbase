@@ -226,9 +226,11 @@ const TicketDetail: React.FC = () => {
                 <th>お支払い状況</th>
                 <td>
                   {(payment?.status !== undefined
-                    && <Link to="/dashboard/payments">
-                      <PaymentStatusLabel payment={payment} />
-                    </Link>)
+                    && (payment.status === 0
+                      ? <Link to="/dashboard/payments">
+                        <PaymentStatusLabel payment={payment} />
+                      </Link>
+                      : <PaymentStatusLabel payment={payment} />))
                     || <BlinkField />}
                 </td>
               </tr>}

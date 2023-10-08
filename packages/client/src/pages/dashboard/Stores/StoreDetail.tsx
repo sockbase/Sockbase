@@ -20,6 +20,10 @@ import BlinkField from '../../../components/Parts/BlinkField'
 import LinkButton from '../../../components/Parts/LinkButton'
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel'
+import FormSection from '../../../components/Form/FormSection'
+import FormItem from '../../../components/Form/FormItem'
+import FormSelect from '../../../components/Form/Select'
 
 const StoreDetail: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
@@ -38,6 +42,9 @@ const StoreDetail: React.FC = () => {
   const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount | null>>()
   const [usedStatuses, setUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
+
+  const [selectedType, setSelectedType] = useState('')
+  const [selectedStatus, setSelectedStatus] = useState(-1)
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
@@ -129,9 +136,18 @@ const StoreDetail: React.FC = () => {
   }, [usedStatuses])
 
   const totalTicketCount = useMemo(() => {
-    if (!tickets) return 0
-    return tickets.length
-  }, [tickets])
+    if (!tickets || !ticketMetas) return 0
+    return tickets
+      .filter(t => t.id && ticketMetas[t.id].applicationStatus !== 1)
+      .length
+  }, [tickets, ticketMetas])
+
+  const filteredTickets = useMemo(() => {
+    if (!tickets) return null
+    return tickets
+      .filter(t => !selectedType || t.typeId === selectedType)
+      .filter(t => selectedStatus === -1 || t.id && ticketMetas?.[t.id].applicationStatus === selectedStatus)
+  }, [tickets, ticketMetas, selectedType, selectedStatus])
 
   return (
     <DashboardLayout title={pageTitle}>
@@ -144,11 +160,37 @@ const StoreDetail: React.FC = () => {
       <p>
         <LinkButton to={`/dashboard/stores/${storeId}/create`} inlined>チケット作成</LinkButton>
       </p>
+
+      <FormSection>
+        <FormItem>
+          <FormSelect
+            value={selectedType}
+            onChange={e => setSelectedType(e.target.value)}>
+            <option value="">種別を選択してください</option>
+            {store?.types.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+          </FormSelect>
+        </FormItem>
+        <FormItem>
+          <FormSelect
+            value={selectedStatus}
+            onChange={e => setSelectedStatus(Number(e.target.value))}>
+            <option value="-1">申し込みステータスを選択してください</option>
+            <option value="2">申し込み確定</option>
+            <option value="1">キャンセル</option>
+            <option value="0">仮申し込み</option>
+          </FormSelect>
+        </FormItem>
+      </FormSection>
+
       <p>
-        使用されたチケット: {usedTicketCount} / {totalTicketCount}枚 ({Math.round(usedTicketCount / totalTicketCount * 100)}%)
+        {tickets
+          && filteredTickets
+          && tickets.length > filteredTickets.length
+          && <>検索条件に一致するチケット: {filteredTickets.length} 枚<br /></>}
+        使用されたチケット: {usedTicketCount} / {totalTicketCount} 枚 ({Math.round(usedTicketCount / totalTicketCount * 100)}%)
       </p>
 
-      {(!store || !tickets) && <Loading text="チケットストア情報" />}
+      {(!store || !filteredTickets) && <Loading text="チケットストア情報" />}
 
       {store && tickets
         && <table>
@@ -164,20 +206,20 @@ const StoreDetail: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {tickets.length !== 0
-              ? tickets
+            {filteredTickets && filteredTickets.length !== 0
+              ? filteredTickets
                 .sort((a, b) => (b.updatedAt?.getTime() ?? b.createdAt?.getTime() ?? 9) - (a.updatedAt?.getTime() ?? a.createdAt?.getTime() ?? 0))
                 .map((t, i) => <tr key={t.id}>
-                  <td>{tickets.length - i}</td>
+                  <td>{filteredTickets.length - i}</td>
                   <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
                   <td>{t?.id && <ApplicationStatusLabel status={ticketMetas?.[t.id].applicationStatus} />}</td>
-                  <td><Link to={`/dashboard/tickets/${t.hashId}`}>{getType(t.typeId)?.name}</Link></td>
+                  <td><StoreTypeLabel type={getType(t.typeId)} /></td>
                   <td>
                     {userDatas
                       ? userDatas?.[t.userId]?.name || '-'
                       : <BlinkField />}
                   </td>
-                  <td>{t.hashId}</td>
+                  <td><Link to={`/dashboard/tickets/${t.hashId}`}>{t.hashId}</Link></td>
                   <td>{formatByDate(t.updatedAt ?? t.createdAt, 'YYYY/MM/DD H:mm:ss')}</td>
                 </tr>)
               : <tr>
