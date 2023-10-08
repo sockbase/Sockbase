@@ -213,13 +213,13 @@ const StoreDetail: React.FC = () => {
                   <td>{filteredTickets.length - i}</td>
                   <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
                   <td>{t?.id && <ApplicationStatusLabel status={ticketMetas?.[t.id].applicationStatus} />}</td>
-                  <td><Link to={`/dashboard/tickets/${t.hashId}`}><StoreTypeLabel type={getType(t.typeId)} /></Link></td>
+                  <td><StoreTypeLabel type={getType(t.typeId)} /></td>
                   <td>
                     {userDatas
                       ? userDatas?.[t.userId]?.name || '-'
                       : <BlinkField />}
                   </td>
-                  <td>{t.hashId}</td>
+                  <td><Link to={`/dashboard/tickets/${t.hashId}`}>{t.hashId}</Link></td>
                   <td>{formatByDate(t.updatedAt ?? t.createdAt, 'YYYY/MM/DD H:mm:ss')}</td>
                 </tr>)
               : <tr>
