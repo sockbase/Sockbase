@@ -19,6 +19,9 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
 
       case 3:
         return 'お支払い失敗'
+
+      case 4:
+        return 'キャンセル済み'
     }
   }, [props.payment.status])
 
@@ -57,7 +60,7 @@ const Container = styled.label<{ status: PaymentStatus }>`
         background-color: #32c041;
         color: #000000;
       `
-    } else if (p.status === 2 || p.status === 3) {
+    } else if (p.status === 2 || p.status === 3 || p.status === 4) {
       return `
         background-color: #d31f1f;
         color: #000000;
