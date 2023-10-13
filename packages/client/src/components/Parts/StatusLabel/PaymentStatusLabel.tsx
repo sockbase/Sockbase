@@ -62,7 +62,7 @@ const Container = styled.label<{ status: PaymentStatus }>`
       `
     } else if (p.status === 2 || p.status === 3 || p.status === 4) {
       return `
-        background-color: #d31f1f;
+        background-color: #b83340;
         color: #000000;
       `
     }
