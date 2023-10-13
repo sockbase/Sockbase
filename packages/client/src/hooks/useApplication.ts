@@ -201,25 +201,25 @@ const useApplication: () => IUseApplication = () => {
   const exportCSV = (apps: sockbase.SockbaseApplicationDocument[]): string => {
     const header = 'id,name,penName,yomi,genre,space,unionId,description,totalAmount,remarks'
     const entries = apps
-      .map(a => ({
-        hashId: a.hashId,
-        circleName: a.circle.name,
-        circleNameYomi: a.circle.yomi,
-        penName: a.circle.penName,
-        genre: a.circle.genre,
-        spaceId: a.spaceId,
-        unionCircle: a.unionCircleId || 'null',
-        description: a.overview.description
+      .map(a => ([
+        a.hashId,
+        a.circle.name,
+        a.circle.yomi,
+        a.circle.penName,
+        a.circle.genre,
+        a.spaceId,
+        a.unionCircleId || 'null',
+        a.overview.description
           .replaceAll(',', '，')
           .replaceAll(/[\r\n]+/g, ' '),
-        totalAmount: a.overview.totalAmount
+        a.overview.totalAmount
           .replaceAll(',', '，')
           .replaceAll(/[\r\n]+/g, ' '),
-        remarks: a.remarks
+        a.remarks
           .replaceAll(',', '，')
           .replaceAll(/[\r\n]+/g, ' ')
-      }))
-      .map(a => `${a.hashId},${a.circleName},${a.penName},${a.circleNameYomi},${a.genre},${a.spaceId},${a.unionCircle},${a.description},${a.totalAmount},${a.remarks}`)
+      ]))
+      .map(a => a.join(','))
       .join('\n')
 
     return `${header}\n${entries}\n`
