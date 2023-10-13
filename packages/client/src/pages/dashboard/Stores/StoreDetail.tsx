@@ -24,6 +24,7 @@ import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel
 import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 import FormSelect from '../../../components/Form/Select'
+import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
 
 const StoreDetail: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
@@ -33,7 +34,8 @@ const StoreDetail: React.FC = () => {
     getStoreByIdAsync,
     getTicketsByStoreIdAsync,
     getTicketUsedStatusByIdAsync,
-    getTicketMetaByIdAsync
+    getTicketMetaByIdAsync,
+    exportCSV
   } = useStore()
   const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
 
@@ -42,6 +44,8 @@ const StoreDetail: React.FC = () => {
   const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount | null>>()
   const [usedStatuses, setUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
+
+  const [ticketCSV, setTicketCSV] = useState('')
 
   const [selectedType, setSelectedType] = useState('')
   const [selectedStatus, setSelectedStatus] = useState(-1)
@@ -149,6 +153,15 @@ const StoreDetail: React.FC = () => {
       .filter(t => selectedStatus === -1 || t.id && ticketMetas?.[t.id].applicationStatus === selectedStatus)
   }, [tickets, ticketMetas, selectedType, selectedStatus])
 
+  const onFetchedAllData = (): void => {
+    if (!filteredTickets || !userDatas) return
+    
+    const csv = exportCSV(filteredTickets, userDatas)
+    setTicketCSV(csv)
+  }
+  useEffect(onFetchedAllData, [filteredTickets, userDatas])
+
+
   return (
     <DashboardLayout title={pageTitle}>
       <Breadcrumbs>
@@ -158,7 +171,10 @@ const StoreDetail: React.FC = () => {
       <PageTitle title={store?.storeName} icon={<MdStore />} description="発券済みチケットの一覧" isLoading={!store} />
 
       <p>
-        <LinkButton to={`/dashboard/stores/${storeId}/create`} inlined>チケット作成</LinkButton>
+        <LinkButton to={`/dashboard/stores/${storeId}/create`} inlined={true}>チケット作成</LinkButton>
+      </p>
+      <p>
+        参加者リストCSVコピー <CopyToClipboard content={ticketCSV} />
       </p>
 
       <FormSection>
