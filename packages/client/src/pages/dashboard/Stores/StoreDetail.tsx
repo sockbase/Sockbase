@@ -7,7 +7,8 @@ import {
   type SockbaseStoreType,
   type SockbaseAccount,
   type SockbaseTicketUsedStatus,
-  type SockbaseTicketMeta
+  type SockbaseTicketMeta,
+  type SockbaseTicketUserDocument
 } from 'sockbase'
 import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
@@ -25,6 +26,7 @@ import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 import FormSelect from '../../../components/Form/Select'
 import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
+import TicketAssignStatusLabel from '../../../components/Parts/StatusLabel/TicketAssignStatusLabel'
 
 const StoreDetail: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
@@ -35,12 +37,14 @@ const StoreDetail: React.FC = () => {
     getTicketsByStoreIdAsync,
     getTicketUsedStatusByIdAsync,
     getTicketMetaByIdAsync,
+    getTicketUserByHashIdAsync,
     exportCSV
   } = useStore()
   const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
 
   const [store, setStore] = useState<SockbaseStoreDocument>()
   const [tickets, setTickets] = useState<SockbaseTicketDocument[]>()
+  const [ticketUsers, setTicketUsers] = useState<Record<string, SockbaseTicketUserDocument>>()
   const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount | null>>()
   const [usedStatuses, setUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
@@ -49,6 +53,7 @@ const StoreDetail: React.FC = () => {
 
   const [selectedType, setSelectedType] = useState('')
   const [selectedStatus, setSelectedStatus] = useState(-1)
+  const [selectedAssign, setSelectedAssign] = useState('')
 
   const onInitialize = (): void => {
     const fetchAsync = async (): Promise<void> => {
@@ -79,6 +84,10 @@ const StoreDetail: React.FC = () => {
         .filter(t => t.id)
         .map(t => t?.id ?? '')
 
+        const ticketHashIds = tickets
+        .filter(t => t.hashId)
+        .map(t => t.hashId ?? '')
+
       Promise.all(
         userIds.map(async (userId) => ({ id: userId, data: await getUserDataByUserIdAndStoreIdOptionalAsync(userId, storeId) }))
       )
@@ -97,6 +106,12 @@ const StoreDetail: React.FC = () => {
         .then(fetchedTicketMetas => mapObjectTicketMetas(fetchedTicketMetas))
         .catch(err => { throw err })
 
+      Promise.all(
+        ticketHashIds.map(async (hashId) => ({ id: hashId, data: await getTicketUserByHashIdAsync(hashId)}))
+      )
+        .then(fetchedTicketUsers => mapObjectTicketUsers(fetchedTicketUsers))
+        .catch(err => { throw err })
+
       const mapObjectUsers = (users: Array<{ id: string, data: SockbaseAccount | null }>): void => {
         const objectMappedUsers = users
           .reduce<Record<string, SockbaseAccount | null>>((p, c) => ({ ...p, [c.id]: c.data }), {})
@@ -113,6 +128,12 @@ const StoreDetail: React.FC = () => {
         const objectMappedTicketMetas = ticketMetas
           .reduce<Record<string, SockbaseTicketMeta>>((p, c) => ({ ...p, [c.id]: c.data }), {})
         setTicketMetas(objectMappedTicketMetas)
+      }
+
+      const mapObjectTicketUsers = (ticketUsers: Array<{ id: string, data: SockbaseTicketUserDocument }>): void => {
+        const objectMappedTicketUsers = ticketUsers
+          .reduce<Record<string, SockbaseTicketUserDocument>>((p, c) => ({...p, [c.id]: c.data}), {})
+        setTicketUsers(objectMappedTicketUsers)
       }
     }
     fetchAsync()
@@ -151,7 +172,10 @@ const StoreDetail: React.FC = () => {
     return tickets
       .filter(t => !selectedType || t.typeId === selectedType)
       .filter(t => selectedStatus === -1 || t.id && ticketMetas?.[t.id].applicationStatus === selectedStatus)
-  }, [tickets, ticketMetas, selectedType, selectedStatus])
+      .filter(t => !selectedAssign
+        || selectedAssign === 'yes' && t.hashId && ticketUsers?.[t.hashId].usableUserId
+        || selectedAssign === 'no' && t.hashId && !ticketUsers?.[t.hashId].usableUserId)
+  }, [tickets, ticketMetas, ticketUsers, selectedType, selectedStatus, selectedAssign])
 
   const onFetchedAllData = (): void => {
     if (!filteredTickets || !userDatas) return
@@ -196,6 +220,15 @@ const StoreDetail: React.FC = () => {
             <option value="0">仮申し込み</option>
           </FormSelect>
         </FormItem>
+        <FormItem>
+          <FormSelect
+            value={selectedAssign}
+            onChange={e => setSelectedAssign(e.target.value)}>
+            <option value="">割当状況を選択してください</option>
+            <option value="yes">割当済み</option>
+            <option value="no">未割当</option>
+          </FormSelect>
+        </FormItem>
       </FormSection>
 
       <p>
@@ -213,8 +246,9 @@ const StoreDetail: React.FC = () => {
           <thead>
             <tr>
               <th>#</th>
-              <th>使用状態</th>
-              <th>申し込み状態</th>
+              <th>申込</th>
+              <th>割当</th>
+              <th>使用</th>
               <th>種別</th>
               <th>購入者</th>
               <th>チケットID</th>
@@ -227,8 +261,9 @@ const StoreDetail: React.FC = () => {
                 .sort((a, b) => (b.updatedAt?.getTime() ?? b.createdAt?.getTime() ?? 9) - (a.updatedAt?.getTime() ?? a.createdAt?.getTime() ?? 0))
                 .map((t, i) => <tr key={t.id}>
                   <td>{filteredTickets.length - i}</td>
-                  <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
                   <td>{t?.id && <ApplicationStatusLabel status={ticketMetas?.[t.id].applicationStatus} />}</td>
+                  <td>{(t?.hashId && <TicketAssignStatusLabel status={!!ticketUsers?.[t.hashId]?.usableUserId}/>) ?? <BlinkField />}</td>
+                  <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
                   <td><StoreTypeLabel type={getType(t.typeId)} /></td>
                   <td>
                     {userDatas
