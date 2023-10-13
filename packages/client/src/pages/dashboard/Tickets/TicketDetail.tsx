@@ -32,6 +32,7 @@ import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketU
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import useRole from '../../../hooks/useRole'
 import FormTextarea from '../../../components/Form/Textarea'
+import TicketAssignStatusLabel from '../../../components/Parts/StatusLabel/TicketAssignStatusLabel'
 
 const TicketDetail: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -236,7 +237,7 @@ const TicketDetail: React.FC = () => {
               </tr>}
               <tr>
                 <th>割り当て状況</th>
-                <td>{(ticketUser && (ticketUser.usableUserId ? '割り当て済み' : '未割り当て')) ?? <BlinkField />}</td>
+                <td>{(ticketUser && <TicketAssignStatusLabel status={!!ticketUser.usableUserId} />) ?? <BlinkField />}</td>
               </tr>
               <tr>
                 <th>使用状況</th>
