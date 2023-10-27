@@ -27,6 +27,7 @@ import FormItem from '../../../components/Form/FormItem'
 import FormSelect from '../../../components/Form/Select'
 import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
 import TicketAssignStatusLabel from '../../../components/Parts/StatusLabel/TicketAssignStatusLabel'
+import Small from '../../../components/Parts/Small'
 
 const StoreDetail: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
@@ -147,7 +148,9 @@ const StoreDetail: React.FC = () => {
       if (!storeId || !ticketUsers) return
 
       const ticketUsableUserIdsSet = Object.values(ticketUsers)
-        .reduce((p, c) => p.add(c.userId), new Set<string>())
+        .filter(u => u.usableUserId)
+        .map(u => u?.usableUserId ?? '')
+        .reduce((p, id) => p.add(id), new Set<string>())
       const ticketUsableUserIds = [...ticketUsableUserIdsSet]
 
       Promise.all(
@@ -315,6 +318,8 @@ const StoreDetail: React.FC = () => {
                     {t.hashId && ticketUsers?.[t.hashId]?.usableUserId
                       ? t.id && getUsableUser(t.id)?.name || <BlinkField />
                       : '-'}
+                    &nbsp;
+                    {t.hashId && <Small>{ticketUsers?.[t.hashId]?.usableUserId}</Small>}
                     </td>
                   <td><Link to={`/dashboard/tickets/${t.hashId}`}>{t.hashId}</Link></td>
                   <td>{formatByDate(t.updatedAt ?? t.createdAt, 'YYYY/MM/DD H:mm:ss')}</td>
