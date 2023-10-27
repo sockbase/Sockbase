@@ -115,7 +115,7 @@ interface IUseStore {
   getUsableTicketsAsync: () => Promise<sockbase.SockbaseTicketUserDocument[] | undefined>
   assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
   unassignTicketUserAsync: (ticketHashId: string) => Promise<void>
-  exportCSV: (tickets: sockbase.SockbaseTicketDocument[], users: Record<string, sockbase.SockbaseAccount | null>) => string
+  exportCSV: (tickets: sockbase.SockbaseTicketDocument[], ticketUsers: Record<string, sockbase.SockbaseTicketUserDocument>, usableUsers: Record<string, sockbase.SockbaseAccount | null>) => string
 }
 
 const useStore: () => IUseStore = () => {
@@ -332,20 +332,23 @@ const useStore: () => IUseStore = () => {
     )
   }
 
-  const exportCSV = (tickets: sockbase.SockbaseTicketDocument[], users: Record<string, sockbase.SockbaseAccount | null>): string => {
+  const exportCSV = (tickets: sockbase.SockbaseTicketDocument[], ticketUsers: Record<string, sockbase.SockbaseTicketUserDocument>, usableUsers: Record<string, sockbase.SockbaseAccount | null>): string => {
     const headers = 'hashId,type,name,postalCode,address,telephone'
     return [
       headers,
       ...tickets
-        .map(t => ([
-          t.hashId,
-          t.typeId,
-          users[t.userId]?.name ?? '未入力',
-          users[t.userId]?.postalCode ?? '未入力',
-          users[t.userId]?.address ?? '未入力',
-          users[t.userId]?.telephone ?? '未入力'
-        ])
-        .join(','))
+        .map(t => {
+          const usableUserId = t.hashId && ticketUsers[t.hashId].usableUserId
+
+          return [
+            t.hashId,
+            t.typeId,
+            (usableUserId && usableUsers[usableUserId]?.name) ??'未入力',
+            (usableUserId && usableUsers[usableUserId]?.postalCode) ??'未入力',
+            (usableUserId && usableUsers[usableUserId]?.address) ??'未入力',
+            (usableUserId && usableUsers[usableUserId]?.telephone) ??'未入力'
+          ].join(',')
+        })
     ].join('\n')
   }
 

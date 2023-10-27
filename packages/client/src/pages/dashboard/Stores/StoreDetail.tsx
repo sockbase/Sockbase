@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { MdStore } from 'react-icons/md'
 import {
@@ -48,6 +48,7 @@ const StoreDetail: React.FC = () => {
   const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount | null>>()
   const [usedStatuses, setUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
+  const [usableUsers, setUsableUsers] = useState<Record<string, SockbaseAccount | null>>()
 
   const [ticketCSV, setTicketCSV] = useState('')
 
@@ -141,17 +142,56 @@ const StoreDetail: React.FC = () => {
   }
   useEffect(onFetchedTickets, [tickets, storeId])
 
+  const onFetchedTicketUsers = (): void => {
+    const fetchAsync = async (): Promise<void> => {
+      if (!storeId || !ticketUsers) return
+
+      const ticketUsableUserIdsSet = Object.values(ticketUsers)
+        .reduce((p, c) => p.add(c.userId), new Set<string>())
+      const ticketUsableUserIds = [...ticketUsableUserIdsSet]
+
+      Promise.all(
+        ticketUsableUserIds
+          .map(async id => ({ id, data: await getUserDataByUserIdAndStoreIdOptionalAsync(id, storeId)}))
+      )
+        .then((fetchedUsableUsers) => mapObjectTicketUsableUsers(fetchedUsableUsers))
+        .catch(err => { throw err })
+
+      const mapObjectTicketUsableUsers = (usableUsers: Array<{id: string, data: SockbaseAccount | null }>): void => {
+        const objectMappedUsableUsers = usableUsers
+          .reduce<Record<string, SockbaseAccount | null>>((p, c) => ({...p, [c.id]: c.data}), {})
+        setUsableUsers(objectMappedUsableUsers)
+      }
+    }
+    fetchAsync()
+      .catch(err => { throw err })
+  }
+  useEffect(onFetchedTicketUsers, [storeId, ticketUsers])
+
   const pageTitle = useMemo(() => {
     if (!store) return '読み込み中'
     return `${store.storeName} チケット一覧`
   }, [store])
 
-  const getType = (typeId: string): SockbaseStoreType | undefined => {
+  const getType = useCallback((typeId: string): SockbaseStoreType | undefined => {
     if (!store) return
     const type = store.types
       .filter(t => t.id === typeId)[0]
     return type
-  }
+  }, [store])
+
+  const getUsableUser = useCallback((ticketId: string): SockbaseAccount | null | undefined => {
+    if (!tickets || !ticketUsers || !usableUsers) return
+
+    const ticket = tickets.filter(t => t.id === ticketId)[0]
+    if (!ticket.hashId) return
+
+    const ticketUser = ticketUsers[ticket.hashId]
+    if (!ticketUser?.usableUserId) return
+
+    const usableUser = usableUsers[ticketUser.usableUserId]
+    return usableUser
+  }, [ticketUsers, usableUsers])
 
   const usedTicketCount = useMemo(() => {
     if (!usedStatuses) return 0
@@ -178,12 +218,12 @@ const StoreDetail: React.FC = () => {
   }, [tickets, ticketMetas, ticketUsers, selectedType, selectedStatus, selectedAssign])
 
   const onFetchedAllData = (): void => {
-    if (!filteredTickets || !userDatas) return
+    if (!filteredTickets || !ticketUsers || !usableUsers) return
     
-    const csv = exportCSV(filteredTickets, userDatas)
+    const csv = exportCSV(filteredTickets, ticketUsers, usableUsers)
     setTicketCSV(csv)
   }
-  useEffect(onFetchedAllData, [filteredTickets, userDatas])
+  useEffect(onFetchedAllData, [filteredTickets, ticketUsers, usableUsers])
 
 
   return (
@@ -251,6 +291,7 @@ const StoreDetail: React.FC = () => {
               <th>使用</th>
               <th>種別</th>
               <th>購入者</th>
+              <th>使用者</th>
               <th>チケットID</th>
               <th>更新日</th>
             </tr>
@@ -270,6 +311,11 @@ const StoreDetail: React.FC = () => {
                       ? userDatas?.[t.userId]?.name || '-'
                       : <BlinkField />}
                   </td>
+                  <td>
+                    {t.hashId && ticketUsers?.[t.hashId]?.usableUserId
+                      ? t.id && getUsableUser(t.id)?.name || <BlinkField />
+                      : '-'}
+                    </td>
                   <td><Link to={`/dashboard/tickets/${t.hashId}`}>{t.hashId}</Link></td>
                   <td>{formatByDate(t.updatedAt ?? t.createdAt, 'YYYY/MM/DD H:mm:ss')}</td>
                 </tr>)
