@@ -102,7 +102,7 @@ const useUserData: () => IUseUserData = () => {
 
     const user = userDoc.data()
     if (!user) {
-      throw new Error('user not found')
+      throw new Error(`user not found: ${userId}`)
     }
 
     return user
@@ -110,7 +110,10 @@ const useUserData: () => IUseUserData = () => {
 
   const getUserDataByUserIdAndStoreIdOptionalAsync = async (userId: string, storeId: string): Promise<SockbaseAccount | null> =>
     await getUserDataByUserIdAndStoreIdAsync(userId, storeId)
-      .catch(() => null)
+      .catch(err => {
+        console.error(err) 
+        return null
+      })
 
   return {
     updateUserDataAsync,
