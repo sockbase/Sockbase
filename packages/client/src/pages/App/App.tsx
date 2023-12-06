@@ -10,35 +10,36 @@ import ResetStyle from '../../styles/ResetStyle'
 import Colors from '../../styles/Colors'
 import GlobalStyle from '../../styles/GlobalStyle'
 
-import Index from '../Index/IndexPage'
-import NotFound from './NotFoundPage'
-import TermsOfService from '../Static/TermsOfServicePage'
-import PrivacyPolicy from '../Static/PrivacyPolicyPage'
-import PasswordReset from '../PasswordReset/PasswordResetPage'
-import EventApplication from '../CircleApplication/CircleApplicationPage'
-import TicketApplication from '../TicketApplication/TicketApplicationPage'
-import TicketAssign from '../TicketAssign/TicketAssignPage'
-import TicketView from '../TicketView/TicketViewPage'
-import DashboardTop from '../DashboardTop/DashboardTopPage'
-import DashboardEventList from '../DashboardEvents/DashboardEventListPage'
-import DashboardEventApplications from '../DashboardEvents/DashboardEventCircleApplicationsPage'
-import DashboardEventSpaces from '../DashboardEvents/EventSpaces/EventSpaces'
-import DashboardApplicationList from '../DashboardCircleApplication/DashboardCircleApplicationListPage'
-import DashboardApplicationDetail from '../DashboardCircleApplication/DashboardCircleApplicationDetailPage'
-import DashboardPaymentList from '../DashboardPayments/DashboardPaymentListPage'
-import DashboardSettings from '../DashboardSettings/DashboardSettingsPage'
-import DashboardContact from '../DashboardContact/DashboardContactPage'
-import DashboardInquiryList from '../DashboardManage/DashboardManageInquiryListPage'
-import DashboardEditLinks from '../DashboardCircleApplication/DashboardCircleApplicationEditLinksPage'
-import DashboardTicketList from '../DashboardTickets/DashboardTicketListPage'
-import DashboardMyTicketList from '../DashboardTickets/DashboardMyTicketListPage'
-import DashboardMyTicketDetail from '../DashboardTickets/DashboardMyTicketDetailPage'
-import DashboardTicketDetail from '../DashboardTickets/DashboardTicketDetailPage'
-import DashboardStoreDetail from '../DashboardStores/DashboardStoreDetailPage'
-import DashboardStoreList from '../DashboardStores/DashboardStoreListPage'
-import DashboardTicketCreate from '../DashboardStores/DashboardStoreTicketCreatePage'
-import DashboardTicketTerminal from '../DashboardTickets/DashboardTicketTerminalPage'
-import DebugDashboard from '../DashboardDebug/DashboardDebugPage'
+import IndexPage from '../Index/IndexPage'
+import NotFoundPage from './NotFoundPage'
+import TermsOfServicePage from '../Static/TermsOfServicePage'
+import PrivacyPolicyPage from '../Static/PrivacyPolicyPage'
+import PasswordResetPage from '../PasswordReset/PasswordResetPage'
+import EventApplicationPage from '../CircleApplication/CircleApplicationPage'
+import TicketApplicationPage from '../TicketApplication/TicketApplicationPage'
+import TicketAssignPage from '../TicketAssign/TicketAssignPage'
+import TicketViewPage from '../TicketView/TicketViewPage'
+import DashboardTopPage from '../DashboardTop/DashboardTopPage'
+import DashboardEventListPage from '../DashboardEvents/DashboardEventListPage'
+import DashboardEventApplicationsPage from '../DashboardEvents/DashboardEventCircleApplicationsPage'
+import DashboardEventSpacesPage from '../DashboardEvents/EventSpaces/DashboardEventSpacesPage'
+import DashboardApplicationListPage from '../DashboardCircleApplication/DashboardCircleApplicationListPage'
+import DashboardApplicationDetailPage from '../DashboardCircleApplication/DashboardCircleApplicationDetailPage'
+import DashboardPaymentListPage from '../DashboardPayments/DashboardPaymentListPage'
+import DashboardSettingsPage from '../DashboardSettings/DashboardSettingsPage'
+import DashboardContactPage from '../DashboardContact/DashboardContactPage'
+import DashboardInquiryListPage from '../DashboardInquiry/DashboardInquiryListPage'
+import DashboardInquiryDetailPage from '../DashboardInquiry/DashboardInquiryDetailPage'
+import DashboardEditLinksPage from '../DashboardCircleApplication/DashboardCircleApplicationEditLinksPage'
+import DashboardTicketListPage from '../DashboardTickets/DashboardTicketListPage'
+import DashboardMyTicketListPage from '../DashboardTickets/DashboardMyTicketListPage'
+import DashboardMyTicketDetailPage from '../DashboardTickets/DashboardMyTicketDetailPage'
+import DashboardTicketDetailPage from '../DashboardTickets/DashboardTicketDetailPage'
+import DashboardStoreDetailPage from '../DashboardStores/DashboardStoreDetailPage'
+import DashboardStoreListPage from '../DashboardStores/DashboardStoreListPage'
+import DashboardTicketCreatePage from '../DashboardStores/DashboardStoreTicketCreatePage'
+import DashboardTicketTerminalPage from '../DashboardTickets/DashboardTicketTerminalPage'
+import DebugDashboardPage from '../DashboardDebug/DashboardDebugPage'
 
 import '../../main.css'
 import { getFirebaseApp, initializeAppCheck } from '../../libs/FirebaseApp'
@@ -62,26 +63,26 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Index />
+        element: <IndexPage />
       },
       {
         path: 'tos',
-        element: <TermsOfService />
+        element: <TermsOfServicePage />
       },
       {
         path: 'privacy-policy',
-        element: <PrivacyPolicy />
+        element: <PrivacyPolicyPage />
       },
       {
         path: 'reset-password',
-        element: <PasswordReset />
+        element: <PasswordResetPage />
       },
       {
         path: 'events',
         children: [
           {
             path: ':eventId',
-            element: <EventApplication />
+            element: <EventApplicationPage />
           }
         ]
       },
@@ -90,20 +91,20 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':storeId',
-            element: <TicketApplication />
+            element: <TicketApplicationPage />
           }
         ]
       },
       {
         path: 'assign-tickets',
-        element: <TicketAssign />
+        element: <TicketAssignPage />
       },
       {
         path: 'tickets',
         children: [
           {
             path: ':ticketHashId',
-            element: <TicketView />
+            element: <TicketViewPage />
           }
         ]
       },
@@ -116,14 +117,14 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <DashboardTop />
+            element: <DashboardTopPage />
           },
           {
             path: 'settings',
             children: [
               {
                 index: true,
-                element: <DashboardSettings />
+                element: <DashboardSettingsPage />
               }
             ]
           },
@@ -132,7 +133,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardContact />
+                element: <DashboardContactPage />
               }
             ]
           },
@@ -141,18 +142,18 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardEventList />
+                element: <DashboardEventListPage />
               },
               {
                 path: ':eventId',
                 children: [
                   {
                     index: true,
-                    element: <DashboardEventApplications />
+                    element: <DashboardEventApplicationsPage />
                   },
                   {
                     path: 'spaces',
-                    element: <DashboardEventSpaces />
+                    element: <DashboardEventSpacesPage />
                   }
                 ]
               }
@@ -163,18 +164,18 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardApplicationList />
+                element: <DashboardApplicationListPage />
               },
               {
                 path: ':hashedAppId',
                 children: [
                   {
                     index: true,
-                    element: <DashboardApplicationDetail />,
+                    element: <DashboardApplicationDetailPage />,
                   },
                   {
                     path: 'links',
-                    element: <DashboardEditLinks />
+                    element: <DashboardEditLinksPage />
                   }
                 ]
               }
@@ -185,15 +186,15 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardTicketList />
+                element: <DashboardTicketListPage />
               },
               {
                 path: ':hashedTicketId',
-                element: <DashboardTicketDetail />
+                element: <DashboardTicketDetailPage />
               },
               {
                 path: 'terminal',
-                element: <DashboardTicketTerminal />
+                element: <DashboardTicketTerminalPage />
               }
             ]
           },
@@ -202,18 +203,18 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardStoreList />
+                element: <DashboardStoreListPage />
               },
               {
                 path: ':storeId',
                 children: [
                   {
                     index: true,
-                    element: <DashboardStoreDetail />,
+                    element: <DashboardStoreDetailPage />,
                   },
                   {
                     path: 'create',
-                    element: <DashboardTicketCreate />
+                    element: <DashboardTicketCreatePage />
                   }
                 ]
               }
@@ -224,27 +225,36 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardMyTicketList />
+                element: <DashboardMyTicketListPage />
               },
               {
                 path: ':hashedTicketId',
-                element: <DashboardMyTicketDetail />
+                element: <DashboardMyTicketDetailPage />
               }
             ]
           },
           {
             path: 'payments',
-            element: <DashboardPaymentList />
+            element: <DashboardPaymentListPage />
           },
           {
             path: 'inquiries',
-            element: <DashboardInquiryList />
+            children: [
+              {
+                index: true,
+                element: <DashboardInquiryListPage />
+              },
+              {
+                path: ':inquiryId',
+                element: <DashboardInquiryDetailPage />
+              }
+            ]
           },
           ...[
             import.meta.env.DEV
               ? {
                 path: 'debug',
-                element: <DebugDashboard />
+                element: <DebugDashboardPage />
               }
               : {}
           ],
@@ -254,7 +264,7 @@ const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <NotFound />
+    element: <NotFoundPage />
   }
 ])
 

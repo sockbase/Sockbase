@@ -244,3 +244,39 @@ export const ticketUserConverter: firestore.FirestoreDataConverter<types.Sockbas
     }
   }
 }
+
+export const inquiryConverter: firestore.FirestoreDataConverter<types.SockbaseInquiryDocument> = {
+  toFirestore: (inquiry: types.SockbaseInquiryDocument) => ({
+    status: inquiry.status,
+    createdAt: inquiry.createdAt,
+    updatedAt: inquiry.updatedAt
+  }),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseInquiryDocument => {
+    const inquiry = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: inquiry.userId,
+      inquiryType: inquiry.inquiryType,
+      body: inquiry.body,
+      status: inquiry.status,
+      createdAt: inquiry.createdAt ? new Date(inquiry.createdAt.seconds * 1000) : null,
+      updatedAt: inquiry.updatedAt ? new Date(inquiry.updatedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const inquiryMetaConverter: firestore.FirestoreDataConverter<types.SockbaseInquiryMetaDocument> = {
+  toFirestore: (meta: types.SockbaseInquiryMetaDocument) => ({
+    status: meta.status,
+    createdAt: meta.createdAt,
+    updatedAt: meta.updatedAt
+  }),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseInquiryMetaDocument => {
+    const meta = snapshot.data()
+    return {
+      status: meta.status,
+      createdAt: meta.createdAt ? new Date(meta.createdAt.seconds * 1000) : null,
+      updatedAt: meta.updatedAt ? new Date(meta.updatedAt.seconds * 1000) : null
+    }
+  }
+}

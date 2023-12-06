@@ -164,6 +164,11 @@ service cloud.firestore {
     match /_inquiries/{inquiryId} {
       allow create: if request.auth.uid == request.resource.data.userId;
       allow read: if isSystemAdmin(request.auth.uid);
+
+      match /private/meta {
+        allow read: if isSystemAdmin(request.auth.uid);
+        allow write: if isSystemAdmin(request.auth.uid);
+      }
     }
     
     // match /{document=**} {

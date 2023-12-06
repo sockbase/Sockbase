@@ -14,38 +14,7 @@ import Alert from '../../components/Parts/Alert'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 import FormHelp from '../../components/Form/Help'
 import Loading from '../../components/Parts/Loading'
-
-const inquiryTypes: Array<{
-  type: string
-  name: string
-  description: string
-}> = [
-    {
-      type: 'payment',
-      name: '決済に関する相談',
-      description: '決済に紐づいている申し込みIDを添えてお問い合わせください。(申し込みIDは申し込み情報下部にあります)'
-    },
-    {
-      type: 'changePassword',
-      name: 'パスワード再設定依頼',
-      description: 'ここにはパスワードを記載しないでください。パスワードの再設定は別途ご案内するページにて行います。'
-    },
-    {
-      type: 'removeAccount',
-      name: 'アカウント消去依頼',
-      description: ''
-    },
-    {
-      type: 'changeCircleInfo',
-      name: 'サークル申し込み情報変更, サークルカット変更',
-      description: '申し込み情報下部の申し込みIDを添えてお問い合わせください。'
-    },
-    {
-      type: 'other',
-      name: 'その他',
-      description: ''
-    }
-  ]
+import inquiryHelper from '../../helpers/inquiryHelper'
 
 const maxBodyLength = 1000
 
@@ -81,7 +50,7 @@ const Contact: React.FC = () => {
     () => {
       const bodyLength = body.length
       const validators = [
-        validator.isIn(type, inquiryTypes.map(t => t.type)),
+        validator.isIn(type, inquiryHelper.inquiryTypes.map(t => t.type)),
         !validator.isEmpty(body),
         bodyLength <= maxBodyLength
       ]
@@ -108,7 +77,7 @@ const Contact: React.FC = () => {
   const inquiryContext = useMemo(() => {
     if (!type) return
 
-    const selectedInquiry = inquiryTypes.filter(t => t.type === type)[0]
+    const selectedInquiry = inquiryHelper.inquiryTypes.filter(t => t.type === type)[0]
     return selectedInquiry
   }, [type])
 
@@ -140,7 +109,7 @@ const Contact: React.FC = () => {
                   value={type}
                   onChange={e => setType(e.target.value)}>
                   <option value=''>お問い合わせ内容を選択してください</option>
-                  {inquiryTypes.map(ct => <option key={ct.type} value={ct.type}>{ct.name}</option>)}
+                  {inquiryHelper.inquiryTypes.map(ct => <option key={ct.type} value={ct.type}>{ct.name}</option>)}
                 </FormSelect>
               </FormItem>
               <FormItem>
