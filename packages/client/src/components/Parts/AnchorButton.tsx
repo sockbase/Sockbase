@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { buttonStyle, type ColorTypes } from '../Mixins/button'
+import { buttonStyle, type ColorTypes } from '../Mixins/Button'
 
 const AnchorButton = styled.a<{ color?: ColorTypes }>`
   display: inline-block;
