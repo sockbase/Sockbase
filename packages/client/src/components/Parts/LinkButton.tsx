@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { buttonStyle, type ColorTypes } from '../Mixins/button'
+import { buttonStyle, type ColorTypes } from '../Mixins/Button'
 
 const LinkButton = styled(Link) <{ color?: ColorTypes, inlined?: boolean }>`
   display: inline-block;
