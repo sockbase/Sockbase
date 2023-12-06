@@ -402,17 +402,24 @@ export interface SockbaseInquiry {
 /**
  * 問い合わせ情報(DB取得)
  */
-export type SockbaseInquiryDocument = SockbaseInquiry & {
+export type SockbaseInquiryDocument = SockbaseInquiry & SockbaseInquiryMetaDocument & {
   id: string
-  status: InquiryStatus
-  createdAt: Date | null
-  updatedAt: Date | null
 }
 
 /**
- * 問い合わせタイプ
+ * 問い合わせ情報(管理用)
  */
-export type InquiryType = 'other'
+export interface SockbaseInquiryMeta {
+  status: SockbaseInquiryStatus
+}
+
+/**
+ * 問い合わせ情報(管理用, DB取得)
+ */
+export type SockbaseInquiryMetaDocument = SockbaseInquiryMeta & {
+  createdAt: Date | null
+  updatedAt: Date | null
+}
 
 /**
  * 問い合わせステータス
@@ -421,4 +428,4 @@ export type InquiryType = 'other'
  * inProgress: 1
  * done: 2
  */
-export type InquiryStatus = 0 | 1 | 2
+export type SockbaseInquiryStatus = 0 | 1 | 2

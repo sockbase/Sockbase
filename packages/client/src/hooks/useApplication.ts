@@ -128,7 +128,7 @@ const useApplication: () => IUseApplication = () => {
     async (app, circleCutFile) => {
       const functions = getFunctions()
       const createApplicationFunction = FirebaseFunctions
-        .httpsCallable<sockbase.SockbaseApplication, sockbase.SockbaseApplicationAddedResult>(functions, 'ApplicationService-createApplication')
+        .httpsCallable<sockbase.SockbaseApplication, sockbase.SockbaseApplicationAddedResult>(functions, 'application-createApplication')
 
       const appResult = await createApplicationFunction(app)
       const hashId = appResult.data.hashId

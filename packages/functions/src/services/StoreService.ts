@@ -7,14 +7,14 @@ import {
   type SockbaseTicketUsedStatus
 } from 'sockbase'
 import { type FirebaseError } from 'firebase-admin'
-import { createPayment, generateBankTransferCode } from '../services/payment'
 import { storeConverter, ticketConverter, ticketUserConverter, userConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
 import firebaseAdmin from '../libs/FirebaseAdmin'
+import PaymentService from './PaymentService'
 
-export const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
+const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
   const now = new Date()
   const timestamp = now.getTime()
 
@@ -82,10 +82,10 @@ export const createTicketAsync = async (userId: string, ticket: SockbaseTicket):
     throw new functions.https.HttpsError('not-found', 'type');
   }
 
-  const bankTransferCode = generateBankTransferCode(now)
+  const bankTransferCode = PaymentService.generateBankTransferCode(now)
 
   const paymentId = type.productInfo
-    ? await createPayment(
+    ? await PaymentService.createPaymentAsync(
       userId,
       ticket.paymentMethod === 'online' ? 1 : 2,
       bankTransferCode,
@@ -158,7 +158,7 @@ const generateTicketHashId = (now: Date): string => {
   return hashId
 }
 
-export const createTicketForAdminAsync = async (userId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
+const createTicketForAdminAsync = async (userId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
   const now = new Date()
 
   const adminApp = firebaseAdmin.getFirebaseAdmin()
@@ -255,7 +255,7 @@ export const createTicketForAdminAsync = async (userId: string, storeId: string,
   }
 }
 
-export const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: SockbaseTicketUsedStatus): Promise<void> => {
+const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: SockbaseTicketUsedStatus): Promise<void> => {
   const adminApp = firebaseAdmin.getFirebaseAdmin()
   const firestore = adminApp.firestore()
 
@@ -275,4 +275,10 @@ export const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: 
       used: ticketUsed.used,
       usedAt: ticketUsed.usedAt
     }, { merge: true })
+}
+
+export default {
+  createTicketAsync,
+  createTicketForAdminAsync,
+  updateTicketUsedStatusAsync
 }

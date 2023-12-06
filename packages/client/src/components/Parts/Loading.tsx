@@ -9,7 +9,7 @@ const Loading: React.FC<Props> = (props) => {
     <Container>
       <Icon><MdCloudDownload /></Icon>
       <Title>読み込み中です</Title>
-      {props.text && <Description>{props.text}を読み込んでいます。</Description>}
+      {props.text && <Description>{props.text} を読み込んでいます。</Description>}
     </Container>
   )
 }
