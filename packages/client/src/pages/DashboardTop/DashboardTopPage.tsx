@@ -12,16 +12,16 @@ import {
   MdStore,
   MdWallet
 } from 'react-icons/md'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TopCard from '../../components/Parts/TopCard'
 import useRole from '../../hooks/useRole'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 
 const DashboardTopPage: React.FC = () => {
   const { commonRole } = useRole()
 
   return (
-    <DashboardLayout title="マイページ トップ">
+    <DashboardBaseLayout title="マイページ トップ">
       <PageTitle
         icon={<MdHome />}
         title="ホーム"
@@ -100,7 +100,7 @@ const DashboardTopPage: React.FC = () => {
             description="利用者から届いたお問い合わせを管理します。" />
         </CardContainer>
       </>}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

@@ -10,7 +10,7 @@ interface Props {
   children: React.ReactNode
   title?: string
 }
-const DefaultLayout: React.FC<Props> = (props) => {
+const DefaultBaseLayout: React.FC<Props> = (props) => {
   return (
     <StyledLayout>
       <HeadHelper title={props.title} />
@@ -21,7 +21,7 @@ const DefaultLayout: React.FC<Props> = (props) => {
   )
 }
 
-export default DefaultLayout
+export default DefaultBaseLayout
 
 const StyledLayout = styled.section`
   display: grid;

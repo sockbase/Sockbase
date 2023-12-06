@@ -13,9 +13,9 @@ import {
 import useStore from '../../hooks/useStore'
 import useDayjs from '../../hooks/useDayjs'
 import useUserData from '../../hooks/useUserData'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Loading from '../../components/Parts/Loading'
 import BlinkField from '../../components/Parts/BlinkField'
 import LinkButton from '../../components/Parts/LinkButton'
@@ -230,7 +230,7 @@ const DashboardStoreDetailPage: React.FC = () => {
 
 
   return (
-    <DashboardLayout title={pageTitle}>
+    <DashboardBaseLayout title={pageTitle}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
@@ -330,7 +330,7 @@ const DashboardStoreDetailPage: React.FC = () => {
           </tbody>
         </table>}
 
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

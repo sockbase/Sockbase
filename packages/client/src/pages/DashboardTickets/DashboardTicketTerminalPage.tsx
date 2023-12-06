@@ -20,9 +20,9 @@ import useUserData from '../../hooks/useUserData'
 import useFirebaseError from '../../hooks/useFirebaseError'
 import useQRReader from '../../hooks/useQRReader'
 import useValidate from '../../hooks/useValidate'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
-import TwoColumnsLayout from '../../components/Layout/TwoColumns/TwoColumns'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Alert from '../../components/Parts/Alert'
 import BlinkField from '../../components/Parts/BlinkField'
@@ -220,7 +220,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
   }, [ticketMeta, ticketUser, type, payment])
 
   return (
-    <DashboardLayout title="チケット照会ターミナル">
+    <DashboardBaseLayout title="チケット照会ターミナル">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
@@ -366,7 +366,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
           </>}
         </>
       </TwoColumnsLayout>
-    </DashboardLayout >
+    </DashboardBaseLayout >
   )
 }
 

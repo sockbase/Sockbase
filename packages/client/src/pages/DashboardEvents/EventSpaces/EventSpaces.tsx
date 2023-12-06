@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { type SockbaseApplicationDocument, type SockbaseEvent, type SockbaseSpaceDocument } from 'sockbase'
-import DashboardLayout from '../../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
-import PageTitle from '../../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../../components/Layout/DashboardBaseLayout/PageTitle'
 import { MdAssignmentTurnedIn } from 'react-icons/md'
 import useEvent from '../../../hooks/useEvent'
 import BlinkField from '../../../components/Parts/BlinkField'
@@ -46,7 +46,7 @@ const EventSpaces: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardLayout title={pageTitle}>
+    <DashboardBaseLayout title={pageTitle}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
@@ -59,7 +59,7 @@ const EventSpaces: React.FC = () => {
         eventId={eventId}
         spaces={spaces}
         apps={apps} />}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

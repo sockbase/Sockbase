@@ -3,8 +3,8 @@ import { MdInbox } from 'react-icons/md'
 import type { SockbaseInquiryDocument } from 'sockbase'
 import useInquiry from '../../hooks/useInquiry'
 import useDayjs from '../../hooks/useDayjs'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 
 const DashboardManageInquiryListPage: React.FC = () => {
   const { getInquiries } = useInquiry()
@@ -26,7 +26,7 @@ const DashboardManageInquiryListPage: React.FC = () => {
   useEffect(onInitiliaze, [])
 
   return (
-    <DashboardLayout title="お問い合わせ一覧">
+    <DashboardBaseLayout title="お問い合わせ一覧">
       <PageTitle icon={<MdInbox />} title='お問い合わせ一覧' description='オープン中のお問い合わせ情報を表示中' />
 
       <table>
@@ -54,7 +54,7 @@ const DashboardManageInquiryListPage: React.FC = () => {
               </tr>)}
         </tbody>
       </table>
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

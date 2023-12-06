@@ -15,7 +15,7 @@ interface Props {
   children: React.ReactNode
   title: string
 }
-const DashboardLayout: React.FC<Props> = (props) => {
+const DashboardBaseLayout: React.FC<Props> = (props) => {
   const firebase = useFirebase()
   const navigate = useNavigate()
 
@@ -66,7 +66,7 @@ const DashboardLayout: React.FC<Props> = (props) => {
   )
 }
 
-export default DashboardLayout
+export default DashboardBaseLayout
 
 const StyledLayout = styled.section`
   display: grid;

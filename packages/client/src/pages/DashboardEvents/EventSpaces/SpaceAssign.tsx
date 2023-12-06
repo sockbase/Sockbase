@@ -6,7 +6,7 @@ import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import FormLabel from '../../../components/Form/Label'
 import FormTextarea from '../../../components/Form/Textarea'
-import TwoColumnsLayout from '../../../components/Layout/TwoColumns/TwoColumns'
+import TwoColumnsLayout from '../../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
 
 interface Props {

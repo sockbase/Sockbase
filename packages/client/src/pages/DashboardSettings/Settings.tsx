@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { SockbaseAccount } from 'sockbase'
-import TwoColumnsLayout from '../../components/Layout/TwoColumns/TwoColumns'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import FormSection from '../../components/Form/FormSection'
 import FormItem from '../../components/Form/FormItem'
 import FormLabel from '../../components/Form/Label'

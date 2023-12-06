@@ -1,12 +1,12 @@
 import styled from 'styled-components'
-import DefaultLayout from '../../components/Layout/Default/Default'
+import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import FormSection from '../../components/Form/FormSection'
 import FormItem from '../../components/Form/FormItem'
 import LinkButton from '../../components/Parts/LinkButton'
 
 const NotFoundPage: React.FC = () => {
   return (
-    <DefaultLayout title="Page Not Found">
+    <DefaultBaseLayout title="Page Not Found">
       <StatusCodeHeader>
         404
       </StatusCodeHeader>
@@ -18,7 +18,7 @@ const NotFoundPage: React.FC = () => {
           <LinkButton to="/" color="default">トップへ戻る</LinkButton>
         </FormItem>
       </FormSection>
-    </DefaultLayout>
+    </DefaultBaseLayout>
   )
 }
 

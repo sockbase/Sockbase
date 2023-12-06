@@ -3,9 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import { MdEdit } from 'react-icons/md'
 import { type SockbaseApplicationLinks, type SockbaseApplicationDocument, type SockbaseEvent } from 'sockbase'
 
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
-import TwoColumnsLayout from '../../components/Layout/TwoColumns/TwoColumns'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Alert from '../../components/Parts/Alert'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
@@ -109,7 +109,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout title="広報情報編集">
+    <DashboardBaseLayout title="広報情報編集">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         {isAdmin
@@ -200,7 +200,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
           <></>
         </TwoColumnsLayout>
         : <Loading text="ユーザ情報" />}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

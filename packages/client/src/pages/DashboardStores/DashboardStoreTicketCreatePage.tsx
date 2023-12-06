@@ -6,9 +6,9 @@ import useStore from '../../hooks/useStore'
 import useDayjs from '../../hooks/useDayjs'
 import useValidate from '../../hooks/useValidate'
 import useFirebaseError from '../../hooks/useFirebaseError'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
-import TwoColumnsLayout from '../../components/Layout/TwoColumns/TwoColumns'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import BlinkField from '../../components/Parts/BlinkField'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
@@ -109,7 +109,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout title={pageTitle}>
+    <DashboardBaseLayout title={pageTitle}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
@@ -202,7 +202,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
           </table>
         </>
       </TwoColumnsLayout>
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

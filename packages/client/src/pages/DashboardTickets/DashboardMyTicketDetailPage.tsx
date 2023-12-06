@@ -8,9 +8,9 @@ import {
 import useStore from '../../hooks/useStore'
 import useDayjs from '../../hooks/useDayjs'
 import useFirebase from '../../hooks/useFirebase'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
-import TwoColumnsLayout from '../../components/Layout/TwoColumns/TwoColumns'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import BlinkField from '../../components/Parts/BlinkField'
@@ -69,7 +69,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
   }, [ticketUser, store])
 
   return (
-    <DashboardLayout title={ticketUser && store ? (pageTitle ?? '') : 'マイチケット情報'}>
+    <DashboardBaseLayout title={ticketUser && store ? (pageTitle ?? '') : 'マイチケット情報'}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/mytickets">マイチケット</Link></li>
@@ -127,7 +127,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
           <>
           </>
         </TwoColumnsLayout>}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 
