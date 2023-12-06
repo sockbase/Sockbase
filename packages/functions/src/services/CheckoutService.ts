@@ -1,122 +1,21 @@
-import * as functions from 'firebase-functions'
-import type { UserRecord } from 'firebase-admin/auth'
+import { type Response } from 'express'
 import { Stripe } from 'stripe'
-import type * as types from 'sockbase'
-
-import { paymentConverter } from '../libs/converters'
-import firebaseAdmin from '../libs/FirebaseAdmin'
+import { type UserRecord } from 'firebase-admin/auth'
+import { type https } from 'firebase-functions'
+import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
+import {
+  type PaymentStatus,
+  type SockbasePaymentDocument
+} from 'sockbase'
+import { paymentConverter } from '../libs/converters'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2022-11-15' })
 const firebaseProjectId = process.env.FUNC_FIREBASE_PROJECT_ID ?? ''
 
-enum Status {
-  Pending = 0,
-  Paid = 1,
-  PaymentFailure = 3
-}
-
-const adminApp = firebaseAdmin.getFirebaseAdmin()
+const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
 const auth = adminApp.auth()
-
-const noticeMessage: (paymentId: string, errorDetail: string | null) => void =
-  (paymentId, errorDetail) => {
-    const body = errorDetail
-      ? {
-        username: 'Sockbase: 決済エラー',
-        embeds: [
-          {
-            title: '決済でエラーが発生しました！',
-            description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
-            url: '',
-            color: 16711680,
-            fields: [
-              {
-                name: '環境',
-                value: firebaseProjectId
-              },
-              {
-                name: 'エラー種類',
-                value: errorDetail
-              },
-              {
-                name: 'Stripe決済ID',
-                value: paymentId
-              }
-            ]
-          }
-        ]
-      }
-      : {
-        username: 'Sockbase: 決済完了',
-        embeds: [
-          {
-            title: '決済が完了しました！',
-            description: '以下の決済依頼ステータスを完了にしました。',
-            url: '',
-            color: 65280,
-            fields: [
-              {
-                name: '環境',
-                value: firebaseProjectId
-              },
-              {
-                name: 'Stripe決済ID',
-                value: paymentId
-              }
-            ]
-          }
-        ]
-      }
-
-    sendMessageToDiscord('system', body)
-      .catch(err => { throw err })
-  }
-
-const updateStatus = async (
-  payment: types.SockbasePaymentDocument,
-  productItems: Stripe.LineItem[],
-  paymentId: string,
-  status: types.PaymentStatus,
-  now: Date
-): Promise<boolean> => {
-  const productItemIds = productItems
-    .filter(p => p.price)
-    .map(p => p.price?.id)
-
-  if (!productItemIds.includes(payment.paymentProductId)) {
-    return false
-  }
-
-  await firestore.doc(`/_payments/${payment.id}`)
-    .set({
-      paymentId,
-      status,
-      updatedAt: now
-    }, { merge: true })
-
-  return true
-}
-
-const collectPayments = async (userId: string, status: number, productItemIds: Array<string | undefined>): Promise<types.SockbasePaymentDocument | null> => {
-  const paymentSnapshot = await firestore.collection('_payments')
-    .withConverter(paymentConverter)
-    .where('userId', '==', userId)
-    .where('status', '==', status)
-    .where('paymentMethod', '==', 1)
-    .get()
-  const payments = paymentSnapshot.docs
-    .map(p => p.data())
-    .filter(p => productItemIds.includes(p.paymentProductId))
-
-  return payments.length > 0 ? payments[0] : null
-}
-
-const getUser = async (email: string): Promise<UserRecord> => {
-  const user = await auth.getUserByEmail(email)
-  return user
-}
 
 const HANDLEABLE_EVENTS = {
   checkoutCompleted: 'checkout.session.completed',
@@ -124,15 +23,20 @@ const HANDLEABLE_EVENTS = {
   asyncPaymentFailed: 'checkout.session.async_payment_failed'
 }
 
-export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, res) => {
+enum Status {
+  Pending = 0,
+  Paid = 1,
+  PaymentFailure = 3
+}
+
+const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<void> => {
+  const now = new Date()
   const event = req.body
 
   if (!Object.values(HANDLEABLE_EVENTS).includes(event.type)) {
     res.send({})
     return
   }
-
-  const now = new Date()
 
   const session = event.data.object as Stripe.Checkout.Session
   if (!session.customer_details) {
@@ -167,7 +71,7 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
   const productItemIds = lineItems.data
     .filter(p => p.price)
-    .map(p => p.price?.id)
+    .map(p => p.price?.id ?? '')
 
   const payment = await collectPayments(user.uid, Status.Pending, productItemIds)
   if (!payment) {
@@ -215,4 +119,108 @@ export const treatCheckoutStatusWebhook = functions.https.onRequest(async (req, 
     paymentId: payment.id
   })
   noticeMessage(paymentId, null)
-})
+}
+
+const getUser = async (email: string): Promise<UserRecord> => {
+  const user = await auth.getUserByEmail(email)
+  return user
+}
+
+const collectPayments =
+  async (userId: string, status: number, productItemIds: Array<string | undefined>): Promise<SockbasePaymentDocument | null> => {
+    const paymentSnapshot = await firestore.collection('_payments')
+      .withConverter(paymentConverter)
+      .where('userId', '==', userId)
+      .where('status', '==', status)
+      .where('paymentMethod', '==', 1)
+      .get()
+    const payments = paymentSnapshot.docs
+      .map(p => p.data())
+      .filter(p => productItemIds.includes(p.paymentProductId))
+
+    return payments.length > 0 ? payments[0] : null
+  }
+
+const updateStatus = async (
+  payment: SockbasePaymentDocument,
+  productItems: Stripe.LineItem[],
+  paymentId: string,
+  status: PaymentStatus,
+  now: Date
+): Promise<boolean> => {
+  const productItemIds = productItems
+    .filter(p => p.price)
+    .map(p => p.price?.id)
+
+  if (!productItemIds.includes(payment.paymentProductId)) {
+    return false
+  }
+
+  await firestore.doc(`/_payments/${payment.id}`)
+    .set({
+      paymentId,
+      status,
+      updatedAt: now
+    }, {
+      merge: true
+    })
+
+  return true
+}
+
+const noticeMessage = (paymentId: string, errorDetail: string | null): void => {
+  const body = errorDetail
+    ? {
+      username: 'Sockbase: 決済エラー',
+      embeds: [
+        {
+          title: '決済でエラーが発生しました！',
+          description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
+          url: '',
+          color: 16711680,
+          fields: [
+            {
+              name: '環境',
+              value: firebaseProjectId
+            },
+            {
+              name: 'エラー種類',
+              value: errorDetail
+            },
+            {
+              name: 'Stripe決済ID',
+              value: paymentId
+            }
+          ]
+        }
+      ]
+    }
+    : {
+      username: 'Sockbase: 決済完了',
+      embeds: [
+        {
+          title: '決済が完了しました！',
+          description: '以下の決済依頼ステータスを完了にしました。',
+          url: '',
+          color: 65280,
+          fields: [
+            {
+              name: '環境',
+              value: firebaseProjectId
+            },
+            {
+              name: 'Stripe決済ID',
+              value: paymentId
+            }
+          ]
+        }
+      ]
+    }
+
+  sendMessageToDiscord('system', body)
+    .catch(err => { throw err })
+}
+
+export default {
+  checkoutPaymentAsync
+}
