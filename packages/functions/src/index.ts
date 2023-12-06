@@ -1,17 +1,17 @@
-import * as HelloWorldService from './services/HelloWorldService'
-import * as MailService from './services/MailService'
-import * as ApplicationService from './services/ApplicationService'
-import * as AccountService from './services/AccountService'
-import * as CheckoutWebhookService from './services/CheckoutWebhookService'
-import * as inquiry from './controllers/inquiry'
-import * as store from './controllers/store'
+import * as account from './controllers/AccountController'
+import * as application from './controllers/ApplicationController'
+import * as checkout from './controllers/CheckoutController'
+import * as hello from './controllers/HelloController'
+import * as inquiry from './controllers/InquiryController'
+import * as mail from './controllers/MailController'
+import * as store from './controllers/StoreController'
 
 export {
-  HelloWorldService,
-  MailService,
-  ApplicationService,
-  AccountService,
-  CheckoutWebhookService,
+  account,
+  application,
+  checkout,
+  hello,
   inquiry,
+  mail,
   store
 }
