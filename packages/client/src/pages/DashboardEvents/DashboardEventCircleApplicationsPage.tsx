@@ -8,13 +8,13 @@ import {
   type SockbaseApplicationMeta,
   type SockbaseEvent
 } from 'sockbase'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import EventApplications from './EventCircleApplications'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import Loading from '../../components/Parts/Loading'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import BlinkField from '../../components/Parts/BlinkField'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 
@@ -99,7 +99,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardBaseLayout title={title}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
@@ -123,7 +123,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
           appHashs={appHashs}
           spaces={spaces} />
         : <Loading text="申し込み一覧" />}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

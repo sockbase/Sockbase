@@ -1,15 +1,15 @@
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 
 import useFirebase from '../../hooks/useFirebase'
 
 import { MdCottage } from 'react-icons/md'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 
 const DashboardDebugPage: React.FC = () => {
   const { user, roles } = useFirebase()
 
   return (
-    <DashboardLayout title="デバッグボード">
+    <DashboardBaseLayout title="デバッグボード">
       <PageTitle
         icon={<MdCottage />}
         title="デバッグボード"
@@ -36,7 +36,7 @@ const DashboardDebugPage: React.FC = () => {
         roles && Object.entries(roles).map(([k, v]) => <li key={k}>{k}: {v}</li>)
       }
 
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

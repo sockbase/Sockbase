@@ -4,9 +4,9 @@ import { MdSettings } from 'react-icons/md'
 import type { SockbaseAccount } from 'sockbase'
 import useUserData from '../../hooks/useUserData'
 import useFirebase from '../../hooks/useFirebase'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import Settings from './Settings'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
 
@@ -38,7 +38,7 @@ const DashboardSettingsPage: React.FC = () => {
   useEffect(onInitialize, [getMyUserDataAsync])
 
   return (
-    <DashboardLayout title="マイページ設定">
+    <DashboardBaseLayout title="マイページ設定">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
@@ -53,7 +53,7 @@ const DashboardSettingsPage: React.FC = () => {
           updateUserDataAsync={updateUserData}
         />
         : <Loading text="ユーザ情報" />}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

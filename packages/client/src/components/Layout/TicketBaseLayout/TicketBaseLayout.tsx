@@ -9,7 +9,7 @@ interface Props {
   ticketUser: SockbaseTicketUserDocument | null | undefined
   store: SockbaseStore | undefined
 }
-const TicketLayout: React.FC<Props> = (props) => {
+const TicketBaseLayout: React.FC<Props> = (props) => {
   const typeName = useMemo(() => {
     if (!props.store || !props.ticketUser) return ''
 
@@ -26,17 +26,17 @@ const TicketLayout: React.FC<Props> = (props) => {
   }, [props.ticketUser, props.store])
 
   return (
-    <TicketLayoutContainer>
+    <TicketBaseLayoutContainer>
       <RequiredLogin />
       <HeadHelper title={pageTitle} />
       {props.children}
-    </TicketLayoutContainer>
+    </TicketBaseLayoutContainer>
   )
 }
 
-export default TicketLayout
+export default TicketBaseLayout
 
-const TicketLayoutContainer = styled.main`
+const TicketBaseLayoutContainer = styled.main`
   height: 100vh;
   height: 100dvh;
 `

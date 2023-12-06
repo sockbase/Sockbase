@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
 import useStore from '../../hooks/useStore'
 import useFirebase from '../../hooks/useFirebase'
-import TicketLayout from '../../components/Layout/Ticket/Ticket'
+import TicketBaseLayout from '../../components/Layout/TicketBaseLayout/TicketBaseLayout'
 import TicketView from './TicketView'
 import Loading from '../../components/Parts/Loading'
 import Alert from '../../components/Parts/Alert'
@@ -36,7 +36,7 @@ const TicketViewPage: React.FC = () => {
   useEffect(onInitialize, [ticketHashId])
 
   return (
-    <TicketLayout ticketUser={ticketUser} store={store}>
+    <TicketBaseLayout ticketUser={ticketUser} store={store}>
       {(!ticketUser || !store)
         && <LoadingContainer>
           {ticketUser === undefined && <Loading text="チケット情報" />}
@@ -51,7 +51,7 @@ const TicketViewPage: React.FC = () => {
           ticketUser={ticketUser}
           store={store}
           userId={user?.uid ?? null} />}
-    </TicketLayout >
+    </TicketBaseLayout >
   )
 }
 

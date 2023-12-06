@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import useValidate from '../../hooks/useValidate'
 import useFirebase from '../../hooks/useFirebase'
 import useFirebaseError from '../../hooks/useFirebaseError'
-import DefaultLayout from '../../components/Layout/Default/Default'
+import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import FormSection from '../../components/Form/FormSection'
 import FormItem from '../../components/Form/FormItem'
@@ -46,7 +46,7 @@ const PasswordResetPage: React.FC = () => {
   }, [validator, email])
 
   return (
-    <DefaultLayout title="パスワード再設定">
+    <DefaultBaseLayout title="パスワード再設定">
       <Breadcrumbs>
         <li><Link to="/">Sockbaseトップ</Link></li>
       </Breadcrumbs>
@@ -96,7 +96,7 @@ const PasswordResetPage: React.FC = () => {
       {errorMessage && <Alert type="danger" title="エラーが発生しました">
         {errorMessage}
       </Alert>}
-    </DefaultLayout>
+    </DefaultBaseLayout>
   )
 }
 

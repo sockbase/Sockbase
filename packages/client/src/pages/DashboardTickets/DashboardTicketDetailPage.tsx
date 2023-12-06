@@ -17,9 +17,9 @@ import useDayjs from '../../hooks/useDayjs'
 import useUserData from '../../hooks/useUserData'
 import usePayment from '../../hooks/usePayment'
 import useRole from '../../hooks/useRole'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
-import TwoColumnsLayout from '../../components/Layout/TwoColumns/TwoColumns'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import BlinkField from '../../components/Parts/BlinkField'
@@ -197,7 +197,7 @@ const DashboardTicketDetailPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
+    <DashboardBaseLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         {isAdmin
@@ -355,7 +355,7 @@ const DashboardTicketDetailPage: React.FC = () => {
           </>}
         </>
       </TwoColumnsLayout>
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

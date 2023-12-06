@@ -1,12 +1,12 @@
 import { MdTableChart } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 
 const DashboardStoreListPage: React.FC = () => {
   return (
-    <DashboardLayout title="チケットストア一覧">
+    <DashboardBaseLayout title="チケットストア一覧">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
@@ -19,7 +19,7 @@ const DashboardStoreListPage: React.FC = () => {
           </ul>
         </li>
       </ul>
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

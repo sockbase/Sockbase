@@ -11,8 +11,8 @@ import {
 } from 'sockbase'
 import useStore from '../../hooks/useStore'
 import useDayjs from '../../hooks/useDayjs'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Alert from '../../components/Parts/Alert'
 import Loading from '../../components/Parts/Loading'
@@ -99,7 +99,7 @@ const DashboardTicketListPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout title="購入済みチケット一覧">
+    <DashboardBaseLayout title="購入済みチケット一覧">
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>
@@ -140,7 +140,7 @@ const DashboardTicketListPage: React.FC = () => {
           </tbody>
         </table>
         : <Loading text="チケット一覧" />}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

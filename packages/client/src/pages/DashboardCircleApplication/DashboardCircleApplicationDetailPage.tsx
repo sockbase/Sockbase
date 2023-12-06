@@ -18,12 +18,12 @@ import usePayment from '../../hooks/usePayment'
 import useUserData from '../../hooks/useUserData'
 import useRole from '../../hooks/useRole'
 import useDayjs from '../../hooks/useDayjs'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Alert from '../../components/Parts/Alert'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import BlinkField from '../../components/Parts/BlinkField'
-import TwoColumnsLayout from '../../components/Layout/TwoColumns/TwoColumns'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
 import CircleCutImage from '../../components/Parts/CircleCutImage'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
@@ -151,7 +151,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   }, [event, app])
 
   return (
-    <DashboardLayout title={title}>
+    <DashboardBaseLayout title={title}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         {isAdmin
@@ -421,7 +421,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
         circleCutURL={circleCutURL}
         isAdmin={isAdmin}
         handleChangeStatus={handleChangeStatus} /> */}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

@@ -4,7 +4,7 @@ import { type SockbaseAccount, type SockbaseStoreDocument } from 'sockbase'
 import useStore from '../../hooks/useStore'
 import useFirebase from '../../hooks/useFirebase'
 import useUserData from '../../hooks/useUserData'
-import DefaultLayout from '../../components/Layout/Default/Default'
+import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import StepContainerComponent from './StepContainer/StepContainer'
 import Loading from '../../components/Parts/Loading'
 import Alert from '../../components/Parts/Alert'
@@ -38,7 +38,7 @@ const TicketApplicationPage: React.FC = () => {
   const pageTitle = useMemo(() => store && `${store.storeName} チケット申し込みフォーム` || '', [store])
 
   return (
-    <DefaultLayout title={pageTitle}>
+    <DefaultBaseLayout title={pageTitle}>
       {store === undefined
         ? <Loading text="チケットストア情報" />
         : store === null
@@ -54,7 +54,7 @@ const TicketApplicationPage: React.FC = () => {
               <StepContainerComponent store={store} isLoggedIn={isLoggedIn} userData={userData} />
             </>
             : <></>}
-    </DefaultLayout >
+    </DefaultBaseLayout >
   )
 }
 

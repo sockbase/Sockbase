@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import useFirebase from '../../hooks/useFirebase'
 import useFirebaseError from '../../hooks/useFirebaseError'
-import DefaultLayout from '../../components/Layout/Default/Default'
+import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import Login from './Login'
 import LinkButton from '../../components/Parts/LinkButton'
 import FormSection from '../../components/Form/FormSection'
@@ -42,7 +42,7 @@ const IndexPage: React.FC = () => {
     }
 
   return (
-    <DefaultLayout>
+    <DefaultBaseLayout>
       {firebase.user === undefined
         ? <Loading text='認証情報' />
         : firebase.user === null
@@ -94,7 +94,7 @@ const IndexPage: React.FC = () => {
         <li><Link to="/tos">利用規約・特定商取引法に基づく表記</Link></li>
         <li><Link to="/privacy-policy">プライバシーポリシー</Link></li>
       </ul>
-    </DefaultLayout>)
+    </DefaultBaseLayout>)
 }
 
 export default IndexPage

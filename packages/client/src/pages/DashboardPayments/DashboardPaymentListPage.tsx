@@ -9,7 +9,7 @@ import type {
   SockbaseStoreDocument,
   SockbaseTicketDocument
 } from 'sockbase'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PaymentList from './PaymentList'
 import useFirebase from '../../hooks/useFirebase'
 import usePayment from '../../hooks/usePayment'
@@ -17,7 +17,7 @@ import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import Loading from '../../components/Parts/Loading'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import useStore from '../../hooks/useStore'
 
 const DashboardPaymentListPage: React.FC = () => {
@@ -109,7 +109,7 @@ const DashboardPaymentListPage: React.FC = () => {
   useEffect(onInitialize, [user])
 
   return (
-    <DashboardLayout title="決済一覧">
+    <DashboardBaseLayout title="決済一覧">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
@@ -127,7 +127,7 @@ const DashboardPaymentListPage: React.FC = () => {
           stores={stores}
           email={user.email} />
         : <Loading text="決済一覧" />}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

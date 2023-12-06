@@ -8,8 +8,8 @@ import {
   type SockbaseTicketUserDocument
 } from 'sockbase'
 import useStore from '../../hooks/useStore'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import TicketCard from '../../components/Parts/TicketCard'
 import Loading from '../../components/Parts/Loading'
@@ -71,7 +71,7 @@ const DashboardMyTicketsPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout title="マイチケット">
+    <DashboardBaseLayout title="マイチケット">
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>
@@ -98,7 +98,7 @@ const DashboardMyTicketsPage: React.FC = () => {
           </p>
         : <Loading text="チケット一覧" />}
 
-    </DashboardLayout >
+    </DashboardBaseLayout >
   )
 }
 

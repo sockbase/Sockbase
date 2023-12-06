@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
-import DashboardLayout from '../../components/Layout/Dashboard/Dashboard'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import CircleApplicationList from './CircleApplicationList'
 import useFirebase from '../../hooks/useFirebase'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import Loading from '../../components/Parts/Loading'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import PageTitle from '../../components/Layout/Dashboard/PageTitle'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import { MdEditNote } from 'react-icons/md'
 
 const DashboardCircleApplicationListPage: React.FC = () => {
@@ -71,7 +71,7 @@ const DashboardCircleApplicationListPage: React.FC = () => {
   useEffect(onChangeLoggedInStatus, [user])
 
   return (
-    <DashboardLayout title="申し込んだイベント">
+    <DashboardBaseLayout title="申し込んだイベント">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
@@ -83,7 +83,7 @@ const DashboardCircleApplicationListPage: React.FC = () => {
       {apps && events && metas
         ? <CircleApplicationList apps={apps} metas={metas} events={events} />
         : <Loading text="申し込み履歴" />}
-    </DashboardLayout>
+    </DashboardBaseLayout>
   )
 }
 

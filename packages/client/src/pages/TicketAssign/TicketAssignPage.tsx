@@ -4,7 +4,7 @@ import { type SockbaseAccount, type SockbaseStoreDocument, type SockbaseTicketUs
 import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
 import useFirebase from '../../hooks/useFirebase'
-import DefaultLayout from '../../components/Layout/Default/Default'
+import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import StepContainer from './StepContainer/StepContainer'
 import Loading from '../../components/Parts/Loading'
 import Alert from '../../components/Parts/Alert'
@@ -58,7 +58,7 @@ const TicketAssignPage: React.FC = () => {
     [store])
 
   return (
-    <DefaultLayout title={pageTitle}>
+    <DefaultBaseLayout title={pageTitle}>
       {userData?.email && <Alert>
         {userData.email} としてログイン中です
       </Alert>}
@@ -85,7 +85,7 @@ const TicketAssignPage: React.FC = () => {
         && <Alert type="danger" title="チケット情報が見つかりませんでした">
           URLが間違っています。
         </Alert>}
-    </DefaultLayout>
+    </DefaultBaseLayout>
   )
 }
 
