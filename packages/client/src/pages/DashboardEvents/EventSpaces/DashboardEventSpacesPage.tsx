@@ -10,7 +10,7 @@ import BlinkField from '../../../components/Parts/BlinkField'
 import EventSpacesStepContainer from './StepContainer'
 import useApplication from '../../../hooks/useApplication'
 
-const EventSpaces: React.FC = () => {
+const DashboardEventSpacesPage: React.FC = () => {
   const { eventId } = useParams()
   const { getEventByIdAsync, getSpacesAsync } = useEvent()
   const { getApplicationsByEventIdAsync } = useApplication()
@@ -63,4 +63,4 @@ const EventSpaces: React.FC = () => {
   )
 }
 
-export default EventSpaces
+export default DashboardEventSpacesPage
