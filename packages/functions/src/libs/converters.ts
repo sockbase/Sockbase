@@ -1,12 +1,6 @@
 import type * as types from 'sockbase'
 import type * as firestore from 'firebase-admin/firestore'
 
-interface ApplicationHashIdDocument {
-  applicationId: string
-  hashId: string
-  paymentId: string
-}
-
 export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePaymentDocument> = {
   toFirestore: (payment: types.SockbasePaymentDocument): firestore.DocumentData => ({
     userId: payment.userId,
@@ -157,14 +151,15 @@ export const roleConverter: firestore.FirestoreDataConverter<{ role: number }> =
   }
 }
 
-export const applicationHashIdConverter: firestore.FirestoreDataConverter<ApplicationHashIdDocument> = {
-  toFirestore: (app: ApplicationHashIdDocument): firestore.DocumentData => ({}),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): ApplicationHashIdDocument => {
+export const applicationHashIdConverter: firestore.FirestoreDataConverter<types.SockbaseApplicationHashIdDocument> = {
+  toFirestore: (app: types.SockbaseApplicationHashIdDocument): firestore.DocumentData => ({}),
+  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseApplicationHashIdDocument => {
     const hashDoc = snapshot.data()
     return {
       applicationId: hashDoc.applicationId,
       hashId: hashDoc.hashId,
-      paymentId: hashDoc.paymentId
+      paymentId: hashDoc.paymentId,
+      spaceId: hashDoc.spaceId
     }
   }
 }

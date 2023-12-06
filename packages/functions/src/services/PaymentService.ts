@@ -1,9 +1,12 @@
 import { type PaymentMethod, type SockbasePaymentDocument } from 'sockbase'
-import firebaseAdmin from '../libs/FirebaseAdmin'
+import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { paymentConverter } from '../libs/converters'
 import dayjs from '../helpers/dayjs'
 
-export const createPayment = async (
+const adminApp = FirebaseAdmin.getFirebaseAdmin()
+const firestore = adminApp.firestore()
+
+const createPaymentAsync = async (
   userId: string,
   paymentMethod: PaymentMethod,
   bankTransferCode: string,
@@ -28,10 +31,6 @@ export const createPayment = async (
     paymentId: '',
     status: 0
   }
-
-  const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const firestore = adminApp.firestore()
-
   const result = await firestore
     .collection('_payments')
     .withConverter(paymentConverter)
@@ -40,5 +39,10 @@ export const createPayment = async (
   return result.id
 }
 
-export const generateBankTransferCode: (now: Date) => string =
+const generateBankTransferCode: (now: Date) => string =
   (now) => dayjs(now).tz().format('DDHHmm')
+
+export default {
+  createPaymentAsync,
+  generateBankTransferCode
+}

@@ -5,7 +5,7 @@ import {
   type SockbaseTicketCreatedResult,
   type SockbaseTicketUsedStatus
 } from 'sockbase'
-import { createTicketAsync, createTicketForAdminAsync, updateTicketUsedStatusAsync } from '../services/StoreService'
+import StoreService from '../services/StoreService'
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
 
 export const onTicketUserUpdated = functions.firestore
@@ -16,7 +16,7 @@ export const onTicketUserUpdated = functions.firestore
     const ticketId = context.params.ticketId
     const ticketUsedStatus = change.after.data() as SockbaseTicketUsedStatus
 
-    await updateTicketUsedStatusAsync(ticketId, ticketUsedStatus)
+    await StoreService.updateTicketUsedStatusAsync(ticketId, ticketUsedStatus)
   })
 
 export const createTicket = functions.https.onCall(
@@ -25,7 +25,7 @@ export const createTicket = functions.https.onCall(
       throw new functions.https.HttpsError('permission-denied', 'Auth Error')
     }
     const userId = context.auth.uid
-    const result = await createTicketAsync(userId, ticket)
+    const result = await StoreService.createTicketAsync(userId, ticket)
     return result
   })
 
@@ -37,7 +37,7 @@ export const createTicketForAdmin = functions.https.onCall(
 
     const userId = context.auth.uid
 
-    const result = await createTicketForAdminAsync(userId, param.storeId, param.createTicketData.typeId, param.createTicketData.email)
+    const result = await StoreService.createTicketForAdminAsync(userId, param.storeId, param.createTicketData.typeId, param.createTicketData.email)
     return result
   }
 )
