@@ -39,7 +39,7 @@ service cloud.firestore {
     }
     
   	match /users/{userId} {
-    	allow read: if request.auth.uid == userId;
+    	allow read: if request.auth.uid == userId || isSystemAdmin(request.auth.uid);
       allow write: if request.auth.uid == userId;
     }
     
