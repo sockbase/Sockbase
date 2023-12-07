@@ -7,7 +7,7 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 
 const DashboardContactPage: React.FC = () => {
   return (
-    <DashboardBaseLayout title="お問い合わせ">
+    <DashboardBaseLayout title="お問い合わせ" requireSystemRole={0}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

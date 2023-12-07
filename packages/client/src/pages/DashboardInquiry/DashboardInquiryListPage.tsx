@@ -10,6 +10,7 @@ import InquiryStatusLabel from '../../components/Parts/StatusLabel/InquiryStatus
 import FormSection from '../../components/Form/FormSection'
 import FormItem from '../../components/Form/FormItem'
 import FormCheckbox from '../../components/Form/Checkbox'
+import Loading from '../../components/Parts/Loading'
 
 const DashboardInquiryListPage: React.FC = () => {
   const { getInquiries, getInquiryType, getInquiryMetaByInquiryIdAsync } = useInquiry()
@@ -57,42 +58,45 @@ const DashboardInquiryListPage: React.FC = () => {
   useEffect(onInitiliaze, [])
 
   return (
-    <DashboardBaseLayout title="お問い合わせ一覧">
-      <PageTitle icon={<MdInbox />} title='お問い合わせ一覧' description='お問い合わせ情報を表示中' />
+    <DashboardBaseLayout title="問い合わせ一覧" requireSystemRole={2}>
+      <PageTitle icon={<MdInbox />} title='問い合わせ一覧' description='問い合わせ情報を表示中' />
 
-      <FormSection>
-        <FormItem>
-          <FormCheckbox
-            name='showClosedInquiries'
-            label='クローズしたお問い合わせを表示'
-            checked={showClosedInquiries}
-            onChange={checked => setShowClosedInquiries(checked)}/>
-        </FormItem>
-      </FormSection>
+      {(!filteredInquiries || !inquiryMetas) && <Loading text='問い合わせ一覧' />}
 
-      <table>
-        <thead>
-          <tr>
-            <th>状態</th>
-            <th>種別</th>
-            <th>お問い合わせ番号</th>
-            <th>更新日</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inquiryMetas && filteredInquiries
-            ?.map(i =>
-              <tr key={i.id}>
-                <td><InquiryStatusLabel status={inquiryMetas[i.id]?.status ?? i.status} /></td>
-                <td>{getInquiryType(i.inquiryType).name}</td>
-                <td><Link to={`/dashboard/inquiries/${i.id}`}>{i.id}</Link></td>
-                <td>{formatByDate(inquiryMetas[i.id]?.updatedAt ?? i.updatedAt, 'YYYY年M月D日 H時m分')}</td>
-              </tr>)}
-              {filteredInquiries?.length === 0 && <tr>
-                <td>検索条件に一致するお問い合わせが見つかりませんでした</td>
-              </tr>}
-        </tbody>
-      </table>
+      {filteredInquiries && inquiryMetas && <>
+        <FormSection>
+          <FormItem>
+            <FormCheckbox
+              name='showClosedInquiries'
+              label='クローズしたお問い合わせを表示'
+              checked={showClosedInquiries}
+              onChange={checked => setShowClosedInquiries(checked)}/>
+          </FormItem>
+        </FormSection>
+        <table>
+          <thead>
+            <tr>
+              <th>状態</th>
+              <th>種別</th>
+              <th>問い合わせ番号</th>
+              <th>更新日</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredInquiries
+              .map(i =>
+                <tr key={i.id}>
+                  <td><InquiryStatusLabel status={inquiryMetas[i.id]?.status ?? i.status} /></td>
+                  <td>{getInquiryType(i.inquiryType).name}</td>
+                  <td><Link to={`/dashboard/inquiries/${i.id}`}>{i.id}</Link></td>
+                  <td>{formatByDate(inquiryMetas[i.id]?.updatedAt ?? i.updatedAt, 'YYYY年M月D日 H時m分')}</td>
+                </tr>)}
+                {filteredInquiries?.length === 0 && <tr>
+                  <td>検索条件に一致するお問い合わせが見つかりませんでした</td>
+                </tr>}
+          </tbody>
+        </table>
+      </>}
     </DashboardBaseLayout>
   )
 }
