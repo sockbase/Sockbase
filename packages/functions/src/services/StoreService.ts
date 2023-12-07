@@ -8,20 +8,21 @@ import {
 } from 'sockbase'
 import { type FirebaseError } from 'firebase-admin'
 import { storeConverter, ticketConverter, ticketUserConverter, userConverter } from '../libs/converters'
-import { sendMessageToDiscord } from '../libs/sendWebhook'
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
-import firebaseAdmin from '../libs/FirebaseAdmin'
+import { sendMessageToDiscord } from '../libs/sendWebhook'
+import FirebaseAdmin from '../libs/FirebaseAdmin'
 import PaymentService from './PaymentService'
+
+const adminApp = FirebaseAdmin.getFirebaseAdmin()
+const firestore = adminApp.firestore()
+const auth = adminApp.auth()
 
 const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
   const now = new Date()
   const timestamp = now.getTime()
 
   const storeId = ticket.storeId
-
-  const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const firestore = adminApp.firestore()
 
   const storeDoc = await firestore.doc(`stores/${storeId}`)
     .withConverter(storeConverter)
@@ -158,12 +159,8 @@ const generateTicketHashId = (now: Date): string => {
   return hashId
 }
 
-const createTicketForAdminAsync = async (userId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
+const createTicketForAdminAsync = async (createdUserId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
   const now = new Date()
-
-  const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const auth = adminApp.auth()
-  const firestore = adminApp.firestore()
 
   const storeDoc = await firestore.doc(`stores/${storeId}`)
     .withConverter(storeConverter)
@@ -185,7 +182,7 @@ const createTicketForAdminAsync = async (userId: string, storeId: string, typeId
     })
 
   const userDoc = await firestore
-    .doc(`/users/${userId}`)
+    .doc(`/users/${user.uid}`)
     .withConverter(userConverter)
     .get()
   const userData = userDoc.data()
@@ -194,7 +191,7 @@ const createTicketForAdminAsync = async (userId: string, storeId: string, typeId
   }
 
   await firestore
-    .doc(`stores/${storeId}/_users/${userId}`)
+    .doc(`stores/${storeId}/_users/${user.uid}`)
     .withConverter(userConverter)
     .set(userData)
 
@@ -207,7 +204,7 @@ const createTicketForAdminAsync = async (userId: string, storeId: string, typeId
     createdAt: now,
     updatedAt: null,
     hashId,
-    createdUserId: userId
+    createdUserId
   }
 
   const ticketResult = await firestore
@@ -256,9 +253,6 @@ const createTicketForAdminAsync = async (userId: string, storeId: string, typeId
 }
 
 const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: SockbaseTicketUsedStatus): Promise<void> => {
-  const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const firestore = adminApp.firestore()
-
   const ticketDoc = await firestore
     .doc(`_tickets/${ticketId}`)
     .withConverter(ticketConverter)
