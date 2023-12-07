@@ -109,7 +109,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title="広報情報編集">
+    <DashboardBaseLayout title="広報情報編集" requireSystemRole={0}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         {isAdmin
@@ -136,7 +136,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
                 (Webサイトの更新は引き続き行えます。)
               </Alert>
               : event && <Alert>
-                カタログ掲載情報の確定日は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日 H時mm分')}</b>」です。<br />
+                カタログ掲載情報の確定日は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日')}</b>」です。<br />
                 確定日以降の情報は掲載されませんのでご注意ください。
               </Alert>}
 

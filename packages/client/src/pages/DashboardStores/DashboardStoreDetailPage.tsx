@@ -230,7 +230,7 @@ const DashboardStoreDetailPage: React.FC = () => {
 
 
   return (
-    <DashboardBaseLayout title={pageTitle}>
+    <DashboardBaseLayout title={pageTitle} requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>

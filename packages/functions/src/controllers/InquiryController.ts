@@ -8,7 +8,11 @@ export const onCreate = firestore
   .onCreate(
     async (snapshot: QueryDocumentSnapshot, context: EventContext<{inquiryId: string}>) => {
       const inquiry = snapshot.data() as SockbaseInquiryDocument
+
       await InquiryService.addInquiryMetaAsync(context.params.inquiryId)
+        .then(() => console.log('inquiry meta data added'))
+
       await InquiryService.noticeInquiryAsync(inquiry)
+        .then(() => console.log('inquiry noticed'))
     }
   )

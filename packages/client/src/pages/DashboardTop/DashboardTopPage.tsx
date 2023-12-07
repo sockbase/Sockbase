@@ -21,7 +21,7 @@ const DashboardTopPage: React.FC = () => {
   const { commonRole } = useRole()
 
   return (
-    <DashboardBaseLayout title="マイページ トップ">
+    <DashboardBaseLayout title="マイページ トップ" requireSystemRole={0}>
       <PageTitle
         icon={<MdHome />}
         title="ホーム"
