@@ -7,7 +7,7 @@ import AccountService from '../services/AccountService'
 export const onChangeOrganizationRoles = firestore
   .document('/organizations/{organizationId}/users/{userId}')
   .onUpdate(
-    (
+    async (
       snapshot: Change<QueryDocumentSnapshot>,
       context: EventContext<{ organizationId: string, userId: string }>
     ) => {
@@ -19,10 +19,12 @@ export const onChangeOrganizationRoles = firestore
         return
       }
 
-      AccountService.updateUserRoleByOrganizationAsync(
-        userId,
-        organizationId,
-        snapshot.after.data().role as SockbaseRole)
+      await AccountService
+        .updateUserRoleByOrganizationAsync(
+          userId,
+          organizationId,
+          snapshot.after.data().role as SockbaseRole)
+        .then(() => console.log('organization role updated'))
         .catch(err => { throw err })
     })
 
@@ -42,7 +44,7 @@ export const onChangeUserRoles = firestore
 export const onChangeUser = firestore
   .document('/users/{userId}')
   .onUpdate(
-    (
+    async (
       change: Change<QueryDocumentSnapshot>,
       context: EventContext<{ userId: string }>
     ) => {
@@ -50,7 +52,8 @@ export const onChangeUser = firestore
       const userId = context.params.userId
       const userData = change.after.data() as SockbaseAccountDocument
 
-      AccountService.updateUserDataAsync(userId, userData)
+      await AccountService.updateUserDataAsync(userId, userData)
+        .then(() => console.log('user data updated'))
         .catch(err => { throw err })
     }
   )
