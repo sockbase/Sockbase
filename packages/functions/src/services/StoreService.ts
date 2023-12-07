@@ -35,19 +35,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     throw new functions.https.HttpsError('deadline-exceeded', 'store_out_of_term')
   }
 
-  const userDoc = await firestore
-    .doc(`/users/${userId}`)
-    .withConverter(userConverter)
-    .get()
-  const userData = userDoc.data()
-  if (!userData) {
-    throw new functions.https.HttpsError('not-found', 'user')
-  }
-
-  await firestore
-    .doc(`stores/${ticket.storeId}/_users/${userId}`)
-    .withConverter(userConverter)
-    .set(userData)
+  await updateTicketUserDataAsync(storeId, userId)
 
   const hashId = generateTicketHashId(now)
   const ticketDoc: SockbaseTicketDocument = {
@@ -181,19 +169,7 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
       }
     })
 
-  const userDoc = await firestore
-    .doc(`/users/${user.uid}`)
-    .withConverter(userConverter)
-    .get()
-  const userData = userDoc.data()
-  if (!userData) {
-    throw new functions.https.HttpsError('not-found', 'user')
-  }
-
-  await firestore
-    .doc(`stores/${storeId}/_users/${user.uid}`)
-    .withConverter(userConverter)
-    .set(userData)
+  await updateTicketUserDataAsync(storeId, user.uid)
 
   const hashId = generateTicketHashId(now)
   const ticketDoc: SockbaseTicketDocument = {
@@ -271,8 +247,26 @@ const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: Sockbas
     }, { merge: true })
 }
 
+const updateTicketUserDataAsync =
+  async (storeId: string, userId: string): Promise<void> => {
+    const userDoc = await firestore
+      .doc(`/users/${userId}`)
+      .withConverter(userConverter)
+      .get()
+    const userData = userDoc.data()
+    if (!userData) {
+      throw new functions.https.HttpsError('not-found', 'user')
+    }
+
+    await firestore
+      .doc(`stores/${storeId}/_users/${userId}`)
+      .withConverter(userConverter)
+      .set(userData)
+  }
+
 export default {
   createTicketAsync,
   createTicketForAdminAsync,
-  updateTicketUsedStatusAsync
+  updateTicketUsedStatusAsync,
+  updateTicketUserDataAsync
 }
