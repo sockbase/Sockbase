@@ -24,7 +24,9 @@ export const createTicket = functions.https.onCall(
     if (!context.auth) {
       throw new functions.https.HttpsError('permission-denied', 'Auth Error')
     }
+
     const userId = context.auth.uid
+
     const result = await StoreService.createTicketAsync(userId, ticket)
     return result
   })
