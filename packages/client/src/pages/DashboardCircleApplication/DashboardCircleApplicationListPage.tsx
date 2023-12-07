@@ -71,7 +71,7 @@ const DashboardCircleApplicationListPage: React.FC = () => {
   useEffect(onChangeLoggedInStatus, [user])
 
   return (
-    <DashboardBaseLayout title="申し込んだイベント">
+    <DashboardBaseLayout title="申し込んだイベント" requireSystemRole={0}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

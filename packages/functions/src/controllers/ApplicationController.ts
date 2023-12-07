@@ -10,9 +10,10 @@ import ApplicationService from '../services/ApplicationService'
 
 export const onCreateApplication = firestore
   .document('/_applications/{applicationId}')
-  .onCreate((snapshot: QueryDocumentSnapshot) => {
+  .onCreate(async (snapshot: QueryDocumentSnapshot) => {
     const app = snapshot.data() as SockbaseApplicationDocument
-    ApplicationService.fetchUserDataForEventAsync(app.userId, app.eventId)
+    await ApplicationService.fetchUserDataForEventAsync(app.userId, app.eventId)
+      .then(() => console.log('application user data created'))
       .catch(err => { throw err })
   })
 

@@ -99,7 +99,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardBaseLayout title={title}>
+    <DashboardBaseLayout title={title} requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>

@@ -197,7 +197,7 @@ const DashboardTicketDetailPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
+    <DashboardBaseLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'} requireSystemRole={0}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         {isAdmin
