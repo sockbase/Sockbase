@@ -8,20 +8,21 @@ import {
 } from 'sockbase'
 import { type FirebaseError } from 'firebase-admin'
 import { storeConverter, ticketConverter, ticketUserConverter, userConverter } from '../libs/converters'
-import { sendMessageToDiscord } from '../libs/sendWebhook'
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
-import firebaseAdmin from '../libs/FirebaseAdmin'
+import { sendMessageToDiscord } from '../libs/sendWebhook'
+import FirebaseAdmin from '../libs/FirebaseAdmin'
 import PaymentService from './PaymentService'
+
+const adminApp = FirebaseAdmin.getFirebaseAdmin()
+const firestore = adminApp.firestore()
+const auth = adminApp.auth()
 
 const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
   const now = new Date()
   const timestamp = now.getTime()
 
   const storeId = ticket.storeId
-
-  const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const firestore = adminApp.firestore()
 
   const storeDoc = await firestore.doc(`stores/${storeId}`)
     .withConverter(storeConverter)
@@ -34,19 +35,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     throw new functions.https.HttpsError('deadline-exceeded', 'store_out_of_term')
   }
 
-  const userDoc = await firestore
-    .doc(`/users/${userId}`)
-    .withConverter(userConverter)
-    .get()
-  const userData = userDoc.data()
-  if (!userData) {
-    throw new functions.https.HttpsError('not-found', 'user')
-  }
-
-  await firestore
-    .doc(`stores/${ticket.storeId}/_users/${userId}`)
-    .withConverter(userConverter)
-    .set(userData)
+  await updateTicketUserDataAsync(storeId, userId)
 
   const hashId = generateTicketHashId(now)
   const ticketDoc: SockbaseTicketDocument = {
@@ -158,12 +147,8 @@ const generateTicketHashId = (now: Date): string => {
   return hashId
 }
 
-const createTicketForAdminAsync = async (userId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
+const createTicketForAdminAsync = async (createdUserId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
   const now = new Date()
-
-  const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const auth = adminApp.auth()
-  const firestore = adminApp.firestore()
 
   const storeDoc = await firestore.doc(`stores/${storeId}`)
     .withConverter(storeConverter)
@@ -184,19 +169,7 @@ const createTicketForAdminAsync = async (userId: string, storeId: string, typeId
       }
     })
 
-  const userDoc = await firestore
-    .doc(`/users/${userId}`)
-    .withConverter(userConverter)
-    .get()
-  const userData = userDoc.data()
-  if (!userData) {
-    throw new functions.https.HttpsError('not-found', 'user')
-  }
-
-  await firestore
-    .doc(`stores/${storeId}/_users/${userId}`)
-    .withConverter(userConverter)
-    .set(userData)
+  await updateTicketUserDataAsync(storeId, user.uid)
 
   const hashId = generateTicketHashId(now)
   const ticketDoc: SockbaseTicketDocument = {
@@ -207,7 +180,7 @@ const createTicketForAdminAsync = async (userId: string, storeId: string, typeId
     createdAt: now,
     updatedAt: null,
     hashId,
-    createdUserId: userId
+    createdUserId
   }
 
   const ticketResult = await firestore
@@ -256,9 +229,6 @@ const createTicketForAdminAsync = async (userId: string, storeId: string, typeId
 }
 
 const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: SockbaseTicketUsedStatus): Promise<void> => {
-  const adminApp = firebaseAdmin.getFirebaseAdmin()
-  const firestore = adminApp.firestore()
-
   const ticketDoc = await firestore
     .doc(`_tickets/${ticketId}`)
     .withConverter(ticketConverter)
@@ -277,8 +247,26 @@ const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: Sockbas
     }, { merge: true })
 }
 
+const updateTicketUserDataAsync =
+  async (storeId: string, userId: string): Promise<void> => {
+    const userDoc = await firestore
+      .doc(`/users/${userId}`)
+      .withConverter(userConverter)
+      .get()
+    const userData = userDoc.data()
+    if (!userData) {
+      throw new functions.https.HttpsError('not-found', 'user')
+    }
+
+    await firestore
+      .doc(`stores/${storeId}/_users/${userId}`)
+      .withConverter(userConverter)
+      .set(userData)
+  }
+
 export default {
   createTicketAsync,
   createTicketForAdminAsync,
-  updateTicketUsedStatusAsync
+  updateTicketUsedStatusAsync,
+  updateTicketUserDataAsync
 }
