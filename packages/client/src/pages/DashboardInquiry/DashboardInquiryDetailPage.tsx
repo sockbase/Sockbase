@@ -94,13 +94,13 @@ const DashboardInquiryListPage: React.FC = () => {
   }, [])
 
   return (
-    <DashboardBaseLayout title="お問い合わせ一覧">
+    <DashboardBaseLayout title="お問い合わせ一覧" requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/inquiries">お問い合わせ一覧</Link></li>
+        <li><Link to="/dashboard/inquiries">問い合わせ一覧</Link></li>
       </Breadcrumbs>
       <PageTitle icon={<MdMail />} title={inquiry && getInquiryType(inquiry?.inquiryType).name} description={`#${inquiryId}`} isLoading={!inquiry}/>
-      {!inquiry && inquiryMeta && <Loading text={`問い合わせ情報 #${inquiryId}`} />}
+      {(!inquiry || !inquiryMeta) && <Loading text={`問い合わせ情報 #${inquiryId}`} />}
       {inquiry && inquiryMeta && <TwoColumnsLayout>
         <>
           <h3>内容</h3>
@@ -113,7 +113,7 @@ const DashboardInquiryListPage: React.FC = () => {
           <table>
             <tbody>
               <tr>
-                <th>お問い合わせ番号</th>
+                <th>問い合わせ番号</th>
                 <td>{inquiry.id}</td>
               </tr>
               <tr>
@@ -125,7 +125,7 @@ const DashboardInquiryListPage: React.FC = () => {
                 <td>{inquiry.userId}</td>
               </tr>
               <tr>
-                <th>ユーザ氏名</th>
+                <th>氏名</th>
                 <td>{userData?.name ?? <BlinkField />}</td>
               </tr>
               <tr>

@@ -43,24 +43,29 @@ const IndexPage: React.FC = () => {
 
   return (
     <DefaultBaseLayout>
+    <h2>Sockbaseマイページにログイン</h2>
+
       {firebase.user === undefined
         ? <Loading text='認証情報' />
-        : firebase.user === null
-          ?
-          <Login
-            email={email}
-            password={password}
-            setEmail={email => setEmail(email)}
-            setPassword={password => setPassword(password)}
-            login={login}
-            isProcessing={isProccesing}
-            error={error} />
-          : <FormSection>
-            <FormItem>
-              <LinkButton to="/dashboard" color="default">マイページに進む</LinkButton>
-            </FormItem>
-          </FormSection>
+        : firebase.user !== null
+          ? <p>
+            {firebase.user.email} としてログイン中です
+          </p>
+          : <Login
+              email={email}
+              password={password}
+              setEmail={email => setEmail(email)}
+              setPassword={password => setPassword(password)}
+              login={login}
+              isProcessing={isProccesing}
+              error={error} />
       }
+
+      {firebase.user !== null &&<FormSection>
+        <FormItem>
+          <LinkButton to="/dashboard" disabled={!firebase.user}>マイページに進む</LinkButton>
+        </FormItem>
+      </FormSection>}
 
       <h2>Sockbaseとは？</h2>
       <p>

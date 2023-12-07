@@ -33,7 +33,8 @@ export const onChangeUserRoles = firestore
       _,
       context: EventContext<{ userId: string, organizationId: string }>
     ) => {
-      AccountService.updateRolesByUserIdAsync(context.params.userId)
+      await AccountService.updateRolesByUserIdAsync(context.params.userId)
+        .then(() => console.log('roles claim updated'))
         .catch(err => { throw err })
     }
   )

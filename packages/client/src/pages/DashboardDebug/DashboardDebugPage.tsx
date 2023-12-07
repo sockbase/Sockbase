@@ -9,7 +9,7 @@ const DashboardDebugPage: React.FC = () => {
   const { user, roles } = useFirebase()
 
   return (
-    <DashboardBaseLayout title="デバッグボード">
+    <DashboardBaseLayout title="デバッグボード" requireSystemRole={0}>
       <PageTitle
         icon={<MdCottage />}
         title="デバッグボード"

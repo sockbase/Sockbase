@@ -1,6 +1,7 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { type SockbaseRole } from 'sockbase'
 
 import useFirebase from '../../../hooks/useFirebase'
 
@@ -14,6 +15,7 @@ import FormButton from '../../Form/Button'
 interface Props {
   children: React.ReactNode
   title: string
+  requireSystemRole: SockbaseRole
 }
 const DashboardBaseLayout: React.FC<Props> = (props) => {
   const firebase = useFirebase()
@@ -21,27 +23,30 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
 
   const [sentVerifyMail, setSentVerifyMail] = useState(false)
 
-  const logout: () => void =
-    () => {
-      firebase.logout()
-      navigate('/')
-    }
+  const logout = useCallback(() => {
+    firebase.logout()
+    navigate('/')
+  }, [])
 
-  const sendVerifyMail: () => void =
-    useCallback(() => {
-      firebase.sendVerifyMail()
-        .then(() => alert('送信が完了しました。'))
-        .catch(err => {
-          alert('エラーが発生しました。')
-          throw err
-        })
-      setSentVerifyMail(true)
-    }, [firebase.sendVerifyMail])
+  const sendVerifyMail = useCallback(() => {
+    firebase.sendVerifyMail()
+      .then(() => alert('送信が完了しました。'))
+      .catch(err => {
+        alert('エラーが発生しました。')
+        throw err
+      })
+    setSentVerifyMail(true)
+  }, [firebase.sendVerifyMail])
+
+  const isValidRole = useMemo((): boolean | null => {
+    if (firebase.roles === undefined) return null
+    return (firebase.roles?.system ?? 0) >= props.requireSystemRole
+  }, [firebase.roles, props.requireSystemRole])
 
   return (
     <StyledLayout>
       <RequiredLogin />
-      {firebase.isLoggedIn && firebase.user && <>
+      {firebase.isLoggedIn && firebase.user && isValidRole && <>
         <HeadHelper title={props.title} />
         <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
         <StyledContainer>
