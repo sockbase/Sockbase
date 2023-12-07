@@ -46,7 +46,7 @@ const DashboardEventSpacesPage: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardBaseLayout title={pageTitle}>
+    <DashboardBaseLayout title={pageTitle} requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
