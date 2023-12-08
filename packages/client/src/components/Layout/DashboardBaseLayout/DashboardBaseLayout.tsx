@@ -11,6 +11,7 @@ import LogotypeSVG from '../../../assets/logotype.svg'
 import Sidebar from './Sidebar'
 import RequiredLogin from '../../../libs/RequiredLogin'
 import FormButton from '../../Form/Button'
+import useRole from '../../../hooks/useRole'
 
 interface Props {
   children: React.ReactNode
@@ -19,6 +20,7 @@ interface Props {
 }
 const DashboardBaseLayout: React.FC<Props> = (props) => {
   const firebase = useFirebase()
+  const { systemRole } = useRole()
   const navigate = useNavigate()
 
   const [sentVerifyMail, setSentVerifyMail] = useState(false)
@@ -39,9 +41,9 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
   }, [firebase.sendVerifyMail])
 
   const isValidRole = useMemo((): boolean | null => {
-    if (firebase.roles === undefined) return null
-    return (firebase.roles?.system ?? 0) >= props.requireSystemRole
-  }, [firebase.roles, props.requireSystemRole])
+    if (systemRole === undefined) return null
+    return (systemRole ?? 0) >= props.requireSystemRole
+  }, [systemRole, props.requireSystemRole])
 
   return (
     <StyledLayout>

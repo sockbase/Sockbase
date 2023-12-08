@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import {
   MdEditCalendar,
-  MdEditNote,
+  MdCollectionsBookmark,
   MdHome,
   MdInbox,
   MdLocalActivity,
@@ -10,7 +10,8 @@ import {
   MdQrCodeScanner,
   MdSettings,
   MdStore,
-  MdWallet
+  MdWallet,
+  MdBadge
 } from 'react-icons/md'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TopCard from '../../components/Parts/TopCard'
@@ -45,7 +46,7 @@ const DashboardTopPage: React.FC = () => {
           description="今までに申し込んだチケット履歴を表示します。" />
         <TopCard
           to="/dashboard/applications"
-          icon={<MdEditNote />}
+          icon={<MdCollectionsBookmark />}
           title="サークル申し込み履歴"
           description="今までに申し込んだサークル参加履歴を表示します。" />
         <TopCard
@@ -77,6 +78,11 @@ const DashboardTopPage: React.FC = () => {
             icon={<MdQrCodeScanner />}
             title="チケット照会ターミナル"
             description="チケットコードを用いて情報を表示し、使用ステータスを管理します。" />
+            <TopCard
+              to="/dashboard/license"
+              icon={<MdBadge />}
+              title="権限"
+              description="付与されている権限情報を表示します。" />
         </CardContainer>
       </>}
 

@@ -10,6 +10,7 @@ interface IUseRole {
   checkIsAdminByOrganizationId: (organizationId: string) => boolean | null | undefined
   isAdminByAnyOrganization: boolean | null | undefined
   commonRole: SockbaseRole | null | undefined
+  systemRole: SockbaseRole | null | undefined
 }
 
 const useRole: () => IUseRole =
@@ -49,8 +50,7 @@ const useRole: () => IUseRole =
         return isAnyAdmin
       }, [roles])
 
-    const commonRole: SockbaseRole | null | undefined =
-      useMemo(() => {
+    const commonRole = useMemo((): SockbaseRole | null | undefined => {
         if (roles === undefined) return undefined
         if (roles === null) return sockbaseShared.enumerations.user.permissionRoles.user
 
@@ -58,10 +58,21 @@ const useRole: () => IUseRole =
         return maxRole as SockbaseRole
       }, [roles])
 
+    const systemRole = useMemo((): SockbaseRole | null | undefined => {
+      if (roles === undefined) return undefined
+      if (roles === null) return sockbaseShared.enumerations.user.permissionRoles.user
+
+      const role = roles.system !== undefined
+        ? roles.system as SockbaseRole
+        : sockbaseShared.enumerations.user.permissionRoles.user
+      return role
+    }, [roles])
+
     return {
       checkIsAdminByOrganizationId,
       isAdminByAnyOrganization,
-      commonRole
+      commonRole,
+      systemRole
     }
   }
 
