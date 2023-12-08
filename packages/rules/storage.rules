@@ -1,14 +1,22 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    function getApplication(appId) {
+      return firestore.get(/databases/(default)/documents/_applications/$(appId)).data;
+    }
+
+    function getApplicationByHashId(appHashId) {
+      return getApplication(firestore.get(/databases/(default)/documents/_applicationHashIds/$(appHashId)).data.applicationId);
+    }
+
     match /events/{eventId}/{allPaths=**} {
       allow read: if true;
       allow write: if false;
     }
 
-    match /circleCuts/{allPaths=**} {
+    match /circleCuts/{appHashId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if getApplicationByHashId(appHashId).userId == request.auth.uid;
     }
 
     // match /{allPaths=**} {
