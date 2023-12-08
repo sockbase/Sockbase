@@ -9,15 +9,14 @@ import {
   type SockbaseApplicationLinks
 } from 'sockbase'
 import sockbaseShared from 'shared'
-
 import useFirebaseError from '../../../hooks/useFirebaseError'
-
 import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 import FormButton from '../../../components/Form/Button'
 import Alert from '../../../components/Parts/Alert'
 import CircleCutImage from '../../../components/Parts/CircleCutImage'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
+import ProgressBar from '../../../components/Parts/ProgressBar'
 
 interface Props {
   app: SockbaseApplication | undefined
@@ -26,6 +25,7 @@ interface Props {
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutData: string | undefined
   userData: SockbaseAccount | null
+  submitProgressPercent: number
   submitApplication: () => Promise<void>
   prevStep: () => void
   nextStep: () => void
@@ -253,6 +253,14 @@ const Step2: React.FC<Props> = (props) => {
               </LoadingCircleWrapper>
             </FormItem>
           </FormSection>
+          
+          {isProgress && <>
+            <ProgressBar percent={props.submitProgressPercent}/>
+            <Alert>
+              送信処理に時間がかかる場合がございます。<br />
+              進捗率が100%になるまでそのままでお待ちください。
+            </Alert>
+          </>}
         </>
       }
     </>
