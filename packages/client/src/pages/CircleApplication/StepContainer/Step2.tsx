@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react'
-
-import type { SockbaseApplication, SockbaseAccountSecure, SockbaseEventSpace, SockbaseAccount, SockbaseEventGenre, SockbaseEvent } from 'sockbase'
+import {
+  type SockbaseApplication,
+  type SockbaseAccountSecure,
+  type SockbaseEventSpace,
+  type SockbaseAccount,
+  type SockbaseEventGenre,
+  type SockbaseEvent,
+  type SockbaseApplicationLinks
+} from 'sockbase'
 import sockbaseShared from 'shared'
 
 import useFirebaseError from '../../../hooks/useFirebaseError'
@@ -14,6 +21,7 @@ import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper
 
 interface Props {
   app: SockbaseApplication | undefined
+  links: SockbaseApplicationLinks | undefined
   event: SockbaseEvent
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutData: string | undefined
@@ -136,6 +144,28 @@ const Step2: React.FC<Props> = (props) => {
               <tr>
                 <th>プチオンリーコード</th>
                 <td>{props.app.petitCode || '(空欄)'}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>サークル広報情報</h2>
+          <table>
+            <tbody>
+              <tr>
+                <th>X</th>
+                <td>{(props.links?.twitterScreenName && `@${props.links?.twitterScreenName}`) || '(空欄)'}</td>
+              </tr>
+              <tr>
+                <th>pixiv</th>
+                <td>{(props.links?.pixivUserId && `users/${props.links?.pixivUserId}`) || '(空欄)'}</td>
+              </tr>
+              <tr>
+                <th>Webサイト</th>
+                <td>{props.links?.websiteURL || '(空欄)'}</td>
+              </tr>
+              <tr>
+                <th>お品書きURL</th>
+                <td>{props.links?.menuURL || '(空欄)'}</td>
               </tr>
             </tbody>
           </table>

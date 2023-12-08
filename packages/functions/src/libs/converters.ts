@@ -1,8 +1,26 @@
-import type * as types from 'sockbase'
-import type * as firestore from 'firebase-admin/firestore'
+import {
+  type SockbaseAccountDocument,
+  type SockbaseApplicationDocument,
+  type SockbaseApplicationHashIdDocument,
+  type SockbaseApplicationLinksDocument,
+  type SockbaseEvent,
+  type SockbaseInquiryDocument,
+  type SockbaseInquiryMetaDocument,
+  type SockbasePaymentDocument,
+  type SockbaseStoreDocument,
+  type SockbaseTicketDocument,
+  type SockbaseTicketUsedStatus,
+  type SockbaseTicketUserDocument
+} from 'sockbase'
 
-export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePaymentDocument> = {
-  toFirestore: (payment: types.SockbasePaymentDocument): firestore.DocumentData => ({
+import {
+  type DocumentData,
+  type FirestoreDataConverter,
+  type QueryDocumentSnapshot
+} from 'firebase-admin/firestore'
+
+export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> = {
+  toFirestore: (payment: SockbasePaymentDocument): DocumentData => ({
     userId: payment.userId,
     paymentProductId: payment.paymentProductId,
     paymentMethod: payment.paymentMethod,
@@ -15,7 +33,7 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
     createdAt: payment.createdAt,
     updatedAt: payment.updatedAt
   }),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbasePaymentDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbasePaymentDocument => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -34,8 +52,8 @@ export const paymentConverter: firestore.FirestoreDataConverter<types.SockbasePa
   }
 }
 
-export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccountDocument> = {
-  toFirestore: (account: types.SockbaseAccountDocument): firestore.DocumentData => ({
+export const userConverter: FirestoreDataConverter<SockbaseAccountDocument> = {
+  toFirestore: (account: SockbaseAccountDocument): DocumentData => ({
     name: account.name,
     email: account.email,
     birthday: account.birthday,
@@ -44,8 +62,8 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
     telephone: account.telephone
   }),
   fromFirestore: (
-    snapshot: firestore.QueryDocumentSnapshot<types.SockbaseAccountDocument>
-  ): types.SockbaseAccountDocument => {
+    snapshot: QueryDocumentSnapshot<SockbaseAccountDocument>
+  ): SockbaseAccountDocument => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -59,8 +77,8 @@ export const userConverter: firestore.FirestoreDataConverter<types.SockbaseAccou
   }
 }
 
-export const applicationConverter: firestore.FirestoreDataConverter<types.SockbaseApplicationDocument> = {
-  toFirestore: (app: types.SockbaseApplicationDocument): firestore.DocumentData => ({
+export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDocument> = {
+  toFirestore: (app: SockbaseApplicationDocument): DocumentData => ({
     hashId: app.hashId,
     userId: app.userId,
     eventId: app.eventId,
@@ -84,7 +102,7 @@ export const applicationConverter: firestore.FirestoreDataConverter<types.Sockba
     createdAt: app.createdAt,
     updatedAt: app.updatedAt
   }),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseApplicationDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationDocument => {
     const app = snapshot.data()
     return {
       hashId: app.hashId,
@@ -113,9 +131,9 @@ export const applicationConverter: firestore.FirestoreDataConverter<types.Sockba
   }
 }
 
-export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEvent> = {
-  toFirestore: (event: types.SockbaseEvent): firestore.DocumentData => ({}),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseEvent => {
+export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
+  toFirestore: (event: SockbaseEvent): DocumentData => ({}),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseEvent => {
     const event = snapshot.data()
     return {
       eventName: event.eventName,
@@ -141,9 +159,9 @@ export const eventConverter: firestore.FirestoreDataConverter<types.SockbaseEven
   }
 }
 
-export const roleConverter: firestore.FirestoreDataConverter<{ role: number }> = {
+export const roleConverter: FirestoreDataConverter<{ role: number }> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot) => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot) => {
     const data = snapshot.data()
     return {
       role: data.role
@@ -151,9 +169,9 @@ export const roleConverter: firestore.FirestoreDataConverter<{ role: number }> =
   }
 }
 
-export const applicationHashIdConverter: firestore.FirestoreDataConverter<types.SockbaseApplicationHashIdDocument> = {
-  toFirestore: (app: types.SockbaseApplicationHashIdDocument): firestore.DocumentData => ({}),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseApplicationHashIdDocument => {
+export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
+  toFirestore: (app: SockbaseApplicationHashIdDocument): DocumentData => ({}),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationHashIdDocument => {
     const hashDoc = snapshot.data()
     return {
       applicationId: hashDoc.applicationId,
@@ -164,9 +182,9 @@ export const applicationHashIdConverter: firestore.FirestoreDataConverter<types.
   }
 }
 
-export const storeConverter: firestore.FirestoreDataConverter<types.SockbaseStoreDocument> = {
+export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseStoreDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseStoreDocument => {
     const storeDoc = snapshot.data()
     return {
       id: snapshot.id,
@@ -181,8 +199,8 @@ export const storeConverter: firestore.FirestoreDataConverter<types.SockbaseStor
   }
 }
 
-export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTicketDocument> = {
-  toFirestore: (ticket: types.SockbaseTicketDocument) => ({
+export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
+  toFirestore: (ticket: SockbaseTicketDocument) => ({
     storeId: ticket.storeId,
     typeId: ticket.typeId,
     paymentMethod: ticket.paymentMethod,
@@ -192,7 +210,7 @@ export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTic
     hashId: ticket.hashId,
     createdUserId: ticket.createdUserId
   }),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketDocument => {
     const ticketDoc = snapshot.data()
     return {
       id: snapshot.id,
@@ -208,12 +226,12 @@ export const ticketConverter: firestore.FirestoreDataConverter<types.SockbaseTic
   }
 }
 
-export const ticketUsedStatusConverter: firestore.FirestoreDataConverter<types.SockbaseTicketUsedStatus> = {
-  toFirestore: (usedStatus: types.SockbaseTicketUsedStatus) => ({
+export const ticketUsedStatusConverter: FirestoreDataConverter<SockbaseTicketUsedStatus> = {
+  toFirestore: (usedStatus: SockbaseTicketUsedStatus) => ({
     used: usedStatus.used,
     usedAt: usedStatus.usedAt
   }),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketUsedStatus => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketUsedStatus => {
     const ticketDoc = snapshot.data()
     return {
       used: ticketDoc.used,
@@ -222,8 +240,8 @@ export const ticketUsedStatusConverter: firestore.FirestoreDataConverter<types.S
   }
 }
 
-export const ticketUserConverter: firestore.FirestoreDataConverter<types.SockbaseTicketUserDocument> = {
-  toFirestore: (ticketUser: types.SockbaseTicketUserDocument) => ({
+export const ticketUserConverter: FirestoreDataConverter<SockbaseTicketUserDocument> = {
+  toFirestore: (ticketUser: SockbaseTicketUserDocument) => ({
     // storeId: ticketUser.storeId,
     // typeId: ticketUser.typeId,
     // usableUserId: ticketUser.usableUserId,
@@ -231,7 +249,7 @@ export const ticketUserConverter: firestore.FirestoreDataConverter<types.Sockbas
     usedAt: ticketUser.usedAt,
     // userId: ticketUser.userId
   }),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseTicketUserDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketUserDocument => {
     const ticketUserDoc = snapshot.data()
     return {
       hashId: snapshot.id,
@@ -245,13 +263,13 @@ export const ticketUserConverter: firestore.FirestoreDataConverter<types.Sockbas
   }
 }
 
-export const inquiryConverter: firestore.FirestoreDataConverter<types.SockbaseInquiryDocument> = {
-  toFirestore: (inquiry: types.SockbaseInquiryDocument) => ({
+export const inquiryConverter: FirestoreDataConverter<SockbaseInquiryDocument> = {
+  toFirestore: (inquiry: SockbaseInquiryDocument) => ({
     status: inquiry.status,
     createdAt: inquiry.createdAt,
     updatedAt: inquiry.updatedAt
   }),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseInquiryDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseInquiryDocument => {
     const inquiry = snapshot.data()
     return {
       id: snapshot.id,
@@ -265,18 +283,41 @@ export const inquiryConverter: firestore.FirestoreDataConverter<types.SockbaseIn
   }
 }
 
-export const inquiryMetaConverter: firestore.FirestoreDataConverter<types.SockbaseInquiryMetaDocument> = {
-  toFirestore: (meta: types.SockbaseInquiryMetaDocument) => ({
+export const inquiryMetaConverter: FirestoreDataConverter<SockbaseInquiryMetaDocument> = {
+  toFirestore: (meta: SockbaseInquiryMetaDocument) => ({
     status: meta.status,
     createdAt: meta.createdAt,
     updatedAt: meta.updatedAt
   }),
-  fromFirestore: (snapshot: firestore.QueryDocumentSnapshot): types.SockbaseInquiryMetaDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseInquiryMetaDocument => {
     const meta = snapshot.data()
     return {
       status: meta.status,
       createdAt: meta.createdAt ? new Date(meta.createdAt.seconds * 1000) : null,
       updatedAt: meta.updatedAt ? new Date(meta.updatedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicationLinksDocument> = {
+  toFirestore: (links: SockbaseApplicationLinksDocument) => ({
+    userId: links.userId,
+    applicationId: links.applicationId,
+    twitterScreenName: links.twitterScreenName,
+    pixivUserId: links.pixivUserId,
+    websiteURL: links.websiteURL,
+    menuURL: links.menuURL
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationLinksDocument => {
+    const links = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: links.userId,
+      applicationId: links.applicationId,
+      twitterScreenName: links.twitterScreenName,
+      pixivUserId: links.pixivUserId,
+      websiteURL: links.websiteURL,
+      menuURL: links.menuURL
     }
   }
 }

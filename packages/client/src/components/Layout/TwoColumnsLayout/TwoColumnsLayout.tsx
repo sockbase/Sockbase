@@ -14,9 +14,15 @@ const TwoColumnsLayout: React.FC<Props> = (props) => {
 export default TwoColumnsLayout
 
 const StyledColumnContainer = styled.section`
+  margin-bottom: 20px;
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   @media screen and (max-width: 840px) {
     display: block;
