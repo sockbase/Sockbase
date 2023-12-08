@@ -80,7 +80,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
     fetchAsync()
       .catch(err => { throw err })
   }
-  useEffect(onInitialize, [hashedAppId])
+  useEffect(onInitialize, [checkIsAdminByOrganizationId, hashedAppId])
 
   const errorCount = useMemo((): number => {
     const validators = [
