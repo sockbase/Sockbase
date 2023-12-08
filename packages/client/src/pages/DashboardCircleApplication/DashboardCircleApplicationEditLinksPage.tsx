@@ -131,9 +131,8 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
         ? <TwoColumnsLayout>
           <>
             {event && (event.schedules.fixedApplication <= new Date().getTime())
-              ? <Alert type="danger">
-                カタログ掲載情報は締切済みです。<br />
-                (Webサイトの更新は引き続き行えます。)
+              ? <Alert type="danger" title='カタログ掲載情報は締切済みです'>
+                オンライン掲載情報の更新は可能です。
               </Alert>
               : event && <Alert>
                 カタログ掲載情報の確定日は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日')}</b>」です。<br />
