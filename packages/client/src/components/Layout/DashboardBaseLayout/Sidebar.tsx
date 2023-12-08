@@ -11,7 +11,7 @@ import {
   MdLogout,
   MdHome,
   MdLocalActivity,
-  MdEditNote,
+  MdEditSquare,
   MdPayments,
   MdSettings,
   MdQrCodeScanner,
@@ -20,7 +20,8 @@ import {
   MdStore,
   MdMail,
   MdInbox,
-  MdWallet
+  MdWallet,
+  MdBadge
 } from 'react-icons/md'
 
 import useWindowDimension from '../../../hooks/useWindowDimension'
@@ -67,7 +68,7 @@ const menu: MenuSection[] = [
       },
       {
         key: 'circleHistories',
-        icon: <MdEditNote />,
+        icon: <MdEditSquare />,
         text: 'サークル申し込み履歴',
         link: '/dashboard/applications'
       },
@@ -102,6 +103,12 @@ const menu: MenuSection[] = [
         text: 'チケット照会ターミナル',
         link: '/dashboard/tickets/terminal'
       },
+      {
+        key: 'license',
+        icon: <MdBadge />,
+        text: '権限',
+        link: '/dashboard/license'
+      }
     ]
   },
   {
@@ -109,6 +116,12 @@ const menu: MenuSection[] = [
     sectionName: 'システム操作',
     requiredRole: sockbaseShared.enumerations.user.permissionRoles.admin,
     items: [
+      {
+        key: 'manageInquiries',
+        icon: <MdInbox />,
+        text: '問い合わせ管理',
+        link: '/dashboard/inquiries'
+      },
       {
         key: 'manageEvents',
         icon: <MdEditCalendar />,
@@ -120,27 +133,14 @@ const menu: MenuSection[] = [
         icon: <MdStore />,
         text: 'チケットストア管理',
         link: '/dashboard/stores'
-      },
-      {
-        key: 'manageInquiries',
-        icon: <MdInbox />,
-        text: '問い合わせ管理',
-        link: '/dashboard/inquiries'
       }
     ]
   },
   {
-    sectionKey: 'debug',
+    sectionKey: 'mydata',
     sectionName: 'デバッグ機能',
     requiredRole: sockbaseShared.enumerations.user.permissionRoles.admin,
     items: [
-      {
-        key: 'debug',
-        icon: <MdHome />,
-        text: 'デバッグダッシュボード',
-        link: '/dashboard/debug',
-        isImportant: true
-      },
       {
         key: 'omnisearch',
         icon: <MdManageSearch />,
@@ -158,7 +158,7 @@ interface Props {
 }
 const Sidebar: React.FC<Props> = (props) => {
   const { width } = useWindowDimension()
-  const { commonRole } = useRole()
+  const { systemRole } = useRole()
 
   const [isHideToggleMenu, setHideToggleMenu] = useState(false)
   const [isOpenMenu, setOpenMenu] = useState(false)
@@ -167,12 +167,12 @@ const Sidebar: React.FC<Props> = (props) => {
     () => setHideToggleMenu(width >= 840)
   useEffect(onChangeWidth, [width])
 
-  const role = useMemo(() => {
-    if (commonRole === undefined || commonRole === null) {
+  const role = useMemo((): SockbaseRole | null => {
+    if (systemRole === undefined || systemRole === null) {
       return null
     }
-    return commonRole
-  }, [commonRole])
+    return systemRole
+  }, [systemRole])
 
   return (
     <StyledSidebarContainer>
@@ -196,9 +196,7 @@ const Sidebar: React.FC<Props> = (props) => {
         <>
           <StyledStatePanel>
             <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
-            <StyledStatePanelContent>
-              {props.user.email}{role !== sockbaseShared.enumerations.user.permissionRoles.user && `(${sockbaseShared.constants.user.roleText[role]})`}
-            </StyledStatePanelContent>
+            <StyledStatePanelContent>{props.user.email}</StyledStatePanelContent>
           </StyledStatePanel>
           <StyledSection>
             <StyledMenu>

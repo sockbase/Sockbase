@@ -11,7 +11,7 @@ const inquiryTypes: Array<{
     {
       type: 'changePassword',
       name: 'パスワード再設定依頼',
-      description: 'ここにはパスワードを記載しないでください。パスワードの再設定は別途ご案内するページにて行います。'
+      description: 'パスワード再設定は「マイページ設定」から行えます。変更時にトラブルが発生した場合はお問い合わせください。'
     },
     {
       type: 'removeAccount',
