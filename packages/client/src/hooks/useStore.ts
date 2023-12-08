@@ -190,7 +190,7 @@ const useStore: () => IUseStore = () => {
   const getTicketMetaByIdAsync = async (ticketId: string): Promise<sockbase.SockbaseTicketMeta> => {
     const db = getFirestore()
     const ticketMetaRef = FirestoreDB
-      .doc(db, `_tickets/${ticketId}/private/meta`)
+      .doc(db, `/_tickets/${ticketId}/private/meta`)
       .withConverter(ticketMetaConverter)
 
     const ticketMetaDoc = await FirestoreDB.getDoc(ticketMetaRef)
@@ -205,7 +205,7 @@ const useStore: () => IUseStore = () => {
   const getTicketUserByHashIdAsync = async (ticketHashId: string): Promise<sockbase.SockbaseTicketUserDocument> => {
     const db = getFirestore()
     const ticketUserRef = FirestoreDB
-      .doc(db, `_ticketUsers/${ticketHashId}`)
+      .doc(db, `/_ticketUsers/${ticketHashId}`)
       .withConverter(ticketUserConverter)
 
     const ticketUserDoc = await FirestoreDB.getDoc(ticketUserRef)
@@ -224,7 +224,7 @@ const useStore: () => IUseStore = () => {
   const getTicketUsedStatusByIdAsync = async (ticketId: string): Promise<sockbase.SockbaseTicketUsedStatus> => {
     const db = getFirestore()
     const ticketUsedStatusRef = FirestoreDB
-      .doc(db, `_tickets/${ticketId}/private/usedStatus`)
+      .doc(db, `/_tickets/${ticketId}/private/usedStatus`)
       .withConverter(ticketUsedStatusConverter)
 
     const ticketUsedStatusDoc = await FirestoreDB.getDoc(ticketUsedStatusRef)
@@ -239,7 +239,7 @@ const useStore: () => IUseStore = () => {
   const updateTicketApplicationStatusAsync = async (ticketId: string, status: sockbase.SockbaseApplicationStatus): Promise<void> => {
     const db = getFirestore()
     const ticketMetaRef = FirestoreDB
-      .doc(db, `_tickets/${ticketId}/private/meta`)
+      .doc(db, `/_tickets/${ticketId}/private/meta`)
       .withConverter(ticketMetaConverter)
 
     await FirestoreDB.setDoc(ticketMetaRef, { applicationStatus: status }, { merge: true })
@@ -248,7 +248,7 @@ const useStore: () => IUseStore = () => {
   const updateTicketUsedStatusByIdAsync = async (ticketId: string, used: boolean): Promise<void> => {
     const db = getFirestore()
     const ticketUsedStatusRef = FirestoreDB
-      .doc(db, `_tickets/${ticketId}/private/usedStatus`)
+      .doc(db, `/_tickets/${ticketId}/private/usedStatus`)
       .withConverter(ticketUsedStatusConverter)
 
     await FirestoreDB.setDoc(ticketUsedStatusRef, { used }, { merge: true })
@@ -310,7 +310,7 @@ const useStore: () => IUseStore = () => {
   const assignTicketUserAsync = async (userId: string, ticketHashId: string): Promise<void> => {
     const db = getFirestore()
     const ticketUserRef = FirestoreDB
-      .doc(db, `_ticketUsers/${ticketHashId}`)
+      .doc(db, `/_ticketUsers/${ticketHashId}`)
       .withConverter(ticketUserConverter)
 
     await FirestoreDB.setDoc(
@@ -322,7 +322,7 @@ const useStore: () => IUseStore = () => {
   const unassignTicketUserAsync = async (ticketHashId: string): Promise<void> => {
     const db = getFirestore()
     const ticketUserRef = FirestoreDB
-      .doc(db, `_ticketUsers/${ticketHashId}`)
+      .doc(db, `/_ticketUsers/${ticketHashId}`)
       .withConverter(ticketUserConverter)
 
     await FirestoreDB.setDoc(

@@ -136,14 +136,14 @@ const Step3: React.FC<Props> = (props) => {
                   ※払込みにかかる手数料は、サークル様のご負担となります。<br />
                 </Alert>
               </>}
-
-            <FormSection>
-              <FormItem>
-                <FormButton color='default' onClick={() => props.nextStep()}>次へ進む</FormButton>
-              </FormItem>
-            </FormSection>
           </>
         }
+
+        <FormSection>
+          <FormItem>
+            <FormButton color='default' onClick={() => props.nextStep()}>次へ進む</FormButton>
+          </FormItem>
+        </FormSection>
       </>
       : <></>)
 }

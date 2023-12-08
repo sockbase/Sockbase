@@ -1,15 +1,16 @@
 import { https } from 'firebase-functions'
 import { MD5, enc } from 'crypto-js'
 import {
-  type SockbaseApplication,
+  type SockbaseApplicationLinksDocument,
   type SockbaseAccount,
   type SockbaseApplicationAddedResult,
-  type SockbaseApplicationDocument
+  type SockbaseApplicationDocument,
+  type SockbaseApplicationPayload
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
 
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { applicationConverter } from '../libs/converters'
+import { applicationConverter, applicationLinksConverter } from '../libs/converters'
 import PaymentService from './PaymentService'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import { getEventByIdAsync } from '../models/event'
@@ -30,17 +31,17 @@ const fetchUserDataForEventAsync = async (userId: string, eventId: string): Prom
     .set(userData)
 }
 
-const createApplicationAsync = async (userId: string, app: SockbaseApplication): Promise<SockbaseApplicationAddedResult> => {
+const createApplicationAsync = async (userId: string, payload: SockbaseApplicationPayload): Promise<SockbaseApplicationAddedResult> => {
   const now = new Date()
   const timestamp = now.getTime()
 
-  const existsApp = getApplicationByUserIdAndEventIdAsync(userId, app.eventId)
+  const existsApp = await getApplicationByUserIdAndEventIdAsync(userId, payload.app.eventId)
   if (existsApp !== null) {
     throw new https.HttpsError('already-exists', 'application_already_exists')
   }
 
-  const unionAppHashDoc =  app.unionCircleId
-    ? (await getApplicaitonHashIdAsync(app.unionCircleId)
+  const unionAppHashDoc =  payload.app.unionCircleId
+    ? (await getApplicaitonHashIdAsync(payload.app.unionCircleId)
         .catch(() => {
           throw new https.HttpsError('not-found', 'application_invalid_unionCircleId')
         }))
@@ -52,21 +53,21 @@ const createApplicationAsync = async (userId: string, app: SockbaseApplication):
     }
   }
 
-  const event = await getEventByIdAsync(app.eventId)
+  const event = await getEventByIdAsync(payload.app.eventId)
     .catch(() => {
       throw new https.HttpsError('not-found', 'Event')
     })
   if (event.schedules.startApplication > timestamp || timestamp > event.schedules.endApplication) {
     throw new https.HttpsError('deadline-exceeded', 'application_out_of_term')
-  } else if (!event.permissions.allowAdult && app.circle.hasAdult) {
+  } else if (!event.permissions.allowAdult && payload.app.circle.hasAdult) {
     throw new https.HttpsError('invalid-argument', 'invalid_argument_adult')
   }
 
   const appDoc: SockbaseApplicationDocument = {
-    ...app,
+    ...payload.app,
     circle: {
-      ...app.circle,
-      hasAdult: event.permissions.allowAdult && app.circle.hasAdult
+      ...payload.app.circle,
+      hasAdult: event.permissions.allowAdult && payload.app.circle.hasAdult
     },
     userId,
     createdAt: now,
@@ -80,17 +81,27 @@ const createApplicationAsync = async (userId: string, app: SockbaseApplication):
   const appId = addResult.id
 
   await firestore
-    .doc(`/applications/${appId}/private/meta`)
+    .doc(`/_applications/${appId}/private/meta`)
     .set({ applicationStatus: 0 })
+
+  const links: SockbaseApplicationLinksDocument = {
+    ...payload.links,
+    id: '',
+    applicationId: appId,
+    userId
+  }
+  await firestore
+    .doc(`/_applicationLinks/${appId}`)
+    .withConverter(applicationLinksConverter)
+    .set(links)
   
-  const space = event.spaces
-    .filter(s => s.id === app.spaceId)[0]
+  const space = event.spaces.filter(s => s.id === payload.app.spaceId)[0]
   
   const bankTransferCode = PaymentService.generateBankTransferCode(now)
   const paymentId = space.productInfo
     ? await PaymentService.createPaymentAsync(
       userId,
-      app.paymentMethod === 'online' ? 1 : 2,
+      payload.app.paymentMethod === 'online' ? 1 : 2,
       bankTransferCode,
       space.productInfo.productId,
       space.price,
@@ -99,8 +110,8 @@ const createApplicationAsync = async (userId: string, app: SockbaseApplication):
     )
     : null
   
-  const hashId = generateHashId(app.eventId, appId, now)
-  await firestore.doc(`/_applicaitons/${appId}`)
+  const hashId = generateHashId(payload.app.eventId, appId, now)
+  await firestore.doc(`/_applications/${appId}`)
     .set({
       hashId
     }, {
@@ -141,7 +152,7 @@ const createApplicationAsync = async (userId: string, app: SockbaseApplication):
           },
           {
             name: 'サークル名',
-            value: app.circle.name
+            value: payload.app.circle.name
           },
           {
             name: '申し込みハッシュID',

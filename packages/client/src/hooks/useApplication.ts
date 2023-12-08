@@ -17,7 +17,7 @@ interface IUseApplication {
   getApplicationsByUserIdAsync: (userId: string) => Promise<sockbase.SockbaseApplicationDocument[]>
   getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
-  submitApplicationAsync: (app: sockbase.SockbaseApplication, circleCutFile: File) => Promise<sockbase.SockbaseApplicationAddedResult>
+  submitApplicationAsync: (payload: sockbase.SockbaseApplicationPayload, circleCutFile: File) => Promise<sockbase.SockbaseApplicationAddedResult>
   getApplicationMetaByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationMeta>
   updateApplicationStatusByIdAsync: (appId: string, status: sockbase.SockbaseApplicationStatus) => Promise<void>
   getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
@@ -124,13 +124,12 @@ const useApplication: () => IUseApplication = () => {
       return metaDoc.data()
     }
 
-  const submitApplicationAsync: (app: sockbase.SockbaseApplication, circleCutFile: File) => Promise<sockbase.SockbaseApplicationAddedResult> =
-    async (app, circleCutFile) => {
+  const submitApplicationAsync = async (payload: sockbase.SockbaseApplicationPayload, circleCutFile: File): Promise<sockbase.SockbaseApplicationAddedResult> => {
       const functions = getFunctions()
       const createApplicationFunction = FirebaseFunctions
-        .httpsCallable<sockbase.SockbaseApplication, sockbase.SockbaseApplicationAddedResult>(functions, 'application-createApplication')
+        .httpsCallable<sockbase.SockbaseApplicationPayload, sockbase.SockbaseApplicationAddedResult>(functions, 'application-createApplication')
 
-      const appResult = await createApplicationFunction(app)
+      const appResult = await createApplicationFunction(payload)
       const hashId = appResult.data.hashId
 
       const storage = getStorage()
