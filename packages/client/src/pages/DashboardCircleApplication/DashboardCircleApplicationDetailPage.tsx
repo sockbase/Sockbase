@@ -8,7 +8,8 @@ import {
   type SockbaseApplicationStatus,
   type SockbaseEvent,
   type SockbaseApplicationLinksDocument,
-  type SockbaseSpaceDocument
+  type SockbaseSpaceDocument,
+  type SockbaseEventSpace
 } from 'sockbase'
 import sockbaseShared from 'shared'
 import { MdEdit } from 'react-icons/md'
@@ -23,7 +24,6 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Alert from '../../components/Parts/Alert'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import BlinkField from '../../components/Parts/BlinkField'
-import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
 import CircleCutImage from '../../components/Parts/CircleCutImage'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
@@ -32,6 +32,7 @@ import FormItem from '../../components/Form/FormItem'
 import LinkButton from '../../components/Parts/LinkButton'
 import FormButton from '../../components/Form/Button'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardCircleApplicationDetailPage: React.FC = () => {
   const {
@@ -138,10 +139,9 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
     return `${event.eventName} 申し込み情報`
   }, [event])
 
-  const spaceName = useMemo(() => {
-    if (!event || !app) return ''
-    const spaceInfo = event.spaces.filter(s => s.id === app.spaceId)[0]
-    return spaceInfo.name
+  const eventSpace = useMemo((): SockbaseEventSpace | undefined => {
+    if (!event || !app) return
+    return event.spaces.filter(s => s.id === app.spaceId)[0]
   }, [event, app])
 
   const genreName = useMemo(() => {
@@ -187,120 +187,61 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
 
       <TwoColumnsLayout>
         <>
-          <h3>ステータス</h3>
+          <h3>申し込み基礎情報</h3>
           <table>
             <tbody>
-              <tr>
-                <th>申し込んだスペース</th>
-                <td>{spaceName || <BlinkField />}</td>
-              </tr>
               <tr>
                 <th>申し込み状況</th>
                 <td>{app && <ApplicationStatusLabel status={app.meta.applicationStatus} /> || <BlinkField />}</td>
               </tr>
               <tr>
+                <th>申し込んだイベント</th>
+                <td>{event && `${event.eventName} ${formatByDate(event.schedules.startEvent, '(YYYY年M月D日 開催)')}` || <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>サークル名</th>
+                <td>
+                  {app
+                    ? <ruby>
+                      {app.circle.name}
+                      <rt>{app.circle.yomi}</rt>
+                    </ruby>
+                    : <BlinkField />}
+                </td>
+              </tr>
+              <tr>
+                <th>ペンネーム</th>
+                <td>
+                  {app
+                    ? <ruby>
+                      {app.circle.penName}
+                      <rt>{app.circle.penNameYomi}</rt>
+                    </ruby>
+                    : <BlinkField />}
+                </td>
+              </tr>
+              <tr>
+                <th>申し込んだスペース</th>
+                <td>{eventSpace?.name || <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>配置されたスペース</th>
+                <td>{
+                  event
+                    ? event.schedules.publishSpaces > new Date().getTime()
+                      ? `配置発表は ${formatByDate(event.schedules.publishSpaces, 'YYYY年M月D日 H時mm分')} を予定しています`
+                      : space?.spaceName || '配置発表まで今しばらくお待ちください'
+                    : <BlinkField />
+                }</td>
+              </tr>
+              {eventSpace?.productInfo && <tr>
                 <th>お支払い状況</th>
                 <td>
                   <Link to="/dashboard/payments">
                     {(payment?.status !== undefined && <PaymentStatusLabel payment={payment} />) || <BlinkField />}
                   </Link>
                 </td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3>サークルカット</h3>
-          {circleCutURL && <CircleCutImage src={circleCutURL} />}
-          <p>
-            サークルカットの変更は「お問い合わせ」よりご依頼ください。
-          </p>
-
-          <h3>サークル情報</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>サークル名</th>
-                <td>{app?.circle.name ?? <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>サークル名(よみ)</th>
-                <td>{app?.circle.yomi ?? <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>ペンネーム</th>
-                <td>{app?.circle.penName ?? <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>ペンネーム(よみ)</th>
-                <td>{app?.circle.penNameYomi ?? <BlinkField />}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3>頒布物情報</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>成人向け頒布物の有無</th>
-                <td>{app
-                  ? app.circle.hasAdult ? '成人向け頒布物があります' : '成人向け頒布物はありません'
-                  : <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>頒布物のジャンル</th>
-                <td>{genreName || <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>頒布物概要</th>
-                <td>{app?.overview.description ?? <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>総搬入量</th>
-                <td>{app?.overview.totalAmount ?? <BlinkField />}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3>隣接配置(合体)希望</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>合体希望サークル 合体申し込みID</th>
-                <td>{app
-                  ? app.unionCircleId || '(空欄)'
-                  : <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>プチオンリーコード</th>
-                <td>{app
-                  ? app.petitCode || '(空欄)'
-                  : <BlinkField />}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3>申込み責任者情報</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>申し込み責任者氏名</th>
-                <td>{userData?.name ?? <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>メールアドレス</th>
-                <td>{userData?.email ?? <BlinkField />}</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <h3>通信欄</h3>
-          <p>
-            {app ? (app.remarks || '(空欄)') : <BlinkField />}
-          </p>
-
-          <h3>申し込み情報</h3>
-          <table>
-            <tbody>
+              </tr>}
               <tr>
                 <th>申し込みID</th>
                 <td>
@@ -311,29 +252,17 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
                     : <BlinkField />}
                 </td>
               </tr>
-              <tr>
-                <th>申し込み日時</th>
-                <td>
-                  {app
-                    ? app.createdAt?.toLocaleString() ?? '-'
-                    : <BlinkField />}
-                </td>
-              </tr>
             </tbody>
           </table>
         </>
-
         <>
-          {/* <h3>頒布物情報デジタル提出</h3>
+          <h3>サークルカット</h3>
+          {circleCutURL && <CircleCutImage src={circleCutURL} />}
           <p>
-            入力されていません
+            サークルカットの変更は「<Link to="/dashboard/contact">お問い合わせ</Link>」よりご依頼ください。
           </p>
-          <FormSection>
-            <FormItem>
-              <FormButton>頒布物情報の編集</FormButton>
-            </FormItem>
-          </FormSection> */}
-
+        </>
+        <>
           <h3>サークル広報情報</h3>
           <table>
             <tbody>
@@ -375,52 +304,111 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           {links !== undefined && <FormSection>
             {!links && hashedAppId
               ? <FormItem>
-                <LinkButton to={`/dashboard/applications/${hashedAppId}/links`}>サークル広報情報を入力</LinkButton>
+                <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} inlined>サークル広報情報を入力</LinkButton>
               </FormItem>
               : <FormItem>
-                <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color="default">サークル広報情報を編集</LinkButton>
+                <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color="default" inlined>サークル広報情報を編集</LinkButton>
               </FormItem>}
           </FormSection>}
-
-          {isAdmin !== undefined && isAdmin && app && <>
-            <h3>操作</h3>
-            <FormSection>
-              {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.provisional &&
-                <FormItem>
-                  <FormButton
-                    color="default"
-                    onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.provisional)}>仮申し込み状態にする</FormButton>
-                </FormItem>}
-              {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.confirmed &&
-                <FormItem>
-                  <FormButton
-                    color="info"
-                    onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.confirmed)}>申し込み確定状態にする</FormButton>
-                </FormItem>}
-              {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.canceled &&
-                <FormItem>
-                  <FormButton
-                    color="danger"
-                    onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.canceled)}>キャンセル状態にする</FormButton>
-                </FormItem>}
-            </FormSection>
-          </>}
-
+          {/* <h3>頒布物情報デジタル提出</h3>
+          <p>
+            入力されていません
+          </p>
+          <FormSection>
+            <FormItem>
+              <FormButton>頒布物情報の編集</FormButton>
+            </FormItem>
+          </FormSection> */}
         </>
-        <></>
+        <>
+          <h3>頒布物情報</h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>成人向け頒布物の有無</th>
+                <td>{app
+                  ? app.circle.hasAdult ? '成人向け頒布物があります' : '成人向け頒布物はありません'
+                  : <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>頒布物のジャンル</th>
+                <td>{genreName || <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>頒布物概要</th>
+                <td>{app?.overview.description ?? <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>総搬入量</th>
+                <td>{app?.overview.totalAmount ?? <BlinkField />}</td>
+              </tr>
+            </tbody>
+          </table>
+        </>
+        <>
+          <h3>隣接配置(合体)希望</h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>合体希望サークル 合体申し込みID</th>
+                <td>{app
+                  ? app.unionCircleId || '(空欄)'
+                  : <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>プチオンリーコード</th>
+                <td>{app
+                  ? app.petitCode || '(空欄)'
+                  : <BlinkField />}</td>
+              </tr>
+            </tbody>
+          </table>
+        </>
+        <>
+          <h3>申込み責任者情報</h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>申し込み責任者氏名</th>
+                <td>{userData?.name ?? <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>メールアドレス</th>
+                <td>{userData?.email ?? <BlinkField />}</td>
+              </tr>
+            </tbody>
+          </table>
+        </>
       </TwoColumnsLayout>
+      
+      <h3>通信欄</h3>
+      <p>
+        {app ? (app.remarks || '(空欄)') : <BlinkField />}
+      </p>
 
-      {/* <ApplicationDetail
-        hashedAppId={hashedAppId}
-        app={app}
-        payment={payment}
-        event={event}
-        eventId={eventId}
-        userData={userData}
-        links={links}
-        circleCutURL={circleCutURL}
-        isAdmin={isAdmin}
-        handleChangeStatus={handleChangeStatus} /> */}
+      {isAdmin !== undefined && isAdmin && app && <>
+        <h2>操作</h2>
+        <FormSection>
+          {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.provisional &&
+            <FormItem>
+              <FormButton
+                color="default"
+                onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.provisional)}>仮申し込み状態にする</FormButton>
+            </FormItem>}
+          {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.confirmed &&
+            <FormItem>
+              <FormButton
+                color="info"
+                onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.confirmed)}>申し込み確定状態にする</FormButton>
+            </FormItem>}
+          {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.canceled &&
+            <FormItem>
+              <FormButton
+                color="danger"
+                onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.canceled)}>キャンセル状態にする</FormButton>
+            </FormItem>}
+        </FormSection>
+      </>}
     </DashboardBaseLayout>
   )
 }

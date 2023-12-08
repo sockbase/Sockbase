@@ -1,12 +1,18 @@
-
 import { useEffect, useState } from 'react'
 
-import type { SockbaseEventSpace, SockbaseApplication, SockbaseAccountSecure, SockbaseEvent } from 'sockbase'
+import {
+  type SockbaseEventSpace,
+  type SockbaseApplication,
+  type SockbaseAccountSecure,
+  type SockbaseEvent,
+  type SockbaseApplicationLinks
+} from 'sockbase'
 import sockbaseShared from 'shared'
 
 import usePostalCode from '../../../hooks/usePostalCode'
 import useValidate from '../../../hooks/useValidate'
 import useFile from '../../../hooks/useFile'
+import useDayjs from '../../../hooks/useDayjs'
 
 import FormSection from '../../../components/Form/FormSection'
 import FormLabel from '../../../components/Form/Label'
@@ -20,16 +26,16 @@ import FormButton from '../../../components/Form/Button'
 import FormCheckbox from '../../../components/Form/Checkbox'
 import FormTextarea from '../../../components/Form/Textarea'
 import CircleCutImage from '../../../components/Parts/CircleCutImage'
-import useDayjs from '../../../hooks/useDayjs'
 
 interface Props {
   eventId: string
   event: SockbaseEvent
   app: SockbaseApplication | undefined
+  links: SockbaseApplicationLinks | undefined
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
   prevStep: () => void
-  nextStep: (app: SockbaseApplication, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
+  nextStep: (app: SockbaseApplication, links: SockbaseApplicationLinks, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
 }
 const Step1: React.FC<Props> = (props) => {
@@ -76,6 +82,13 @@ const Step1: React.FC<Props> = (props) => {
   })
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
 
+  const [links, setLinks] = useState<SockbaseApplicationLinks>({
+    twitterScreenName: '',
+    pixivUserId: '',
+    websiteURL: '',
+    menuURL: ''
+  })
+
   const [isAgreed, setAgreed] = useState(false)
 
   const [spaceIds, setSpaceIds] = useState<string[]>()
@@ -85,25 +98,31 @@ const Step1: React.FC<Props> = (props) => {
 
   const [error, setError] = useState<string | undefined>()
 
-  const onInitialize: () => void =
-    () => {
+  const onInitialize = (): void => {
       if (props.app) {
         setApp(props.app)
       }
+
+      if (props.links) {
+        setLinks(props.links)
+      }
+
       if (props.leaderUserData) {
         setLeaderUserData(props.leaderUserData)
         setDisplayBirthday(s => formatByDate(props.leaderUserData?.birthday, 'YYYY-MM-DD'))
       }
+      
       if (props.circleCutFile) {
         setCircleCutFile(props.circleCutFile)
       }
+      
       if (props.event.spaces) {
         setSpaceIds(props.event.spaces.map(i => i.id))
       }
 
       setPaymentMethodIds(sockbaseShared.constants.payment.methods.map(i => i.id))
     }
-  useEffect(onInitialize, [props.app, props.leaderUserData, props.circleCutFile, props.event])
+  useEffect(onInitialize, [props.app, props.links, props.leaderUserData, props.circleCutFile, props.event])
 
   const onChangeCircleCutFile: () => void =
     () => {
@@ -119,12 +138,12 @@ const Step1: React.FC<Props> = (props) => {
 
   const onChangeForm: () => void =
     () => {
-      if (!spaceIds || !paymentMethodIds || !circleCutData) return
+      if (!spaceIds || !paymentMethodIds) return
 
       const validators = [
         validator.isIn(app.spaceId, spaceIds),
         !validator.isNull(circleCutFile),
-        !validator.isEmpty(circleCutData),
+        !!circleCutData && !validator.isEmpty(circleCutData),
         !validator.isEmpty(app.circle.name),
         validator.isOnlyHiragana(app.circle.yomi),
         !validator.isEmpty(app.circle.penName),
@@ -134,7 +153,11 @@ const Step1: React.FC<Props> = (props) => {
         !validator.isEmpty(app.overview.description),
         !validator.isEmpty(app.overview.totalAmount),
         validator.isIn(app.paymentMethod, paymentMethodIds),
-        (!app.unionCircleId || validator.isApplicationHashId(app.unionCircleId))
+        (!app.unionCircleId || validator.isApplicationHashId(app.unionCircleId)),
+        !links.twitterScreenName || validator.isTwitterScreenName(links.twitterScreenName),
+        !links.pixivUserId || validator.isOnlyNumber(links.pixivUserId),
+        !links.websiteURL || validator.isURL(links.websiteURL),
+        !links.menuURL || validator.isURL(links.menuURL)
       ]
       const invalidCount = validators
         .filter(i => !i)
@@ -168,7 +191,7 @@ const Step1: React.FC<Props> = (props) => {
       setInvalidFieldCount(invalidCount)
       setAllValid(!hasValidationError)
     }
-  useEffect(onChangeForm, [spaceIds, app, leaderUserData, circleCutFile, circleCutData, props.event])
+  useEffect(onChangeForm, [spaceIds, app, links, leaderUserData, circleCutFile, circleCutData, props.event])
 
   const onChangeBirthday: () => void =
     () => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
@@ -210,8 +233,8 @@ const Step1: React.FC<Props> = (props) => {
         address: '住所',
         telephone: '08081656154',
         email: 'nirsmmy@gmail.com',
-        password: 'password1234',
-        rePassword: 'password1234'
+        password: 'Password1234',
+        rePassword: 'Password1234'
       })
       setDisplayBirthday('2002-03-29')
       setAgreed(true)
@@ -225,7 +248,7 @@ const Step1: React.FC<Props> = (props) => {
         return
       }
 
-      props.nextStep(app, leaderUserData, circleCutData, circleCutFile)
+      props.nextStep(app, links, leaderUserData, circleCutData, circleCutFile)
     }
 
   const handleFilledPostalCode: (postalCode: string) => void =
@@ -396,18 +419,18 @@ const Step1: React.FC<Props> = (props) => {
             onChange={e => setApp(s => ({ ...s, overview: { ...s.overview, totalAmount: e.target.value } }))} />
           <FormHelp>単位まで入力してください。</FormHelp>
         </FormItem>
-      </FormSection >
+      </FormSection>
 
       <h2>隣接配置希望(合体)情報</h2>
       <FormSection>
         <FormItem>
-          <FormLabel>合体希望サークル 合体申し込みID</FormLabel>
+          <FormLabel>合体希望サークル 申し込みID</FormLabel>
           <FormInput
             placeholder='20231231235959123-abc0def1'
             value={app.unionCircleId}
             onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value }))}
             hasError={!validator.isEmpty(app.unionCircleId) && !validator.isApplicationHashId(app.unionCircleId)} />
-          <FormHelp>先に申し込んだ方から提供された合体申し込みIDを入力してください。</FormHelp>
+          <FormHelp>先に申し込んだ方から提供された申し込みIDを入力してください。</FormHelp>
         </FormItem>
         <FormItem>
           <FormLabel>プチオンリーコード</FormLabel>
@@ -416,6 +439,54 @@ const Step1: React.FC<Props> = (props) => {
             value={app.petitCode}
             onChange={e => setApp(s => ({ ...s, petitCode: e.target.value }))} />
           <FormHelp>プチオンリー主催から入力を指示された場合のみ入力してください。</FormHelp>
+        </FormItem>
+      </FormSection>
+
+      <h2>サークル広報情報</h2>
+      <p>
+        カタログなどに掲載するサークルの広報情報を入力してください。<br />
+        申し込み後も変更できます。
+      </p>
+      <FormSection>
+        <FormItem>
+          <FormLabel>X</FormLabel>
+          <FormInput
+            placeholder='xxxxxxx'
+            value={links.twitterScreenName ?? ''}
+            onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value }))} />
+          <FormHelp hasError={!!links.twitterScreenName && !validator.isTwitterScreenName(links.twitterScreenName)}>
+            @を除いて入力してください
+          </FormHelp>
+        </FormItem>
+        <FormItem>
+          <FormLabel>pixiv</FormLabel>
+          <FormInput
+            placeholder='1234567890'
+            value={links.pixivUserId ?? ''}
+            onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value }))} />
+          <FormHelp hasError={!!links.pixivUserId && !validator.isOnlyNumber(links.pixivUserId)}>
+            ID部分のみを入力してください
+          </FormHelp>
+        </FormItem>
+        <FormItem>
+          <FormLabel>Webサイト</FormLabel>
+          <FormInput
+            placeholder='https://sumire.sockbase.net'
+            value={links.websiteURL ?? ''}
+            onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value }))} />
+          <FormHelp hasError={!!links.websiteURL && !validator.isURL(links.websiteURL)}>
+            http://から始めてください
+          </FormHelp>
+        </FormItem>
+        <FormItem>
+          <FormLabel>お品書きURL</FormLabel>
+          <FormInput
+            placeholder='https://oshina.sockbase.net'
+            value={links.menuURL ?? ''}
+            onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value }))} />
+          <FormHelp hasError={!!links.menuURL && !validator.isURL(links.menuURL)}>
+            http://から始めてください
+          </FormHelp>
         </FormItem>
       </FormSection>
 

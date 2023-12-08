@@ -1,22 +1,24 @@
 import { useEffect, useState } from 'react'
-import type {
-  SockbaseApplicationAddedResult,
-  SockbaseAccount,
-  SockbaseAccountSecure,
-  SockbaseApplication,
-  SockbaseEvent
+import {
+  type SockbaseApplicationAddedResult,
+  type SockbaseAccount,
+  type SockbaseAccountSecure,
+  type SockbaseApplication,
+  type SockbaseEvent,
+  type SockbaseApplicationPayload,
+  type SockbaseApplicationLinks
 } from 'sockbase'
 import useFirebase from '../../../hooks/useFirebase'
 import useUserData from '../../../hooks/useUserData'
 import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
 import StepProgress from '../../../components/Parts/StepProgress'
+import Alert from '../../../components/Parts/Alert'
 import Introduction from './Introduction'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import Step4 from './Step4'
-import Alert from '../../../components/Parts/Alert'
 
 const stepProgresses = ['入力', '確認', '決済', '完了']
 
@@ -36,6 +38,7 @@ const StepContainer: React.FC<Props> = (props) => {
   const [circleCutData, setCircleCutData] = useState<string>()
   const [circleCutFile, setCircleCutFile] = useState<File>()
   const [app, setApp] = useState<SockbaseApplication>()
+  const [links, setLinks] = useState<SockbaseApplicationLinks>()
   const [leaderUserData, setLeaderUserData] = useState<SockbaseAccountSecure>()
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
 
@@ -44,14 +47,18 @@ const StepContainer: React.FC<Props> = (props) => {
 
   const submitApplication: () => Promise<void> =
     async () => {
-      if (!app || !leaderUserData || !circleCutFile) return
+      if (!app || !links || !leaderUserData || !circleCutFile) return
 
       if (!user) {
         const newUser = await createUser(leaderUserData.email, leaderUserData.password)
         await updateUserDataAsync(newUser.uid, leaderUserData)
       }
 
-      const createdAppResult = await submitApplicationAsync(app, circleCutFile)
+      const payload: SockbaseApplicationPayload = {
+        app,
+        links
+      }
+      const createdAppResult = await submitApplicationAsync(payload, circleCutFile)
       setAppResult(createdAppResult)
     }
 
@@ -83,12 +90,14 @@ const StepContainer: React.FC<Props> = (props) => {
           eventId={props.eventId}
           event={props.event}
           app={app}
+          links={links}
           leaderUserData={leaderUserData}
           circleCutFile={circleCutFile}
           isLoggedIn={props.isLoggedIn}
           prevStep={() => setStep(0)}
-          nextStep={(app, leaderUserData, circleCutData, circleCutFile) => {
+          nextStep={(app, links, leaderUserData, circleCutData, circleCutFile) => {
             setApp(app)
+            setLinks(links)
             setLeaderUserData(leaderUserData)
             setCircleCutData(circleCutData)
             setCircleCutFile(circleCutFile)
@@ -97,6 +106,7 @@ const StepContainer: React.FC<Props> = (props) => {
         <Step2 key="step2"
           event={props.event}
           app={app}
+          links={links}
           leaderUserData={leaderUserData}
           circleCutData={circleCutData}
           userData={userData}
@@ -113,7 +123,7 @@ const StepContainer: React.FC<Props> = (props) => {
           appResult={appResult} />
       ])
     }
-  useEffect(onInitialize, [props, app, leaderUserData, circleCutData, userData, appResult])
+  useEffect(onInitialize, [props, app, links, leaderUserData, circleCutData, userData, appResult])
 
   return (
     <>

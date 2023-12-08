@@ -199,7 +199,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
           </>
           <></>
         </TwoColumnsLayout>
-        : <Loading text="ユーザ情報" />}
+        : <Loading text="広報情報" />}
     </DashboardBaseLayout>
   )
 }

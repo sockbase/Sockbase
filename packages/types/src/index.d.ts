@@ -202,6 +202,14 @@ export interface SockbaseApplicationHashIdDocument {
 }
 
 /**
+ * サークル申し込みペイロード
+ */
+export interface SockbaseApplicationPayload {
+  app: SockbaseApplication
+  links: SockbaseApplicationLinks
+}
+
+/**
  * スペース情報
  */
 export interface SockbaseSpace {

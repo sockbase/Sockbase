@@ -10,7 +10,7 @@ import {
 import StoreService from '../services/StoreService'
 
 export const onTicketUserUsedStatusUpdated = firestore
-  .document(`_tickets/{ticketId}/private/usedStatus`)
+  .document(`/_tickets/{ticketId}/private/usedStatus`)
   .onUpdate(async (change: Change<QueryDocumentSnapshot>, context: EventContext<{ ticketId: string }>) => {
     if (!change.after.exists) return
 
@@ -21,7 +21,7 @@ export const onTicketUserUsedStatusUpdated = firestore
   })
 
 export const onTicketUserAssigned = firestore
-  .document(`_ticketUsers/{ticketHashId}`)
+  .document(`/_ticketUsers/{ticketHashId}`)
   .onUpdate(async (change: Change<QueryDocumentSnapshot>) => {
     if (!change.after.exists) return
 

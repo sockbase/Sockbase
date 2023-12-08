@@ -54,11 +54,11 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
   const ticketId = ticketResult.id
 
   await firestore
-    .doc(`_tickets/${ticketId}/private/meta`)
+    .doc(`/_tickets/${ticketId}/private/meta`)
     .set({ applicationStatus: 0 })
 
   await firestore
-    .doc(`_tickets/${ticketId}/private/usedStatus`)
+    .doc(`/_tickets/${ticketId}/private/usedStatus`)
     .set({
       used: false,
       usedAt: null
@@ -86,7 +86,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     : null
 
   await firestore
-    .doc(`_ticketHashIds/${hashId}`)
+    .doc(`/_ticketHashIds/${hashId}`)
     .set({
       hashId,
       ticketId,
@@ -94,7 +94,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     })
 
   await firestore
-    .doc(`_ticketUsers/${hashId}`)
+    .doc(`/_ticketUsers/${hashId}`)
     .set({
       userId,
       storeId,
@@ -191,18 +191,18 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
   const ticketId = ticketResult.id
 
   await firestore
-    .doc(`_tickets/${ticketId}/private/meta`)
+    .doc(`/_tickets/${ticketId}/private/meta`)
     .set({ applicationStatus: 2 })
 
   await firestore
-    .doc(`_tickets/${ticketId}/private/usedStatus`)
+    .doc(`/_tickets/${ticketId}/private/usedStatus`)
     .set({
       used: false,
       usedAt: null
     })
 
   await firestore
-    .doc(`_ticketHashIds/${hashId}`)
+    .doc(`/_ticketHashIds/${hashId}`)
     .set({
       hashId,
       ticketId,
@@ -210,7 +210,7 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
     })
 
   await firestore
-    .doc(`_ticketUsers/${hashId}`)
+    .doc(`/_ticketUsers/${hashId}`)
     .set({
       userId: user.uid,
       storeId,
@@ -230,7 +230,7 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
 
 const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: SockbaseTicketUsedStatus): Promise<void> => {
   const ticketDoc = await firestore
-    .doc(`_tickets/${ticketId}`)
+    .doc(`/_tickets/${ticketId}`)
     .withConverter(ticketConverter)
     .get()
   const ticket = ticketDoc.data()
@@ -239,7 +239,7 @@ const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: Sockbas
   }
 
   await firestore
-    .doc(`_ticketUsers/${ticket.hashId}`)
+    .doc(`/_ticketUsers/${ticket.hashId}`)
     .withConverter(ticketUserConverter)
     .set({
       used: ticketUsed.used,
