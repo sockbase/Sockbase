@@ -51,7 +51,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
   useEffect(onInitialize, [hashedAppId])
 
   return (
-    <DashboardBaseLayout title="サークルカット更新" requireSystemRole={0}>
+    <DashboardBaseLayout title="サークルカット変更" requireSystemRole={0}>
     <Breadcrumbs>
       <li><Link to="/dashboard">マイページ</Link></li>
       {isAdmin
@@ -68,7 +68,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
         {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
       </li>
     </Breadcrumbs>
-    <PageTitle title={app?.circle.name} description="サークルカット更新" icon={<MdPhoto />} isLoading={!app} />
+    <PageTitle title={app?.circle.name} description="サークルカット変更" icon={<MdPhoto />} isLoading={!app} />
 
     現在準備中です。
 
