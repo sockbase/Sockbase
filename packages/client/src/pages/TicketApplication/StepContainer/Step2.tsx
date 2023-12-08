@@ -8,6 +8,7 @@ import sockbaseShared from 'shared'
 import useDayjs from '../../../hooks/useDayjs'
 import useFirebaseError from '../../../hooks/useFirebaseError'
 import Alert from '../../../components/Parts/Alert'
+import ProgressBar from '../../../components/Parts/ProgressBar'
 
 interface Props {
   store: SockbaseStoreDocument
@@ -15,6 +16,7 @@ interface Props {
   userData: SockbaseAccountSecure | undefined
   fetchedUserData: SockbaseAccount | null
   isLoggedIn: boolean
+  submitProgressPercent: number
   submitTicket: () => Promise<void>
   prevStep: () => void
   nextStep: () => void
@@ -128,6 +130,14 @@ const Step2: React.FC<Props> = (props) => {
           </LoadingCircleWrapper>
         </FormItem>
       </FormSection>
+      
+      {isProgressing && <>
+        <ProgressBar percent={props.submitProgressPercent}/>
+        <Alert>
+          送信処理に時間がかかる場合がございます。<br />
+          進捗率が100%になるまでそのままでお待ちください。
+        </Alert>
+      </>}
     </>
   )
 }

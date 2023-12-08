@@ -17,7 +17,8 @@ interface IUseApplication {
   getApplicationsByUserIdAsync: (userId: string) => Promise<sockbase.SockbaseApplicationDocument[]>
   getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
-  submitApplicationAsync: (payload: sockbase.SockbaseApplicationPayload, circleCutFile: File) => Promise<sockbase.SockbaseApplicationAddedResult>
+  submitApplicationAsync: (payload: sockbase.SockbaseApplicationPayload) => Promise<sockbase.SockbaseApplicationAddedResult>
+  uploadCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
   getApplicationMetaByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationMeta>
   updateApplicationStatusByIdAsync: (appId: string, status: sockbase.SockbaseApplicationStatus) => Promise<void>
   getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
@@ -124,20 +125,21 @@ const useApplication: () => IUseApplication = () => {
       return metaDoc.data()
     }
 
-  const submitApplicationAsync = async (payload: sockbase.SockbaseApplicationPayload, circleCutFile: File): Promise<sockbase.SockbaseApplicationAddedResult> => {
+  const submitApplicationAsync = async (payload: sockbase.SockbaseApplicationPayload): Promise<sockbase.SockbaseApplicationAddedResult> => {
       const functions = getFunctions()
       const createApplicationFunction = FirebaseFunctions
         .httpsCallable<sockbase.SockbaseApplicationPayload, sockbase.SockbaseApplicationAddedResult>(functions, 'application-createApplication')
 
       const appResult = await createApplicationFunction(payload)
-      const hashId = appResult.data.hashId
-
-      const storage = getStorage()
-      const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${hashId}`)
-      await FirebaseStorage.uploadBytes(circleCutRef, circleCutFile)
-
       return appResult.data
     }
+
+  const uploadCircleCutFileAsync = async (appHashId: string, circleCutFile: File): Promise<void> => {
+    const storage = getStorage()
+    const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${appHashId}`)
+    await FirebaseStorage.uploadBytes(circleCutRef, circleCutFile)
+
+  }
 
   const updateApplicationStatusByIdAsync: (appId: string, status: sockbase.SockbaseApplicationStatus) => Promise<void> =
     async (appId, status) => {
@@ -231,6 +233,7 @@ const useApplication: () => IUseApplication = () => {
     getApplicationsByUserIdWithIdAsync,
     getApplicationsByEventIdAsync,
     submitApplicationAsync,
+    uploadCircleCutFileAsync,
     getApplicationMetaByIdAsync,
     updateApplicationStatusByIdAsync,
     getCircleCutURLByHashedIdAsync,

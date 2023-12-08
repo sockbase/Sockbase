@@ -31,7 +31,7 @@ interface Props {
 const StepContainer: React.FC<Props> = (props) => {
   const { user, createUser } = useFirebase()
   const { updateUserDataAsync, getMyUserDataAsync } = useUserData()
-  const { submitApplicationAsync } = useApplication()
+  const { submitApplicationAsync, uploadCircleCutFileAsync } = useApplication()
   const { formatByDate } = useDayjs()
 
   const [step, setStep] = useState(0)
@@ -45,21 +45,34 @@ const StepContainer: React.FC<Props> = (props) => {
   const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [appResult, setAppResult] = useState<SockbaseApplicationAddedResult>()
 
+  const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
+
   const submitApplication: () => Promise<void> =
     async () => {
       if (!app || !links || !leaderUserData || !circleCutFile) return
+
+      setSubmitProgressPercent(10)
 
       if (!user) {
         const newUser = await createUser(leaderUserData.email, leaderUserData.password)
         await updateUserDataAsync(newUser.uid, leaderUserData)
       }
 
+      setSubmitProgressPercent(30)
+
       const payload: SockbaseApplicationPayload = {
         app,
         links
       }
-      const createdAppResult = await submitApplicationAsync(payload, circleCutFile)
-      setAppResult(createdAppResult)
+      await submitApplicationAsync(payload)
+        .then(async createdAppResult => {
+          setSubmitProgressPercent(80)
+          setAppResult(createdAppResult)
+          
+          await uploadCircleCutFileAsync(createdAppResult.hashId, circleCutFile)
+            .then(() => setSubmitProgressPercent(100))
+        })
+        .catch(err => { throw err })
     }
 
   const fetchUserData: () => void =
@@ -110,6 +123,7 @@ const StepContainer: React.FC<Props> = (props) => {
           leaderUserData={leaderUserData}
           circleCutData={circleCutData}
           userData={userData}
+          submitProgressPercent={submitProgressPercent}
           submitApplication={submitApplication}
           prevStep={() => setStep(1)}
           nextStep={() => setStep(3)} />,
@@ -123,7 +137,7 @@ const StepContainer: React.FC<Props> = (props) => {
           appResult={appResult} />
       ])
     }
-  useEffect(onInitialize, [props, app, links, leaderUserData, circleCutData, userData, appResult])
+  useEffect(onInitialize, [props, app, links, leaderUserData, circleCutData, userData, appResult, submitProgressPercent])
 
   return (
     <>
