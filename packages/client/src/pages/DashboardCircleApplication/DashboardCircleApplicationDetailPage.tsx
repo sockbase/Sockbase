@@ -260,7 +260,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           {circleCutURL && <CircleCutImage src={circleCutURL} />}
           <FormSection>
             <FormItem>
-                <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color="default" inlined>サークルカット更新</LinkButton>
+                <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color="default" inlined>サークルカット変更</LinkButton>
             </FormItem>
           </FormSection>
         </>
