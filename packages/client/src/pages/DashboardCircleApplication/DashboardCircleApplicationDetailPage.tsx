@@ -258,9 +258,11 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
         <>
           <h3>サークルカット</h3>
           {circleCutURL && <CircleCutImage src={circleCutURL} />}
-          <p>
-            サークルカットの変更は「<Link to="/dashboard/contact">お問い合わせ</Link>」よりご依頼ください。
-          </p>
+          <FormSection>
+            <FormItem>
+                <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color="default" inlined>サークルカット更新</LinkButton>
+            </FormItem>
+          </FormSection>
         </>
         <>
           <h3>サークル広報情報</h3>

@@ -23,14 +23,15 @@ import DashboardTopPage from '../DashboardTop/DashboardTopPage'
 import DashboardEventListPage from '../DashboardEvents/DashboardEventListPage'
 import DashboardEventApplicationsPage from '../DashboardEvents/DashboardEventCircleApplicationsPage'
 import DashboardEventSpacesPage from '../DashboardEvents/EventSpaces/DashboardEventSpacesPage'
-import DashboardApplicationListPage from '../DashboardCircleApplication/DashboardCircleApplicationListPage'
-import DashboardApplicationDetailPage from '../DashboardCircleApplication/DashboardCircleApplicationDetailPage'
+import DashboardCircleApplicationListPage from '../DashboardCircleApplication/DashboardCircleApplicationListPage'
 import DashboardPaymentListPage from '../DashboardPayments/DashboardPaymentListPage'
 import DashboardSettingsPage from '../DashboardSettings/DashboardSettingsPage'
 import DashboardContactPage from '../DashboardContact/DashboardContactPage'
 import DashboardInquiryListPage from '../DashboardInquiry/DashboardInquiryListPage'
 import DashboardInquiryDetailPage from '../DashboardInquiry/DashboardInquiryDetailPage'
-import DashboardEditLinksPage from '../DashboardCircleApplication/DashboardCircleApplicationEditLinksPage'
+import DashboardCircleApplicationDetailPage from '../DashboardCircleApplication/DashboardCircleApplicationDetailPage'
+import DashboardCircleApplicationEditLinksPage from '../DashboardCircleApplication/DashboardCircleApplicationEditLinksPage'
+import DashboardCircleApplicationUpdateCutPage from '../DashboardCircleApplication/DashboardCircleApplicationUpdateCutPage'
 import DashboardTicketListPage from '../DashboardTickets/DashboardTicketListPage'
 import DashboardMyTicketListPage from '../DashboardTickets/DashboardMyTicketListPage'
 import DashboardMyTicketDetailPage from '../DashboardTickets/DashboardMyTicketDetailPage'
@@ -164,18 +165,22 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardApplicationListPage />
+                element: <DashboardCircleApplicationListPage />
               },
               {
                 path: ':hashedAppId',
                 children: [
                   {
                     index: true,
-                    element: <DashboardApplicationDetailPage />,
+                    element: <DashboardCircleApplicationDetailPage />,
                   },
                   {
                     path: 'links',
-                    element: <DashboardEditLinksPage />
+                    element: <DashboardCircleApplicationEditLinksPage />
+                  },
+                  {
+                    path: 'cut',
+                    element: <DashboardCircleApplicationUpdateCutPage />
                   }
                 ]
               }
