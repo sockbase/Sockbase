@@ -157,7 +157,8 @@ service cloud.firestore {
 
     match /_payments/{paymentId} {
       allow read: if request.auth.uid == resource.data.userId
-        || isOrganizationStaff(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id);
+        || (resource.data.applicationId != null && isOrganizationStaff(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id))
+        || (resource.data.ticketId != null && isOrganizationStaff(request.auth.uid, getStore(getTicket(resource.data.ticketId).storeId)._organization.id));
       allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id);
     }
 
