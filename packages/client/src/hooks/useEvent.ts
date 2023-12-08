@@ -106,7 +106,7 @@ const useEvent: () => IUseEvent = () => {
 
     rawAssignSpaces.forEach(space => {
       const appHashDocRef = FirestoreDB
-        .doc(db, `_applicationHashIds/${space.applicationHashId}`)
+        .doc(db, `/_applicationHashIds/${space.applicationHashId}`)
         .withConverter(applicationHashIdConverter)
 
       batch.set(appHashDocRef, {
