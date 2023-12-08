@@ -256,18 +256,13 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
         </>
         <>
-          <h3>サークルカット</h3>
-          {circleCutURL && <CircleCutImage src={circleCutURL} />}
-          <FormSection>
-            <FormItem>
-                <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color="default" inlined>サークルカット変更</LinkButton>
-            </FormItem>
-          </FormSection>
-        </>
-        <>
-          <h3>サークル広報情報</h3>
+          <h3>サークルカット, 広報情報</h3>
           <table>
             <tbody>
+              <tr>
+                <th>サークルカット</th>
+                <td>{circleCutURL && <CircleCutImage src={circleCutURL} />}</td>
+              </tr>
               <tr>
                 <th>Twitter</th>
                 <td>
@@ -303,15 +298,13 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
             </tbody>
           </table>
 
-          {links !== undefined && <FormSection>
-            {!links && hashedAppId
-              ? <FormItem>
-                <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} inlined>サークル広報情報を入力</LinkButton>
-              </FormItem>
-              : <FormItem>
-                <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color="default" inlined>サークル広報情報を編集</LinkButton>
-              </FormItem>}
+          {links !== undefined && hashedAppId && <FormSection>
+            <FormItem inlined>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color='default' inlined>サークルカット変更</LinkButton>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color={links ? 'default' : undefined} inlined>広報情報{links ? '編集' : '入力'}</LinkButton>
+            </FormItem>
           </FormSection>}
+
           {/* <h3>頒布物情報デジタル提出</h3>
           <p>
             入力されていません
@@ -382,7 +375,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
         </>
       </TwoColumnsLayout>
-      
+
       <h3>通信欄</h3>
       <p>
         {app ? (app.remarks || '(空欄)') : <BlinkField />}

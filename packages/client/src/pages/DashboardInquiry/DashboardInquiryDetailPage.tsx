@@ -45,10 +45,6 @@ const DashboardInquiryListPage: React.FC = () => {
           const fetchedInquiry = await getInquiryByIdAsync(inquiryId)
           setInquiry(fetchedInquiry)
 
-          await getUserDataByUserIdAsync(fetchedInquiry.userId)
-          .then((fetchedUserData) => setUserData(fetchedUserData))
-          .catch((err) => { throw err })
-
           const fetchedInquiryMeta = await getInquiryMetaByInquiryIdAsync(inquiryId)
             .then((fetchedMeta) => fetchedMeta)
             .catch(() => {
@@ -60,6 +56,10 @@ const DashboardInquiryListPage: React.FC = () => {
               return dummyMeta
             })
           setInquiryMeta(fetchedInquiryMeta)
+
+          await getUserDataByUserIdAsync(fetchedInquiry.userId)
+            .then((fetchedUserData) => setUserData(fetchedUserData))
+            .catch((err) => { throw err })
         }
 
       fetchInquiry()
@@ -78,7 +78,7 @@ const DashboardInquiryListPage: React.FC = () => {
   const handleChangeStatus = useCallback((status: SockbaseInquiryStatus): void => {
     if (!inquiryId) return
     if (!confirm('ステータスを変更します\nよろしいですか？')) return
-    
+
     setStatusByIdAsync(inquiryId, status)
       .then(() => {
         setInquiryMeta(s => s && ({
@@ -99,7 +99,7 @@ const DashboardInquiryListPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/inquiries">問い合わせ一覧</Link></li>
       </Breadcrumbs>
-      <PageTitle icon={<MdMail />} title={inquiry && getInquiryType(inquiry?.inquiryType).name} description={`#${inquiryId}`} isLoading={!inquiry}/>
+      <PageTitle icon={<MdMail />} title={inquiry && getInquiryType(inquiry?.inquiryType).name} description={`#${inquiryId}`} isLoading={!inquiry} />
       {(!inquiry || !inquiryMeta) && <Loading text={`問い合わせ情報 #${inquiryId}`} />}
       {inquiry && inquiryMeta && <TwoColumnsLayout>
         <>
@@ -134,11 +134,11 @@ const DashboardInquiryListPage: React.FC = () => {
               </tr>
               <tr>
                 <th>作成日</th>
-                <td>{formatByDate(inquiryMeta.createdAt ?? inquiry.createdAt , 'YYYY年M月D日 H時m分')}</td>
+                <td>{formatByDate(inquiryMeta.createdAt ?? inquiry.createdAt, 'YYYY年M月D日 H時m分')}</td>
               </tr>
               <tr>
                 <th>更新日</th>
-                <td>{formatByDate(inquiryMeta.updatedAt ?? inquiry.updatedAt , 'YYYY年M月D日 H時m分')}</td>
+                <td>{formatByDate(inquiryMeta.updatedAt ?? inquiry.updatedAt, 'YYYY年M月D日 H時m分')}</td>
               </tr>
             </tbody>
           </table>
