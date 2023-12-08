@@ -39,7 +39,7 @@ import DashboardStoreDetailPage from '../DashboardStores/DashboardStoreDetailPag
 import DashboardStoreListPage from '../DashboardStores/DashboardStoreListPage'
 import DashboardTicketCreatePage from '../DashboardStores/DashboardStoreTicketCreatePage'
 import DashboardTicketTerminalPage from '../DashboardTickets/DashboardTicketTerminalPage'
-import DebugDashboardPage from '../DashboardDebug/DashboardDebugPage'
+import DashboardLicensePage from '../DashboardLicense/DashboardLicensePage'
 
 import '../../main.css'
 import { getFirebaseApp, initializeAppCheck } from '../../libs/FirebaseApp'
@@ -250,14 +250,10 @@ const router = createBrowserRouter([
               }
             ]
           },
-          ...[
-            import.meta.env.DEV
-              ? {
-                path: 'debug',
-                element: <DebugDashboardPage />
-              }
-              : {}
-          ],
+          {
+            path: 'license',
+            element: <DashboardLicensePage />
+          }
         ]
       }
     ]

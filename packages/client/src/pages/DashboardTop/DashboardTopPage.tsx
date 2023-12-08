@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import {
   MdEditCalendar,
-  MdEditNote,
+  MdCollectionsBookmark,
   MdHome,
   MdInbox,
   MdLocalActivity,
@@ -10,7 +10,8 @@ import {
   MdQrCodeScanner,
   MdSettings,
   MdStore,
-  MdWallet
+  MdWallet,
+  MdBadge
 } from 'react-icons/md'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TopCard from '../../components/Parts/TopCard'
@@ -18,7 +19,7 @@ import useRole from '../../hooks/useRole'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 
 const DashboardTopPage: React.FC = () => {
-  const { commonRole } = useRole()
+  const { systemRole } = useRole()
 
   return (
     <DashboardBaseLayout title="マイページ トップ" requireSystemRole={0}>
@@ -45,7 +46,7 @@ const DashboardTopPage: React.FC = () => {
           description="今までに申し込んだチケット履歴を表示します。" />
         <TopCard
           to="/dashboard/applications"
-          icon={<MdEditNote />}
+          icon={<MdCollectionsBookmark />}
           title="サークル申し込み履歴"
           description="今までに申し込んだサークル参加履歴を表示します。" />
         <TopCard
@@ -69,7 +70,7 @@ const DashboardTopPage: React.FC = () => {
           description="Sockbaseに登録している情報を変更します。" />
       </CardContainer>
 
-      {!!commonRole && commonRole >= 1 && <>
+      {!!systemRole && systemRole >= 1 && <>
         <h2>イベント開催支援</h2>
         <CardContainer>
           <TopCard
@@ -77,10 +78,15 @@ const DashboardTopPage: React.FC = () => {
             icon={<MdQrCodeScanner />}
             title="チケット照会ターミナル"
             description="チケットコードを用いて情報を表示し、使用ステータスを管理します。" />
+            <TopCard
+              to="/dashboard/license"
+              icon={<MdBadge />}
+              title="権限"
+              description="付与されている権限情報を表示します。" />
         </CardContainer>
       </>}
 
-      {!!commonRole && commonRole >= 2 && <>
+      {!!systemRole && systemRole >= 2 && <>
         <h2>システム操作</h2>
         <CardContainer>
           <TopCard
