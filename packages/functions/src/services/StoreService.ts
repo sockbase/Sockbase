@@ -125,7 +125,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     ]
   }
 
-  sendMessageToDiscord(store._organization.id, webhookBody)
+  await sendMessageToDiscord(store._organization.id, webhookBody)
     .then(() => console.log('sent webhook'))
     .catch(err => { throw err })
 
