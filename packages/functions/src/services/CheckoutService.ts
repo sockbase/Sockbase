@@ -217,7 +217,7 @@ const noticeMessage = (paymentId: string, errorDetail: string | null): void => {
       ]
     }
 
-  await sendMessageToDiscord('system', body)
+  sendMessageToDiscord('system', body)
     .catch(err => { throw err })
 }
 
