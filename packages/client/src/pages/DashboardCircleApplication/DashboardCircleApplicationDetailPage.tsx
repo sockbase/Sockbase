@@ -194,6 +194,14 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
                 <th>申し込み状況</th>
                 <td>{app && <ApplicationStatusLabel status={app.meta.applicationStatus} /> || <BlinkField />}</td>
               </tr>
+              {eventSpace?.productInfo && <tr>
+                <th>お支払い状況</th>
+                <td>
+                  <Link to="/dashboard/payments">
+                    {(payment?.status !== undefined && <PaymentStatusLabel payment={payment} />) || <BlinkField />}
+                  </Link>
+                </td>
+              </tr>}
               <tr>
                 <th>申し込んだイベント</th>
                 <td>{event && `${event.eventName} ${formatByDate(event.schedules.startEvent, '(YYYY年M月D日 開催)')}` || <BlinkField />}</td>
@@ -234,14 +242,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
                     : <BlinkField />
                 }</td>
               </tr>
-              {eventSpace?.productInfo && <tr>
-                <th>お支払い状況</th>
-                <td>
-                  <Link to="/dashboard/payments">
-                    {(payment?.status !== undefined && <PaymentStatusLabel payment={payment} />) || <BlinkField />}
-                  </Link>
-                </td>
-              </tr>}
               <tr>
                 <th>申し込みID</th>
                 <td>
