@@ -264,7 +264,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
                 <td>{circleCutURL && <CircleCutImage src={circleCutURL} />}</td>
               </tr>
               <tr>
-                <th>Twitter</th>
+                <th>X</th>
                 <td>
                   {links !== undefined
                     ? links?.twitterScreenName ? `@${links.twitterScreenName}` : '(未入力)'
