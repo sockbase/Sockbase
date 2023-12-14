@@ -57,9 +57,10 @@ const StepContainer: React.FC<Props> = (props) => {
     setSubmitProgressPercent(30)
 
     await createTicketAsync(ticketInfo)
-      .then((result) => {
+      .then(async (result) => {
         setTicketResult(result)
         setSubmitProgressPercent(100)
+        await (new Promise((resolve) => setTimeout(resolve, 2000)))
       })
   }
 

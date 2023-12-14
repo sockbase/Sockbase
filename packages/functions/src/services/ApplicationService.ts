@@ -40,11 +40,11 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     throw new https.HttpsError('already-exists', 'application_already_exists')
   }
 
-  const unionAppHashDoc =  payload.app.unionCircleId
+  const unionAppHashDoc = payload.app.unionCircleId
     ? (await getApplicaitonHashIdAsync(payload.app.unionCircleId)
-        .catch(() => {
-          throw new https.HttpsError('not-found', 'application_invalid_unionCircleId')
-        }))
+      .catch(() => {
+        throw new https.HttpsError('not-found', 'application_invalid_unionCircleId')
+      }))
     : null
   if (unionAppHashDoc !== null) {
     const unionApp = await getApplicationByIdAsync(unionAppHashDoc.applicationId)
@@ -94,9 +94,9 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .doc(`/_applicationLinks/${appId}`)
     .withConverter(applicationLinksConverter)
     .set(links)
-  
+
   const space = event.spaces.filter(s => s.id === payload.app.spaceId)[0]
-  
+
   const bankTransferCode = PaymentService.generateBankTransferCode(now)
   const paymentId = space.productInfo
     ? await PaymentService.createPaymentAsync(
@@ -109,7 +109,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
       appId
     )
     : null
-  
+
   const hashId = generateHashId(payload.app.eventId, appId, now)
   await firestore.doc(`/_applications/${appId}`)
     .set({
@@ -117,7 +117,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     }, {
       merge: true
     })
-  
+
   await firestore.doc(`/_applicationHashIds/${hashId}`)
     .set({
       hashId,
@@ -166,8 +166,8 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
       }
     ]
   }
-  
-  sendMessageToDiscord(event._organization.id, webhookBody)
+
+  await sendMessageToDiscord(event._organization.id, webhookBody)
     .then(() => console.log('sent webhook'))
     .catch(err => { throw err })
 
