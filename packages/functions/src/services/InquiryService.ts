@@ -13,13 +13,13 @@ const addInquiryMetaAsync = async (inquiryId: string): Promise<void> => {
 
   await firestore.doc(`/_inquiries/${inquiryId}/private/meta`)
     .withConverter(inquiryMetaConverter)
-      .set({
-        status: 0,
-        createdAt: now,
-        updatedAt: now
-      }, {
-        merge: true
-      })
+    .set({
+      status: 0,
+      createdAt: now,
+      updatedAt: now
+    }, {
+      merge: true
+    })
 }
 
 const noticeInquiryAsync = async (inquiry: SockbaseInquiryDocument): Promise<void> => {
@@ -60,7 +60,7 @@ const noticeInquiryAsync = async (inquiry: SockbaseInquiryDocument): Promise<voi
     }]
   }
 
-  sendMessageToDiscord('system', body)
+  await sendMessageToDiscord('system', body)
     .catch(err => { throw err })
 }
 
