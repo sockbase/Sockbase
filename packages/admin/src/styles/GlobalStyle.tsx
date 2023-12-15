@@ -32,6 +32,9 @@ html, body, fieldset, textarea {
   margin: 0;
   padding: 0;
 }
+fieldset {
+  border: none;
+}
 #root {
   height: 100%;
 }

@@ -10,10 +10,10 @@ interface Props {
 }
 
 const DefaultBaseLayout: React.FC<Props> = (props) => {
-  const pageTitle = useMemo(() => props.title
-    ? `${props.title} - Sockbase ADMIN`
-    : 'Sockbase ADMIN',
-  [props.title])
+  const pageTitle = useMemo(
+    () => (props.title ? `${props.title} - Sockbase ADMIN` : 'Sockbase ADMIN'),
+    [props.title]
+  )
 
   return (
     <Container>
@@ -28,9 +28,7 @@ const DefaultBaseLayout: React.FC<Props> = (props) => {
           <Sidebar />
         </SidebarWrapper>
       </SidebarContainer>
-      <MainContainer>
-        {props.children}
-      </MainContainer>
+      <MainContainer>{props.children}</MainContainer>
     </Container>
   )
 }
@@ -41,10 +39,15 @@ const Container = styled.div`
   height: 100%;
   display: grid;
   grid-template-columns: 35% 1fr;
+  justify-content: stretch;
   background-color: var(--primary-darkgray-color);
 `
 
 const SidebarContainer = styled.section`
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow-y: auto;
+  border-right: 1px solid var(--border-color);
 `
 const SidebarBrand = styled.section`
   padding: 20px;
@@ -58,12 +61,9 @@ const Logotype = styled.img`
 `
 
 const SidebarWrapper = styled.nav`
-  height: 100%;
-  overflow-y: scroll;
-  border-right: 1px solid var(--border-color);
   padding: 40px;
 `
 const MainContainer = styled.main`
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 `

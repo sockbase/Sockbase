@@ -16,9 +16,7 @@ const MainLayout: React.FC<Props> = (props) => {
           {props.title && <PageTitle>{props.title}</PageTitle>}
           {props.subTitle && <PageSubTitle>{props.subTitle}</PageSubTitle>}
         </PageTitlePanel>
-        <Container>
-          {props.children}
-        </Container>
+        <Container>{props.children}</Container>
       </BaseContainer>
     </DefaultBaseLayout>
   )

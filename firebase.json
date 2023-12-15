@@ -1,21 +1,30 @@
 {
-  "hosting": {
-    "public": "./packages/client/dist",
-    "predeploy": [
-      "yarn workspace client build"
-    ],
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  },
+  "hosting": [
+    {
+      "target": "client",
+      "public": "./packages/client/dist",
+      "predeploy": ["yarn workspace client build"],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
+      "target": "admin",
+      "public": "./packages/admin/dist",
+      "predeploy": ["yarn workspace admin build"],
+      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "rewrites": [
+        {
+          "source": "*",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ],
   "functions": {
     "source": "./packages/functions",
     "predeploy": [
