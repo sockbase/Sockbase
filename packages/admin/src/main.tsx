@@ -12,5 +12,5 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <Colors />
     <GlobalStyle />
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 )

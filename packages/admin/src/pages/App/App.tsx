@@ -2,11 +2,12 @@ import {
   createBrowserRouter,
   Outlet,
   RouterProvider,
-  ScrollRestoration
+  ScrollRestoration,
 } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 
 import IndexPage from '../Index/IndexPage'
+import LoginPage from '../Login/LoginPage'
 
 const Root: React.FC = () => {
   return (
@@ -24,10 +25,14 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <IndexPage />
-      }
-    ]
-  }
+        element: <IndexPage />,
+      },
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
+    ],
+  },
 ])
 
 const App: React.FC = () => {
