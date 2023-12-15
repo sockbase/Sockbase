@@ -1,0 +1,4 @@
+{
+  "githubPullRequests.ignoredPullRequestBranches": ["develop"],
+  "editor.tabSize": 2
+}
