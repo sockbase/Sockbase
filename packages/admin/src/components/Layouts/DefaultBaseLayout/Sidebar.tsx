@@ -12,11 +12,37 @@ import {
   MdLogin,
 } from 'react-icons/md'
 
+import useNotification from '../../../hooks/useNotification'
+import useModal from '../../../hooks/useModal'
+import FormSection from '../../Form/FormSection'
+import FormItem from '../../Form/FormItem'
+import FormButton from '../../Form/FormButton'
+
 const Sidebar: React.FC = () => {
   const navigate = useNavigate()
+  const { addNotification } = useNotification()
+  const { showModal, closeModal } = useModal()
+
+  const handleConfirmLogout = useCallback((): void => {
+    showModal(
+      'ログアウト操作',
+      <>
+        Sockbase 管理パネルからログアウトします。<br />
+        よろしいですか？
+      </>,
+      [
+        <FormSection>
+          <FormItem inlined right>
+            <FormButton onClick={handleLogout} color="danger">ログアウト</FormButton>
+            <FormButton onClick={closeModal}>やめる</FormButton>
+          </FormItem>
+        </FormSection>
+      ])
+  }, [showModal, closeModal])
 
   const handleLogout = useCallback((): void => {
-    confirm('ログアウトしますか？')
+    closeModal()
+    addNotification('ログアウトしました')
   }, [])
 
   const handleTransition = useCallback((link: string): void => {
@@ -37,7 +63,7 @@ const Sidebar: React.FC = () => {
           </MenuItemIcon>
           <MenuItemLabel>ログイン</MenuItemLabel>
         </MenuItemButton>
-        <MenuItemButton onClick={handleLogout}>
+        <MenuItemButton onClick={handleConfirmLogout}>
           <MenuItemIcon>
             <MdLogout />
           </MenuItemIcon>

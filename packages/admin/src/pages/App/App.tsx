@@ -5,16 +5,23 @@ import {
   ScrollRestoration,
 } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
+import { RecoilRoot } from 'recoil'
 
 import IndexPage from '../Index/IndexPage'
 import LoginPage from '../Login/LoginPage'
+import ModalProvider from '../../components/Providers/ModalProvider/ModalProvider'
+import NotificationProvider from '../../components/Providers/NotificationProvider/NotificationProvider'
 
 const Root: React.FC = () => {
   return (
-    <HelmetProvider>
-      <Outlet />
-      <ScrollRestoration />
-    </HelmetProvider>
+    <RecoilRoot>
+      <HelmetProvider>
+        <NotificationProvider />
+        <ModalProvider />
+        <Outlet />
+        <ScrollRestoration />
+      </HelmetProvider>
+    </RecoilRoot>
   )
 }
 

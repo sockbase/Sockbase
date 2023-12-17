@@ -11,6 +11,7 @@ const Colors = createGlobalStyle`
   --primary-darkgray-color: #e2e7ea;
   --sub-dark-color: #808080;
   --border-color: #c8cccf;
+  --danger-color: #b52e2e;
 }
 `
 
