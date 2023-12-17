@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import styled, { css } from 'styled-components'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import {
   MdHome,
   MdQrCodeScanner,
@@ -13,8 +13,14 @@ import {
 } from 'react-icons/md'
 
 const Sidebar: React.FC = () => {
+  const navigate = useNavigate()
+
   const handleLogout = useCallback((): void => {
     confirm('ログアウトしますか？')
+  }, [])
+
+  const handleTransition = useCallback((link: string): void => {
+    navigate(link)
   }, [])
 
   return (
@@ -25,12 +31,12 @@ const Sidebar: React.FC = () => {
       </Card>
 
       <Menu>
-        <MenuItemLink to="/login">
+        <MenuItemButton onClick={() => handleTransition('/login')}>
           <MenuItemIcon>
             <MdLogin />
           </MenuItemIcon>
           <MenuItemLabel>ログイン</MenuItemLabel>
-        </MenuItemLink>
+        </MenuItemButton>
         <MenuItemButton onClick={handleLogout}>
           <MenuItemIcon>
             <MdLogout />
@@ -40,50 +46,50 @@ const Sidebar: React.FC = () => {
       </Menu>
 
       <Menu>
-        <MenuItemLink to="/">
+        <MenuItemButton onClick={() => handleTransition('/')}>
           <MenuItemIcon>
             <MdHome />
           </MenuItemIcon>
           <MenuItemLabel>トップ</MenuItemLabel>
-        </MenuItemLink>
+        </MenuItemButton>
       </Menu>
 
       <MenuTitle>イベント開催支援</MenuTitle>
       <Menu>
-        <MenuItemLink to="">
+        <MenuItemButton onClick={() => handleTransition('')}>
           <MenuItemIcon>
             <MdQrCodeScanner />
           </MenuItemIcon>
           <MenuItemLabel>チケット照会ターミナル</MenuItemLabel>
-        </MenuItemLink>
-        <MenuItemLink to="">
+        </MenuItemButton>
+        <MenuItemButton onClick={() => handleTransition('')}>
           <MenuItemIcon>
             <MdBadge />
           </MenuItemIcon>
           <MenuItemLabel>権限</MenuItemLabel>
-        </MenuItemLink>
+        </MenuItemButton>
       </Menu>
 
       <MenuTitle>システム操作</MenuTitle>
       <Menu>
-        <MenuItemLink to="">
+        <MenuItemButton onClick={() => handleTransition('')}>
           <MenuItemIcon>
             <MdInbox />
           </MenuItemIcon>
           <MenuItemLabel>問い合わせ管理</MenuItemLabel>
-        </MenuItemLink>
-        <MenuItemLink to="">
+        </MenuItemButton>
+        <MenuItemButton onClick={() => handleTransition('')}>
           <MenuItemIcon>
             <MdEditCalendar />
           </MenuItemIcon>
           <MenuItemLabel>イベント管理</MenuItemLabel>
-        </MenuItemLink>
-        <MenuItemLink to="">
+        </MenuItemButton>
+        <MenuItemButton onClick={() => handleTransition('')}>
           <MenuItemIcon>
             <MdStore />
           </MenuItemIcon>
           <MenuItemLabel>チケットストア管理</MenuItemLabel>
-        </MenuItemLink>
+        </MenuItemButton>
       </Menu>
     </Container>
   )
@@ -134,6 +140,7 @@ const MenuItemLinkMixin = css`
   padding: 10px;
   width: 100%;
   background-color: #ffffff;
+  border: none;
   border-bottom: 1px solid var(--border-color);
   cursor: pointer;
   transition: 0.1s ease;
@@ -163,11 +170,6 @@ const MenuItemIcon = styled.span`
   }
 `
 const MenuItemLabel = styled.span``
-const MenuItemLink = styled(Link)`
-  ${MenuItemLinkMixin}
-  text-decoration: none;
-  color: inherit;
-`
 const MenuItemButton = styled.button`
   ${MenuItemLinkMixin}
   font: inherit;
