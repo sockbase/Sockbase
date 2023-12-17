@@ -41,6 +41,7 @@ const Container = styled.div`
   grid-template-columns: 35% 1fr;
   justify-content: stretch;
   background-color: var(--primary-darkgray-color);
+  user-select: none;
 `
 
 const SidebarContainer = styled.section`
