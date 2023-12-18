@@ -11,6 +11,7 @@ import IndexPage from '../Index/IndexPage'
 import LoginPage from '../Login/LoginPage'
 import ModalProvider from '../../components/Providers/ModalProvider/ModalProvider'
 import NotificationProvider from '../../components/Providers/NotificationProvider/NotificationProvider'
+import RequiredLogin from '../../libs/RequiredLogin'
 
 const Root: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const Root: React.FC = () => {
       <HelmetProvider>
         <NotificationProvider />
         <ModalProvider />
+        <RequiredLogin />
         <Outlet />
         <ScrollRestoration />
       </HelmetProvider>
