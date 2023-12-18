@@ -160,7 +160,7 @@ const MenuTitle = styled.div`
   margin-bottom: 5px;
   font-weight: bold;
   font-size: 0.75em;
-  color: var(--sub-dark-color);
+  color: var(--gray-color);
 `
 
 const Menu = styled.div`

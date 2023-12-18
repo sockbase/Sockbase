@@ -9,7 +9,7 @@ const Colors = createGlobalStyle`
   --primary-lightgray-color: #edf2f5;
   --primary-gray-color: #e5eaed;
   --primary-darkgray-color: #e2e7ea;
-  --sub-dark-color: #808080;
+  --gray-color: #808080;
   --border-color: #c8cccf;
   --danger-color: #b52e2e;
   --disable-color: #c0c0c0;
