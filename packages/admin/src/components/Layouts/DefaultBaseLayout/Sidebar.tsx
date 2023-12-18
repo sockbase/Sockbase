@@ -96,13 +96,13 @@ const Sidebar: React.FC = () => {
 
           <MenuTitle>イベント開催支援</MenuTitle>
           <Menu>
-            <MenuItemButton onClick={() => handleTransition('')}>
+            <MenuItemButton onClick={() => handleTransition('/terminal')}>
               <MenuItemIcon>
                 <MdQrCodeScanner />
               </MenuItemIcon>
               <MenuItemLabel>チケット照会ターミナル</MenuItemLabel>
             </MenuItemButton>
-            <MenuItemButton onClick={() => handleTransition('')}>
+            <MenuItemButton onClick={() => handleTransition('/license')}>
               <MenuItemIcon>
                 <MdBadge />
               </MenuItemIcon>
@@ -112,19 +112,19 @@ const Sidebar: React.FC = () => {
 
           <MenuTitle>システム操作</MenuTitle>
           <Menu>
-            <MenuItemButton onClick={() => handleTransition('')}>
+            <MenuItemButton onClick={() => handleTransition('/inquiries')}>
               <MenuItemIcon>
                 <MdInbox />
               </MenuItemIcon>
               <MenuItemLabel>問い合わせ管理</MenuItemLabel>
             </MenuItemButton>
-            <MenuItemButton onClick={() => handleTransition('')}>
+            <MenuItemButton onClick={() => handleTransition('/events')}>
               <MenuItemIcon>
                 <MdEditCalendar />
               </MenuItemIcon>
               <MenuItemLabel>イベント管理</MenuItemLabel>
             </MenuItemButton>
-            <MenuItemButton onClick={() => handleTransition('')}>
+            <MenuItemButton onClick={() => handleTransition('/stores')}>
               <MenuItemIcon>
                 <MdStore />
               </MenuItemIcon>
