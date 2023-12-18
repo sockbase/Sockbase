@@ -7,6 +7,7 @@ const FormInput = styled.input`
   width: 100%;
   font-size: 1rem;
   font-family: inherit;
+  border-radius: 5px;
 
   border: 1px solid var(--border-color);
   outline: none;
