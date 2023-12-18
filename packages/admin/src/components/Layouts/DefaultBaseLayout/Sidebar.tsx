@@ -11,9 +11,9 @@ import {
   MdLogout,
   MdLogin,
 } from 'react-icons/md'
-
 import useNotification from '../../../hooks/useNotification'
 import useModal from '../../../hooks/useModal'
+import useFirebase from '../../../hooks/useFirebase'
 import FormSection from '../../Form/FormSection'
 import FormItem from '../../Form/FormItem'
 import FormButton from '../../Form/FormButton'
@@ -22,26 +22,33 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate()
   const { addNotification } = useNotification()
   const { showModal, closeModal } = useModal()
+  const { user, isLoggedIn, logout } = useFirebase()
 
   const handleConfirmLogout = useCallback((): void => {
     showModal(
       'ログアウト操作',
       <>
-        Sockbase 管理パネルからログアウトします。<br />
+        Sockbase 管理パネルからログアウトします。
+        <br />
         よろしいですか？
       </>,
       [
         <FormSection>
           <FormItem inlined right>
-            <FormButton onClick={handleLogout} color="danger">ログアウト</FormButton>
+            <FormButton onClick={handleLogout} color="danger">
+              ログアウト
+            </FormButton>
             <FormButton onClick={closeModal}>やめる</FormButton>
           </FormItem>
-        </FormSection>
-      ])
+        </FormSection>,
+      ]
+    )
   }, [showModal, closeModal])
 
   const handleLogout = useCallback((): void => {
+    logout()
     closeModal()
+    navigate('/login')
     addNotification('ログアウトしました')
   }, [])
 
@@ -51,72 +58,81 @@ const Sidebar: React.FC = () => {
 
   return (
     <Container>
-      <Card>
-        <CardTitle>ログイン中ユーザ</CardTitle>
-        <CardContent>xxx@sockbase.net</CardContent>
-      </Card>
+      {isLoggedIn === false && (
+        <Menu>
+          <MenuItemButton onClick={() => handleTransition('/login')}>
+            <MenuItemIcon>
+              <MdLogin />
+            </MenuItemIcon>
+            <MenuItemLabel>ログイン</MenuItemLabel>
+          </MenuItemButton>
+        </Menu>
+      )}
 
-      <Menu>
-        <MenuItemButton onClick={() => handleTransition('/login')}>
-          <MenuItemIcon>
-            <MdLogin />
-          </MenuItemIcon>
-          <MenuItemLabel>ログイン</MenuItemLabel>
-        </MenuItemButton>
-        <MenuItemButton onClick={handleConfirmLogout}>
-          <MenuItemIcon>
-            <MdLogout />
-          </MenuItemIcon>
-          <MenuItemLabel>ログアウト</MenuItemLabel>
-        </MenuItemButton>
-      </Menu>
+      {isLoggedIn && (
+        <>
+          <Card>
+            <CardTitle>ログイン中ユーザ</CardTitle>
+            <CardContent>{user?.email}</CardContent>
+          </Card>
 
-      <Menu>
-        <MenuItemButton onClick={() => handleTransition('/')}>
-          <MenuItemIcon>
-            <MdHome />
-          </MenuItemIcon>
-          <MenuItemLabel>トップ</MenuItemLabel>
-        </MenuItemButton>
-      </Menu>
+          <Menu>
+            <MenuItemButton onClick={handleConfirmLogout}>
+              <MenuItemIcon>
+                <MdLogout />
+              </MenuItemIcon>
+              <MenuItemLabel>ログアウト</MenuItemLabel>
+            </MenuItemButton>
+          </Menu>
 
-      <MenuTitle>イベント開催支援</MenuTitle>
-      <Menu>
-        <MenuItemButton onClick={() => handleTransition('')}>
-          <MenuItemIcon>
-            <MdQrCodeScanner />
-          </MenuItemIcon>
-          <MenuItemLabel>チケット照会ターミナル</MenuItemLabel>
-        </MenuItemButton>
-        <MenuItemButton onClick={() => handleTransition('')}>
-          <MenuItemIcon>
-            <MdBadge />
-          </MenuItemIcon>
-          <MenuItemLabel>権限</MenuItemLabel>
-        </MenuItemButton>
-      </Menu>
+          <Menu>
+            <MenuItemButton onClick={() => handleTransition('/')}>
+              <MenuItemIcon>
+                <MdHome />
+              </MenuItemIcon>
+              <MenuItemLabel>トップ</MenuItemLabel>
+            </MenuItemButton>
+          </Menu>
 
-      <MenuTitle>システム操作</MenuTitle>
-      <Menu>
-        <MenuItemButton onClick={() => handleTransition('')}>
-          <MenuItemIcon>
-            <MdInbox />
-          </MenuItemIcon>
-          <MenuItemLabel>問い合わせ管理</MenuItemLabel>
-        </MenuItemButton>
-        <MenuItemButton onClick={() => handleTransition('')}>
-          <MenuItemIcon>
-            <MdEditCalendar />
-          </MenuItemIcon>
-          <MenuItemLabel>イベント管理</MenuItemLabel>
-        </MenuItemButton>
-        <MenuItemButton onClick={() => handleTransition('')}>
-          <MenuItemIcon>
-            <MdStore />
-          </MenuItemIcon>
-          <MenuItemLabel>チケットストア管理</MenuItemLabel>
-        </MenuItemButton>
-      </Menu>
+          <MenuTitle>イベント開催支援</MenuTitle>
+          <Menu>
+            <MenuItemButton onClick={() => handleTransition('')}>
+              <MenuItemIcon>
+                <MdQrCodeScanner />
+              </MenuItemIcon>
+              <MenuItemLabel>チケット照会ターミナル</MenuItemLabel>
+            </MenuItemButton>
+            <MenuItemButton onClick={() => handleTransition('')}>
+              <MenuItemIcon>
+                <MdBadge />
+              </MenuItemIcon>
+              <MenuItemLabel>権限</MenuItemLabel>
+            </MenuItemButton>
+          </Menu>
+
+          <MenuTitle>システム操作</MenuTitle>
+          <Menu>
+            <MenuItemButton onClick={() => handleTransition('')}>
+              <MenuItemIcon>
+                <MdInbox />
+              </MenuItemIcon>
+              <MenuItemLabel>問い合わせ管理</MenuItemLabel>
+            </MenuItemButton>
+            <MenuItemButton onClick={() => handleTransition('')}>
+              <MenuItemIcon>
+                <MdEditCalendar />
+              </MenuItemIcon>
+              <MenuItemLabel>イベント管理</MenuItemLabel>
+            </MenuItemButton>
+            <MenuItemButton onClick={() => handleTransition('')}>
+              <MenuItemIcon>
+                <MdStore />
+              </MenuItemIcon>
+              <MenuItemLabel>チケットストア管理</MenuItemLabel>
+            </MenuItemButton>
+          </Menu>
+        </>
+      )}
     </Container>
   )
 }

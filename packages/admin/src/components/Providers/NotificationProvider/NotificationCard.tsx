@@ -11,9 +11,9 @@ const NotificationCard: React.FC<Props> = (props) => {
   const [seconds, setSeconds] = useState(maxSeconds)
   const [cancelToken, setCancelToken] = useState<NodeJS.Timeout>()
 
-  const onInitialize = (): () => void => {
+  const onInitialize = (): (() => void) => {
     const cancelToken = setInterval(() => {
-      setSeconds(s => s - 1)
+      setSeconds((s) => s - 1)
     }, 1000)
     setCancelToken(cancelToken)
 
@@ -30,11 +30,7 @@ const NotificationCard: React.FC<Props> = (props) => {
   }
   useEffect(onSeconds, [seconds])
 
-  return (
-    <Container seconds={seconds}>
-      {props.message}
-    </Container>
-  )
+  return <Container seconds={seconds}>{props.message}</Container>
 }
 
 export default NotificationCard
@@ -47,13 +43,14 @@ const Container = styled.div<{ seconds: number }>`
   border-radius: 5px;
 
   position: relative;
+  pointer-events: none;
 
   &:after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
-    width: ${props => (props.seconds - 1) / (maxSeconds - 1) * 100}%;
+    width: ${(props) => ((props.seconds - 1) / (maxSeconds - 1)) * 100}%;
     height: 5px;
     background-color: #ffffff80;
     border-radius: 0 0 5px 5px;

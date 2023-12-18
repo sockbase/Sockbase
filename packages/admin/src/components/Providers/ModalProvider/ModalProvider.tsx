@@ -6,13 +6,15 @@ const ModalProvider: React.FC = () => {
   const [modal] = useRecoilState(ModalState)
   return (
     <>
-      {modal && <ModalWrapper>
-        <ModalContainer>
-          <ModalHeader>{modal.title}</ModalHeader>
-          <ModalContent>{modal.body}</ModalContent>
-          <ModalFooter>{modal.footerItems.map(f => f)}</ModalFooter>
-        </ModalContainer>
-      </ModalWrapper>}
+      {modal && (
+        <ModalWrapper>
+          <ModalContainer>
+            <ModalHeader>{modal.title}</ModalHeader>
+            <ModalContent>{modal.body}</ModalContent>
+            <ModalFooter>{modal.footerItems.map((f) => f)}</ModalFooter>
+          </ModalContainer>
+        </ModalWrapper>
+      )}
     </>
   )
 }
@@ -40,7 +42,7 @@ const ModalContainer = styled.div`
 
 const ModalHeader = styled.div`
   padding: 10px;
-  background-color: #404040;
+  background-color: var(--brand-black-color);
   color: var(--brand-white-color);
   font-weight: bold;
   border-radius: 5px 5px 0 0;

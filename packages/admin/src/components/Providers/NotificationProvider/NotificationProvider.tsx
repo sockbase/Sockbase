@@ -7,14 +7,19 @@ const NotificationProvider: React.FC = () => {
   const [notifications, setNotification] = useRecoilState(notificationState)
 
   const handleRemove = (id: string): void => {
-    setNotification(s => (s.filter(n => n.id !== id)))
+    setNotification((s) => s.filter((n) => n.id !== id))
   }
 
   return (
     <>
       <NotificationWrapper>
-        {notifications.map(n =>
-          <NotificationCard key={n.id} message={n.message} handleRemove={() => handleRemove(n.id)} />)}
+        {notifications.map((n) => (
+          <NotificationCard
+            key={n.id}
+            message={n.message}
+            handleRemove={() => handleRemove(n.id)}
+          />
+        ))}
       </NotificationWrapper>
     </>
   )
@@ -31,9 +36,10 @@ const NotificationWrapper = styled.div`
   height: 100%;
 
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: flex-end;
   flex-flow: column;
+  flex-direction: column-reverse;
 
   pointer-events: none;
   /* overflow: hidden; */
