@@ -7,11 +7,17 @@ import {
 import { HelmetProvider } from 'react-helmet-async'
 import { RecoilRoot } from 'recoil'
 
-import IndexPage from '../Index/IndexPage'
-import LoginPage from '../Login/LoginPage'
 import ModalProvider from '../../components/Providers/ModalProvider/ModalProvider'
 import NotificationProvider from '../../components/Providers/NotificationProvider/NotificationProvider'
 import RequiredLogin from '../../libs/RequiredLogin'
+
+import IndexPage from '../Index/IndexPage'
+import LoginPage from '../Login/LoginPage'
+import TicketTerminalPage from '../TicketTerminal/TicketTerminalPage'
+import LicensePage from '../License/LicensePage'
+import InquiryListPage from '../InquiryList/InquiryListPage'
+import EventListPage from '../EventList/EventListPage'
+import StoreListPage from '../StoreList/StoreListPage'
 
 const Root: React.FC = () => {
   return (
@@ -39,6 +45,26 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: <LoginPage />,
+      },
+      {
+        path: 'terminal',
+        element: <TicketTerminalPage />,
+      },
+      {
+        path: 'license',
+        element: <LicensePage />,
+      },
+      {
+        path: 'inquiries',
+        element: <InquiryListPage />,
+      },
+      {
+        path: 'events',
+        element: <EventListPage />,
+      },
+      {
+        path: 'stores',
+        element: <StoreListPage />,
       },
     ],
   },

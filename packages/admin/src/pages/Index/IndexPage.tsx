@@ -1,14 +1,14 @@
 import { MdHome } from 'react-icons/md'
 import MainLayout from '../../components/Layouts/MainLayout/MainLayout'
 
-const IndexPage = (): React.ReactNode => {
+const IndexPage: React.FC = () => {
   return (
     <MainLayout
       title="Sockbase 管理パネル"
       subTitle="Sockbase 管理パネルへようこそ"
       icon={<MdHome />}
     >
-      トップ
+      IndexPage
     </MainLayout>
   )
 }
