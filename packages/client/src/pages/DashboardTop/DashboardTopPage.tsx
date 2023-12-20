@@ -78,11 +78,11 @@ const DashboardTopPage: React.FC = () => {
             icon={<MdQrCodeScanner />}
             title="チケット照会ターミナル"
             description="チケットコードを用いて情報を表示し、使用ステータスを管理します。" />
-            <TopCard
-              to="/dashboard/license"
-              icon={<MdBadge />}
-              title="権限"
-              description="付与されている権限情報を表示します。" />
+          <TopCard
+            to="/dashboard/license"
+            icon={<MdBadge />}
+            title="権限"
+            description="付与されている権限情報を表示します。" />
         </CardContainer>
       </>}
 

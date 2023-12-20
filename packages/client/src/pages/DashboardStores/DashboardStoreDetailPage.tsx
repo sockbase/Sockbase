@@ -319,7 +319,7 @@ const DashboardStoreDetailPage: React.FC = () => {
                       : '-'}
                     &nbsp;
                     {t.hashId && <Small>{ticketUsers?.[t.hashId]?.usableUserId}</Small>}
-                    </td>
+                  </td>
                   <td><Link to={`/dashboard/tickets/${t.hashId}`}>{t.hashId}</Link></td>
                   <td>{formatByDate(t.updatedAt ?? t.createdAt, 'YYYY/MM/DD H:mm:ss')}</td>
                 </tr>)

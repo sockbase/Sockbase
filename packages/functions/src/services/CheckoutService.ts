@@ -170,51 +170,51 @@ const updateStatus = async (
 const noticeMessage = (paymentId: string, errorDetail: string | null): void => {
   const body = errorDetail
     ? {
-        username: 'Sockbase: 決済エラー',
-        embeds: [
-          {
-            title: '決済でエラーが発生しました！',
-            description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
-            url: '',
-            color: 16711680,
-            fields: [
-              {
-                name: '環境',
-                value: firebaseProjectId
-              },
-              {
-                name: 'エラー種類',
-                value: errorDetail
-              },
-              {
-                name: 'Stripe決済ID',
-                value: paymentId
-              }
-            ]
-          }
-        ]
-      }
+      username: 'Sockbase: 決済エラー',
+      embeds: [
+        {
+          title: '決済でエラーが発生しました！',
+          description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
+          url: '',
+          color: 16711680,
+          fields: [
+            {
+              name: '環境',
+              value: firebaseProjectId
+            },
+            {
+              name: 'エラー種類',
+              value: errorDetail
+            },
+            {
+              name: 'Stripe決済ID',
+              value: paymentId
+            }
+          ]
+        }
+      ]
+    }
     : {
-        username: 'Sockbase: 決済完了',
-        embeds: [
-          {
-            title: '決済が完了しました！',
-            description: '以下の決済依頼ステータスを完了にしました。',
-            url: '',
-            color: 65280,
-            fields: [
-              {
-                name: '環境',
-                value: firebaseProjectId
-              },
-              {
-                name: 'Stripe決済ID',
-                value: paymentId
-              }
-            ]
-          }
-        ]
-      }
+      username: 'Sockbase: 決済完了',
+      embeds: [
+        {
+          title: '決済が完了しました！',
+          description: '以下の決済依頼ステータスを完了にしました。',
+          url: '',
+          color: 65280,
+          fields: [
+            {
+              name: '環境',
+              value: firebaseProjectId
+            },
+            {
+              name: 'Stripe決済ID',
+              value: paymentId
+            }
+          ]
+        }
+      ]
+    }
 
   sendMessageToDiscord('system', body)
     .catch(err => { throw err })
