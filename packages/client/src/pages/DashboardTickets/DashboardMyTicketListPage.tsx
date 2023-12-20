@@ -124,7 +124,7 @@ const DashboardMyTicketsPage: React.FC = () => {
                         <td><Link to={`/dashboard/mytickets/${t.hashId}`}>詳細</Link></td>
                       </tr>)
                   : <tr>
-                    <td colSpan={5}>使用済みチケットはありません。</td>  
+                    <td colSpan={5}>使用済みチケットはありません。</td>
                   </tr>}
               </tbody>
             </table>

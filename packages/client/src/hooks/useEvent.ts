@@ -6,7 +6,7 @@ import useFirebase from './useFirebase'
 import {
   applicationHashIdConverter,
   eventConverter,
-  spaceConverter,
+  spaceConverter
 } from '../libs/converters'
 
 interface IUseEvent {
@@ -109,7 +109,7 @@ const useEvent = (): IUseEvent => {
         const spaceDoc: SockbaseSpaceDocument = {
           ...space,
           id: '',
-          eventId,
+          eventId
         }
         const addResult = await FirestoreDB.addDoc(spacesRef, spaceDoc).catch(
           (err) => {
@@ -118,7 +118,7 @@ const useEvent = (): IUseEvent => {
         )
         return {
           ...spaceDoc,
-          id: addResult.id,
+          id: addResult.id
         }
       })
     ).catch((err) => {
@@ -143,7 +143,7 @@ const useEvent = (): IUseEvent => {
       batch.set(
         appHashDocRef,
         {
-          spaceId: space.spaceId,
+          spaceId: space.spaceId
         },
         { merge: true }
       )
@@ -161,7 +161,7 @@ const useEvent = (): IUseEvent => {
     getSpaceOptionalAsync,
     getSpacesAsync,
     createSpacesAsync,
-    assignSpacesAsync,
+    assignSpacesAsync
   }
 }
 

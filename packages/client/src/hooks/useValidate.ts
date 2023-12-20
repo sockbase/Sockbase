@@ -77,7 +77,7 @@ const useValidate = (): IUseValidate => {
     isTwitterScreenName,
     isOnlyNumber,
     isURL,
-    equals,
+    equals
   }
 }
 

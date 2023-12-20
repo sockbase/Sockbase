@@ -48,8 +48,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
   if (!paymentId) {
     res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
     return
-  }
-  else if (typeof paymentId !== 'string') {
+  } else if (typeof paymentId !== 'string') {
     res.status(500).send({ error: 'MissingType', detail: 'paymentId type is missing' })
     return
   }
@@ -76,7 +75,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
   const payment = await collectPayments(user.uid, Status.Pending, productItemIds)
   if (!payment) {
     res.status(404).send({ error: 'NotFound', detail: 'required payment is not found' })
-    noticeMessage(paymentId, `required payment is not found`)
+    noticeMessage(paymentId, 'required payment is not found')
     return
   }
 
@@ -88,7 +87,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
 
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(paymentId, `required product item is not found`)
+        noticeMessage(paymentId, 'required product item is not found')
         return
       }
       break
@@ -97,7 +96,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     case HANDLEABLE_EVENTS.asyncPaymentSuccessed: {
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(paymentId, `required product item is not found`)
+        noticeMessage(paymentId, 'required product item is not found')
         return
       }
       break
@@ -106,7 +105,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     case HANDLEABLE_EVENTS.asyncPaymentFailed: {
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.PaymentFailure, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(paymentId, `required product item is not found`,)
+        noticeMessage(paymentId, 'required product item is not found')
         return
       }
       break
@@ -171,51 +170,51 @@ const updateStatus = async (
 const noticeMessage = (paymentId: string, errorDetail: string | null): void => {
   const body = errorDetail
     ? {
-      username: 'Sockbase: 決済エラー',
-      embeds: [
-        {
-          title: '決済でエラーが発生しました！',
-          description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
-          url: '',
-          color: 16711680,
-          fields: [
-            {
-              name: '環境',
-              value: firebaseProjectId
-            },
-            {
-              name: 'エラー種類',
-              value: errorDetail
-            },
-            {
-              name: 'Stripe決済ID',
-              value: paymentId
-            }
-          ]
-        }
-      ]
-    }
+        username: 'Sockbase: 決済エラー',
+        embeds: [
+          {
+            title: '決済でエラーが発生しました！',
+            description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
+            url: '',
+            color: 16711680,
+            fields: [
+              {
+                name: '環境',
+                value: firebaseProjectId
+              },
+              {
+                name: 'エラー種類',
+                value: errorDetail
+              },
+              {
+                name: 'Stripe決済ID',
+                value: paymentId
+              }
+            ]
+          }
+        ]
+      }
     : {
-      username: 'Sockbase: 決済完了',
-      embeds: [
-        {
-          title: '決済が完了しました！',
-          description: '以下の決済依頼ステータスを完了にしました。',
-          url: '',
-          color: 65280,
-          fields: [
-            {
-              name: '環境',
-              value: firebaseProjectId
-            },
-            {
-              name: 'Stripe決済ID',
-              value: paymentId
-            }
-          ]
-        }
-      ]
-    }
+        username: 'Sockbase: 決済完了',
+        embeds: [
+          {
+            title: '決済が完了しました！',
+            description: '以下の決済依頼ステータスを完了にしました。',
+            url: '',
+            color: 65280,
+            fields: [
+              {
+                name: '環境',
+                value: firebaseProjectId
+              },
+              {
+                name: 'Stripe決済ID',
+                value: paymentId
+              }
+            ]
+          }
+        ]
+      }
 
   sendMessageToDiscord('system', body)
     .catch(err => { throw err })

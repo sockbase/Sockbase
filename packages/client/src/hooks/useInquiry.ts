@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import type {
   SockbaseInquiryDocument,
   SockbaseInquiryMetaDocument,
-  SockbaseInquiryStatus,
+  SockbaseInquiryStatus
 } from 'sockbase'
 import useFirebase from './useFirebase'
 import * as FirestoreDB from 'firebase/firestore'
@@ -31,7 +31,7 @@ export const inquiryConverter: FirestoreDB.FirestoreDataConverter<SockbaseInquir
     toFirestore: (inquiry: SockbaseInquiryDocument) => ({
       status: inquiry.status,
       createdAt: null,
-      updatedAt: null,
+      updatedAt: null
     }),
     fromFirestore: (
       snapshot: FirestoreDB.QueryDocumentSnapshot
@@ -48,15 +48,15 @@ export const inquiryConverter: FirestoreDB.FirestoreDataConverter<SockbaseInquir
           : null,
         updatedAt: inquiry.updatedAt
           ? new Date(inquiry.updatedAt.seconds * 1000)
-          : null,
+          : null
       }
-    },
+    }
   }
 
 export const inquiryMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseInquiryMetaDocument> =
   {
     toFirestore: (meta: SockbaseInquiryMetaDocument) => ({
-      status: meta.status,
+      status: meta.status
     }),
     fromFirestore: (
       snapshot: FirestoreDB.QueryDocumentSnapshot
@@ -69,9 +69,9 @@ export const inquiryMetaConverter: FirestoreDB.FirestoreDataConverter<SockbaseIn
           : null,
         updatedAt: meta.updatedAt
           ? new Date(meta.updatedAt.seconds * 1000)
-          : null,
+          : null
       }
-    },
+    }
   }
 
 const useInquiry = (): IUseInquiry => {
@@ -93,7 +93,7 @@ const useInquiry = (): IUseInquiry => {
         id: '',
         createdAt: null,
         updatedAt: null,
-        status: 0,
+        status: 0
       }
 
       await FirestoreDB.addDoc(inquiryRef, inquiryDoc)
@@ -149,7 +149,7 @@ const useInquiry = (): IUseInquiry => {
 
   const getInquiryType = (
     inquiryType: string
-  ): { type: string; name: string; description: string } =>
+  ): { type: string, name: string, description: string } =>
     inquiryHelper.inquiryTypes.filter((t) => t.type === inquiryType)[0]
 
   const setStatusByIdAsync = async (
@@ -165,10 +165,10 @@ const useInquiry = (): IUseInquiry => {
     await FirestoreDB.setDoc(
       inquiryMetaRef,
       {
-        status,
+        status
       },
       {
-        merge: true,
+        merge: true
       }
     )
   }
@@ -179,7 +179,7 @@ const useInquiry = (): IUseInquiry => {
     getInquiryByIdAsync,
     getInquiryMetaByInquiryIdAsync,
     getInquiryType,
-    setStatusByIdAsync,
+    setStatusByIdAsync
   }
 }
 

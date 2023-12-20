@@ -20,9 +20,9 @@ const storeConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseStoreD
         rules: data.rules,
         schedules: data.schedules,
         _organization: data._organization,
-        types: data.types,
+        types: data.types
       }
-    },
+    }
   }
 
 const ticketConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseTicketDocument> =
@@ -46,30 +46,30 @@ const ticketConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseTicke
           ? new Date(data.updatedAt.seconds * 1000)
           : null,
         hashId: data.hashId,
-        createdUserId: data.createdUserId,
+        createdUserId: data.createdUserId
       }
-    },
+    }
   }
 
 const ticketMetaConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseTicketMeta> =
   {
     toFirestore: (ticketMeta: sockbase.SockbaseTicketMeta) => ({
-      applicationStatus: ticketMeta.applicationStatus,
+      applicationStatus: ticketMeta.applicationStatus
     }),
     fromFirestore: (
       snapshot: FirestoreDB.QueryDocumentSnapshot
     ): sockbase.SockbaseTicketMeta => {
       const data = snapshot.data()
       return {
-        applicationStatus: data.applicationStatus,
+        applicationStatus: data.applicationStatus
       }
-    },
+    }
   }
 
 const ticketUserConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseTicketUserDocument> =
   {
     toFirestore: (data: sockbase.SockbaseTicketUserDocument) => ({
-      usableUserId: data.usableUserId,
+      usableUserId: data.usableUserId
     }),
     fromFirestore: (
       snapshot: FirestoreDB.QueryDocumentSnapshot
@@ -82,16 +82,16 @@ const ticketUserConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseT
         typeId: data.typeId,
         usableUserId: data.usableUserId,
         used: data.used,
-        usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null,
+        usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
       }
-    },
+    }
   }
 
 const ticketUsedStatusConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseTicketUsedStatus> =
   {
     toFirestore: (usedStatus: sockbase.SockbaseTicketUsedStatus) => ({
       used: usedStatus.used,
-      usedAt: FirestoreDB.serverTimestamp(),
+      usedAt: FirestoreDB.serverTimestamp()
     }),
     fromFirestore: (
       snapshot: FirestoreDB.QueryDocumentSnapshot
@@ -99,9 +99,9 @@ const ticketUsedStatusConverter: FirestoreDB.FirestoreDataConverter<sockbase.Soc
       const data = snapshot.data()
       return {
         used: data.used,
-        usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null,
+        usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
       }
-    },
+    }
   }
 
 const ticketHashIdConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseTicketHashIdDocument> =
@@ -114,9 +114,9 @@ const ticketHashIdConverter: FirestoreDB.FirestoreDataConverter<sockbase.Sockbas
       return {
         hashId: data.hashId,
         ticketId: data.ticketId,
-        paymentId: data.paymentId,
+        paymentId: data.paymentId
       }
-    },
+    }
   }
 
 interface IUseStore {
@@ -131,7 +131,7 @@ interface IUseStore {
   ) => Promise<sockbase.SockbaseTicketAddedResult>
   createTicketForAdminAsync: (
     storeId: string,
-    createTicketData: { email: string; typeId: string }
+    createTicketData: { email: string, typeId: string }
   ) => Promise<sockbase.SockbaseTicketCreatedResult>
   getTicketIdByHashIdAsync: (
     ticketHashId: string
@@ -166,10 +166,10 @@ interface IUseStore {
     storeId: string
   ) => Promise<sockbase.SockbaseTicketDocument[]>
   getMyTicketsAsync: () => Promise<
-    sockbase.SockbaseTicketDocument[] | undefined
+  sockbase.SockbaseTicketDocument[] | undefined
   >
   getUsableTicketsAsync: () => Promise<
-    sockbase.SockbaseTicketUserDocument[] | undefined
+  sockbase.SockbaseTicketUserDocument[] | undefined
   >
   assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
   unassignTicketUserAsync: (ticketHashId: string) => Promise<void>
@@ -211,8 +211,8 @@ const useStore = (): IUseStore => {
   ): Promise<sockbase.SockbaseTicketAddedResult> => {
     const functions = getFunctions()
     const createTicketFunction = FirebaseFunctions.httpsCallable<
-      sockbase.SockbaseTicket,
-      sockbase.SockbaseTicketAddedResult
+    sockbase.SockbaseTicket,
+    sockbase.SockbaseTicketAddedResult
     >(functions, 'store-createTicket')
 
     const appResult = await createTicketFunction(ticket)
@@ -221,17 +221,17 @@ const useStore = (): IUseStore => {
 
   const createTicketForAdminAsync = async (
     storeId: string,
-    createTicketData: { email: string; typeId: string }
+    createTicketData: { email: string, typeId: string }
   ): Promise<sockbase.SockbaseTicketCreatedResult> => {
     const funcstions = getFunctions()
     const createTicketForAdminFunction = FirebaseFunctions.httpsCallable<
-      { storeId: string; createTicketData: { email: string; typeId: string } },
-      sockbase.SockbaseTicketCreatedResult
+    { storeId: string, createTicketData: { email: string, typeId: string } },
+    sockbase.SockbaseTicketCreatedResult
     >(funcstions, 'store-createTicketForAdmin')
 
     const ticketResult = await createTicketForAdminFunction({
       storeId,
-      createTicketData,
+      createTicketData
     })
     return ticketResult.data
   }
@@ -406,14 +406,14 @@ const useStore = (): IUseStore => {
   }
 
   const getMyTicketsAsync = useCallback(async (): Promise<
-    sockbase.SockbaseTicketDocument[] | undefined
+  sockbase.SockbaseTicketDocument[] | undefined
   > => {
     if (!user) return
     return await getTicketsByUserIdAsync(user.uid)
   }, [user])
 
   const getUsableTicketsAsync = useCallback(async (): Promise<
-    sockbase.SockbaseTicketUserDocument[] | undefined
+  sockbase.SockbaseTicketUserDocument[] | undefined
   > => {
     if (!user) return
 
@@ -485,9 +485,9 @@ const useStore = (): IUseStore => {
           (usableUserId && usableUsers[usableUserId]?.name) ?? '未入力',
           (usableUserId && usableUsers[usableUserId]?.postalCode) ?? '未入力',
           (usableUserId && usableUsers[usableUserId]?.address) ?? '未入力',
-          (usableUserId && usableUsers[usableUserId]?.telephone) ?? '未入力',
+          (usableUserId && usableUsers[usableUserId]?.telephone) ?? '未入力'
         ].join(',')
-      }),
+      })
     ].join('\n')
   }
 
@@ -510,7 +510,7 @@ const useStore = (): IUseStore => {
     getUsableTicketsAsync,
     assignTicketUserAsync,
     unassignTicketUserAsync,
-    exportCSV,
+    exportCSV
   }
 }
 

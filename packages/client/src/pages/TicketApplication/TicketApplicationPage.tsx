@@ -35,7 +35,7 @@ const TicketApplicationPage: React.FC = () => {
   }
   useEffect(onInitialize, [getMyUserDataAsync])
 
-  const pageTitle = useMemo(() => store && `${store.storeName} チケット申し込みフォーム` || '', [store])
+  const pageTitle = useMemo(() => (store && `${store.storeName} チケット申し込みフォーム`) || '', [store])
 
   return (
     <DefaultBaseLayout title={pageTitle}>

@@ -11,7 +11,7 @@ const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
     birthday: userData.birthday,
     postalCode: userData.postalCode,
     address: userData.address,
-    telephone: userData.telephone,
+    telephone: userData.telephone
   }),
   fromFirestore: (
     snapshot: FirestoreDB.QueryDocumentSnapshot,
@@ -24,9 +24,9 @@ const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
       birthday: new Date(data.birthday).getTime(),
       postalCode: data.postalCode,
       address: data.address,
-      telephone: data.telephone,
+      telephone: data.telephone
     }
-  },
+  }
 }
 
 interface IUseUserData {
@@ -151,7 +151,7 @@ const useUserData = (): IUseUserData => {
     getUserDataByUserIdAsync,
     getUserDataByUserIdAndEventIdAsync,
     getUserDataByUserIdAndStoreIdAsync,
-    getUserDataByUserIdAndStoreIdOptionalAsync,
+    getUserDataByUserIdAndStoreIdOptionalAsync
   }
 }
 

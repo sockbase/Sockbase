@@ -39,7 +39,7 @@ const useQRReader = (): IUseQRReader => {
 
   return {
     data,
-    QRReaderComponent,
+    QRReaderComponent
   }
 }
 

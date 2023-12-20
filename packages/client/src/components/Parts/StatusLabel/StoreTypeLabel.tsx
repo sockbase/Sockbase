@@ -6,7 +6,6 @@ interface Props {
   type: SockbaseStoreType | undefined
 }
 const StoreTypeLabel: React.FC<Props> = (props) => {
-
   return (
     <Container bgColor={props.type?.color || '#808080'}>
       {props.type?.name ?? <BlinkField />}

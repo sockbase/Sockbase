@@ -30,7 +30,7 @@ const useFile = (): IUseFile => {
     data,
     error,
     openAsText,
-    openAsDataURL,
+    openAsDataURL
   }
 }
 

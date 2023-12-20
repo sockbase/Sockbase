@@ -22,9 +22,9 @@ const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<Application
       return {
         applicationId: hashDoc.applicationId,
         hashId: hashDoc.hashId,
-        paymentId: hashDoc.paymentId,
+        paymentId: hashDoc.paymentId
       }
-    },
+    }
   }
 
 const paymentConverter: FirestoreDB.FirestoreDataConverter<SockbasePaymentDocument> =
@@ -53,9 +53,9 @@ const paymentConverter: FirestoreDB.FirestoreDataConverter<SockbasePaymentDocume
           : null,
         updatedAt: payment.updatedAt
           ? new Date(payment.updatedAt.seconds * 1000)
-          : null,
+          : null
       }
-    },
+    }
   }
 
 interface IUsePayment {
@@ -123,7 +123,7 @@ const usePayment = (): IUsePayment => {
   return {
     getPaymentIdByHashId,
     getPaymentsByUserId,
-    getPaymentAsync,
+    getPaymentAsync
   }
 }
 

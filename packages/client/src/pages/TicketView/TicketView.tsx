@@ -78,14 +78,14 @@ const TicketView: React.FC<Props> = (props) => {
             ? <>
               <Alert title="チケットの割り当てが完了していません" type="danger">
                 このチケットを使うユーザの割り当てが完了していません。
-                {props.userId !== ticketUser.userId
-                  && <>
+                {props.userId !== ticketUser.userId &&
+                  <>
                     <br />
                     チケット購入者からチケット受け取りURLを送付してもらい、情報を入力してください。
                   </>}
               </Alert>
-              {props.userId === ticketUser.userId
-                && <>
+              {props.userId === ticketUser.userId &&
+                <>
                   <p>
                     自分でこのチケットを使う場合は「チケットを有効化する」を押してください。<br />
                     他の方にチケットを渡す場合は、<Link to={`/dashboard/tickets/${props.ticketHashId}`}>チケット情報表示ページ</Link> から チケット受け取りURL を渡してください。
@@ -104,8 +104,8 @@ const TicketView: React.FC<Props> = (props) => {
                 ? <Alert type="danger" title="使用済みです">
                   このチケットは既に使用されています。
                 </Alert>
-                : ticketUser && props.userId !== ticketUser.usableUserId
-                && <Alert title="他の方に割り当てられているチケットです" type="danger">
+                : ticketUser && props.userId !== ticketUser.usableUserId &&
+                <Alert title="他の方に割り当てられているチケットです" type="danger">
                   あなたが使用すると、割り当てた方が使用できなくなります。<br />
                   自分のチケットは <Link to="/dashboard/mytickets">マイチケット</Link> から確認できます。
                 </Alert>}

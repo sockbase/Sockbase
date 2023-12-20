@@ -39,8 +39,8 @@ const DashboardInquiryListPage: React.FC = () => {
             .map(async i => ({
               id: i.id,
               data: await getInquiryMetaByInquiryIdAsync(i.id)
-                      .then((fetchedMeta) => fetchedMeta)
-                      .catch(() => null)
+                .then((fetchedMeta) => fetchedMeta)
+                .catch(() => null)
             })))
             .then((fetchedMetas) => {
               const mappedMetas = fetchedMetas.reduce<Record<string, SockbaseInquiryMetaDocument | null>>((p, c) => ({

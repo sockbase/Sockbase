@@ -30,8 +30,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
   const store = storeDoc.data()
   if (!store) {
     throw new functions.https.HttpsError('not-found', 'store')
-  }
-  else if (store.schedules.startApplication >= timestamp || timestamp > store.schedules.endApplication) {
+  } else if (store.schedules.startApplication >= timestamp || timestamp > store.schedules.endApplication) {
     throw new functions.https.HttpsError('deadline-exceeded', 'store_out_of_term')
   }
 
@@ -68,7 +67,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     .filter(t => !t.private)
     .filter(t => t.id === ticket.typeId)[0]
   if (!type) {
-    throw new functions.https.HttpsError('not-found', 'type');
+    throw new functions.https.HttpsError('not-found', 'type')
   }
 
   const bankTransferCode = PaymentService.generateBankTransferCode(now)

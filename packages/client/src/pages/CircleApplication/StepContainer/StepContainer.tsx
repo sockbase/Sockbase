@@ -68,7 +68,7 @@ const StepContainer: React.FC<Props> = (props) => {
         .then(async createdAppResult => {
           setSubmitProgressPercent(80)
           setAppResult(createdAppResult)
-          
+
           await uploadCircleCutFileAsync(createdAppResult.hashId, circleCutFile)
             .then(async () => {
               setSubmitProgressPercent(100)

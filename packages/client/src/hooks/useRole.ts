@@ -63,8 +63,7 @@ const useRole = (): IUseRole => {
 
   const commonRole = useMemo((): SockbaseRole | null | undefined => {
     if (roles === undefined) return undefined
-    if (roles === null)
-      return sockbaseShared.enumerations.user.permissionRoles.user
+    if (roles === null) { return sockbaseShared.enumerations.user.permissionRoles.user }
 
     const maxRole = Math.max(...Object.values(roles))
     return maxRole as SockbaseRole
@@ -72,8 +71,7 @@ const useRole = (): IUseRole => {
 
   const systemRole = useMemo((): SockbaseRole | null | undefined => {
     if (roles === undefined) return undefined
-    if (roles === null)
-      return sockbaseShared.enumerations.user.permissionRoles.user
+    if (roles === null) { return sockbaseShared.enumerations.user.permissionRoles.user }
 
     const role =
       roles.system !== undefined
@@ -86,7 +84,7 @@ const useRole = (): IUseRole => {
     checkIsAdminByOrganizationId,
     isAdminByAnyOrganization,
     commonRole,
-    systemRole,
+    systemRole
   }
 }
 

@@ -24,7 +24,7 @@ const Container = styled.div`
   border-radius: 5px;
 `
 
-const Progress = styled.div<{percent: number}>`
+const Progress = styled.div<{ percent: number }>`
   padding: 0 ${props => props.percent > 0 ? 5 : 0}px;
   width: ${props => props.percent}%;
   text-align: right;

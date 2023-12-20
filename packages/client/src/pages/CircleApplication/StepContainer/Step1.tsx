@@ -99,29 +99,29 @@ const Step1: React.FC<Props> = (props) => {
   const [error, setError] = useState<string | undefined>()
 
   const onInitialize = (): void => {
-      if (props.app) {
-        setApp(props.app)
-      }
-
-      if (props.links) {
-        setLinks(props.links)
-      }
-
-      if (props.leaderUserData) {
-        setLeaderUserData(props.leaderUserData)
-        setDisplayBirthday(s => formatByDate(props.leaderUserData?.birthday, 'YYYY-MM-DD'))
-      }
-      
-      if (props.circleCutFile) {
-        setCircleCutFile(props.circleCutFile)
-      }
-      
-      if (props.event.spaces) {
-        setSpaceIds(props.event.spaces.map(i => i.id))
-      }
-
-      setPaymentMethodIds(sockbaseShared.constants.payment.methods.map(i => i.id))
+    if (props.app) {
+      setApp(props.app)
     }
+
+    if (props.links) {
+      setLinks(props.links)
+    }
+
+    if (props.leaderUserData) {
+      setLeaderUserData(props.leaderUserData)
+      setDisplayBirthday(s => formatByDate(props.leaderUserData?.birthday, 'YYYY-MM-DD'))
+    }
+
+    if (props.circleCutFile) {
+      setCircleCutFile(props.circleCutFile)
+    }
+
+    if (props.event.spaces) {
+      setSpaceIds(props.event.spaces.map(i => i.id))
+    }
+
+    setPaymentMethodIds(sockbaseShared.constants.payment.methods.map(i => i.id))
+  }
   useEffect(onInitialize, [props.app, props.links, props.leaderUserData, props.circleCutFile, props.event])
 
   const onChangeCircleCutFile: () => void =
