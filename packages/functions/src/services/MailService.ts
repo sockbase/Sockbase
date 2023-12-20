@@ -43,7 +43,7 @@ const sendMailUpdateUnionCircleAsync = async (app: SockbaseApplicationDocument):
   const unionApp = await getApplicationByIdAsync(unionAppHash.applicationId)
   const event = await getEventByIdAsync(unionApp.eventId)
   const unionUserEmail = await getEmail(unionApp.userId)
-  
+
   const template = mailConfig.templates.updateUnionCircle(event, app, unionApp)
   await addQueueAsync(unionUserEmail, template)
 }
@@ -60,7 +60,7 @@ const sendMailRequestPaymentAsync = async (payment: SockbasePaymentDocument): Pr
   await addQueueAsync(email, template)
 }
 
-const requestCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId: string, email: string): Promise<{ subject: string; body: string[]; }> => {
+const requestCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId: string, email: string): Promise<{ subject: string, body: string[] }> => {
   const app = await getApplicationByIdAsync(appId)
   const event = await getEventByIdAsync(app.eventId)
   const space = event.spaces.filter(s => s.id === app.spaceId)[0]
@@ -68,7 +68,7 @@ const requestCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId
   return mailConfig.templates.requestCirclePayment(payment, app, event, space, email)
 }
 
-const requestTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticketId: string, email: string): Promise<{ subject: string; body: string[]; }> => {
+const requestTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticketId: string, email: string): Promise<{ subject: string, body: string[] }> => {
   const ticket = await getTicketByIdAsync(ticketId)
   const store = await getStoreByIdAsync(ticket.storeId)
   const type = store.types.filter(t => t.id === ticket.typeId)[0]
@@ -86,11 +86,11 @@ const sendMailAcceptPaymentAsync = async (payment: SockbasePaymentDocument): Pro
       ? await acceptTicketPaymentAsync(payment, payment.ticketId)
       : null
   if (!template) return
-    
+
   await addQueueAsync(email, template)
 }
 
-const acceptCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId: string): Promise<{ subject: string; body: string[]; }> => {
+const acceptCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId: string): Promise<{ subject: string, body: string[] }> => {
   const app = await getApplicationByIdAsync(appId)
   const event = await getEventByIdAsync(app.eventId)
   const space = event.spaces.filter(s => s.id === app.spaceId)[0]
@@ -98,7 +98,7 @@ const acceptCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId:
   return mailConfig.templates.acceptCirclePayment(payment, app, event, space)
 }
 
-const acceptTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticketId: string): Promise<{ subject: string; body: string[]; }> => {
+const acceptTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticketId: string): Promise<{ subject: string, body: string[] }> => {
   const ticket = await getTicketByIdAsync(ticketId)
   const store = await getStoreByIdAsync(ticket.storeId)
   const type = store.types.filter(t => t.id === ticket.typeId)[0]
@@ -115,12 +115,12 @@ const sendMailAcceptInquiryAsync = async (inquiry: SockbaseInquiryDocument): Pro
 }
 
 const getEmail = async (userId: string): Promise<string> => {
-    const user = await auth.getUser(userId)
-    if (!user.email) {
-      throw new Error('email no set')
-    }
-    return user.email
+  const user = await auth.getUser(userId)
+  if (!user.email) {
+    throw new Error('email no set')
   }
+  return user.email
+}
 
 const addQueueAsync = async (email: string, content: { subject: string, body: string[] }): Promise<void> => {
   await firestore.collection('_mails')

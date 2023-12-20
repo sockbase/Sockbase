@@ -130,7 +130,7 @@ const Step2: React.FC<Props> = (props) => {
           </LoadingCircleWrapper>
         </FormItem>
       </FormSection>
-      
+
       {isProgressing && <>
         <ProgressBar percent={props.submitProgressPercent}/>
         <Alert>

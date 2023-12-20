@@ -61,7 +61,7 @@ const IndexPage: React.FC = () => {
               error={error} />
       }
 
-      {firebase.user !== null &&<FormSection>
+      {firebase.user !== null && <FormSection>
         <FormItem>
           <LinkButton to="/dashboard" disabled={!firebase.user}>マイページに進む</LinkButton>
         </FormItem>

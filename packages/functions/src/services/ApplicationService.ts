@@ -42,9 +42,9 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
 
   const unionAppHashDoc = payload.app.unionCircleId
     ? (await getApplicaitonHashIdAsync(payload.app.unionCircleId)
-      .catch(() => {
-        throw new https.HttpsError('not-found', 'application_invalid_unionCircleId')
-      }))
+        .catch(() => {
+          throw new https.HttpsError('not-found', 'application_invalid_unionCircleId')
+        }))
     : null
   if (unionAppHashDoc !== null) {
     const unionApp = await getApplicationByIdAsync(unionAppHashDoc.applicationId)

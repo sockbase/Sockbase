@@ -35,7 +35,7 @@ const useFirebaseError = (): IUseFirebaseError => {
   }
 
   return {
-    localize,
+    localize
   }
 }
 

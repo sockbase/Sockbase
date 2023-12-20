@@ -62,15 +62,15 @@ const TicketAssignPage: React.FC = () => {
       {userData?.email && <Alert>
         {userData.email} としてログイン中です
       </Alert>}
-      {ticketHashId
-        && (ticketUser === undefined || !store || userData === undefined)
-        && <Loading text="チケット情報" />}
-      {ticketHashId && isLoggedIn !== undefined
-        && ticketUser && !ticketUser.usableUserId && store && userData !== undefined
-        && <StepContainer isLoggedIn={isLoggedIn} ticketHashId={ticketHashId} ticketUser={ticketUser} store={store} userData={userData} />}
+      {ticketHashId &&
+        (ticketUser === undefined || !store || userData === undefined) &&
+        <Loading text="チケット情報" />}
+      {ticketHashId && isLoggedIn !== undefined &&
+        ticketUser && !ticketUser.usableUserId && store && userData !== undefined &&
+        <StepContainer isLoggedIn={isLoggedIn} ticketHashId={ticketHashId} ticketUser={ticketUser} store={store} userData={userData} />}
 
-      {ticketHashId && ticketUser?.usableUserId
-        && <>
+      {ticketHashId && ticketUser?.usableUserId &&
+        <>
           <Alert type="danger" title="受け取り済みのチケットです">
             このチケットは既に受け取り済みです。
           </Alert>
@@ -81,8 +81,8 @@ const TicketAssignPage: React.FC = () => {
           </FormSection>}
         </>
       }
-      {(!ticketHashId || ticketUser === null)
-        && <Alert type="danger" title="チケット情報が見つかりませんでした">
+      {(!ticketHashId || ticketUser === null) &&
+        <Alert type="danger" title="チケット情報が見つかりませんでした">
           URLが間違っています。
         </Alert>}
     </DefaultBaseLayout>

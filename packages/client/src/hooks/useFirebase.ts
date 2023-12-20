@@ -12,19 +12,19 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   onIdTokenChanged,
-  sendEmailVerification,
+  sendEmailVerification
 } from 'firebase/auth'
 import {
   type Firestore,
-  getFirestore as getFirebaseFirestore,
+  getFirestore as getFirebaseFirestore
 } from 'firebase/firestore'
 import {
   type FirebaseStorage,
-  getStorage as getFirebaseStorage,
+  getStorage as getFirebaseStorage
 } from 'firebase/storage'
 import {
   type Functions,
-  getFunctions as getFirebaseFunctions,
+  getFunctions as getFirebaseFunctions
 } from 'firebase/functions'
 import type { SockbaseRole } from 'sockbase'
 import { getFirebaseApp } from '../libs/FirebaseApp'
@@ -164,7 +164,7 @@ const useFirebase = (): IUseFirebase => {
     sendVerifyMail,
     getFirestore,
     getStorage,
-    getFunctions,
+    getFunctions
   }
 }
 

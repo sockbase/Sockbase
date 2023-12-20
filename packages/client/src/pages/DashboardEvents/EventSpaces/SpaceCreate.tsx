@@ -26,13 +26,13 @@ const SpaceCreate: React.FC<Props> = (props) => {
   const handleSubmit = (): void => {
     const rawSpaces = rawSpaceData.split('\n')
       .map<RawEventSpace>(space => {
-        const meta = space.split(',')
-        return {
-          spaceGroupOrder: Number(meta[0]),
-          spaceOrder: Number(meta[1]),
-          spaceName: meta[2]
-        }
-      })
+      const meta = space.split(',')
+      return {
+        spaceGroupOrder: Number(meta[0]),
+        spaceOrder: Number(meta[1]),
+        spaceName: meta[2]
+      }
+    })
     props.nextStep(rawSpaces)
   }
 

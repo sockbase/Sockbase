@@ -8,18 +8,14 @@ import {
   applicationConverter,
   applicationHashIdConverter,
   applicationLinksConverter,
-  applicationMetaConverter,
+  applicationMetaConverter
 } from '../libs/converters'
 
 interface IUseApplication {
   getApplicationIdByHashedIdAsync: (
     hashedAppId: string
   ) => Promise<sockbase.SockbaseApplicationHashIdDocument>
-  getApplicationByIdAsync: (appId: string) => Promise<
-    sockbase.SockbaseApplicationDocument & {
-      meta: sockbase.SockbaseApplicationMeta
-    }
-  >
+  getApplicationByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationDocument & { meta: sockbase.SockbaseApplicationMeta }>
   getApplicationsByUserIdAsync: (
     userId: string
   ) => Promise<sockbase.SockbaseApplicationDocument[]>
@@ -80,9 +76,9 @@ const useApplication = (): IUseApplication => {
   const getApplicationByIdAsync = async (
     appId: string
   ): Promise<
-    sockbase.SockbaseApplicationDocument & {
-      meta: sockbase.SockbaseApplicationMeta
-    }
+  sockbase.SockbaseApplicationDocument & {
+    meta: sockbase.SockbaseApplicationMeta
+  }
   > => {
     const db = getFirestore()
 
@@ -148,9 +144,9 @@ const useApplication = (): IUseApplication => {
     const queryDocs = querySnapshot.docs
       .filter((doc) => doc.exists())
       .reduce<Record<string, sockbase.SockbaseApplicationDocument>>(
-        (p, c) => ({ ...p, [c.id]: c.data() }),
-        {}
-      )
+      (p, c) => ({ ...p, [c.id]: c.data() }),
+      {}
+    )
 
     return queryDocs
   }
@@ -171,9 +167,9 @@ const useApplication = (): IUseApplication => {
     const queryDocs = querySnapshot.docs
       .filter((doc) => doc.exists())
       .reduce<Record<string, sockbase.SockbaseApplicationDocument>>(
-        (p, c) => ({ ...p, [c.id]: c.data() }),
-        {}
-      )
+      (p, c) => ({ ...p, [c.id]: c.data() }),
+      {}
+    )
 
     return queryDocs
   }
@@ -202,8 +198,8 @@ const useApplication = (): IUseApplication => {
   ): Promise<sockbase.SockbaseApplicationAddedResult> => {
     const functions = getFunctions()
     const createApplicationFunction = FirebaseFunctions.httpsCallable<
-      sockbase.SockbaseApplicationPayload,
-      sockbase.SockbaseApplicationAddedResult
+    sockbase.SockbaseApplicationPayload,
+    sockbase.SockbaseApplicationAddedResult
     >(functions, 'application-createApplication')
 
     const appResult = await createApplicationFunction(payload)
@@ -235,7 +231,7 @@ const useApplication = (): IUseApplication => {
     FirestoreDB.setDoc(
       metaRef,
       {
-        applicationStatus: status,
+        applicationStatus: status
       },
       { merge: true }
     ).catch((err) => {
@@ -297,7 +293,7 @@ const useApplication = (): IUseApplication => {
         ...links,
         id: '',
         applicationId: appId,
-        userId: user.uid,
+        userId: user.uid
       }
 
       await FirestoreDB.setDoc(linksRef, linksDoc).catch((err) => {
@@ -325,7 +321,7 @@ const useApplication = (): IUseApplication => {
         a.overview.totalAmount
           .replaceAll(',', '，')
           .replaceAll(/[\r\n]+/g, ' '),
-        a.remarks.replaceAll(',', '，').replaceAll(/[\r\n]+/g, ' '),
+        a.remarks.replaceAll(',', '，').replaceAll(/[\r\n]+/g, ' ')
       ])
       .map((a) => a.join(','))
       .join('\n')
@@ -347,7 +343,7 @@ const useApplication = (): IUseApplication => {
     getLinksByApplicationIdAsync,
     getLinksByApplicationIdOptionalAsync,
     setLinksByApplicationIdAsync,
-    exportCSV,
+    exportCSV
   }
 }
 

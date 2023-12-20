@@ -86,7 +86,7 @@ const DashboardStoreDetailPage: React.FC = () => {
         .filter(t => t.id)
         .map(t => t?.id ?? '')
 
-        const ticketHashIds = tickets
+      const ticketHashIds = tickets
         .filter(t => t.hashId)
         .map(t => t.hashId ?? '')
 
@@ -109,7 +109,7 @@ const DashboardStoreDetailPage: React.FC = () => {
         .catch(err => { throw err })
 
       Promise.all(
-        ticketHashIds.map(async (hashId) => ({ id: hashId, data: await getTicketUserByHashIdAsync(hashId)}))
+        ticketHashIds.map(async (hashId) => ({ id: hashId, data: await getTicketUserByHashIdAsync(hashId) }))
       )
         .then(fetchedTicketUsers => mapObjectTicketUsers(fetchedTicketUsers))
         .catch(err => { throw err })
@@ -134,7 +134,7 @@ const DashboardStoreDetailPage: React.FC = () => {
 
       const mapObjectTicketUsers = (ticketUsers: Array<{ id: string, data: SockbaseTicketUserDocument }>): void => {
         const objectMappedTicketUsers = ticketUsers
-          .reduce<Record<string, SockbaseTicketUserDocument>>((p, c) => ({...p, [c.id]: c.data}), {})
+          .reduce<Record<string, SockbaseTicketUserDocument>>((p, c) => ({ ...p, [c.id]: c.data }), {})
         setTicketUsers(objectMappedTicketUsers)
       }
     }
@@ -155,14 +155,14 @@ const DashboardStoreDetailPage: React.FC = () => {
 
       Promise.all(
         ticketUsableUserIds
-          .map(async id => ({ id, data: await getUserDataByUserIdAndStoreIdOptionalAsync(id, storeId)}))
+          .map(async id => ({ id, data: await getUserDataByUserIdAndStoreIdOptionalAsync(id, storeId) }))
       )
         .then((fetchedUsableUsers) => mapObjectTicketUsableUsers(fetchedUsableUsers))
         .catch(err => { throw err })
 
-      const mapObjectTicketUsableUsers = (usableUsers: Array<{id: string, data: SockbaseAccount | null }>): void => {
+      const mapObjectTicketUsableUsers = (usableUsers: Array<{ id: string, data: SockbaseAccount | null }>): void => {
         const objectMappedUsableUsers = usableUsers
-          .reduce<Record<string, SockbaseAccount | null>>((p, c) => ({...p, [c.id]: c.data}), {})
+          .reduce<Record<string, SockbaseAccount | null>>((p, c) => ({ ...p, [c.id]: c.data }), {})
         setUsableUsers(objectMappedUsableUsers)
       }
     }
@@ -214,20 +214,19 @@ const DashboardStoreDetailPage: React.FC = () => {
     if (!tickets) return null
     return tickets
       .filter(t => !selectedType || t.typeId === selectedType)
-      .filter(t => selectedStatus === -1 || t.id && ticketMetas?.[t.id].applicationStatus === selectedStatus)
-      .filter(t => !selectedAssign
-        || selectedAssign === 'yes' && t.hashId && ticketUsers?.[t.hashId].usableUserId
-        || selectedAssign === 'no' && t.hashId && !ticketUsers?.[t.hashId].usableUserId)
+      .filter(t => selectedStatus === -1 || (t.id && ticketMetas?.[t.id].applicationStatus === selectedStatus))
+      .filter(t => !selectedAssign ||
+        (selectedAssign === 'yes' && t.hashId && ticketUsers?.[t.hashId].usableUserId) ||
+        (selectedAssign === 'no' && t.hashId && !ticketUsers?.[t.hashId].usableUserId))
   }, [tickets, ticketMetas, ticketUsers, selectedType, selectedStatus, selectedAssign])
 
   const onFetchedAllData = (): void => {
     if (!filteredTickets || !ticketUsers || !usableUsers) return
-    
+
     const csv = exportCSV(filteredTickets, ticketUsers, usableUsers)
     setTicketCSV(csv)
   }
   useEffect(onFetchedAllData, [filteredTickets, ticketUsers, usableUsers])
-
 
   return (
     <DashboardBaseLayout title={pageTitle} requireSystemRole={2}>
@@ -275,17 +274,17 @@ const DashboardStoreDetailPage: React.FC = () => {
       </FormSection>
 
       <p>
-        {tickets
-          && filteredTickets
-          && tickets.length > filteredTickets.length
-          && <>検索条件に一致するチケット: {filteredTickets.length} 枚<br /></>}
+        {tickets &&
+          filteredTickets &&
+          tickets.length > filteredTickets.length &&
+          <>検索条件に一致するチケット: {filteredTickets.length} 枚<br /></>}
         使用されたチケット: {usedTicketCount} / {totalTicketCount} 枚 ({Math.round(usedTicketCount / totalTicketCount * 100)}%)
       </p>
 
       {(!store || !filteredTickets) && <Loading text="チケットストア情報" />}
 
-      {store && tickets
-        && <table>
+      {store && tickets &&
+        <table>
           <thead>
             <tr>
               <th>#</th>
@@ -316,7 +315,7 @@ const DashboardStoreDetailPage: React.FC = () => {
                   </td>
                   <td>
                     {t.hashId && ticketUsers?.[t.hashId]?.usableUserId
-                      ? t.id && getUsableUser(t.id)?.name || <BlinkField />
+                      ? (t.id && getUsableUser(t.id)?.name) || <BlinkField />
                       : '-'}
                     &nbsp;
                     {t.hashId && <Small>{ticketUsers?.[t.hashId]?.usableUserId}</Small>}

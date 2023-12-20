@@ -27,7 +27,7 @@ const useDocs = (docId: string): IUseDocs => {
   return {
     fetchDocsByIdAsync,
     DocProvider,
-    content,
+    content
   }
 }
 

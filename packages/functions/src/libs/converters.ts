@@ -246,7 +246,7 @@ export const ticketUserConverter: FirestoreDataConverter<SockbaseTicketUserDocum
     // typeId: ticketUser.typeId,
     // usableUserId: ticketUser.usableUserId,
     used: ticketUser.used,
-    usedAt: ticketUser.usedAt,
+    usedAt: ticketUser.usedAt
     // userId: ticketUser.userId
   }),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketUserDocument => {

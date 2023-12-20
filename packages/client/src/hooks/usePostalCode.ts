@@ -20,7 +20,7 @@ const usePostalCode = (): IUsePostalCode => {
   }
 
   return {
-    getAddressByPostalCode,
+    getAddressByPostalCode
   }
 }
 
