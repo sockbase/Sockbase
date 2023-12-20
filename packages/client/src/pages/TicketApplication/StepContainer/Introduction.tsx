@@ -6,6 +6,7 @@ import useDayjs from '../../../hooks/useDayjs'
 
 interface Props {
   store: SockbaseStore
+  prevStep: () => void
   nextStep: () => void
 }
 const Introduction: React.FC<Props> = (props) => {
@@ -13,6 +14,12 @@ const Introduction: React.FC<Props> = (props) => {
 
   return (
     <>
+      <FormSection>
+        <FormItem>
+          <FormButton color="default" onClick={props.prevStep}>アカウント確認画面へ戻る</FormButton>
+        </FormItem>
+      </FormSection>
+
       <h1>申し込みの前に</h1>
 
       <p>

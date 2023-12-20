@@ -51,7 +51,7 @@ const TicketApplicationPage: React.FC = () => {
               {user?.email && <Alert>
                 {user.email} としてログイン中です
               </Alert>}
-              <StepContainerComponent store={store} isLoggedIn={isLoggedIn} userData={userData} />
+              <StepContainerComponent user={user} store={store} isLoggedIn={isLoggedIn} userData={userData} />
             </>
             : <></>}
     </DefaultBaseLayout >

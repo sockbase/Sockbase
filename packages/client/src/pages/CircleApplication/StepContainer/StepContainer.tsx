@@ -14,13 +14,14 @@ import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
 import StepProgress from '../../../components/Parts/StepProgress'
 import Alert from '../../../components/Parts/Alert'
+import CheckAccount from './CheckAccount'
 import Introduction from './Introduction'
 import Step1 from './Step1'
 import Step2 from './Step2'
 import Step3 from './Step3'
 import Step4 from './Step4'
 
-const stepProgresses = ['入力', '確認', '決済', '完了']
+const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
 
 interface Props {
   eventId: string
@@ -29,7 +30,7 @@ interface Props {
   isLoggedIn: boolean
 }
 const StepContainer: React.FC<Props> = (props) => {
-  const { user, createUser } = useFirebase()
+  const { user, createUser, loginByEmail, logout } = useFirebase()
   const { updateUserDataAsync, getMyUserDataAsync } = useUserData()
   const { submitApplicationAsync, uploadCircleCutFileAsync } = useApplication()
   const { formatByDate } = useDayjs()
@@ -101,7 +102,18 @@ const StepContainer: React.FC<Props> = (props) => {
       if (userData === undefined) return
 
       setStepComponents([
-        <Introduction key="introduction" nextStep={() => setStep(1)} event={props.event} eyecatchURL={props.eyecatchURL} />,
+        <CheckAccount key="checkAccount"
+          user={user}
+          eyecatchURL={props.eyecatchURL}
+          login={async (email, password) => {
+            await loginByEmail(email, password)
+          }}
+          logout={() => logout()}
+          nextStep={() => setStep(1)} />,
+        <Introduction key="introduction"
+          event={props.event}
+          prevStep={() => setStep(0)}
+          nextStep={() => setStep(2)} />,
         <Step1 key="step1"
           eventId={props.eventId}
           event={props.event}
@@ -110,14 +122,14 @@ const StepContainer: React.FC<Props> = (props) => {
           leaderUserData={leaderUserData}
           circleCutFile={circleCutFile}
           isLoggedIn={props.isLoggedIn}
-          prevStep={() => setStep(0)}
+          prevStep={() => setStep(1)}
           nextStep={(app, links, leaderUserData, circleCutData, circleCutFile) => {
             setApp(app)
             setLinks(links)
             setLeaderUserData(leaderUserData)
             setCircleCutData(circleCutData)
             setCircleCutFile(circleCutFile)
-            setStep(2)
+            setStep(3)
           }} />,
         <Step2 key="step2"
           event={props.event}
@@ -128,19 +140,19 @@ const StepContainer: React.FC<Props> = (props) => {
           userData={userData}
           submitProgressPercent={submitProgressPercent}
           submitApplication={submitApplication}
-          prevStep={() => setStep(1)}
-          nextStep={() => setStep(3)} />,
+          nextStep={() => setStep(4)}
+          prevStep={() => setStep(2)} />,
         <Step3 key="step3"
           appResult={appResult}
           app={app}
           event={props.event}
           email={userData?.email ?? leaderUserData?.email}
-          nextStep={() => setStep(4)} />,
+          nextStep={() => setStep(5)} />,
         <Step4 key="step4"
           appResult={appResult} />
       ])
     }
-  useEffect(onInitialize, [props, app, links, leaderUserData, circleCutData, userData, appResult, submitProgressPercent])
+  useEffect(onInitialize, [props, user, app, links, leaderUserData, circleCutData, userData, appResult, submitProgressPercent])
 
   return (
     <>
