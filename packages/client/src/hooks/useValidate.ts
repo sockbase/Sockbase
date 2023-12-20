@@ -17,70 +17,68 @@ interface IUseValidate {
   isOnlyNumber: (value: string) => boolean
   equals: (value1: string, value2: string) => boolean
 }
-const useValidate: () => IUseValidate =
-  () => {
-    const isIn: (value: string, entries: string[]) => boolean =
-      (value, entries) => validator.isIn(value, entries)
+const useValidate = (): IUseValidate => {
+  const isIn = (value: string, entries: string[]): boolean =>
+    validator.isIn(value, entries)
 
-    const isEmpty: (value: string) => boolean =
-      (value) => value.trim() === ''
+  const isEmpty = (value: string): boolean => value.trim() === ''
 
-    const isMatchRegex: (value: string, regex: RegExp) => boolean =
-      (value, regex) => regex.test(value)
+  const isMatchRegex: (value: string, regex: RegExp) => boolean = (
+    value,
+    regex
+  ) => regex.test(value)
 
-    const isNull: <T>(value: T) => boolean =
-      (value) => value === null
+  const isNull = <T>(value: T): boolean => value === null
 
-    const isOnlyHiragana: (value: string) => boolean =
-      (value) => isMatchRegex(value, /^[ぁ-んー]+$/)
+  const isOnlyHiragana = (value: string): boolean =>
+    isMatchRegex(value, /^[ぁ-んー]+$/)
 
-    const isPostalCode: (value: string) => boolean =
-      (value) => isMatchRegex(value, /^\d{3}\d{4}$/)
+  const isPostalCode = (value: string): boolean =>
+    isMatchRegex(value, /^\d{3}\d{4}$/)
 
-    const isDate: (value: string) => boolean =
-      (value) => validator.isDate(value)
+  const isDate = (value: string): boolean => validator.isDate(value)
 
-    const isEmail: (value: string) => boolean =
-      (value) => validator.isEmail(value)
+  const isEmail = (value: string): boolean => validator.isEmail(value)
 
-    const isApplicationHashId: (value: string) => boolean =
-      (value) => isMatchRegex(value, /^\d{17}-[0-9a-f]{8}$/)
+  const isApplicationHashId = (value: string): boolean =>
+    isMatchRegex(value, /^\d{17}-[0-9a-f]{8}$/)
 
-    const isTicketHashId: (value: string) => boolean =
-      (value) => isMatchRegex(value, /^\d{17}-[123456789ABCEFGHJKLNPRSTUWXYZabcdefghkmnprstvwxz]{32}$/)
+  const isTicketHashId = (value: string): boolean =>
+    isMatchRegex(
+      value,
+      /^\d{17}-[123456789ABCEFGHJKLNPRSTUWXYZabcdefghkmnprstvwxz]{32}$/
+    )
 
-    const isStrongPassword: (value: string) => boolean =
-      (value) => isMatchRegex(value, /(?=.*[A-Z])[a-zA-Z0-9]+/) && value.length >= 12
+  const isStrongPassword = (value: string): boolean =>
+    isMatchRegex(value, /(?=.*[A-Z])[a-zA-Z0-9]+/) && value.length >= 12
 
-    const isTwitterScreenName = (value: string): boolean =>
-      isMatchRegex(value, /^[A-Za-z0-9_]{1,16}$/)
+  const isTwitterScreenName = (value: string): boolean =>
+    isMatchRegex(value, /^[A-Za-z0-9_]{1,16}$/)
 
-    const isOnlyNumber = (value: string): boolean =>
-      isMatchRegex(value, /^\d+$/)
+  const isOnlyNumber = (value: string): boolean => isMatchRegex(value, /^\d+$/)
 
-    const isURL = (value: string): boolean =>
-      isMatchRegex(value, /^http(s)?:\/\//)
+  const isURL = (value: string): boolean =>
+    isMatchRegex(value, /^http(s)?:\/\//)
 
-    const equals: (value1: string, value2: string) => boolean =
-      (value1, value2) => value1 === value2
+  const equals = (value1: string, value2: string): boolean => value1 === value2
 
-    return {
-      isIn,
-      isEmpty,
-      isMatchRegex,
-      isNull,
-      isOnlyHiragana,
-      isPostalCode,
-      isDate,
-      isEmail,
-      isTicketHashId,
-      isApplicationHashId,
-      isStrongPassword,
-      isTwitterScreenName,
-      isOnlyNumber,
-      isURL,
-      equals
-    }
+  return {
+    isIn,
+    isEmpty,
+    isMatchRegex,
+    isNull,
+    isOnlyHiragana,
+    isPostalCode,
+    isDate,
+    isEmail,
+    isTicketHashId,
+    isApplicationHashId,
+    isStrongPassword,
+    isTwitterScreenName,
+    isOnlyNumber,
+    isURL,
+    equals,
   }
+}
 
 export default useValidate
