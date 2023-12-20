@@ -228,15 +228,15 @@ const Step1: React.FC<Props> = (props) => {
       })
       setLeaderUserData({
         name: '染宮ねいろ',
-        birthday: new Date('2002/03/29').getTime(),
-        postalCode: '133-0065',
+        birthday: new Date('2000/01/01').getTime(),
+        postalCode: '1000001',
         address: '住所',
-        telephone: '08081656154',
+        telephone: '00012345678',
         email: 'nirsmmy@gmail.com',
         password: 'Password1234',
         rePassword: 'Password1234'
       })
-      setDisplayBirthday('2002-03-29')
+      setDisplayBirthday('2000/01/01')
       setAgreed(true)
     }
 
@@ -301,7 +301,7 @@ const Step1: React.FC<Props> = (props) => {
 
       <h2>サークルカット</h2>
       <ul>
-        <li>サークルカットを提出する際は、テンプレートを使用する必要があります。</li>
+        <li>テンプレートを使用し、<u>PNG形式でのご提出をお願いいたします。</u></li>
         <li>サークルカットの変更は、申し込み後のマイページから行えます。</li>
         <li>公序良俗に反する画像は使用できません。不特定多数の方の閲覧が可能なためご配慮をお願いいたします。</li>
       </ul>
@@ -310,7 +310,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormLabel>サークルカット</FormLabel>
           <FormInput
             type="file"
-            accept="image/*"
+            accept="image/png"
             onChange={e => setCircleCutFile(e.target.files?.[0])} />
         </FormItem>
         <FormItem>
@@ -364,30 +364,41 @@ const Step1: React.FC<Props> = (props) => {
       <h2>頒布物情報</h2>
       <FormSection>
         {
-          props.event.permissions.allowAdult &&
-          <FormItem>
-            <FormLabel>成人向け頒布物の有無</FormLabel>
-            <FormSelect
-              value={app.circle.hasAdult === null
-                ? 'none'
-                : app.circle.hasAdult
-                  ? 'yes'
-                  : 'no'}
-              onChange={e => setApp(s => ({
-                ...s,
-                circle: {
-                  ...s.circle,
-                  hasAdult: e.target.value === 'none'
-                    ? null
-                    : e.target.value === 'yes'
-                }
-              }))}>
-              <option value="none">選択してください</option>
-              <option value="no">成人向け頒布物はありません</option>
-              <option value="yes">成人向け頒布物があります</option>
-            </FormSelect>
-          </FormItem>
+          props.event.permissions.allowAdult && <>
+            <FormItem>
+              <FormLabel>成人向け頒布物の有無</FormLabel>
+              <FormSelect
+                value={app.circle.hasAdult === null
+                  ? 'none'
+                  : app.circle.hasAdult
+                    ? 'yes'
+                    : 'no'}
+                onChange={e => setApp(s => ({
+                  ...s,
+                  circle: {
+                    ...s.circle,
+                    hasAdult: e.target.value === 'none'
+                      ? null
+                      : e.target.value === 'yes'
+                  }
+                }))}>
+                <option value="none">選択してください</option>
+                <option value="no">無: 成人向け頒布物はありません</option>
+                <option value="yes">有: 成人向け頒布物があります</option>
+              </FormSelect>
+            </FormItem>
+            <FormItem>
+              <Alert>
+                成人向け作品を頒布する場合、イベント当日（{formatByDate(props.event.schedules.startEvent, 'YYYY年M月D日')}）時点で18歳以上である必要があります。
+              </Alert>
+              <Alert>
+                イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
+              </Alert>
+            </FormItem>
+          </>
         }
+        </FormSection>
+        <FormSection>
         <FormItem>
           <FormLabel>頒布物のジャンル</FormLabel>
           <FormSelect
@@ -399,7 +410,9 @@ const Step1: React.FC<Props> = (props) => {
           <FormHelp>
             頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
           </FormHelp>
-        </FormItem >
+        </FormItem>
+        </FormSection>
+        <FormSection>
         <FormItem>
           <FormLabel>頒布物概要</FormLabel>
           <FormTextarea
@@ -408,16 +421,29 @@ const Step1: React.FC<Props> = (props) => {
             onChange={e => setApp(s => ({ ...s, overview: { ...s.overview, description: e.target.value } }))} />
           <FormHelp>
             スペース配置の参考にしますので、キャラクター名等は正しく入力してください。<br />
-            合同誌企画やイベント外との連動企画がある場合はその旨も入力してください。
+            合同誌企画がある場合はその旨も入力してください。
           </FormHelp>
         </FormItem>
         <FormItem>
+          <Alert>
+            「頒布物概要」に記載された内容を元に配置します。<br />
+            サークルカットの内容は考慮されませんのでご注意ください。
+          </Alert>
+        </FormItem>
+        </FormSection>
+        <FormSection>
+        <FormItem>
           <FormLabel>総搬入量</FormLabel>
           <FormTextarea
-            placeholder='合同誌: 1種1,000冊, 既刊: 5種合計500冊, グッズ: 3種合計30個'
+            placeholder='合同誌: 1種1,000冊, 既刊: 5種合計500冊, 色紙: 1枚, グッズ: 3種合計30個'
             value={app.overview.totalAmount}
             onChange={e => setApp(s => ({ ...s, overview: { ...s.overview, totalAmount: e.target.value } }))} />
           <FormHelp>単位まで入力してください。</FormHelp>
+        </FormItem>
+        <FormItem>
+          <Alert>
+            搬入量が決まっていない場合は、最大の持ち込み予定数を入力してください。
+          </Alert>
         </FormItem>
       </FormSection>
 
@@ -428,7 +454,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             placeholder='20231231235959123-abc0def1'
             value={app.unionCircleId}
-            onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value }))}
+            onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value.trim() }))}
             hasError={!validator.isEmpty(app.unionCircleId) && !validator.isApplicationHashId(app.unionCircleId)} />
           <FormHelp>先に申し込んだ方から提供された申し込みIDを入力してください。</FormHelp>
         </FormItem>
@@ -437,7 +463,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             placeholder='marukaku00'
             value={app.petitCode}
-            onChange={e => setApp(s => ({ ...s, petitCode: e.target.value }))} />
+            onChange={e => setApp(s => ({ ...s, petitCode: e.target.value.trim() }))} />
           <FormHelp>プチオンリー主催から入力を指示された場合のみ入力してください。</FormHelp>
         </FormItem>
       </FormSection>
@@ -453,7 +479,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             placeholder='xxxxxxx'
             value={links.twitterScreenName ?? ''}
-            onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value }))} />
+            onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value.trim() }))} />
           <FormHelp hasError={!!links.twitterScreenName && !validator.isTwitterScreenName(links.twitterScreenName)}>
             @を除いて入力してください
           </FormHelp>
@@ -463,7 +489,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             placeholder='1234567890'
             value={links.pixivUserId ?? ''}
-            onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value }))} />
+            onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value.trim() }))} />
           <FormHelp hasError={!!links.pixivUserId && !validator.isOnlyNumber(links.pixivUserId)}>
             ID部分のみを入力してください
           </FormHelp>
@@ -473,7 +499,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             placeholder='https://sumire.sockbase.net'
             value={links.websiteURL ?? ''}
-            onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value }))} />
+            onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value.trim() }))} />
           <FormHelp hasError={!!links.websiteURL && !validator.isURL(links.websiteURL)}>
             http://から始めてください
           </FormHelp>
@@ -483,7 +509,7 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             placeholder='https://oshina.sockbase.net'
             value={links.menuURL ?? ''}
-            onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value }))} />
+            onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value.trim() }))} />
           <FormHelp hasError={!!links.menuURL && !validator.isURL(links.menuURL)}>
             http://から始めてください
           </FormHelp>
@@ -517,7 +543,7 @@ const Step1: React.FC<Props> = (props) => {
                 onChange={e => {
                   if (e.target.value.length > 7) return
                   handleFilledPostalCode(e.target.value)
-                  setLeaderUserData(s => ({ ...s, postalCode: e.target.value }))
+                  setLeaderUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
                 }}
                 hasError={!validator.isEmpty(leaderUserData.postalCode) && !validator.isPostalCode(leaderUserData.postalCode)} />
               <FormHelp>
@@ -532,11 +558,14 @@ const Step1: React.FC<Props> = (props) => {
                 onChange={e => setLeaderUserData(s => ({ ...s, address: e.target.value }))} />
             </FormItem>
             <FormItem>
+              <Alert>住所は都道府県からはじめ、番地・部屋番号まで記入してください。</Alert>
+            </FormItem>
+            <FormItem>
               <FormLabel>電話番号</FormLabel>
               <FormInput
                 placeholder='07001234567'
                 value={leaderUserData.telephone}
-                onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value }))} />
+                onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value.trim() }))} />
             </FormItem>
           </FormSection>
 
@@ -621,10 +650,14 @@ const Step1: React.FC<Props> = (props) => {
 
       <h2>通信欄</h2>
       <p>申し込みにあたり運営チームへの要望等がありましたら入力してください。</p>
+      <Alert>
+        合同誌の発行予定がある場合や、今までのイベントで長い待機列が出来たことがある場合は、その旨をご記入いただけますと幸いです。<br />
+        追って運営チームよりご状況等をお伺いする場合がございます。
+      </Alert>
       <FormSection>
         <FormItem>
           <FormTextarea
-            placeholder='成人向け作品を頒布するサークルとは離れた場所に配置をお願いします。'
+            placeholder='◯◯◯◯にて、△△人ほどの待機列が出来たことがあります。今回も最後尾札を用意する予定です。'
             value={app.remarks}
             onChange={e => setApp(s => ({ ...s, remarks: e.target.value }))}
           ></FormTextarea>

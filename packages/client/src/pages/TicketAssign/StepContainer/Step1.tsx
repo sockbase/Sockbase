@@ -168,7 +168,7 @@ const Step1: React.FC<Props> = (props) => {
               <FormInput
                 placeholder='07001234567'
                 value={userData.telephone}
-                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value }))} />
+                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))} />
             </FormItem>
           </FormSection>
 

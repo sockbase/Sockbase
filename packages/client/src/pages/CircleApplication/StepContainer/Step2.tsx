@@ -196,6 +196,20 @@ const Step2: React.FC<Props> = (props) => {
             </tbody>
           </table>
 
+          <h2>Sockbaseログイン情報</h2>
+          <table>
+            <tbody>
+              <tr>
+                <th>メールアドレス</th>
+                <td>{props.userData?.email ?? props.leaderUserData.email}</td>
+              </tr>
+              <tr>
+                <th>パスワード</th>
+                <td>セキュリティ保護のため非表示</td>
+              </tr>
+            </tbody>
+          </table>
+
           <h2>通信欄</h2>
           <p>
             {props.app.remarks || '(空欄)'}
