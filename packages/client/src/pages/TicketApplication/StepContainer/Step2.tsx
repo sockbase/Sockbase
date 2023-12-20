@@ -108,6 +108,20 @@ const Step2: React.FC<Props> = (props) => {
         </p>
       </>}
 
+      <h2>Sockbaseログイン情報</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>メールアドレス</th>
+            <td>{props.fetchedUserData?.email ?? props.userData?.email}</td>
+          </tr>
+          <tr>
+            <th>パスワード</th>
+            <td>セキュリティ保護のため非表示</td>
+          </tr>
+        </tbody>
+      </table>
+
       <h1>申し込み情報送信</h1>
       <p>
         上記の内容で正しければ「決済に進む(申し込み情報送信)」ボタンを押してください。

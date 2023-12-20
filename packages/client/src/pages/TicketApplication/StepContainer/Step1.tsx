@@ -180,6 +180,7 @@ const Step1: React.FC<Props> = (props) => {
           </FormSection>
           : <Alert>申し込みたい参加種別を選択してください</Alert>}
       </>}
+
       <h2>申し込み責任者情報</h2>
       {!props.isLoggedIn
         ? <>
@@ -207,7 +208,7 @@ const Step1: React.FC<Props> = (props) => {
                 onChange={e => {
                   if (e.target.value.length > 7) return
                   handleFilledPostalCode(e.target.value)
-                  setUserData(s => ({ ...s, postalCode: e.target.value }))
+                  setUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
                 }}
                 hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)} />
               <FormHelp>ハイフンは入力不要です</FormHelp>
@@ -224,7 +225,7 @@ const Step1: React.FC<Props> = (props) => {
               <FormInput
                 placeholder='07001234567'
                 value={userData.telephone}
-                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value }))} />
+                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))} />
             </FormItem>
           </FormSection>
 
