@@ -18,6 +18,7 @@
     "@stylistic/semi": "off",
     "@stylistic/quotes": "off",
     "@stylistic/eol-last": "error",
+    "@stylistic/indent": ["error", 2],
     "@stylistic/multiline-ternary": [
       "error",
       "always-multiline"
