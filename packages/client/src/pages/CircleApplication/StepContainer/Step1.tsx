@@ -397,8 +397,8 @@ const Step1: React.FC<Props> = (props) => {
             </FormItem>
           </>
         }
-        </FormSection>
-        <FormSection>
+      </FormSection>
+      <FormSection>
         <FormItem>
           <FormLabel>頒布物のジャンル</FormLabel>
           <FormSelect
@@ -411,8 +411,8 @@ const Step1: React.FC<Props> = (props) => {
             頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
           </FormHelp>
         </FormItem>
-        </FormSection>
-        <FormSection>
+      </FormSection>
+      <FormSection>
         <FormItem>
           <FormLabel>頒布物概要</FormLabel>
           <FormTextarea
@@ -430,8 +430,8 @@ const Step1: React.FC<Props> = (props) => {
             サークルカットの内容は考慮されませんのでご注意ください。
           </Alert>
         </FormItem>
-        </FormSection>
-        <FormSection>
+      </FormSection>
+      <FormSection>
         <FormItem>
           <FormLabel>総搬入量</FormLabel>
           <FormTextarea

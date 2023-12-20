@@ -87,7 +87,7 @@ const CheckAccount: React.FC<Props> = (props) => {
               <FormButton onClick={handleLogin} disabled={isProgress || errorCount > 0}>ログイン</FormButton>
             </FormItem>
             <FormItem>
-            <LinkButton color="default" to="/reset-password">パスワードを忘れた場合</LinkButton>
+              <LinkButton color="default" to="/reset-password">パスワードを忘れた場合</LinkButton>
             </FormItem>
             {error &&
               <FormItem>
@@ -116,7 +116,7 @@ const CheckAccount: React.FC<Props> = (props) => {
               <FormButton color="default" onClick={props.logout}>ログアウト</FormButton>
             </FormItem>
           </FormSection>
-      </>}
+        </>}
 
       <FormSection>
         <FormItem>

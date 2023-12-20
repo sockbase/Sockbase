@@ -19,6 +19,8 @@
     "@stylistic/quotes": "off",
     "@stylistic/eol-last": "error",
     "@stylistic/indent": ["error", 2],
+    "indent": "off",
+    "@typescript-eslint/indent": "off", // https://github.com/typescript-eslint/typescript-eslint/issues/1824
     "@stylistic/multiline-ternary": [
       "error",
       "always-multiline"
