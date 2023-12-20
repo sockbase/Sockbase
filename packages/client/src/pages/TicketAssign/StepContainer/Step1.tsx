@@ -99,11 +99,11 @@ const Step1: React.FC<Props> = (props) => {
 
   return (
     <>
-    <FormSection>
-      <FormItem>
-        <FormButton color="default" onClick={props.prevStep}>アカウント確認画面へ戻る</FormButton>
-      </FormItem>
-    </FormSection>
+      <FormSection>
+        <FormItem>
+          <FormButton color="default" onClick={props.prevStep}>アカウント確認画面へ戻る</FormButton>
+        </FormItem>
+      </FormSection>
 
       <h2>イベント情報</h2>
       <table>
