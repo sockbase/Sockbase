@@ -19,7 +19,7 @@ const useDayjs = (): IUseDayjs => {
     dayjs(date).tz().format(format)
 
   const formatDateTime = (date: FormatDate): string =>
-    dayjs(date).tz().format('YYYY年M月D日 h時mm分')
+    dayjs(date).tz().format('YYYY年M月D日 H時mm分')
 
   return {
     formatByDate,

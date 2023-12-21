@@ -12,6 +12,7 @@ const Colors = createGlobalStyle`
   --gray-color: #808080;
   --border-color: #c8cccf;
   --danger-color: #b52e2e;
+  --info-color: #3781bc;
   --disable-color: #c0c0c0;
 }
 `
