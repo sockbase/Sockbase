@@ -29,7 +29,9 @@ interface IUseInquiry {
 export const inquiryConverter: FirestoreDB.FirestoreDataConverter<SockbaseInquiryDocument> =
   {
     toFirestore: (inquiry: SockbaseInquiryDocument) => ({
-      status: inquiry.status,
+      userId: inquiry.userId,
+      inquiryType: inquiry.inquiryType,
+      body: inquiry.body,
       createdAt: null,
       updatedAt: null
     }),
