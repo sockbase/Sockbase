@@ -35,6 +35,14 @@ const TicketApplicationPage: React.FC = () => {
   }
   useEffect(onInitialize, [getMyUserDataAsync])
 
+  useEffect(() => {
+    const handleBeforeUnloadEvent = (event: BeforeUnloadEvent): void => {
+      event.preventDefault()
+    }
+    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
+  }, [])
+
   const pageTitle = useMemo(() => (store && `${store.storeName} チケット申し込みフォーム`) || '', [store])
 
   return (

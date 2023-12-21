@@ -41,6 +41,14 @@ const CircleApplicationPage: React.FC = () => {
   }
   useEffect(onChangeEventId, [params.eventId])
 
+  useEffect(() => {
+    const handleBeforeUnloadEvent = (event: BeforeUnloadEvent): void => {
+      event.preventDefault()
+    }
+    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
+  }, [])
+
   return (
     <DefaultBaseLayout title={pageTitle}>
       {
