@@ -54,6 +54,7 @@ p {
   }
 }
 table {
+  width: 100%;
   margin-bottom: 20px;
   &:last-child {
     margin-bottom: 0;

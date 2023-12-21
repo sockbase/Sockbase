@@ -17,6 +17,8 @@ import TicketTerminalPage from '../TicketTerminal/TicketTerminalPage'
 import LicensePage from '../License/LicensePage'
 import InquiryListPage from '../InquiryList/InquiryListPage'
 import EventListPage from '../EventList/EventListPage'
+import EventApplicationListPage from '../EventApplicationList/EventApplicationListPage'
+import ApplicationDetailPage from '../ApplicationDetail/ApplicationDetailPage'
 import StoreListPage from '../StoreList/StoreListPage'
 
 const Root: React.FC = () => {
@@ -60,7 +62,25 @@ const router = createBrowserRouter([
       },
       {
         path: 'events',
-        element: <EventListPage />
+        children: [
+          {
+            index: true,
+            element: <EventListPage />
+          },
+          {
+            path: ':eventId',
+            element: <EventApplicationListPage />
+          }
+        ]
+      },
+      {
+        path: 'applications',
+        children: [
+          {
+            path: ':appHashId',
+            element: <ApplicationDetailPage />
+          }
+        ]
       },
       {
         path: 'stores',
