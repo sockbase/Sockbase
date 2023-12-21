@@ -1,4 +1,4 @@
-import { type DocumentData, type SnapshotOptions, type FirestoreDataConverter, type QueryDocumentSnapshot } from 'firebase/firestore'
+import { type DocumentData, type FirestoreDataConverter, type QueryDocumentSnapshot } from 'firebase/firestore'
 import {
   type SockbaseApplicationDocument,
   type SockbaseApplicationMeta,
@@ -12,7 +12,7 @@ export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicat
   toFirestore: (app: SockbaseApplicationHashIdDocument): DocumentData => ({
     spaceId: app.spaceId
   }),
-  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseApplicationHashIdDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationHashIdDocument => {
     const hashDoc = snapshot.data()
     return {
       applicationId: hashDoc.applicationId,
@@ -24,8 +24,8 @@ export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicat
 }
 
 export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDocument> = {
-  toFirestore: (app: SockbaseApplicationDocument): DocumentData => ({}),
-  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseApplicationDocument => {
+  toFirestore: (): DocumentData => ({}),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationDocument => {
     const app = snapshot.data()
     return {
       hashId: app.hashId,
@@ -48,7 +48,7 @@ export const applicationMetaConverter: FirestoreDataConverter<SockbaseApplicatio
   toFirestore: (meta: SockbaseApplicationMeta) => ({
     applicationStatus: meta.applicationStatus
   }),
-  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseApplicationMeta => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationMeta => {
     const meta = snapshot.data()
     return {
       applicationStatus: meta.applicationStatus
@@ -81,7 +81,7 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
   toFirestore: (): DocumentData => ({}),
-  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseEventDocument => {
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseEventDocument => {
     const event = snapshot.data() as SockbaseEventDocument
     return {
       id: snapshot.id,
