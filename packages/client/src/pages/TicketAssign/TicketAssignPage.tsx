@@ -53,6 +53,14 @@ const TicketAssignPage: React.FC = () => {
   }
   useEffect(onChangeHashId, [ticketHashId, getMyUserDataAsync])
 
+  useEffect(() => {
+    const handleBeforeUnloadEvent = (event: BeforeUnloadEvent): void => {
+      event.preventDefault()
+    }
+    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
+  }, [])
+
   const pageTitle = useMemo(
     () => store ? `${store.storeName} 受け取りページ` : '読み込み中',
     [store])
