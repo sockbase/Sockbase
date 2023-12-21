@@ -78,7 +78,11 @@ const EventApplicationListPage: React.FC = () => {
   }, [event])
 
   return (
-    <MainLayout title={event?.eventName ?? '読み込み中'} subTitle="申し込み一覧" icon={<MdEvent />}>
+    <MainLayout
+      title={event?.eventName ?? '読み込み中'}
+      subTitle="申し込み一覧"
+      icon={<MdEvent />}
+      prevPage={{ path: '/events', name: 'イベント管理' }}>
       <table>
         <thead>
           <tr>

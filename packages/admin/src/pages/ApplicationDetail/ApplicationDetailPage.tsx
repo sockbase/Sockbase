@@ -151,7 +151,11 @@ const ApplicationDetailPage: React.FC = () => {
   }
   useEffect(onEventFetched, [app, appHash, getSpace])
 
-  return <MainLayout title={app?.circle.name ?? '読み込み中'} subTitle="申し込み情報照会" icon={<MdEdit />}>
+  return <MainLayout
+    title={app?.circle.name ?? '読み込み中'}
+    subTitle="申し込み情報照会"
+    icon={<MdEdit />}
+    prevPage={{ path: `/events/${app?.eventId}`, name: event?.eventName ?? '…' }}>
     <h2>申し込み情報</h2>
     <TwoColumnLayout>
       <>

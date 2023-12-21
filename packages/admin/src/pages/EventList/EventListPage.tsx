@@ -27,6 +27,7 @@ const EventListPage: React.FC = () => {
       title="イベント管理"
       subTitle="Sockbase で管理しているイベントを表示します。"
       icon={<MdEditCalendar />}
+      prevPage={{ path: '/', name: 'トップ' }}
     >
       <table>
         <thead>

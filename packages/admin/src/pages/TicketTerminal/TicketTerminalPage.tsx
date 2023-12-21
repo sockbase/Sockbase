@@ -7,6 +7,7 @@ const TicketTerminalPage: React.FC = () => {
       title="チケット照会ターミナル"
       subTitle="チケットコードを用いて情報を表示し、使用ステータスを管理します。"
       icon={<MdQrCodeScanner />}
+      prevPage={{ path: '/', name: 'トップ' }}
     >
       TicketTerminalPage
     </MainLayout>

@@ -1,14 +1,16 @@
 import styled from 'styled-components'
+import { type PrevPage } from '../../../@types'
 import DefaultBaseLayout from '../DefaultBaseLayout/DefaultBaseLayout'
 
 interface Props {
+  prevPage?: PrevPage
   title: string
   items: React.ReactElement[]
   main: React.ReactElement
 }
 const ColumnLayout: React.FC<Props> = (props) => {
   return (
-    <DefaultBaseLayout title={props.title}>
+    <DefaultBaseLayout title={props.title} prevPage={props.prevPage}>
       <Container>
         <Menu>
           <MenuHeader>{props.title}</MenuHeader>

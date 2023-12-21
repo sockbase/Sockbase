@@ -3,6 +3,7 @@ import { createGlobalStyle } from 'styled-components'
 const Colors = createGlobalStyle`
 :root {
   --primary-color: #00a8ff;
+  --primary-text-color: #0088cc;
   --secondary-color: #ea6183;
   --brand-black-color: #202020;
   --brand-white-color: #ffffff;
