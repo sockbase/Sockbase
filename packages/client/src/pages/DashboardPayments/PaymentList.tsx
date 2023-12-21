@@ -24,8 +24,7 @@ const PaymentList: React.FC<Props> = (props) => {
       if (appId) {
         const app = props.apps[appId]
         return `/dashboard/applications/${app.hashId ?? ''}`
-      }
-      else if (ticketId) {
+      } else if (ticketId) {
         const ticket = props.tickets[ticketId]
         return `/dashboard/tickets/${ticket.hashId ?? ''}`
       }
@@ -49,8 +48,7 @@ const PaymentList: React.FC<Props> = (props) => {
       const app = props.apps[payment.applicationId]
       const event = props.events[app.eventId]
       return event.eventName
-    }
-    else if (payment.ticketId) {
+    } else if (payment.ticketId) {
       const ticket = props.tickets[payment.ticketId]
       const store = props.stores[ticket.storeId]
       const type = store.types
@@ -74,8 +72,7 @@ const PaymentList: React.FC<Props> = (props) => {
 
       if (!space.productInfo) return '-'
       return <a href={`${space.productInfo.paymentURL}${emailLink}`} target="_blank" rel="noreferrer">お支払いはこちら</a>
-    }
-    else if (payment.ticketId) {
+    } else if (payment.ticketId) {
       const ticket = props.tickets[payment.ticketId]
       const typeInfo = props.stores[ticket.storeId].types
         .filter(t => t.id === ticket.typeId)[0]

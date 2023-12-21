@@ -21,7 +21,7 @@ const useDayjs = (): IUseDayjs => {
   ): string => dayjs(date).tz().format(format)
 
   return {
-    formatByDate,
+    formatByDate
   }
 }
 

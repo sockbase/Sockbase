@@ -13,7 +13,10 @@ const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
     address: userData.address,
     telephone: userData.telephone
   }),
-  fromFirestore: (snapshot: FirestoreDB.QueryDocumentSnapshot, options: FirestoreDB.SnapshotOptions): SockbaseAccount => {
+  fromFirestore: (
+    snapshot: FirestoreDB.QueryDocumentSnapshot,
+    options: FirestoreDB.SnapshotOptions
+  ): SockbaseAccount => {
     const data = snapshot.data()
     return {
       name: data.name,
@@ -27,35 +30,49 @@ const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
 }
 
 interface IUseUserData {
-  updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
+  updateUserDataAsync: (
+    userId: string,
+    userData: SockbaseAccount
+  ) => Promise<void>
   getMyUserDataAsync: () => Promise<SockbaseAccount | null>
   getUserDataByUserIdAsync: (userId: string) => Promise<SockbaseAccount>
-  getUserDataByUserIdAndEventIdAsync: (userId: string, eventId: string) => Promise<SockbaseAccount>
-  getUserDataByUserIdAndStoreIdAsync: (userId: string, storeId: string) => Promise<SockbaseAccount>
-  getUserDataByUserIdAndStoreIdOptionalAsync: (userId: string, storeId: string) => Promise<SockbaseAccount | null>
+  getUserDataByUserIdAndEventIdAsync: (
+    userId: string,
+    eventId: string
+  ) => Promise<SockbaseAccount>
+  getUserDataByUserIdAndStoreIdAsync: (
+    userId: string,
+    storeId: string
+  ) => Promise<SockbaseAccount>
+  getUserDataByUserIdAndStoreIdOptionalAsync: (
+    userId: string,
+    storeId: string
+  ) => Promise<SockbaseAccount | null>
 }
-const useUserData: () => IUseUserData = () => {
+const useUserData = (): IUseUserData => {
   const { user, getFirestore } = useFirebase()
 
-  const updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void> =
-    async (userId, userData) => {
-      const db = getFirestore()
-      const userRef = FirestoreDB
-        .doc(db, 'users', userId)
-        .withConverter(userConverter)
-      await FirestoreDB.setDoc(userRef, userData)
-    }
+  const updateUserDataAsync = async (
+    userId: string,
+    userData: SockbaseAccount
+  ): Promise<void> => {
+    const db = getFirestore()
+    const userRef = FirestoreDB.doc(db, 'users', userId).withConverter(
+      userConverter
+    )
+    await FirestoreDB.setDoc(userRef, userData)
+  }
 
-  const getMyUserDataAsync: () => Promise<SockbaseAccount | null> =
-    useCallback(async () => {
+  const getMyUserDataAsync =
+    useCallback(async (): Promise<SockbaseAccount | null> => {
       if (!user) {
         return null
       }
 
       const db = getFirestore()
-      const userRef = FirestoreDB
-        .doc(db, 'users', user.uid)
-        .withConverter(userConverter)
+      const userRef = FirestoreDB.doc(db, 'users', user.uid).withConverter(
+        userConverter
+      )
       const snap = await FirestoreDB.getDoc(userRef)
       if (snap.exists()) {
         return snap.data()
@@ -64,23 +81,30 @@ const useUserData: () => IUseUserData = () => {
       }
     }, [user])
 
-  const getUserDataByUserIdAsync: (userId: string) => Promise<SockbaseAccount> =
-    async (userId) => {
-      const db = getFirestore()
-      const userRef = FirestoreDB.doc(db, 'users', userId)
-        .withConverter(userConverter)
-      const userDoc = await FirestoreDB.getDoc(userRef)
-      if (userDoc.exists()) {
-        return userDoc.data()
-      } else {
-        throw new Error('user not found')
-      }
-    }
-
-  const getUserDataByUserIdAndEventIdAsync = async (userId: string, eventId: string): Promise<SockbaseAccount> => {
+  const getUserDataByUserIdAsync = async (
+    userId: string
+  ): Promise<SockbaseAccount> => {
     const db = getFirestore()
-    const userRef = FirestoreDB.doc(db, `/events/${eventId}/_users/${userId}`)
-      .withConverter(userConverter)
+    const userRef = FirestoreDB.doc(db, 'users', userId).withConverter(
+      userConverter
+    )
+    const userDoc = await FirestoreDB.getDoc(userRef)
+    if (userDoc.exists()) {
+      return userDoc.data()
+    } else {
+      throw new Error('user not found')
+    }
+  }
+
+  const getUserDataByUserIdAndEventIdAsync = async (
+    userId: string,
+    eventId: string
+  ): Promise<SockbaseAccount> => {
+    const db = getFirestore()
+    const userRef = FirestoreDB.doc(
+      db,
+      `/events/${eventId}/_users/${userId}`
+    ).withConverter(userConverter)
 
     const userDoc = await FirestoreDB.getDoc(userRef)
 
@@ -92,11 +116,15 @@ const useUserData: () => IUseUserData = () => {
     return user
   }
 
-  const getUserDataByUserIdAndStoreIdAsync = async (userId: string, storeId: string): Promise<SockbaseAccount> => {
+  const getUserDataByUserIdAndStoreIdAsync = async (
+    userId: string,
+    storeId: string
+  ): Promise<SockbaseAccount> => {
     const db = getFirestore()
-    const userRef = FirestoreDB
-      .doc(db, `stores/${storeId}/_users/${userId}`)
-      .withConverter(userConverter)
+    const userRef = FirestoreDB.doc(
+      db,
+      `stores/${storeId}/_users/${userId}`
+    ).withConverter(userConverter)
 
     const userDoc = await FirestoreDB.getDoc(userRef)
 
@@ -108,12 +136,14 @@ const useUserData: () => IUseUserData = () => {
     return user
   }
 
-  const getUserDataByUserIdAndStoreIdOptionalAsync = async (userId: string, storeId: string): Promise<SockbaseAccount | null> =>
-    await getUserDataByUserIdAndStoreIdAsync(userId, storeId)
-      .catch(err => {
-        console.error(err) 
-        return null
-      })
+  const getUserDataByUserIdAndStoreIdOptionalAsync = async (
+    userId: string,
+    storeId: string
+  ): Promise<SockbaseAccount | null> =>
+    await getUserDataByUserIdAndStoreIdAsync(userId, storeId).catch((err) => {
+      console.error(err)
+      return null
+    })
 
   return {
     updateUserDataAsync,

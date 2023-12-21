@@ -1,25 +1,21 @@
 {
-  "extends": ["./../../.eslintrc.json", "plugin:react/recommended"],
-  "plugins": ["react"],
+  "extends": [
+    "./../../.eslintrc.json",
+    "plugin:react/recommended"
+  ],
   "settings": {
     "react": {
       "version": "detect"
     }
   },
   "rules": {
-    "@typescript-eslint/no-confusing-void-expression": [
-      "warn",
-      {
-        "ignoreArrowShorthand": true
-      }
-    ],
+    "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
     "react/function-component-definition": [
       2,
       {
         "namedComponents": "arrow-function"
       }
-    ],
-    "react/prop-types": "off"
+    ]
   }
 }

@@ -49,7 +49,6 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
       getStoreByIdAsync(storeId)
         .then(fetchedStore => setStore(fetchedStore))
         .catch(err => { throw err })
-
     }
     fetchAsync()
       .catch(err => { throw err })
@@ -58,7 +57,6 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
 
   const createTicket = (): void => {
     if (!storeId || !createTicketData.email || !createTicketData.typeId) return
-
 
     const typeName = getType(createTicketData.typeId)?.name
     if (!confirm(`以下のチケットを作成します\n\nメールアドレス: ${createTicketData.email}\nチケット種別: ${typeName}\n\nよろしいですか？`)) return
@@ -115,7 +113,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
         <li><Link to={`/dashboard/stores/${storeId}`}>{store?.storeName ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
-      <PageTitle title={store?.storeName} icon={<MdStore />} description={`チケット作成`} isLoading={!store} />
+      <PageTitle title={store?.storeName} icon={<MdStore />} description={'チケット作成'} isLoading={!store} />
 
       <TwoColumnsLayout>
         <>

@@ -34,6 +34,8 @@ const Login: React.FC<Props> = (props) => {
             value={props.password}
             onChange={e => props.setPassword(e.target.value)} />
         </FormItem>
+      </FormSection>
+      <FormSection>
         <FormItem>
           <FormButton
             onClick={props.login}
