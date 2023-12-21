@@ -3,10 +3,14 @@ import styled from 'styled-components'
 const FormButton = styled.button<{
   disabled?: boolean
   inlined?: boolean
-  color?: 'danger'
+  color?: 'danger' | 'info'
 }>`
-  padding: 10px 20px;
+  ${props => !props.inlined && {
+    display: 'block',
+    width: '100%'
+  }}
 
+  padding: 10px 20px;
   border-radius: 5px;
   border: none;
   font-size: 1rem;
@@ -19,8 +23,7 @@ const FormButton = styled.button<{
 
   background-color: var(--brand-black-color);
 
-  ${(props) =>
-    props.color === 'danger' ? 'background-color: var(--danger-color);' : ''}
+  ${(props) => props.color && `background-color: var(--${props.color}-color);`}
 
   ${(props) =>
     props.disabled &&

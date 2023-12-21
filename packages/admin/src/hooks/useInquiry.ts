@@ -168,19 +168,16 @@ const useInquiry = (): IUseInquiry => {
     status: SockbaseInquiryStatus
   ): Promise<void> => {
     const db = getFirestore()
-    const inquiryMetaRef = FirestoreDB.doc(
-      db,
-      `/_inquiries/${inquiryId}/private/meta`
-    ).withConverter(inquiryMetaConverter)
+    const inquiryMetaRef = FirestoreDB
+      .doc(db, `/_inquiries/${inquiryId}/private/meta`)
+      .withConverter(inquiryMetaConverter)
+
+    console.log(`/_inquiries/${inquiryId}/private/meta`, status)
 
     await FirestoreDB.setDoc(
       inquiryMetaRef,
-      {
-        status
-      },
-      {
-        merge: true
-      }
+      { status },
+      { merge: true }
     )
   }
 
