@@ -16,7 +16,6 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 }
-
 html, body {
   font-family: "LINE Seed JP", sans-serif;
   font-size: 16px;
@@ -31,7 +30,13 @@ html, body {
 html, body, fieldset, textarea,
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
+  margin-bottom: 5px;
   padding: 0;
+}
+h3 {
+  font-size: 0.95em;
+  font-weight: normal;
+  color: var(--gray-color);
 }
 fieldset {
   border: none;
@@ -48,11 +53,35 @@ p {
     margin-bottom: 0;
   }
 }
-h3 {
-  margin-bottom: 2px;
-  font-size: 0.95em;
-  font-weight: normal;
-  color: var(--gray-color);
+table {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  border-collapse: collapse;
+  text-align: left;
+
+  th, td {
+    padding: 7px;
+  }
+  th {
+    width: 30%;
+  }
+
+  tbody {
+    border-top: 2px solid var(--gray-color);
+    border-bottom: 2px solid var(--gray-color);
+
+    th, td {
+      border-bottom: 1px solid var(--gray-color);
+    }
+    tr:last-child {
+      th, td {
+        border-bottom: none;
+      }
+    }
+  }
 }
 #root {
   height: 100%;
