@@ -2,7 +2,7 @@ import {
   createBrowserRouter,
   Outlet,
   RouterProvider,
-  ScrollRestoration,
+  ScrollRestoration
 } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import { RecoilRoot } from 'recoil'
@@ -40,34 +40,34 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <IndexPage />,
+        element: <IndexPage />
       },
       {
         path: 'login',
-        element: <LoginPage />,
+        element: <LoginPage />
       },
       {
         path: 'terminal',
-        element: <TicketTerminalPage />,
+        element: <TicketTerminalPage />
       },
       {
         path: 'license',
-        element: <LicensePage />,
+        element: <LicensePage />
       },
       {
         path: 'inquiries',
-        element: <InquiryListPage />,
+        element: <InquiryListPage />
       },
       {
         path: 'events',
-        element: <EventListPage />,
+        element: <EventListPage />
       },
       {
         path: 'stores',
-        element: <StoreListPage />,
-      },
-    ],
-  },
+        element: <StoreListPage />
+      }
+    ]
+  }
 ])
 
 const App: React.FC = () => {

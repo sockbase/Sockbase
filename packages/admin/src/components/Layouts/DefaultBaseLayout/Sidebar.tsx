@@ -9,7 +9,7 @@ import {
   MdEditCalendar,
   MdStore,
   MdLogout,
-  MdLogin,
+  MdLogin
 } from 'react-icons/md'
 import useNotification from '../../../hooks/useNotification'
 import useModal from '../../../hooks/useModal'
@@ -33,14 +33,14 @@ const Sidebar: React.FC = () => {
         よろしいですか？
       </>,
       [
-        <FormSection>
+        <FormSection key="logout">
           <FormItem inlined right>
             <FormButton onClick={handleLogout} color="danger">
               ログアウト
             </FormButton>
             <FormButton onClick={closeModal}>やめる</FormButton>
           </FormItem>
-        </FormSection>,
+        </FormSection>
       ]
     )
   }, [showModal, closeModal])

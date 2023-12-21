@@ -1,8 +1,12 @@
 import { useRecoilState } from 'recoil'
 import notificationState from '../atoms/notificationState'
 
-const useNotification = () => {
-  const [_, setNotifications] = useRecoilState(notificationState)
+interface IUseNotification {
+  addNotification: (message: string) => void
+}
+
+const useNotification = (): IUseNotification => {
+  const [, setNotifications] = useRecoilState(notificationState)
 
   const addNotification = (message: string): void => {
     const now = new Date().getTime()

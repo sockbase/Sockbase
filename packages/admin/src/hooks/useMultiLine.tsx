@@ -1,6 +1,10 @@
 import { Fragment, useCallback } from 'react'
 
-const useMultiLine = () => {
+interface IUseMultiLine {
+  convertMultiLine: (rawBody: string) => React.ReactNode
+}
+
+const useMultiLine = (): IUseMultiLine => {
   const convertMultiLine = useCallback((rawBody: string): React.ReactNode => {
     const body = rawBody.split('\\n')
     return body.map((l, k) => (
@@ -12,7 +16,7 @@ const useMultiLine = () => {
   }, [])
 
   return {
-    convertMultiLine,
+    convertMultiLine
   }
 }
 
