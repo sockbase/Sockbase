@@ -25,6 +25,10 @@ export interface SockbaseEvent {
   }
 }
 
+export type SockbaseEventDocument = SockbaseEvent & {
+  id: string
+}
+
 /**
  * スペース
  */

@@ -57,6 +57,6 @@ const PageSubTitle = styled.div`
   grid-column: 2;
 `
 const Container = styled.div`
-  padding: 40px 10%;
+  padding: 20px;
   background-color: var(--primary-lightgray-color);
 `
