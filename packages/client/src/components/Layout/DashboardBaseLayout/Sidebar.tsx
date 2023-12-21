@@ -290,8 +290,7 @@ const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boo
       }
       : {
         backgroundColor: '#ea6183'
-      }
-  }
+      }}
 `
 const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
   padding: 10px;
@@ -319,8 +318,7 @@ const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boo
       : {
         border: '2px solid #ea6183',
         color: '#000000'
-      }
-  }
+      }}
   }
 `
 const StyledStatePanel = styled.div`

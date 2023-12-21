@@ -40,7 +40,7 @@ const DashboardTicketListPage: React.FC = () => {
       if (!fetchedTickets) return
 
       const ticketIds = fetchedTickets
-        .map(t => t.id ?? '' )
+        .map(t => t.id ?? '')
       const ticketHashIds = fetchedTickets
         .map(t => t.hashId ?? '')
 

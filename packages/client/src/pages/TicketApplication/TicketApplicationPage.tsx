@@ -35,7 +35,7 @@ const TicketApplicationPage: React.FC = () => {
   }
   useEffect(onInitialize, [getMyUserDataAsync])
 
-  const pageTitle = useMemo(() => store && `${store.storeName} チケット申し込みフォーム` || '', [store])
+  const pageTitle = useMemo(() => (store && `${store.storeName} チケット申し込みフォーム`) || '', [store])
 
   return (
     <DefaultBaseLayout title={pageTitle}>
@@ -51,7 +51,7 @@ const TicketApplicationPage: React.FC = () => {
               {user?.email && <Alert>
                 {user.email} としてログイン中です
               </Alert>}
-              <StepContainerComponent store={store} isLoggedIn={isLoggedIn} userData={userData} />
+              <StepContainerComponent user={user} store={store} isLoggedIn={isLoggedIn} userData={userData} />
             </>
             : <></>}
     </DefaultBaseLayout >

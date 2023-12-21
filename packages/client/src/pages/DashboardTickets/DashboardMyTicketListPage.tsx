@@ -102,33 +102,33 @@ const DashboardMyTicketsPage: React.FC = () => {
               </p>
             : <Loading text="チケット一覧" />}
 
-            <h2>使用済みチケット</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>チケット名</th>
-                  <th>チケット種別</th>
-                  <th>使用日</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {usedTicketUsers.length !== 0
-                  ? usedTicketUsers
-                    .map((t, i) => <tr key={t.hashId}>
-                        <td>{i + 1}</td>
-                        <th>{getStore(t.storeId)?.storeName}</th>
-                        <td>{getType(t.storeId, t.typeId)?.name}</td>
-                        <td>{formatByDate(t.usedAt, 'YYYY年M月D日 H時mm分')}</td>
-                        <td><Link to={`/dashboard/mytickets/${t.hashId}`}>詳細</Link></td>
-                      </tr>)
-                  : <tr>
-                    <td colSpan={5}>使用済みチケットはありません。</td>  
-                  </tr>}
-              </tbody>
-            </table>
-          </>}
+          <h2>使用済みチケット</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>チケット名</th>
+                <th>チケット種別</th>
+                <th>使用日</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {usedTicketUsers.length !== 0
+                ? usedTicketUsers
+                  .map((t, i) => <tr key={t.hashId}>
+                    <td>{i + 1}</td>
+                    <th>{getStore(t.storeId)?.storeName}</th>
+                    <td>{getType(t.storeId, t.typeId)?.name}</td>
+                    <td>{formatByDate(t.usedAt, 'YYYY年M月D日 H時mm分')}</td>
+                    <td><Link to={`/dashboard/mytickets/${t.hashId}`}>詳細</Link></td>
+                  </tr>)
+                : <tr>
+                  <td colSpan={5}>使用済みチケットはありません。</td>
+                </tr>}
+            </tbody>
+          </table>
+        </>}
     </DashboardBaseLayout >
   )
 }

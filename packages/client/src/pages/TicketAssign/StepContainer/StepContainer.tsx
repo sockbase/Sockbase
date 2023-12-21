@@ -12,6 +12,7 @@ import Step3 from './Step3'
 import useStore from '../../../hooks/useStore'
 import useFirebase from '../../../hooks/useFirebase'
 import useUserData from '../../../hooks/useUserData'
+import CheckAccount from './CheckAccount'
 
 const stepProgresses = ['入力', '確認', '完了']
 
@@ -24,7 +25,7 @@ interface Props {
 }
 const StepContainer: React.FC<Props> = (props) => {
   const { assignTicketUserAsync } = useStore()
-  const { createUser, user } = useFirebase()
+  const { createUser, loginByEmail, logout, user } = useFirebase()
   const { updateUserDataAsync } = useUserData()
 
   const [step, setStep] = useState(0)
@@ -47,14 +48,23 @@ const StepContainer: React.FC<Props> = (props) => {
 
   const onInitialize = (): void => {
     setStepComponents([
+      <CheckAccount key="checkAccount"
+        user={user}
+        login={async (email, password) => {
+          await loginByEmail(email, password)
+        }}
+        logout={() => logout()}
+        nextStep={() => setStep(1)}
+      />,
       <Step1 key="step1"
-        isLoggedIn={props.isLoggedIn}
+        user={user}
         store={props.store}
         ticketUser={props.ticketUser}
         userData={userData}
+        prevStep={() => setStep(0)}
         nextStep={(u) => {
           setUserData(u)
-          setStep(1)
+          setStep(2)
         }} />,
       <Step2 key="step2"
         store={props.store}
@@ -62,15 +72,15 @@ const StepContainer: React.FC<Props> = (props) => {
         loggedInUserData={props.userData}
         inputedUserData={userData}
         submitAssignTicket={submitAssignTicket}
-        nextStep={() => setStep(2)}
-        prevStep={() => setStep(0)} />,
+        nextStep={() => setStep(3)}
+        prevStep={() => setStep(1)} />,
       <Step3 key="step3"
         ticketHashId={props.ticketHashId}
         store={props.store}
         ticketUser={props.ticketUser} />
     ])
   }
-  useEffect(onInitialize, [props.isLoggedIn, props.store, props.ticketUser, props.userData, userData])
+  useEffect(onInitialize, [props.isLoggedIn, props.store, props.ticketUser, props.userData, user, userData])
 
   const onChangeStep: () => void =
     () => window.scrollTo(0, 0)
@@ -83,7 +93,7 @@ const StepContainer: React.FC<Props> = (props) => {
       <StepProgress steps={
         stepProgresses.map((i, k) => ({
           text: i,
-          isActive: k === step
+          isActive: k === step - 1
         }))
       } />
 

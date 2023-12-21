@@ -119,7 +119,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
 
   const handleChangeStatus = (status: SockbaseApplicationStatus): void => {
     if (!appId || !isAdmin) return
-    if (!confirm(`ステータスを変更します。\nよろしいですか？`)) return
+    if (!confirm('ステータスを変更します。\nよろしいですか？')) return
 
     updateApplicationStatusByIdAsync(appId, status)
       .then(() => {
@@ -192,7 +192,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
             <tbody>
               <tr>
                 <th>申し込み状況</th>
-                <td>{app && <ApplicationStatusLabel status={app.meta.applicationStatus} /> || <BlinkField />}</td>
+                <td>{(app && <ApplicationStatusLabel status={app.meta.applicationStatus} />) || <BlinkField />}</td>
               </tr>
               {eventSpace?.productInfo && <tr>
                 <th>お支払い状況</th>
@@ -204,7 +204,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               </tr>}
               <tr>
                 <th>申し込んだイベント</th>
-                <td>{event && `${event.eventName} ${formatByDate(event.schedules.startEvent, '(YYYY年M月D日 開催)')}` || <BlinkField />}</td>
+                <td>{(event && `${event.eventName} ${formatByDate(event.schedules.startEvent, '(YYYY年M月D日 開催)')}`) || <BlinkField />}</td>
               </tr>
               <tr>
                 <th>サークル名</th>

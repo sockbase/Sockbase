@@ -10,7 +10,7 @@ import {
 import StoreService from '../services/StoreService'
 
 export const onTicketUserUsedStatusUpdated = firestore
-  .document(`/_tickets/{ticketId}/private/usedStatus`)
+  .document('/_tickets/{ticketId}/private/usedStatus')
   .onUpdate(async (change: Change<QueryDocumentSnapshot>, context: EventContext<{ ticketId: string }>) => {
     if (!change.after.exists) return
 
@@ -21,7 +21,7 @@ export const onTicketUserUsedStatusUpdated = firestore
   })
 
 export const onTicketUserAssigned = firestore
-  .document(`/_ticketUsers/{ticketHashId}`)
+  .document('/_ticketUsers/{ticketHashId}')
   .onUpdate(async (change: Change<QueryDocumentSnapshot>) => {
     if (!change.after.exists) return
 
@@ -44,7 +44,7 @@ export const createTicket = https.onCall(
   })
 
 export const createTicketForAdmin = https.onCall(
-  async (param: { storeId: string; createTicketData: { email: string; typeId: string; } }, context: https.CallableContext): Promise<SockbaseTicketCreatedResult> => {
+  async (param: { storeId: string, createTicketData: { email: string, typeId: string } }, context: https.CallableContext): Promise<SockbaseTicketCreatedResult> => {
     if (!context.auth?.token.roles || context.auth.token.roles?.system !== 2) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }
