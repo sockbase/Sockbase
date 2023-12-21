@@ -23,7 +23,7 @@ const useDayjs = (): IUseDayjs => {
 
   return {
     formatByDate,
-    formatDateTime,
+    formatDateTime
   }
 }
 

@@ -20,7 +20,7 @@ const FormButton = styled.button<{
   background-color: var(--brand-black-color);
 
   ${(props) =>
-    props.color === 'danger' ? `background-color: var(--danger-color);` : ''}
+    props.color === 'danger' ? 'background-color: var(--danger-color);' : ''}
 
   ${(props) =>
     props.disabled &&

@@ -12,24 +12,39 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   onIdTokenChanged,
-  sendEmailVerification,
+  sendEmailVerification
 } from 'firebase/auth'
 import {
   type Firestore,
-  getFirestore as getFirebaseFirestore,
+  getFirestore as getFirebaseFirestore
 } from 'firebase/firestore'
 import {
   type FirebaseStorage,
-  getStorage as getFirebaseStorage,
+  getStorage as getFirebaseStorage
 } from 'firebase/storage'
 import {
   type Functions,
-  getFunctions as getFirebaseFunctions,
+  getFunctions as getFirebaseFunctions
 } from 'firebase/functions'
 import type { SockbaseRole } from 'sockbase'
 import { getFirebaseApp } from '../libs/FirebaseApp'
 
-const useFirebase = () => {
+interface IUseFirebase {
+  isLoggedIn: boolean | undefined
+  user: User | null | undefined
+  roles: Record<string, SockbaseRole> | null | undefined
+  getAuth: () => Auth
+  loginByEmail: (email: string, password: string) => Promise<UserCredential>
+  logout: () => void
+  createUser: (email: string, password: string) => Promise<User>
+  sendPasswordResetURLAsync: (email: string) => Promise<void>
+  sendVerifyMail: () => Promise<void>
+  getFirestore: () => Firestore
+  getStorage: () => FirebaseStorage
+  getFunctions: () => Functions
+}
+
+const useFirebase = (): IUseFirebase => {
   const [auth, setAuth] = useState<Auth | undefined>()
   const [isLoggedIn, setLoggedIn] = useState<boolean | undefined>()
   const [user, setUser] = useState<User | null | undefined>()
@@ -62,7 +77,7 @@ const useFirebase = () => {
     return credential
   }
 
-  const logout = () => {
+  const logout = (): void => {
     const auth = getAuth()
     signOut(auth)
       .then(() => {
@@ -91,7 +106,7 @@ const useFirebase = () => {
     })
   }
 
-  const sendVerifyMail: () => Promise<void> = useCallback(async () => {
+  const sendVerifyMail = useCallback(async () => {
     if (!user) return
     sendEmailVerification(user).catch((err) => {
       throw err
@@ -149,7 +164,7 @@ const useFirebase = () => {
     sendVerifyMail,
     getFirestore,
     getStorage,
-    getFunctions,
+    getFunctions
   }
 }
 

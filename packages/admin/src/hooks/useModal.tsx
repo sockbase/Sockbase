@@ -1,9 +1,14 @@
 import { useRecoilState } from 'recoil'
 import ModalState from '../atoms/modalState'
-import React from 'react'
+import type React from 'react'
 
-const useModal = () => {
-  const [_, setModal] = useRecoilState(ModalState)
+interface IUseModal {
+  showModal: (title: string, body: React.ReactNode, footerItems: React.ReactNode[]) => void
+  closeModal: () => void
+}
+
+const useModal = (): IUseModal => {
+  const [, setModal] = useRecoilState(ModalState)
 
   const showModal = (title: string, body: React.ReactNode, footerItems: React.ReactNode[]): void => {
     setModal({
