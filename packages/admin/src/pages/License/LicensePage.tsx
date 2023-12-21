@@ -24,6 +24,7 @@ const LicensePage: React.FC = () => {
       title="権限"
       subTitle="付与されている権限情報を表示します。"
       icon={<MdBadge />}
+      prevPage={{ path: '/', name: 'トップ' }}
     >
       <h2>ユーザ情報</h2>
       <table>

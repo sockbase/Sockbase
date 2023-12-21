@@ -7,6 +7,7 @@ const StoreListPage: React.FC = () => {
       title="チケットストア管理"
       subTitle="Sockbase で管理しているチケットストアを表示します。"
       icon={<MdStore />}
+      prevPage={{ path: '/', name: 'トップ' }}
     >
       StoreListPage
     </MainLayout>

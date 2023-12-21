@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { type PrevPage } from '../../../@types'
 import DefaultBaseLayout from '../DefaultBaseLayout/DefaultBaseLayout'
 
 interface Props {
@@ -6,10 +7,11 @@ interface Props {
   title?: string
   subTitle?: string
   icon?: React.ReactNode
+  prevPage?: PrevPage
 }
 const MainLayout: React.FC<Props> = (props) => {
   return (
-    <DefaultBaseLayout title={props.title}>
+    <DefaultBaseLayout title={props.title} prevPage={props.prevPage}>
       <BaseContainer>
         <PageTitlePanel>
           {props.icon && <PageTitleIcon>{props.icon}</PageTitleIcon>}

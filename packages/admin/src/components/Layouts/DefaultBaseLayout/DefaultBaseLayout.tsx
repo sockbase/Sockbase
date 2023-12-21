@@ -1,19 +1,29 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Helmet } from 'react-helmet-async'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { type PrevPage } from '../../../@types'
 import Sidebar from './Sidebar'
 import LogotypeSVG from '../../../assets/logotype.svg'
 
 interface Props {
   children: React.ReactNode
   title?: string
+  prevPage?: PrevPage
 }
 
 const DefaultBaseLayout: React.FC<Props> = (props) => {
+  const navigate = useNavigate()
+
   const pageTitle = useMemo(
     () => (props.title ? `${props.title} - Sockbase ADMIN` : 'Sockbase ADMIN'),
     [props.title]
   )
+
+  const transitionPrevPage = useCallback(() => {
+    if (!props.prevPage) return
+    navigate(props.prevPage.path)
+  }, [props.prevPage])
 
   return (
     <Container>
@@ -28,7 +38,14 @@ const DefaultBaseLayout: React.FC<Props> = (props) => {
           <Sidebar />
         </SidebarWrapper>
       </SidebarContainer>
-      <MainContainer>{props.children}</MainContainer>
+      <MainContainer>
+        <BackButtonWrapper>
+          {props.prevPage && <BackButtonContainer>
+            <BackButton onClick={transitionPrevPage}>{props.prevPage.name}</BackButton>
+          </BackButtonContainer>}
+        </BackButtonWrapper>
+        {props.children}
+      </MainContainer>
     </Container>
   )
 }
@@ -67,4 +84,33 @@ const SidebarWrapper = styled.nav`
 const MainContainer = styled.main`
   height: 100%;
   overflow-y: auto;
+  display: grid;
+  grid-template-rows: auto 1fr;
+`
+const BackButtonWrapper = styled.div`
+`
+const BackButtonContainer = styled.div`
+  border-bottom: 1px solid var(--border-color);
+`
+const BackButton = styled.span`
+  display: inline-block;
+  padding: 10px;
+  padding-left: 32px;
+  color: var(--primary-text-color);
+  cursor: pointer;
+
+  position: relative;
+
+  &::before {
+    position: absolute;
+    top: calc(50% - 8px);
+    left: 16px;
+    display: inline-block;
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-left: 2px solid var(--primary-text-color);
+    border-bottom: 2px solid var(--primary-text-color);
+    transform: rotate(45deg);
+  }
 `

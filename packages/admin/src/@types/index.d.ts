@@ -16,3 +16,8 @@ export interface RawAssignEventSpace {
   applicationHashId: string
   spaceId: string
 }
+
+export interface PrevPage {
+  path: string
+  name: string
+}

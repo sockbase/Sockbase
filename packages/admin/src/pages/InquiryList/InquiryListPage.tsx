@@ -114,6 +114,7 @@ const InquiryListPage: React.FC = () => {
 
   return (
     <ColumnLayout
+      prevPage={{ path: '/', name: 'トップ' }}
       title="問い合わせ管理"
       items={
         inquiries === undefined || inquiryMetas === undefined || userDatas === undefined
