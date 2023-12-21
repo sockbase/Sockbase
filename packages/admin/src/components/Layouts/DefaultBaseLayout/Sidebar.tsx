@@ -112,12 +112,6 @@ const Sidebar: React.FC = () => {
 
           <MenuTitle>システム操作</MenuTitle>
           <Menu>
-            <MenuItemButton onClick={() => handleTransition('/inquiries')}>
-              <MenuItemIcon>
-                <MdInbox />
-              </MenuItemIcon>
-              <MenuItemLabel>問い合わせ管理</MenuItemLabel>
-            </MenuItemButton>
             <MenuItemButton onClick={() => handleTransition('/events')}>
               <MenuItemIcon>
                 <MdEditCalendar />
@@ -129,6 +123,12 @@ const Sidebar: React.FC = () => {
                 <MdStore />
               </MenuItemIcon>
               <MenuItemLabel>チケットストア管理</MenuItemLabel>
+            </MenuItemButton>
+            <MenuItemButton onClick={() => handleTransition('/inquiries')}>
+              <MenuItemIcon>
+                <MdInbox />
+              </MenuItemIcon>
+              <MenuItemLabel>問い合わせ管理</MenuItemLabel>
             </MenuItemButton>
           </Menu>
         </>

@@ -38,14 +38,16 @@ const DefaultBaseLayout: React.FC<Props> = (props) => {
           <Sidebar />
         </SidebarWrapper>
       </SidebarContainer>
-      <MainContainer>
+      <MainWapper>
         <BackButtonWrapper>
           {props.prevPage && <BackButtonContainer>
             <BackButton onClick={transitionPrevPage}>{props.prevPage.name}</BackButton>
           </BackButtonContainer>}
         </BackButtonWrapper>
-        {props.children}
-      </MainContainer>
+        <MainContainer>
+          {props.children}
+        </MainContainer>
+      </MainWapper>
     </Container>
   )
 }
@@ -56,6 +58,7 @@ const Container = styled.div`
   height: 100%;
   display: grid;
   grid-template-columns: 35% 1fr;
+  grid-template-rows: 100%;
   justify-content: stretch;
   background-color: var(--primary-darkgray-color);
   user-select: none;
@@ -81,11 +84,14 @@ const Logotype = styled.img`
 const SidebarWrapper = styled.nav`
   padding: 40px;
 `
-const MainContainer = styled.main`
+const MainWapper = styled.main`
   height: 100%;
-  overflow-y: auto;
   display: grid;
   grid-template-rows: auto 1fr;
+`
+const MainContainer = styled.div`
+  height: 100%;
+  overflow-y: auto;
 `
 const BackButtonWrapper = styled.div`
 `
