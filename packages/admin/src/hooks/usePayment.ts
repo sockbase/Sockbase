@@ -11,13 +11,9 @@ interface ApplicationHashIdDocument {
 
 const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<ApplicationHashIdDocument> =
   {
-    toFirestore: (
-      app: ApplicationHashIdDocument
-    ): FirestoreDB.DocumentData => ({}),
+    toFirestore: (): FirestoreDB.DocumentData => ({}),
     fromFirestore: (
-      snapshot: FirestoreDB.QueryDocumentSnapshot,
-      options: FirestoreDB.SnapshotOptions
-    ): ApplicationHashIdDocument => {
+      snapshot: FirestoreDB.QueryDocumentSnapshot): ApplicationHashIdDocument => {
       const hashDoc = snapshot.data()
       return {
         applicationId: hashDoc.applicationId,
@@ -29,13 +25,9 @@ const applicationHashIdConverter: FirestoreDB.FirestoreDataConverter<Application
 
 const paymentConverter: FirestoreDB.FirestoreDataConverter<SockbasePaymentDocument> =
   {
-    toFirestore: (
-      payment: SockbasePaymentDocument
-    ): FirestoreDB.DocumentData => ({}),
+    toFirestore: (): FirestoreDB.DocumentData => ({}),
     fromFirestore: (
-      snapshot: FirestoreDB.QueryDocumentSnapshot,
-      options: FirestoreDB.SnapshotOptions
-    ): SockbasePaymentDocument => {
+      snapshot: FirestoreDB.QueryDocumentSnapshot): SockbasePaymentDocument => {
       const payment = snapshot.data()
       return {
         userId: payment.userId,

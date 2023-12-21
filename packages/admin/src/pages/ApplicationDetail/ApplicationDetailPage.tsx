@@ -10,7 +10,10 @@ import {
   type SockbasePaymentDocument,
   type SockbaseEventSpace,
   type SockbaseApplicationHashIdDocument,
-  type SockbaseSpaceDocument
+  type SockbaseSpaceDocument,
+  type SockbaseEventGenre,
+  type SockbaseApplicationStatus,
+  type PaymentStatus
 } from 'sockbase'
 import { MdEdit } from 'react-icons/md'
 import useApplication from '../../hooks/useApplication'
@@ -47,6 +50,39 @@ const ApplicationDetailPage: React.FC = () => {
     if (!event) return null
     return event.spaces.filter(s => s.id === spaceId)[0]
   }, [event])
+
+  const getGenre = useCallback((genreId: string): SockbaseEventGenre | null => {
+    if (!event) return null
+    return event.genres.filter(g => g.id === genreId)[0]
+  }, [event])
+
+  const getApplicationStatusText = useCallback((status: SockbaseApplicationStatus): string => {
+    if (status === 0) {
+      return '仮申し込み'
+    } else if (status === 1) {
+      return 'キャンセル済み'
+    } else if (status === 2) {
+      return '申し込み確定'
+    } else {
+      return status
+    }
+  }, [])
+
+  const getPaymentStatusText = useCallback((status: PaymentStatus): string => {
+    if (status === 0) {
+      return '支払い待ち'
+    } else if (status === 1) {
+      return '支払い済み'
+    } else if (status === 2) {
+      return '返金済み'
+    } else if (status === 3) {
+      return '支払い失敗'
+    } else if (status === 4) {
+      return 'キャンセル済み'
+    } else {
+      return status
+    }
+  }, [])
 
   const onInitialize = (): void => {
     const fetchApplicationAsync = async (): Promise<void> => {
@@ -124,11 +160,11 @@ const ApplicationDetailPage: React.FC = () => {
           <tbody>
             <tr>
               <th>申込状況</th>
-              <td>{appMeta?.applicationStatus}</td>
+              <td>{appMeta && getApplicationStatusText(appMeta.applicationStatus)}</td>
             </tr>
             {app && getSpace(app.spaceId) && <tr>
               <th>支払状況</th>
-              <td>{payment?.status}</td>
+              <td>{payment && getPaymentStatusText(payment.status)}</td>
             </tr>}
             <tr>
               <th>イベント</th>
@@ -154,7 +190,7 @@ const ApplicationDetailPage: React.FC = () => {
             </tr>
             <tr>
               <th>申込sp.</th>
-              <td>{app?.spaceId}</td>
+              <td>{app && getSpace(app.spaceId)?.name}</td>
             </tr>
             <tr>
               <th>配置sp.</th>
@@ -204,7 +240,7 @@ const ApplicationDetailPage: React.FC = () => {
             </tr>
             <tr>
               <th>ジャンル</th>
-              <td>{app?.circle.genre}</td>
+              <td>{app && getGenre(app.circle.genre)?.name}</td>
             </tr>
             <tr>
               <th>概要</th>
