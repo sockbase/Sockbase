@@ -30,6 +30,7 @@ const Container = styled.div`
   grid-template-columns: 45% 1fr;
 `
 const Menu = styled.div`
+  height: 100%;
   overflow-y: auto;
   border-right: 1px solid var(--border-color);
 `
