@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "_userMetas": {
+      "$userId": {
+        ".read": "auth.uid == $userId"
+      }
+    }
+  }
+}

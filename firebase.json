@@ -43,5 +43,8 @@
   },
   "storage": {
     "rules": "./packages/rules/storage.rules"
+  },
+  "database": {
+    "rules": "./packages/rules/rtdb.json"
   }
 }

@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { type EffectCallback, useCallback, useEffect, useState } from 'react'
 import { type FirebaseError } from 'firebase/app'
 import {
   type Auth,
   type User,
   type UserCredential,
-  type Unsubscribe,
   type IdTokenResult,
   getAuth as getFirebaseAuth,
   signInWithEmailAndPassword,
@@ -26,8 +25,15 @@ import {
   type Functions,
   getFunctions as getFirebaseFunctions
 } from 'firebase/functions'
+import {
+  type Database,
+  ref as dbRef,
+  onValue as dbOnValue,
+  getDatabase as getFirebaseDatabase
+} from 'firebase/database'
 import type { SockbaseRole } from 'sockbase'
 import { getFirebaseApp } from '../libs/FirebaseApp'
+import useNotification from './useNotification'
 
 interface IUseFirebase {
   isLoggedIn: boolean | undefined
@@ -42,6 +48,7 @@ interface IUseFirebase {
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
   getFunctions: () => Functions
+  getDatabase: () => Database
 }
 
 const useFirebase = (): IUseFirebase => {
@@ -50,7 +57,9 @@ const useFirebase = (): IUseFirebase => {
   const [user, setUser] = useState<User | null | undefined>()
   const [roles, setRoles] = useState<Record<string, SockbaseRole> | null>()
 
-  const getAuth = (): Auth => {
+  const { addNotification } = useNotification()
+
+  const getAuth = useCallback((): Auth => {
     if (auth) {
       return auth
     }
@@ -60,7 +69,7 @@ const useFirebase = (): IUseFirebase => {
     setAuth(_auth)
 
     return _auth
-  }
+  }, [auth])
 
   const loginByEmail = async (
     email: string,
@@ -122,7 +131,12 @@ const useFirebase = (): IUseFirebase => {
     return getFirebaseFunctions(app)
   }
 
-  const onAuthenticationUpdated = (): Unsubscribe => {
+  const getDatabase = (): Database => {
+    const app = getFirebaseApp()
+    return getFirebaseDatabase(app)
+  }
+
+  const onAuthenticationUpdated: EffectCallback = () => {
     const auth = getAuth()
     const unSubscribe = onIdTokenChanged(auth, (user) => {
       setUser(user)
@@ -130,6 +144,8 @@ const useFirebase = (): IUseFirebase => {
 
       if (!user) {
         setRoles(undefined)
+        // refreshUserMetaUnsubscribe?.()
+        // setRefreshUserMetaUnsubscribe(null)
         return unSubscribe
       }
 
@@ -140,7 +156,7 @@ const useFirebase = (): IUseFirebase => {
         .then((result: IdTokenResult) => {
           if (result.claims.roles === undefined) {
             setRoles(null)
-            return
+            return unSubscribe
           }
           setRoles(result.claims.roles)
         })
@@ -148,9 +164,35 @@ const useFirebase = (): IUseFirebase => {
           throw err
         })
     })
-    return unSubscribe
+
+    return () => {
+      unSubscribe()
+    }
   }
-  useEffect(onAuthenticationUpdated, [])
+  useEffect(onAuthenticationUpdated, [auth])
+
+  const onUserChanged: EffectCallback = () => {
+    if (!user) return
+
+    const db = getDatabase()
+    const userMetaRef = dbRef(db, `_userMetas/${user.uid}/refreshTime`)
+
+    const unSubscribeToken = dbOnValue(userMetaRef, () => {
+      user.getIdToken()
+        .then(() => addNotification('ユーザ情報を取得しました'))
+        .catch(err => { throw err })
+    },
+    err => {
+      unSubscribeToken()
+      console.error(err)
+      throw err
+    })
+
+    return () => {
+      unSubscribeToken()
+    }
+  }
+  useEffect(onUserChanged, [user])
 
   return {
     isLoggedIn,
@@ -164,7 +206,8 @@ const useFirebase = (): IUseFirebase => {
     sendVerifyMail,
     getFirestore,
     getStorage,
-    getFunctions
+    getFunctions,
+    getDatabase
   }
 }
 
