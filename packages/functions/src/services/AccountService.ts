@@ -9,6 +9,7 @@ import { applicationConverter, roleConverter, ticketConverter } from '../libs/co
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
 const auth = adminApp.auth()
+const database = adminApp.database()
 
 const updateUserRoleByOrganizationAsync =
   async (userId: string, organizationId: string, role: SockbaseRole): Promise<void> => {
@@ -51,6 +52,11 @@ const setRolesToClaimsAsync = async (userId: string, roles: Record<string, numbe
 const updateRolesByUserIdAsync = async (userId: string): Promise<void> => {
   const roles = await getRolesAsync(userId)
   await setRolesToClaimsAsync(userId, roles)
+    .then(async () => {
+      await database
+        .ref(`_userMetas/${userId}/refreshTime`)
+        .set(new Date().getTime())
+    })
 }
 
 const updateUserDataAsync = async (userId: string, userData: SockbaseAccountDocument): Promise<void> => {
