@@ -51,7 +51,7 @@ const CheckAccount: React.FC<Props> = (props) => {
     <>
       {props.user === undefined && <Loading text="認証情報" />}
 
-      <h1>Sockbaseアカウントをお持ちですか？</h1>
+      <h1>Sockbaseアカウントはお持ちですか？</h1>
 
       {props.user === null
         ? <>
