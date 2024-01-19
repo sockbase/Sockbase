@@ -165,7 +165,7 @@ export interface SockbaseApplicationMeta {
 
 /**
  * サークル申し込みステータス
- * 
+ *
  * 0: 仮申し込み
  * 1: キャンセル済み
  * 2: 申し込み確定
@@ -258,7 +258,7 @@ export interface SockbaseTicketMeta {
 
 /**
  * チケット申し込みステータス
- * 
+ *
  * 0: 仮申し込み
  * 1: キャンセル済み
  * 2: 申し込み確定
@@ -348,7 +348,7 @@ export type SockbaseAccountDocument = SockbaseAccount & {
 
 /**
  * ロール
- * 
+ *
  * 0: 通常ユーザ
  * 1: スタッフ
  * 2: 管理者
@@ -357,7 +357,7 @@ export type SockbaseRole = 0 | 1 | 2
 
 /**
  * 決済方法
- * 
+ *
  * online: 1
  * bankTransfer: 2
  */
@@ -365,7 +365,7 @@ export type PaymentMethod = 1 | 2
 
 /**
  * 決済ステータス
- * 
+ *
  * pending: 0
  * paid: 1
  * refunded: 2
@@ -431,7 +431,7 @@ export type SockbaseInquiryMetaDocument = SockbaseInquiryMeta & {
 
 /**
  * 問い合わせステータス
- * 
+ *
  * todo: 0
  * inProgress: 1
  * done: 2

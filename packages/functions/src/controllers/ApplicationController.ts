@@ -24,7 +24,7 @@ export const createApplication = https.onCall(
     }
 
     const userId = context.auth.uid
-    
+
     const result = await ApplicationService.createApplicationAsync(userId, payload)
     return result
   })

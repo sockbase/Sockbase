@@ -23,7 +23,7 @@ export default LoadingCircleWrapper
 const Container = styled.div<{ inlined?: boolean }>`
   position: relative;
   display: inline-block;
-  ${props => !props.inlined && `width: 100%;`}
+  ${props => !props.inlined && 'width: 100%;'}
 `
 
 const LoadingContainer = styled.div`

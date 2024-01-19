@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import type { SockbaseApplicationDocument, SockbaseApplicationHashIdDocument, SockbaseApplicationMeta, SockbaseEvent, SockbaseSpaceDocument } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbaseApplicationHashIdDocument, SockbaseApplicationMeta, SockbaseEvent, SockbaseEventGenre, SockbaseEventSpace, SockbaseSpaceDocument } from 'sockbase'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
 
 interface Props {
@@ -18,19 +18,24 @@ const EventCircleApplications: React.FC<Props> = (props) => {
     return appCount
   }, [props.apps])
 
-  const spaceName: (spaceId: string) => string =
-    (spaceId) => props.event.spaces
-      .filter(s => s.id === spaceId)[0].name
+  const getSpace = useCallback((spaceId: string): SockbaseEventSpace | null => {
+    if (!props.event) return null
+    return props.event.spaces.filter(s => s.id === spaceId)[0]
+  }, [props.event])
 
-  const genreName = (genreId: string): string =>
-    props.event.genres
-      .filter(g => g.id === genreId)[0].name
+  const getGenre = useCallback((genreId: string): SockbaseEventGenre | null => {
+    if (!props.event) return null
+    return props.event.genres.filter(g => g.id === genreId)[0]
+  }, [props.event])
 
-  const circleNameByHashId = (appHashId: string): string =>
-    Object.values(props.apps)
-      .filter(a => a.hashId === appHashId)[0].circle.name
+  const getCircleByHashId = useCallback((appHashId: string): SockbaseApplicationDocument | null => {
+    if (!props.apps) return null
+    return Object.values(props.apps).filter(a => a.hashId === appHashId)[0]
+  }, [props.apps])
 
-  const getSpace = (appHashId: string): SockbaseSpaceDocument | null => {
+  const getAssignedSpace = useCallback((appHashId: string): SockbaseSpaceDocument | null => {
+    if (!props.appHashs) return null
+
     const appHashs = props.appHashs.filter(h => h.hashId === appHashId)
     if (appHashs.length !== 1) return null
 
@@ -41,7 +46,7 @@ const EventCircleApplications: React.FC<Props> = (props) => {
     if (spaces.length !== 1) return null
 
     return spaces[0]
-  }
+  }, [props.appHashs])
 
   return (
     <>
@@ -71,12 +76,12 @@ const EventCircleApplications: React.FC<Props> = (props) => {
                 app.hashId && <tr key={app.hashId}>
                   <td>{Object.entries(props.apps).length - i}</td>
                   <td><ApplicationStatusLabel status={props.metas[appId].applicationStatus} /></td>
-                  <td>{getSpace(app.hashId)?.spaceName ?? '-'}</td>
+                  <td>{getAssignedSpace(app.hashId)?.spaceName ?? '-'}</td>
                   <th><Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link></th>
                   <td>{app.circle.penName}</td>
-                  <td>{spaceName(app.spaceId)}</td>
-                  <td>{genreName(app.circle.genre)}</td>
-                  <td>{(app.unionCircleId && circleNameByHashId(app.unionCircleId)) || '-'}</td>
+                  <td>{getSpace(app.spaceId)?.name}</td>
+                  <td>{getGenre(app.circle.genre)?.name}</td>
+                  <td>{(app.unionCircleId && getCircleByHashId(app.unionCircleId)?.circle.name) || '-'}</td>
                 </tr>
               ))
           }

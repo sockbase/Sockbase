@@ -270,9 +270,9 @@ const DashboardTicketTerminalPage: React.FC = () => {
         <>
           {ticketUser && <>
             <h2>チケット情報</h2>
-            {ticketMeta && type
-              && (ticketMeta.applicationStatus !== 2 || !ticketUser.usableUserId || (type.productInfo && payment?.status !== 1))
-              && <Alert type="danger" title="このチケットは使用できません。">
+            {ticketMeta && type &&
+              (ticketMeta.applicationStatus !== 2 || !ticketUser.usableUserId || (type.productInfo && payment?.status !== 1)) &&
+              <Alert type="danger" title="このチケットは使用できません。">
                 <ul>
                   {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。</li>}
                   {!ticketUser.usableUserId && <li>チケットの割り当てが行われていません。</li>}
@@ -280,8 +280,8 @@ const DashboardTicketTerminalPage: React.FC = () => {
                 </ul>
               </Alert>}
 
-            {usedStatus
-              && <FormSection>
+            {usedStatus &&
+              <FormSection>
                 {!usedStatus.used
                   ? <FormItem>
                     <FormButton onClick={() => updateTicketUsedStatus(true)} disabled={isProgressForUsedStatus || !canUseTicket}>
@@ -316,8 +316,8 @@ const DashboardTicketTerminalPage: React.FC = () => {
                       : <BlinkField />}
                   </td>
                 </tr>
-                {type?.productInfo
-                  && <tr>
+                {type?.productInfo &&
+                  <tr>
                     <th>決済状況</th>
                     <td>
                       {payment
@@ -357,7 +357,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
                   <th>使用日時</th>
                   <td>
                     {ticketUser !== null
-                      ? ticketUser?.usedAt && formatByDate(ticketUser.usedAt, 'YYYY年M月D日 H時mm分') || '未使用'
+                      ? (ticketUser?.usedAt && formatByDate(ticketUser.usedAt, 'YYYY年M月D日 H時mm分')) || '未使用'
                       : <BlinkField />}
                   </td>
                 </tr>

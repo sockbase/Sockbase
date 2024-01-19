@@ -145,8 +145,8 @@ const DashboardTicketDetailPage: React.FC = () => {
   }, [store, type])
 
   const assignURL = useMemo(() =>
-    ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}` || '',
-    [ticketHash])
+    (ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}`) || '',
+  [ticketHash])
 
   const handleAssignMe = (): void => {
     if (!ticket || !ticketHash) return
@@ -184,7 +184,7 @@ const DashboardTicketDetailPage: React.FC = () => {
 
   const handleChangeStatus = (status: SockbaseApplicationStatus): void => {
     if (!ticket?.id || !isAdmin) return
-    if (!confirm(`ステータスを変更します。\nよろしいですか？`)) return
+    if (!confirm('ステータスを変更します。\nよろしいですか？')) return
 
     updateTicketApplicationStatusAsync(ticket.id, status)
       .then(() => {
@@ -218,21 +218,21 @@ const DashboardTicketDetailPage: React.FC = () => {
               <tr>
                 <th>申し込み状況</th>
                 <td>
-                  {(ticketMeta?.applicationStatus !== undefined
-                    && <ApplicationStatusLabel status={ticketMeta?.applicationStatus} />)
-                    || <BlinkField />}
+                  {(ticketMeta?.applicationStatus !== undefined &&
+                    <ApplicationStatusLabel status={ticketMeta?.applicationStatus} />) ||
+                    <BlinkField />}
                 </td>
               </tr>
               {type?.productInfo && <tr>
                 <th>お支払い状況</th>
                 <td>
-                  {(payment?.status !== undefined
-                    && (payment.status === 0
+                  {(payment?.status !== undefined &&
+                    (payment.status === 0
                       ? <Link to="/dashboard/payments">
                         <PaymentStatusLabel payment={payment} />
                       </Link>
-                      : <PaymentStatusLabel payment={payment} />))
-                    || <BlinkField />}
+                      : <PaymentStatusLabel payment={payment} />)) ||
+                    <BlinkField />}
                 </td>
               </tr>}
               <tr>

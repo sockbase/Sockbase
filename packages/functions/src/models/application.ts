@@ -5,7 +5,6 @@ import { applicationConverter, applicationHashIdConverter } from '../libs/conver
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
 
-
 const getApplicationByIdAsync = async (appId: string): Promise<SockbaseApplicationDocument> => {
   const appDoc = await firestore
     .doc(`/_applications/${appId}`)
@@ -18,7 +17,7 @@ const getApplicationByIdAsync = async (appId: string): Promise<SockbaseApplicati
 
   return app
 }
-  
+
 const getApplicationByUserIdAndEventIdAsync = async (userId: string, eventId: string): Promise<SockbaseApplicationDocument | null> => {
   const appCollection = await firestore.collection('_applications')
     .withConverter(applicationConverter)

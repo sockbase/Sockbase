@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { type User } from 'firebase/auth'
 import {
   type SockbaseTicket,
   type SockbaseStoreDocument,
@@ -17,17 +18,19 @@ import useFirebase from '../../../hooks/useFirebase'
 import useUserData from '../../../hooks/useUserData'
 import Alert from '../../../components/Parts/Alert'
 import useDayjs from '../../../hooks/useDayjs'
+import CheckAccount from './CheckAccount'
 
-const stepProgresses = ['入力', '確認', '決済', '完了']
+const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
 
 interface Props {
+  user: User | null | undefined
   store: SockbaseStoreDocument
   userData: SockbaseAccount | null
   isLoggedIn: boolean
 }
 const StepContainer: React.FC<Props> = (props) => {
   const { createTicketAsync } = useStore()
-  const { createUser } = useFirebase()
+  const { createUser, loginByEmail, logout } = useFirebase()
   const { updateUserDataAsync } = useUserData()
   const { formatByDate } = useDayjs()
 
@@ -66,7 +69,17 @@ const StepContainer: React.FC<Props> = (props) => {
 
   const onInitialize = (): void => {
     setStepComponents([
-      <Introduction key="introduction" nextStep={() => setStep(1)} store={props.store} />,
+      <CheckAccount key="checkAccount"
+        user={props.user}
+        login={async (email, password) => {
+          await loginByEmail(email, password)
+        }}
+        logout={() => logout()}
+        nextStep={() => setStep(1)} />,
+      <Introduction key="introduction"
+        prevStep={() => setStep(0)}
+        nextStep={() => setStep(2)}
+        store={props.store} />,
       <Step1 key="step1"
         store={props.store}
         isLoggedIn={props.isLoggedIn}
@@ -75,9 +88,9 @@ const StepContainer: React.FC<Props> = (props) => {
         nextStep={(t: SockbaseTicket, u: SockbaseAccountSecure) => {
           setTicketInfo(t)
           setUserData(u)
-          setStep(2)
+          setStep(3)
         }}
-        prevStep={() => setStep(0)} />,
+        prevStep={() => setStep(1)} />,
       <Step2 key="step2"
         store={props.store}
         ticketInfo={ticketInfo}
@@ -86,18 +99,18 @@ const StepContainer: React.FC<Props> = (props) => {
         isLoggedIn={props.isLoggedIn}
         submitProgressPercent={submitProgressPercent}
         submitTicket={async () => await handleSubmit()}
-        nextStep={() => setStep(3)}
-        prevStep={() => setStep(1)} />,
+        nextStep={() => setStep(4)}
+        prevStep={() => setStep(2)} />,
       <Step3 key="step3"
         store={props.store}
         ticketInfo={ticketInfo}
         ticketResult={ticketResult}
         email={props.userData?.email ?? userData?.email}
-        nextStep={() => setStep(4)} />,
+        nextStep={() => setStep(5)} />,
       <Step4 key="step4" store={props.store} ticketResult={ticketResult} />
     ])
   }
-  useEffect(onInitialize, [props.store, props.userData, ticketInfo, userData, ticketResult, submitProgressPercent])
+  useEffect(onInitialize, [props.user, props.store, props.userData, ticketInfo, userData, ticketResult, submitProgressPercent])
 
   return (
     <>

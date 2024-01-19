@@ -66,20 +66,20 @@ const DashboardSettingsPage: React.FC = () => {
   }, [userData, displayBirthday])
 
   const handleUpdate = useCallback(() => {
-      if (!user || !userData || errorCount !== 0) return
+    if (!user || !userData || errorCount !== 0) return
 
-      setError(null)
-      setProgress(true)
+    setError(null)
+    setProgress(true)
 
-      updateUserDataAsync(user.uid, userData)
-        .then(() => {
-          alert('更新が完了しました')
-          setProgress(false)
-        })
-        .catch(err => {
-          setError(new Error(localizeFirebaseError(err)))
-        })
-    }, [user, userData, errorCount])
+    updateUserDataAsync(user.uid, userData)
+      .then(() => {
+        alert('更新が完了しました')
+        setProgress(false)
+      })
+      .catch(err => {
+        setError(new Error(localizeFirebaseError(err)))
+      })
+  }, [user, userData, errorCount])
 
   const handleClickPasswordReset = useCallback(() => {
     if (!user?.email) return

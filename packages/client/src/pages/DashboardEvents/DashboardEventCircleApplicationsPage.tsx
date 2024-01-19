@@ -76,9 +76,9 @@ const DashboardEventApplicationsPage: React.FC = () => {
             .then(fetchedHashs => {
               const filteredHashs = fetchedHashs
                 .reduce<SockbaseApplicationHashIdDocument[]>((p, c) => {
-                  if (c === undefined) return p
-                  return [...p, c]
-                }, [])
+                if (c === undefined) return p
+                return [...p, c]
+              }, [])
               setAppHashs(filteredHashs)
             })
             .catch(err => { throw err })

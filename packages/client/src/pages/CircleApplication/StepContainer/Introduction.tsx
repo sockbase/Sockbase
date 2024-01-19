@@ -1,4 +1,3 @@
-import styled from 'styled-components'
 import type { SockbaseEvent } from 'sockbase'
 
 import useDayjs from '../../../hooks/useDayjs'
@@ -7,28 +6,23 @@ import FormButton from '../../../components/Form/Button'
 import FormSection from '../../../components/Form/FormSection'
 import FormItem from '../../../components/Form/FormItem'
 
-import dummyEyecatchImage from '../../../assets/dummy-eyecatch.jpg'
 import Alert from '../../../components/Parts/Alert'
 
 interface Props {
   event: SockbaseEvent
-  eyecatchURL: string | null
   nextStep: () => void
+  prevStep: () => void
 }
 const Introduction: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
 
   return (
     <>
-      <p>
-        {
-          props.eyecatchURL
-            ? <EyecatchImage src={props.eyecatchURL} />
-            : <EyecatchImage src={dummyEyecatchImage} />
-        }
-      </p>
-
-      <h1>申し込みの前に</h1>
+      <FormSection>
+        <FormItem>
+          <FormButton color="default" onClick={props.prevStep}>アカウント確認画面へ戻る</FormButton>
+        </FormItem>
+      </FormSection>
 
       <p>
         このページでは「{props.event.eventName}」へのサークル参加申し込みを受け付けます。<br />
@@ -184,7 +178,3 @@ const Introduction: React.FC<Props> = (props) => {
 }
 
 export default Introduction
-
-const EyecatchImage = styled.img`
-  width: 100%;
-`

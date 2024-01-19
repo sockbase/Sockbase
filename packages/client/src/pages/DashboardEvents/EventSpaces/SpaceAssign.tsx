@@ -31,12 +31,12 @@ const SpaceAssign: React.FC<Props> = (props) => {
     if (!rawSpaceAssignData) return
     const rawAssignSpaces = rawSpaceAssignData.split('\n')
       .map<RawAssignEventSpace>(space => {
-        const meta = space.split(',')
-        return {
-          spaceId: meta[1],
-          applicationHashId: meta[0]
-        }
-      })
+      const meta = space.split(',')
+      return {
+        spaceId: meta[1],
+        applicationHashId: meta[0]
+      }
+    })
     props.nextStep(rawAssignSpaces)
   }
 
