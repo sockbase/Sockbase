@@ -475,7 +475,7 @@ const Step1: React.FC<Props> = (props) => {
       </p>
       <FormSection>
         <FormItem>
-          <FormLabel>X</FormLabel>
+          <FormLabel>X (Twitter)</FormLabel>
           <FormInput
             placeholder='xxxxxxx'
             value={links.twitterScreenName ?? ''}
