@@ -141,7 +141,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
 
             <FormSection>
               <FormItem>
-                <FormLabel>X</FormLabel>
+                <FormLabel>X (Twitter)</FormLabel>
                 <FormInput
                   placeholder='xxxxxxx'
                   value={links.twitterScreenName ?? ''}

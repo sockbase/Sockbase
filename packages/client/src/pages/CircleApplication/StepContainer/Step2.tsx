@@ -152,7 +152,7 @@ const Step2: React.FC<Props> = (props) => {
           <table>
             <tbody>
               <tr>
-                <th>X</th>
+                <th>X (Twitter)</th>
                 <td>{(props.links?.twitterScreenName && `@${props.links?.twitterScreenName}`) || '(空欄)'}</td>
               </tr>
               <tr>
