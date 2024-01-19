@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 const FormButton = styled.button<{ inlined?: boolean, color?: 'default' | 'info' | 'danger' }>`
-  ${props => !props.inlined && `width: 100%;`}
+  ${props => !props.inlined && 'width: 100%;'}
   
   padding: 10px 40px;
   

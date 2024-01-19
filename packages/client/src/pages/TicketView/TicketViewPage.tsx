@@ -37,16 +37,16 @@ const TicketViewPage: React.FC = () => {
 
   return (
     <TicketBaseLayout ticketUser={ticketUser} store={store}>
-      {(!ticketUser || !store)
-        && <LoadingContainer>
+      {(!ticketUser || !store) &&
+        <LoadingContainer>
           {ticketUser === undefined && <Loading text="チケット情報" />}
-          {ticketUser === null
-            && <Alert title="チケットの取得に失敗しました">
+          {ticketUser === null &&
+            <Alert title="チケットの取得に失敗しました">
               URLが間違っている可能性があります。
             </Alert>}
         </LoadingContainer>}
-      {ticketHashId && ticketUser && store && user !== undefined
-        && <TicketView
+      {ticketHashId && ticketUser && store && user !== undefined &&
+        <TicketView
           ticketHashId={ticketHashId}
           ticketUser={ticketUser}
           store={store}

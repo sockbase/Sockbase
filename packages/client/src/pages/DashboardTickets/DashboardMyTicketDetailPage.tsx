@@ -76,18 +76,18 @@ const DashboardMyTicketDetailPage: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="マイチケット情報" isLoading={!store} />
 
-      {user && ticketUser?.userId === user.uid && !ticketUser.usableUserId
-        && <Alert type="danger" title="チケットの割り当てが完了していません">
+      {user && ticketUser?.userId === user.uid && !ticketUser.usableUserId &&
+        <Alert type="danger" title="チケットの割り当てが完了していません">
           購入したチケットを使用するためには、まずチケットの割り当てを行う必要があります。<br />
           <Link to={`/dashboard/tickets/${hashedTicketId}`}>こちら</Link> から割り当てを行ってください。
         </Alert>}
-      {ticketUser === null || (ticketUser && user && (ticketUser.userId !== user.uid && ticketUser.usableUserId !== user.uid))
-        && <Alert type="danger" title="チケットの取得に失敗しました">
+      {ticketUser === null || (ticketUser && user && (ticketUser.userId !== user.uid && ticketUser.usableUserId !== user.uid) &&
+        <Alert type="danger" title="チケットの取得に失敗しました">
           自分が購入していない, 割り当てられていないチケットの情報は表示できません。
-        </Alert>}
+        </Alert>)}
 
-      {user && ticketUser?.usableUserId
-        && <TwoColumnsLayout>
+      {user && ticketUser?.usableUserId &&
+        <TwoColumnsLayout>
           <>
             {ticketUser.hashId && !ticketUser.used && <FormSection>
               <FormItem>

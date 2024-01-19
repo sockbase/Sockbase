@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { type User } from 'firebase/auth'
 import { type SockbaseTicketUserDocument, type SockbaseStoreDocument, type SockbaseAccountSecure } from 'sockbase'
 import FormButton from '../../../components/Form/Button'
 import FormItem from '../../../components/Form/FormItem'
@@ -13,10 +14,11 @@ import useValidate from '../../../hooks/useValidate'
 import Alert from '../../../components/Parts/Alert'
 
 interface Props {
-  isLoggedIn: boolean
   store: SockbaseStoreDocument
   ticketUser: SockbaseTicketUserDocument
   userData: SockbaseAccountSecure | undefined
+  user: User | null | undefined
+  prevStep: () => void
   nextStep: (userData: SockbaseAccountSecure) => void
 }
 const Step1: React.FC<Props> = (props) => {
@@ -78,7 +80,7 @@ const Step1: React.FC<Props> = (props) => {
   }, [props.store, props.ticketUser])
 
   const errorCount = useMemo((): number => {
-    if (props.isLoggedIn) return 0
+    if (props.user) return 0
 
     const userDataValidators = [
       !validator.isEmpty(userData.name),
@@ -93,10 +95,16 @@ const Step1: React.FC<Props> = (props) => {
     return userDataValidators
       .filter(v => !v)
       .length
-  }, [userData, props.isLoggedIn])
+  }, [userData, props.user])
 
   return (
     <>
+      <FormSection>
+        <FormItem>
+          <FormButton color="default" onClick={props.prevStep}>アカウント確認画面へ戻る</FormButton>
+        </FormItem>
+      </FormSection>
+
       <h2>イベント情報</h2>
       <table>
         <tbody>
@@ -123,7 +131,7 @@ const Step1: React.FC<Props> = (props) => {
 
       <h2>使用者情報</h2>
 
-      {!props.isLoggedIn
+      {!props.user
         ? <>
           <FormSection>
             <FormItem>
@@ -168,7 +176,7 @@ const Step1: React.FC<Props> = (props) => {
               <FormInput
                 placeholder='07001234567'
                 value={userData.telephone}
-                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value }))} />
+                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))} />
             </FormItem>
           </FormSection>
 
@@ -208,9 +216,19 @@ const Step1: React.FC<Props> = (props) => {
             </FormItem>
           </FormSection>
         </>
-        : <p>
-          現在ログイン中のユーザ情報を引き継ぎます。
-        </p>}
+        : <>
+          <p>
+            以下のアカウントにチケットを紐づけます。
+          </p>
+          <table>
+            <tbody>
+              <tr>
+                <th>メールアドレス</th>
+                <td>{props.user?.email}</td>
+              </tr>
+            </tbody>
+          </table>
+        </>}
 
       <h2>注意事項</h2>
       <p>

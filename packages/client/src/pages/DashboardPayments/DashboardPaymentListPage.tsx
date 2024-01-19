@@ -63,13 +63,13 @@ const DashboardPaymentListPage: React.FC = () => {
 
           const objectMappedApps = fetchedApps
             .reduce<Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>(
-              (p, c) => ({ ...p, [c.appId]: c.data }),
-              {})
+            (p, c) => ({ ...p, [c.appId]: c.data }),
+            {})
           const objectMappedTickets = fetchedTickets
             .reduce<Record<string, SockbaseTicketDocument>>(
-              (p, c) => ({ ...p, [c.ticketId]: c.data }),
-              {}
-            )
+            (p, c) => ({ ...p, [c.ticketId]: c.data }),
+            {}
+          )
 
           const eventIdsSet = Object.values(objectMappedApps)
             .reduce((p, c) => p.add(c.eventId), new Set<string>())
@@ -88,13 +88,12 @@ const DashboardPaymentListPage: React.FC = () => {
 
           const objectMappedEvents = fetchedEvents
             .reduce<Record<string, SockbaseEvent>>(
-              (p, c) => ({ ...p, [c.eventId]: c.data }),
-              {})
+            (p, c) => ({ ...p, [c.eventId]: c.data }),
+            {})
           const objectMappedStores = fetchedStores
             .reduce<Record<string, SockbaseStoreDocument>>(
-              (p, c) => ({ ...p, [c.storeId]: c.data }),
-              {})
-
+            (p, c) => ({ ...p, [c.storeId]: c.data }),
+            {})
 
           setPayments(fetchedPayments)
           setApps(objectMappedApps)

@@ -1,6 +1,6 @@
-import { useState } from "react"
-import DefaultBaseLayout from "../../components/Layout/DefaultBaseLayout/DefaultBaseLayout"
-import StaticDocumentProvider from "../../components/Providers/StaticDocumentProvider/StaticDocumentProvider"
+import { useState } from 'react'
+import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
+import StaticDocumentProvider from '../../components/Providers/StaticDocumentProvider/StaticDocumentProvider'
 
 const TermsOfServicePage: React.FC =
   () => {

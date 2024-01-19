@@ -152,7 +152,7 @@ const Step2: React.FC<Props> = (props) => {
           <table>
             <tbody>
               <tr>
-                <th>X</th>
+                <th>X (Twitter)</th>
                 <td>{(props.links?.twitterScreenName && `@${props.links?.twitterScreenName}`) || '(空欄)'}</td>
               </tr>
               <tr>
@@ -192,6 +192,20 @@ const Step2: React.FC<Props> = (props) => {
               <tr>
                 <th>電話番号</th>
                 <td>{props.userData?.telephone ?? props.leaderUserData.telephone}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Sockbaseログイン情報</h2>
+          <table>
+            <tbody>
+              <tr>
+                <th>メールアドレス</th>
+                <td>{props.userData?.email ?? props.leaderUserData.email}</td>
+              </tr>
+              <tr>
+                <th>パスワード</th>
+                <td>セキュリティ保護のため非表示</td>
               </tr>
             </tbody>
           </table>
@@ -253,7 +267,7 @@ const Step2: React.FC<Props> = (props) => {
               </LoadingCircleWrapper>
             </FormItem>
           </FormSection>
-          
+
           {isProgress && <>
             <ProgressBar percent={props.submitProgressPercent}/>
             <Alert>

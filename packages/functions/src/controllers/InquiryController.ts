@@ -6,7 +6,7 @@ import InquiryService from '../services/InquiryService'
 export const onCreate = firestore
   .document('/_inquiries/{inquiryId}')
   .onCreate(
-    async (snapshot: QueryDocumentSnapshot, context: EventContext<{inquiryId: string}>) => {
+    async (snapshot: QueryDocumentSnapshot, context: EventContext<{ inquiryId: string }>) => {
       const inquiry = snapshot.data() as SockbaseInquiryDocument
 
       await InquiryService.addInquiryMetaAsync(context.params.inquiryId)

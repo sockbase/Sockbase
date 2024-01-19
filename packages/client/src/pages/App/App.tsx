@@ -172,7 +172,7 @@ const router = createBrowserRouter([
                 children: [
                   {
                     index: true,
-                    element: <DashboardCircleApplicationDetailPage />,
+                    element: <DashboardCircleApplicationDetailPage />
                   },
                   {
                     path: 'links',
@@ -215,7 +215,7 @@ const router = createBrowserRouter([
                 children: [
                   {
                     index: true,
-                    element: <DashboardStoreDetailPage />,
+                    element: <DashboardStoreDetailPage />
                   },
                   {
                     path: 'create',
