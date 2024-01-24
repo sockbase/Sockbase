@@ -20,8 +20,9 @@ const sendMailAcceptCircleApplicationAsync = async (app: SockbaseApplicationDocu
   const email = await getEmail(app.userId)
   const event = await getEventByIdAsync(app.eventId)
   const space = event.spaces.filter(s => s.id === app.spaceId)[0]
+  const genre = event.genres.filter(g => g.id === app.circle.genre)[0]
 
-  const template = mailConfig.templates.acceptApplication(event, app, space)
+  const template = mailConfig.templates.acceptApplication(event, app, space, genre)
   await addQueueAsync(email, template)
 }
 

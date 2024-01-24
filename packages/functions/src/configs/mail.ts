@@ -9,7 +9,8 @@ import type {
   SockbaseApplicationDocument,
   SockbaseTicketDocument,
   SockbaseStoreDocument,
-  SockbaseStoreType
+  SockbaseStoreType,
+  SockbaseEventGenre
 } from 'sockbase'
 import { convertTypeText } from '../models/inquiry'
 
@@ -23,7 +24,7 @@ const suffix = [
 ]
 
 const templates = {
-  acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument, space: SockbaseEventSpace) => ({
+  acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument, space: SockbaseEventSpace, genre: SockbaseEventGenre) => ({
     subject: `[${event.eventName}] サークル参加申し込み 内容確認`,
     body: [
       `この度は、${event.eventName}への参加申し込みをいただき、誠にありがとうございます。お申し込みいただいた内容を確認いたしました。`,
@@ -36,7 +37,7 @@ const templates = {
       `ペンネーム(よみ): ${app.circle.penNameYomi}`,
       `スペース数: ${space.name}`,
       `成人向け頒布物の有無: ${app.circle.hasAdult ? '有り' : '無し'}`,
-      `頒布物のジャンル: ${app.circle.genre}`,
+      `頒布物のジャンル: ${genre.name}`,
       `頒布物概要: ${app.overview.description}`,
       `総搬入量: ${app.overview.totalAmount}`,
       `合体希望サークル 合体申し込みID: ${app.unionCircleId}`,
