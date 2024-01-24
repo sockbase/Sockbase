@@ -59,6 +59,7 @@ const EventCircleApplications: React.FC<Props> = (props) => {
           <tr>
             <th>#</th>
             <th></th>
+            <th>申し込みID</th>
             <th>配置</th>
             <th>サークル名</th>
             <th>ペンネーム</th>
@@ -71,11 +72,12 @@ const EventCircleApplications: React.FC<Props> = (props) => {
           {
             Object.entries(props.apps)
               .filter(([_, app]) => !!app.hashId)
-              .sort(([_a, a], [_b, b]) => (a.createdAt?.getTime() ?? 9) - (b.createdAt?.getTime() ?? 0))
+              .sort(([_a, a], [_b, b]) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
               .map(([appId, app], i) => (
                 app.hashId && <tr key={app.hashId}>
                   <td>{Object.entries(props.apps).length - i}</td>
                   <td><ApplicationStatusLabel status={props.metas[appId].applicationStatus} /></td>
+                  <td>{app.hashId}</td>
                   <td>{getAssignedSpace(app.hashId)?.spaceName ?? '-'}</td>
                   <th><Link to={`/dashboard/applications/${app.hashId}`}>{app.circle.name}</Link></th>
                   <td>{app.circle.penName}</td>
