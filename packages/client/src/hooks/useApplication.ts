@@ -305,7 +305,7 @@ const useApplication = (): IUseApplication => {
 
   const exportCSV = (apps: sockbase.SockbaseApplicationDocument[]): string => {
     const header =
-      'id,name,penName,yomi,genre,space,unionId,description,totalAmount,remarks'
+      'id,name,penName,yomi,genre,space,hasAdult,unionId,description,totalAmount,remarks'
     const entries = apps
       .map((a) => [
         a.hashId,
@@ -314,6 +314,7 @@ const useApplication = (): IUseApplication => {
         a.circle.penName,
         a.circle.genre,
         a.spaceId,
+        a.circle.hasAdult ? '1' : '0',
         a.unionCircleId || 'null',
         a.overview.description
           .replaceAll(',', '，')
