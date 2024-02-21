@@ -308,7 +308,7 @@ const useApplication = (): IUseApplication => {
 
   const exportCSV = (apps: Record<string, sockbase.SockbaseApplicationDocument>, links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>): string => {
     const header =
-      'id,name,yomi,penName,genre,space,hasAdult,unionId,description,totalAmount,remarks,twitter,pixiv,web,menu'
+      'id\tname\tyomi\tpenName\tgenre\tspace\thasAdult\tunionId\tdescription\ttotalAmount\tremarks\ttwitter\tpixiv\tweb\tmenu'
     const entries = Object.entries(apps)
       .map(([id, a]) => [
         a.hashId,
@@ -331,7 +331,7 @@ const useApplication = (): IUseApplication => {
         links[id]?.websiteURL,
         links[id]?.menuURL
       ])
-      .map((a) => a.join(','))
+      .map((a) => a.join('\t'))
       .join('\n')
 
     return `${header}\n${entries}\n`
