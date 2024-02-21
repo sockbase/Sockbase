@@ -50,7 +50,10 @@ interface IUseApplication {
     appId: string,
     links: sockbase.SockbaseApplicationLinks
   ) => Promise<void>
-  exportCSV: (apps: sockbase.SockbaseApplicationDocument[]) => string
+  exportCSV: (
+    apps: Record<string, sockbase.SockbaseApplicationDocument>,
+    links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>
+  ) => string
 }
 
 const useApplication = (): IUseApplication => {
@@ -303,11 +306,11 @@ const useApplication = (): IUseApplication => {
     [user]
   )
 
-  const exportCSV = (apps: sockbase.SockbaseApplicationDocument[]): string => {
+  const exportCSV = (apps: Record<string, sockbase.SockbaseApplicationDocument>, links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>): string => {
     const header =
-      'id,name,penName,yomi,genre,space,hasAdult,unionId,description,totalAmount,remarks'
-    const entries = apps
-      .map((a) => [
+      'id,name,yomi,penName,genre,space,hasAdult,unionId,description,totalAmount,remarks,twitter,pixiv,web,menu'
+    const entries = Object.entries(apps)
+      .map(([id, a]) => [
         a.hashId,
         a.circle.name,
         a.circle.yomi,
@@ -322,7 +325,11 @@ const useApplication = (): IUseApplication => {
         a.overview.totalAmount
           .replaceAll(',', '，')
           .replaceAll(/[\r\n]+/g, ' '),
-        a.remarks.replaceAll(',', '，').replaceAll(/[\r\n]+/g, ' ')
+        a.remarks.replaceAll(',', '，').replaceAll(/[\r\n]+/g, ' '),
+        links[id]?.twitterScreenName,
+        links[id]?.pixivUserId,
+        links[id]?.websiteURL,
+        links[id]?.menuURL
       ])
       .map((a) => a.join(','))
       .join('\n')

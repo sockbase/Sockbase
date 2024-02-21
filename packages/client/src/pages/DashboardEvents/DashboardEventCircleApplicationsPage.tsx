@@ -6,7 +6,8 @@ import {
   type SockbaseApplicationDocument,
   type SockbaseApplicationHashIdDocument,
   type SockbaseApplicationMeta,
-  type SockbaseEvent
+  type SockbaseEvent,
+  type SockbaseApplicationLinksDocument
 } from 'sockbase'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import EventApplications from './EventCircleApplications'
@@ -24,6 +25,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
     getApplicationsByEventIdAsync,
     getApplicationMetaByIdAsync,
     getApplicationIdByHashedIdAsync,
+    getLinksByApplicationIdOptionalAsync,
     exportCSV
   } = useApplication()
   const { getEventByIdAsync, getSpacesAsync } = useEvent()
@@ -83,9 +85,22 @@ const DashboardEventApplicationsPage: React.FC = () => {
             })
             .catch(err => { throw err })
 
-          const appsCSV = exportCSV(Object.values(fetchedApps))
-          setAppsCSV(appsCSV)
+          Promise.all(appIds.map(async appId => ({
+            appId,
+            data: await getLinksByApplicationIdOptionalAsync(appId)
+          })))
+            .then(fetchedLinks => {
+              const objectMappedLinks = fetchedLinks.reduce<Record<string, SockbaseApplicationLinksDocument | null>>((p, c) => ({
+                ...p,
+                [c.appId]: c.data
+              }), {})
+
+              const appsCSV = exportCSV(fetchedApps, objectMappedLinks)
+              setAppsCSV(appsCSV)
+            })
+            .catch(err => { throw err })
         }
+
       fetchAppsAsync()
         .catch(err => {
           throw err
