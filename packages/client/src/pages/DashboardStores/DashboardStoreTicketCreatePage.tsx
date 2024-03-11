@@ -152,8 +152,8 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
 
           <FormSection>
             <FormItem>
-              <LoadingCircleWrapper isLoading={isProgress} inlined>
-                <FormButton onClick={createTicket} inlined disabled={isProgress || errorCount > 0}>確認して登録</FormButton>
+              <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
+                <FormButton onClick={createTicket} inlined={true} disabled={isProgress || errorCount > 0}>確認して登録</FormButton>
               </LoadingCircleWrapper>
             </FormItem>
             <FormItem>
@@ -162,7 +162,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
                 label="追加後メールアドレスを空欄にする"
                 checked={isClearEmail}
                 onChange={c => setClearEmail(c)}
-                inlined />
+                inlined={true} />
             </FormItem>
           </FormSection>
         </>

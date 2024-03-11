@@ -9,7 +9,8 @@ import {
   type SockbaseEvent,
   type SockbaseApplicationLinksDocument,
   type SockbaseSpaceDocument,
-  type SockbaseEventSpace
+  type SockbaseEventSpace,
+  type SockbaseApplicationOverviewDocument
 } from 'sockbase'
 import sockbaseShared from 'shared'
 import { MdEdit } from 'react-icons/md'
@@ -40,7 +41,8 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
     getApplicationByIdAsync,
     getCircleCutURLByHashedIdAsync,
     updateApplicationStatusByIdAsync,
-    getLinksByApplicationIdOptionalAsync
+    getLinksByApplicationIdOptionalAsync,
+    getOverviewByApplicationIdOptionalAsync
   } = useApplication()
   const { getPaymentIdByHashId, getPaymentAsync } = usePayment()
   const { getEventByIdAsync, getSpaceOptionalAsync } = useEvent()
@@ -56,6 +58,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const [eventId, setEventId] = useState<string>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [links, setLinks] = useState<SockbaseApplicationLinksDocument | null>()
+  const [overview, setOverview] = useState<SockbaseApplicationOverviewDocument | null>()
   const [space, setSpace] = useState<SockbaseSpaceDocument | null>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
   const [isAdmin, setAdmin] = useState<boolean | null>()
@@ -79,6 +82,10 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
 
         getLinksByApplicationIdOptionalAsync(fetchedAppHashDoc.applicationId)
           .then(fetchedLinks => setLinks(fetchedLinks))
+          .catch(err => { throw err })
+
+        getOverviewByApplicationIdOptionalAsync(fetchedAppHashDoc.applicationId)
+          .then(fetchedOverview => setOverview(fetchedOverview))
           .catch(err => { throw err })
 
         if (fetchedAppHashDoc.spaceId) {
@@ -299,9 +306,9 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
 
           {links !== undefined && hashedAppId && <FormSection>
-            <FormItem inlined>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color='default' inlined>サークルカット変更</LinkButton>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color={links ? 'default' : undefined} inlined>広報情報{links ? '編集' : '入力'}</LinkButton>
+            <FormItem inlined={true}>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color='default' inlined={true}>サークルカットを差し替える</LinkButton>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color={links ? 'default' : undefined} inlined={true}>広報情報を{links ? '編集' : '入力'}する</LinkButton>
             </FormItem>
           </FormSection>}
 
@@ -331,14 +338,19 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               </tr>
               <tr>
                 <th>頒布物概要</th>
-                <td>{app?.overview.description ?? <BlinkField />}</td>
+                <td>{overview?.description ?? app?.overview.description ?? <BlinkField />}</td>
               </tr>
               <tr>
                 <th>総搬入量</th>
-                <td>{app?.overview.totalAmount ?? <BlinkField />}</td>
+                <td>{overview?.totalAmount ?? app?.overview.totalAmount ?? <BlinkField />}</td>
               </tr>
             </tbody>
           </table>
+          {links !== undefined && hashedAppId && <FormSection>
+            <FormItem inlined={true}>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>頒布物概要を編集する</LinkButton>
+            </FormItem>
+          </FormSection>}
         </>
         <>
           <h3>隣接配置(合体)希望</h3>
