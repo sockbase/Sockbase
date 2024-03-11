@@ -105,12 +105,25 @@ service cloud.firestore {
       }
     }
 
-    match /_applicationLinks/{applicationLinksId} {
+    match /_applicationLinks/{applicationId} {
       allow read: if request.auth.uid == resource.data.userId
-        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationLinksId).eventId)._organization.id);
+        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
         
-      allow create: if request.auth.uid == request.resource.data.userId;
+      allow create: if request.auth.uid == request.resource.data.userId
+        && getApplication(applicationId) != null;
+
       allow write: if request.auth.uid == resource.data.userId;
+    }
+
+    match /_applicationOverviews/{applicationId} {
+      allow read: if request.auth.uid == resource.data.userId
+        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
+
+      allow create: if request.auth.uid == request.resource.data.userId
+        && getApplication(applicationId) != null;
+
+      allow write: if request.auth.uid == resource.data.userId
+        && request.time.toMillis() < getEvent(getApplication(applicationId).eventId).schedules.fixedApplication;
     }
 
     match /spaces/{spaceId} {

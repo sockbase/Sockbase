@@ -5,7 +5,8 @@ import {
   type SockbaseApplicationHashIdDocument,
   type SockbaseApplicationLinksDocument,
   type SockbaseEvent,
-  type SockbaseSpaceDocument
+  type SockbaseSpaceDocument,
+  type SockbaseApplicationOverviewDocument
 } from 'sockbase'
 
 export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
@@ -112,6 +113,25 @@ export const spaceConverter: FirestoreDataConverter<SockbaseSpaceDocument> = {
       spaceGroupOrder: space.spaceGroupOrder,
       spaceOrder: space.spaceOrder,
       spaceName: space.spaceName
+    }
+  }
+}
+
+export const overviewConverter: FirestoreDataConverter<SockbaseApplicationOverviewDocument> = {
+  toFirestore: (overview: SockbaseApplicationOverviewDocument) => ({
+    userId: overview.userId,
+    applicationId: overview.applicationId,
+    description: overview.description,
+    totalAmount: overview.totalAmount
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationOverviewDocument => {
+    const overview = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: overview.userId,
+      applicationId: overview.applicationId,
+      description: overview.description,
+      totalAmount: overview.totalAmount
     }
   }
 }

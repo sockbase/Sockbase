@@ -122,10 +122,7 @@ export interface SockbaseApplication {
     hasAdult: boolean | null
     genre: string
   }
-  overview: {
-    description: string
-    totalAmount: string
-  }
+  overview: SockbaseApplicationOverview
   unionCircleId: string
   petitCode: string
   paymentMethod: string
@@ -186,6 +183,23 @@ export interface SockbaseApplicationLinks {
  * サークル広報情報(DB取得)
  */
 export type SockbaseApplicationLinksDocument = SockbaseApplicationLinks & {
+  id: string
+  applicationId: string
+  userId: string
+}
+
+/**
+ * 頒布物概要
+ */
+export interface SockbaseApplicationOverview {
+  description: string
+  totalAmount: string
+}
+
+/**
+ * 頒布物概要(DB取得)
+ */
+export type SockbaseApplicationOverviewDocument = SockbaseApplicationOverview & {
   id: string
   applicationId: string
   userId: string

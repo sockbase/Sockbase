@@ -57,7 +57,7 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
               メールアドレスの確認が必要です
               <Button
                 onClick={sendVerifyMail}
-                inlined
+                inlined={true}
                 disabled={sentVerifyMail}>確認メール送信</Button>
             </Alert>
           </StyledWrapAlert>}

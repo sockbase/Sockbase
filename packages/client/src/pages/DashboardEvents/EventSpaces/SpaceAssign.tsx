@@ -52,7 +52,7 @@ const SpaceAssign: React.FC<Props> = (props) => {
             </FormItem>
             <FormItem>
               <FormButton
-                inlined
+                inlined={true}
                 onClick={handleSubmit}>
                 確認へ進む
               </FormButton>

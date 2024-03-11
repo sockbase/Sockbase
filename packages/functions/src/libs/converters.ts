@@ -1,4 +1,5 @@
 import {
+  type SockbaseApplicationOverviewDocument,
   type SockbaseAccountDocument,
   type SockbaseApplicationDocument,
   type SockbaseApplicationHashIdDocument,
@@ -318,6 +319,25 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
       pixivUserId: links.pixivUserId,
       websiteURL: links.websiteURL,
       menuURL: links.menuURL
+    }
+  }
+}
+
+export const overviewConverter: FirestoreDataConverter<SockbaseApplicationOverviewDocument> = {
+  toFirestore: (overview: SockbaseApplicationOverviewDocument) => ({
+    userId: overview.userId,
+    applicationId: overview.applicationId,
+    description: overview.description,
+    totalAmount: overview.totalAmount
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationOverviewDocument => {
+    const overview = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: overview.userId,
+      applicationId: overview.applicationId,
+      description: overview.description,
+      totalAmount: overview.totalAmount
     }
   }
 }
