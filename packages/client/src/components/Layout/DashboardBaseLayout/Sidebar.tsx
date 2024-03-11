@@ -15,13 +15,13 @@ import {
   MdPayments,
   MdSettings,
   MdQrCodeScanner,
-  MdManageSearch,
   MdEditCalendar,
   MdStore,
   MdMail,
   MdInbox,
   MdWallet,
-  MdBadge
+  MdBadge,
+  MdSearch
 } from 'react-icons/md'
 
 import useWindowDimension from '../../../hooks/useWindowDimension'
@@ -117,6 +117,12 @@ const menu: MenuSection[] = [
     requiredRole: sockbaseShared.enumerations.user.permissionRoles.admin,
     items: [
       {
+        key: 'omnisearch',
+        icon: <MdSearch />,
+        text: '検索',
+        link: '/dashboard/search'
+      },
+      {
         key: 'manageInquiries',
         icon: <MdInbox />,
         text: '問い合わせ管理',
@@ -133,20 +139,6 @@ const menu: MenuSection[] = [
         icon: <MdStore />,
         text: 'チケットストア管理',
         link: '/dashboard/stores'
-      }
-    ]
-  },
-  {
-    sectionKey: 'mydata',
-    sectionName: 'デバッグ機能',
-    requiredRole: sockbaseShared.enumerations.user.permissionRoles.admin,
-    items: [
-      {
-        key: 'omnisearch',
-        icon: <MdManageSearch />,
-        text: '横断検索',
-        link: '',
-        isDisabled: true
       }
     ]
   }
