@@ -9,6 +9,7 @@ import {
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import useRole from '../../hooks/useRole'
+import useDayjs from '../../hooks/useDayjs'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
@@ -35,6 +36,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
   } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { checkIsAdminByOrganizationId } = useRole()
+  const { formatByDate } = useDayjs()
 
   const [appId, setAppId] = useState<string>()
   const [app, setApp] = useState<SockbaseApplicationDocument>()
@@ -139,6 +141,10 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
                 </p>
               </>
               : <>
+                <Alert>
+                配置情報の入力締め切り日は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日')}</b>」です。<br />
+                締め切り日以降は編集できませんのでご注意ください。
+                </Alert>
                 <FormSection>
                   <FormItem>
                     <FormLabel>頒布物概要</FormLabel>
