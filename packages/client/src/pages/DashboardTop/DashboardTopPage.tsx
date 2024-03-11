@@ -11,7 +11,8 @@ import {
   MdSettings,
   MdStore,
   MdWallet,
-  MdBadge
+  MdBadge,
+  MdSearch
 } from 'react-icons/md'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TopCard from '../../components/Parts/TopCard'
@@ -89,6 +90,11 @@ const DashboardTopPage: React.FC = () => {
       {!!systemRole && systemRole >= 2 && <>
         <h2>システム操作</h2>
         <CardContainer>
+          <TopCard
+            to="/dashboard/search"
+            icon={<MdSearch />}
+            title="検索(BETA)"
+            description="申し込みIDから内部管理IDを取得します。" />
           <TopCard
             to="/dashboard/events/"
             icon={<MdEditCalendar />}
