@@ -22,7 +22,7 @@ const Alert: React.FC<Props> = (props) => {
 }
 
 const AlertContainer = styled.div<{ type?: AlertTypes }>`
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   padding: 10px;
   background-color: #f0f0f0;
   border-radius: 5px;
