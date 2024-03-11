@@ -31,7 +31,8 @@ interface IUseApplication {
   setOverviewByApplicationIdAsync: (appId: string, overview: sockbase.SockbaseApplicationOverview) => Promise<void>
   exportCSV: (
     apps: Record<string, sockbase.SockbaseApplicationDocument>,
-    links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>
+    links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
+    overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>
   ) => string
 }
 
@@ -326,7 +327,10 @@ const useApplication = (): IUseApplication => {
       })
   }, [user])
 
-  const exportCSV = (apps: Record<string, sockbase.SockbaseApplicationDocument>, links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>): string => {
+  const exportCSV = (
+    apps: Record<string, sockbase.SockbaseApplicationDocument>,
+    links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
+    overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>): string => {
     const header =
       'id\tname\tyomi\tpenName\tgenre\tspace\thasAdult\tunionId\tdescription\ttotalAmount\tremarks\ttwitter\tpixiv\tweb\tmenu'
     const entries = Object.entries(apps)
@@ -339,10 +343,10 @@ const useApplication = (): IUseApplication => {
         a.spaceId,
         a.circle.hasAdult ? '1' : '0',
         a.unionCircleId || 'null',
-        a.overview.description
+        (overviews[id]?.description ?? a.overview.description)
           .replaceAll(',', '，')
           .replaceAll(/[\r\n]+/g, ' '),
-        a.overview.totalAmount
+        (overviews[id]?.totalAmount ?? a.overview.totalAmount)
           .replaceAll(',', '，')
           .replaceAll(/[\r\n]+/g, ' '),
         a.remarks.replaceAll(',', '，').replaceAll(/[\r\n]+/g, ' '),
