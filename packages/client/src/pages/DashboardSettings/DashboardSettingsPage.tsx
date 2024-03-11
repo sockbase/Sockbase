@@ -181,9 +181,9 @@ const DashboardSettingsPage: React.FC = () => {
 
             <FormSection>
               <FormItem>
-                <LoadingCircleWrapper isLoading={isProgress} inlined>
+                <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
                   <FormButton
-                    inlined
+                    inlined={true}
                     disabled={isProgress || errorCount !== 0}
                     onClick={handleUpdate}>情報を更新する</FormButton>
                 </LoadingCircleWrapper>

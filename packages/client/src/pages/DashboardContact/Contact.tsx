@@ -134,9 +134,9 @@ const Contact: React.FC = () => {
 
             <FormSection>
               <FormItem>
-                <LoadingCircleWrapper isLoading={isProgress} inlined>
+                <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
                   <FormButton
-                    inlined
+                    inlined={true}
                     onClick={handleSubmit}
                     disabled={isProgress || isSuccess || errorCount !== 0}>送信</FormButton>
                 </LoadingCircleWrapper>

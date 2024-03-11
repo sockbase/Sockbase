@@ -5,12 +5,13 @@ import {
   type SockbaseAccount,
   type SockbaseApplicationAddedResult,
   type SockbaseApplicationDocument,
-  type SockbaseApplicationPayload
+  type SockbaseApplicationPayload,
+  type SockbaseApplicationOverviewDocument
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
 
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { applicationConverter, applicationLinksConverter } from '../libs/converters'
+import { applicationConverter, applicationLinksConverter, overviewConverter } from '../libs/converters'
 import PaymentService from './PaymentService'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import { getEventByIdAsync } from '../models/event'
@@ -94,6 +95,17 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .doc(`/_applicationLinks/${appId}`)
     .withConverter(applicationLinksConverter)
     .set(links)
+
+  const overview: SockbaseApplicationOverviewDocument = {
+    ...payload.app.overview,
+    id: '',
+    applicationId: appId,
+    userId
+  }
+  await firestore
+    .doc(`/_applicationOverviews/${appId}`)
+    .withConverter(overviewConverter)
+    .set(overview)
 
   const space = event.spaces.filter(s => s.id === payload.app.spaceId)[0]
 

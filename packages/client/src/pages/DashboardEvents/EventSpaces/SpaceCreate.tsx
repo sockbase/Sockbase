@@ -47,7 +47,7 @@ const SpaceCreate: React.FC<Props> = (props) => {
         <FormItem>
           <FormButton
             onClick={handleSubmit}
-            inlined>
+            inlined={true}>
             確認へ進む
           </FormButton>
         </FormItem>
