@@ -42,6 +42,7 @@ import DashboardStoreListPage from '../DashboardStores/DashboardStoreListPage'
 import DashboardTicketCreatePage from '../DashboardStores/DashboardStoreTicketCreatePage'
 import DashboardTicketTerminalPage from '../DashboardTickets/DashboardTicketTerminalPage'
 import DashboardLicensePage from '../DashboardLicense/DashboardLicensePage'
+import DashboardSearchPage from '../DashboardSearch/DashboardSearchPage'
 
 import '../../main.css'
 import { getFirebaseApp, initializeAppCheck } from '../../libs/FirebaseApp'
@@ -263,6 +264,10 @@ const router = createBrowserRouter([
           {
             path: 'license',
             element: <DashboardLicensePage />
+          },
+          {
+            path: 'search',
+            element: <DashboardSearchPage />
           }
         ]
       }
