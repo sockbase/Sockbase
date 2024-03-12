@@ -13,6 +13,7 @@ import Alert from '../../components/Parts/Alert'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
+import useDayjs from '../../hooks/useDayjs'
 import useFirebase from '../../hooks/useFirebase'
 import useFirebaseError from '../../hooks/useFirebaseError'
 import usePostalCode from '../../hooks/usePostalCode'
@@ -26,6 +27,7 @@ const DashboardSettingsPage: React.FC = () => {
   const validator = useValidate()
   const { getAddressByPostalCode } = usePostalCode()
   const { localize: localizeFirebaseError } = useFirebaseError()
+  const { formatByDate } = useDayjs()
 
   const [isProgress, setProgress] = useState(false)
   const [sentPasswordResetUrl, setSentPasswordResetUrl] = useState(false)
@@ -40,6 +42,7 @@ const DashboardSettingsPage: React.FC = () => {
           const fetchedUserData = await getMyUserDataAsync()
           if (!fetchedUserData) return
           setUserData(fetchedUserData)
+          setDisplayBirthday(formatByDate(fetchedUserData.birthday, 'YYYY-MM-DD'))
         }
       fetchUserDataAsync()
         .catch(err => { throw err })
