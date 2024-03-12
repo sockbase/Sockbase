@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { type SockbaseTicketCreatedResult, type SockbaseStoreDocument, type SockbaseStoreType } from 'sockbase'
-import { MdStore } from 'react-icons/md'
+import { IconMAdmissionTickets } from 'react-fluentui-emoji/lib/modern'
+import {
+  type SockbaseTicketCreatedResult,
+  type SockbaseStoreDocument,
+  type SockbaseStoreType
+} from 'sockbase'
 import useStore from '../../hooks/useStore'
 import useDayjs from '../../hooks/useDayjs'
 import useValidate from '../../hooks/useValidate'
@@ -113,7 +117,12 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
         <li><Link to={`/dashboard/stores/${storeId}`}>{store?.storeName ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
-      <PageTitle title={store?.storeName} icon={<MdStore />} description={'チケット作成'} isLoading={!store} />
+
+      <PageTitle
+        title={store?.storeName}
+        icon={<IconMAdmissionTickets />}
+        description={'チケット作成'}
+        isLoading={!store} />
 
       <TwoColumnsLayout>
         <>

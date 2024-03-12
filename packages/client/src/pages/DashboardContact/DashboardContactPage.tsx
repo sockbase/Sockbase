@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { MdMail } from 'react-icons/md'
+import { IconMEMail } from 'react-fluentui-emoji/lib/modern'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Contact from './Contact'
@@ -11,7 +11,11 @@ const DashboardContactPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle icon={<MdMail />} title="お問い合わせ" description="Sockbase運営チームへのお問い合わせはこちらから" />
+
+      <PageTitle
+        icon={<IconMEMail />}
+        title="お問い合わせ"
+        description="Sockbase運営チームへのお問い合わせはこちらから" />
 
       <Contact />
     </DashboardBaseLayout>

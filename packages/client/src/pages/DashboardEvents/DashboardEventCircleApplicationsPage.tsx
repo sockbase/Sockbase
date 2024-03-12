@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { MdEditCalendar } from 'react-icons/md'
+import { IconMCalendar } from 'react-fluentui-emoji/lib/modern'
 import {
   type SockbaseSpaceDocument,
   type SockbaseApplicationDocument,
@@ -142,11 +142,13 @@ const DashboardEventApplicationsPage: React.FC = () => {
         <li><Link to="/dashboard/events">管理イベント</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
       </Breadcrumbs>
+
       <PageTitle
-        icon={<MdEditCalendar />}
+        icon={<IconMCalendar />}
         title={event?.eventName}
         description="申し込みサークル一覧"
         isLoading={!event} />
+
       <FormSection>
         <FormItem>
           <LinkButton to={`/dashboard/events/${eventId}/spaces`} color="default" inlined>配置管理</LinkButton>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { MdWallet } from 'react-icons/md'
+import { IconMPurse } from 'react-fluentui-emoji/lib/modern'
 import {
   type SockbaseTicketMeta,
   type SockbaseAccount,
@@ -208,7 +208,7 @@ const DashboardTicketDetailPage: React.FC = () => {
           : <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>}
 
       </Breadcrumbs>
-      <PageTitle title={pageTitle} icon={<MdWallet />} description="購入済みチケット情報" isLoading={!store} />
+      <PageTitle title={pageTitle} icon={<IconMPurse />} description="購入済みチケット情報" isLoading={!store} />
 
       <TwoColumnsLayout>
         <>

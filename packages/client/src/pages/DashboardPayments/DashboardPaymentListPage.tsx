@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MdPayments } from 'react-icons/md'
+import { IconMReceipt } from 'react-fluentui-emoji/lib/modern'
 import type {
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
@@ -113,7 +113,7 @@ const DashboardPaymentListPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
-        icon={<MdPayments />}
+        icon={<IconMReceipt />}
         title="決済履歴"
         description="Sockbaseでのお支払い状況の一覧を表示中" />
 

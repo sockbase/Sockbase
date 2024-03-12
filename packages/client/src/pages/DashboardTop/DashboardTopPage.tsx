@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import {
   MdEditCalendar,
   MdCollectionsBookmark,
-  MdHome,
   MdInbox,
   MdLocalActivity,
   MdMail,
@@ -14,6 +13,7 @@ import {
   MdBadge,
   MdSearch
 } from 'react-icons/md'
+import { IconMHouse } from 'react-fluentui-emoji/lib/modern'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TopCard from '../../components/Parts/TopCard'
 import useRole from '../../hooks/useRole'
@@ -25,7 +25,7 @@ const DashboardTopPage: React.FC = () => {
   return (
     <DashboardBaseLayout title="マイページ トップ">
       <PageTitle
-        icon={<MdHome />}
+        icon={<IconMHouse />}
         title="ホーム"
         description="Sockbaseマイページへようこそ！" />
 

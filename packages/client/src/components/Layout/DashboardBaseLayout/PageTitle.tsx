@@ -38,6 +38,11 @@ const StyledIcon = styled.div`
   align-items: center;
   justify-content: center;
   color: #ea6183;
+
+  svg {
+    width: 48px !important;
+    height: 48px !important;
+  }
 `
 const StyledTitle = styled.div`
   grid-column: 2;
