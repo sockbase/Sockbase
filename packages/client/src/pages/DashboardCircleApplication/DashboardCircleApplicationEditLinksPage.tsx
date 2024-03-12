@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import { MdEdit } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import { IconMLink } from 'react-fluentui-emoji/lib/modern'
 import { type SockbaseApplicationLinks, type SockbaseApplicationDocument, type SockbaseEvent } from 'sockbase'
 import FormButton from '../../components/Form/Button'
 import FormItem from '../../components/Form/FormItem'
@@ -124,13 +124,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
           {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
-
-      <PageTitle
-        title={app?.circle.name}
-        description="広報情報編集"
-        icon={<IconMLink />}
-        isLoading={!app} />
-
+      <PageTitle title={app?.circle.name} description="広報情報編集" icon={<MdEdit />} isLoading={!app} />
       {app && event
         ? <TwoColumnsLayout>
           <>

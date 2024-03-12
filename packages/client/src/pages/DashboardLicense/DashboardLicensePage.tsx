@@ -1,5 +1,5 @@
+import { MdBadge } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import { IconMIdentificationCard } from 'react-fluentui-emoji/lib/modern'
 import sockbaseShared from 'shared'
 
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
@@ -15,9 +15,8 @@ const DashboardLicensePage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to='/dashboard'>マイページ</Link></li>
       </Breadcrumbs>
-
       <PageTitle
-        icon={<IconMIdentificationCard />}
+        icon={<MdBadge />}
         title="権限"
         description="付与されている権限情報を表示します" />
 

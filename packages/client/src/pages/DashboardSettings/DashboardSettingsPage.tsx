@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MdSettings } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import { IconMGear } from 'react-fluentui-emoji/lib/modern'
 import FormButton from '../../components/Form/Button'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -114,7 +114,7 @@ const DashboardSettingsPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
-        icon={<IconMGear />}
+        icon={<MdSettings />}
         title="マイページ設定"
         description="Sockbaseが共通で使用している設定はこのページで変更できます" />
 

@@ -1,17 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
+import { MdAssignmentTurnedIn } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import { IconMChair } from 'react-fluentui-emoji/lib/modern'
-import {
-  type SockbaseApplicationDocument,
-  type SockbaseEvent,
-  type SockbaseSpaceDocument
-} from 'sockbase'
+import { type SockbaseApplicationDocument, type SockbaseEvent, type SockbaseSpaceDocument } from 'sockbase'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
+
 import EventSpacesStepContainer from './StepContainer'
 
 const DashboardEventSpacesPage: React.FC = () => {
@@ -57,12 +54,7 @@ const DashboardEventSpacesPage: React.FC = () => {
         <li>{event?._organization.name ?? <BlinkField />}</li>
         <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
-
-      <PageTitle
-        title={event?.eventName}
-        description="スペース配置"
-        icon={<IconMChair />}
-        isLoading={!event} />
+      <PageTitle title={event?.eventName} description="スペース配置" icon={<MdAssignmentTurnedIn />} isLoading={!event} />
 
       {eventId && spaces && apps && <EventSpacesStepContainer
         eventId={eventId}

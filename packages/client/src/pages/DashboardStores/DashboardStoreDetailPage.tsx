@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { IconMTicket } from 'react-fluentui-emoji/lib/modern'
+import { MdStore } from 'react-icons/md'
 import {
   type SockbaseTicketDocument,
   type SockbaseStoreDocument,
@@ -234,12 +234,7 @@ const DashboardStoreDetailPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
       </Breadcrumbs>
-
-      <PageTitle
-        title={store?.storeName}
-        icon={<IconMTicket />}
-        description="発券済みチケットの一覧"
-        isLoading={!store} />
+      <PageTitle title={store?.storeName} icon={<MdStore />} description="発券済みチケットの一覧" isLoading={!store} />
 
       <p>
         <LinkButton to={`/dashboard/stores/${storeId}/create`} inlined={true}>チケット作成</LinkButton>

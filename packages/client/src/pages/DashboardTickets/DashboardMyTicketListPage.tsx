@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { IconMTicket } from 'react-fluentui-emoji/lib/modern'
+import { MdLocalActivity } from 'react-icons/md'
 import {
   type SockbaseStoreType,
   type SockbaseStoreDocument,
@@ -76,7 +76,7 @@ const DashboardMyTicketsPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle title="マイチケット" icon={<IconMTicket />} description="あなたに割り当てられているチケットを表示中" />
+      <PageTitle title="マイチケット" icon={<MdLocalActivity />} description="あなたに割り当てられているチケットを表示中" />
 
       {ticketUsers === undefined
         ? <Loading text='マイチケット' />

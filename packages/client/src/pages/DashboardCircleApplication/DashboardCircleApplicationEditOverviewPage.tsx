@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MdEdit } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import { IconMBookmarkTabs } from 'react-fluentui-emoji/lib/modern'
-import {
-  type SockbaseApplicationOverview,
-  type SockbaseApplicationDocument,
-  type SockbaseEvent
-} from 'sockbase'
 import FormButton from '../../components/Form/Button'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -24,6 +19,11 @@ import useApplication from '../../hooks/useApplication'
 import useDayjs from '../../hooks/useDayjs'
 import useEvent from '../../hooks/useEvent'
 import useRole from '../../hooks/useRole'
+import type {
+  SockbaseApplicationOverview,
+  SockbaseApplicationDocument,
+  SockbaseEvent
+} from 'sockbase'
 
 const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
   const { hashedAppId } = useParams<{ hashedAppId: string }>()
@@ -119,12 +119,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
           {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
-
-      <PageTitle
-        title={app?.circle.name}
-        description="頒布物情報編集"
-        icon={<IconMBookmarkTabs />}
-        isLoading={!app} />
+      <PageTitle title={app?.circle.name} description="頒布物概要編集" icon={<MdEdit />} isLoading={!app} />
 
       {app && event && overview
         ? <TwoColumnsLayout>
