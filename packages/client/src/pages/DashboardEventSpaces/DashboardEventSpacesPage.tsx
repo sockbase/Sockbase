@@ -7,12 +7,12 @@ import {
   type SockbaseSpaceDocument
 } from 'sockbase'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import useEvent from '../../hooks/useEvent'
 import BlinkField from '../../components/Parts/BlinkField'
-import EventSpacesStepContainer from './StepContainer'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import useApplication from '../../hooks/useApplication'
+import useEvent from '../../hooks/useEvent'
+import EventSpacesStepContainer from './StepContainer'
 
 const DashboardEventSpacesPage: React.FC = () => {
   const { eventId } = useParams()

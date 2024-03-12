@@ -1,8 +1,8 @@
-import type { SockbaseApplicationAddedResult } from 'sockbase'
 
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import LinkButton from '../../../components/Parts/LinkButton'
+import type { SockbaseApplicationAddedResult } from 'sockbase'
 
 interface Props {
   appResult?: SockbaseApplicationAddedResult

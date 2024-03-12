@@ -1,11 +1,11 @@
+import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
+import { type Change, type EventContext, firestore } from 'firebase-functions'
 import {
   type SockbaseApplicationDocument,
   type SockbaseInquiryDocument,
   type SockbasePaymentDocument,
   type SockbaseTicketDocument
 } from 'sockbase'
-import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import { type Change, type EventContext, firestore } from 'firebase-functions'
 
 import MailService from '../services/MailService'
 

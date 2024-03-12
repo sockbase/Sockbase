@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
 
 interface Props {
   apps: Record<string, SockbaseApplicationDocument>

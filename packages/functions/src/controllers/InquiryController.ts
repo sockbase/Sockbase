@@ -1,7 +1,7 @@
-import { type EventContext, firestore } from 'firebase-functions'
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import type { SockbaseInquiryDocument } from 'sockbase'
+import { type EventContext, firestore } from 'firebase-functions'
 import InquiryService from '../services/InquiryService'
+import type { SockbaseInquiryDocument } from 'sockbase'
 
 export const onCreate = firestore
   .document('/_inquiries/{inquiryId}')

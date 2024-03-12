@@ -10,18 +10,18 @@ import {
   type SockbaseApplicationLinksDocument,
   type SockbaseApplicationOverviewDocument
 } from 'sockbase'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import EventApplications from './EventCircleApplications'
-import useApplication from '../../hooks/useApplication'
-import useEvent from '../../hooks/useEvent'
-import Loading from '../../components/Parts/Loading'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import LinkButton from '../../components/Parts/LinkButton'
-import FormSection from '../../components/Form/FormSection'
-import FormItem from '../../components/Form/FormItem'
+import Loading from '../../components/Parts/Loading'
+import useApplication from '../../hooks/useApplication'
+import useEvent from '../../hooks/useEvent'
+import EventApplications from './EventCircleApplications'
 
 const DashboardEventApplicationsPage: React.FC = () => {
   const { eventId } = useParams()

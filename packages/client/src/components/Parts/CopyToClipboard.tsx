@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import styled from 'styled-components'
-
 import { MdCopyAll, MdLibraryAddCheck } from 'react-icons/md'
+import styled from 'styled-components'
 
 interface Props {
   content: string

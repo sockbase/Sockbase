@@ -1,6 +1,6 @@
-import type { SockbaseAccountDocument } from 'sockbase'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { userConverter } from '../libs/converters'
+import type { SockbaseAccountDocument } from 'sockbase'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()

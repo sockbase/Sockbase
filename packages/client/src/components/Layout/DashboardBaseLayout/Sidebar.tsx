@@ -1,10 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import styled, { css } from 'styled-components'
-import type { User } from 'firebase/auth'
-import type { SockbaseRole } from 'sockbase'
-import sockbaseShared from 'shared'
-
 import {
   MdMenu,
   MdClose,
@@ -23,9 +17,13 @@ import {
   MdBadge,
   MdSearch
 } from 'react-icons/md'
-
-import useWindowDimension from '../../../hooks/useWindowDimension'
+import { Link } from 'react-router-dom'
+import styled, { css } from 'styled-components'
+import sockbaseShared from 'shared'
 import useRole from '../../../hooks/useRole'
+import useWindowDimension from '../../../hooks/useWindowDimension'
+import type { User } from 'firebase/auth'
+import type { SockbaseRole } from 'sockbase'
 
 interface MenuSection {
   sectionKey: string
