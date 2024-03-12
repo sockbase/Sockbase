@@ -68,10 +68,10 @@ const StepContainer: React.FC<Props> = (props) => {
         handleSubmit={assignSpaces}
         prevStep={() => setStep(2)}
         nextStep={() => setStep(4)} />,
-      <SpaceView key="space-view" />
+      <SpaceView key="space-view" eventId={props.eventId}/>
     ])
   }
-  useEffect(onInitialize, [props.spaces, rawSpaces, spacesData, rawAssignSpaces, props.apps])
+  useEffect(onInitialize, [props.spaces, rawSpaces, spacesData, rawAssignSpaces, props.apps, props.eventId])
 
   return (
     <>

@@ -19,6 +19,9 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import BlinkField from '../../components/Parts/BlinkField'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
+import LinkButton from '../../components/Parts/LinkButton'
+import FormSection from '../../components/Form/FormSection'
+import FormItem from '../../components/Form/FormItem'
 
 const DashboardEventApplicationsPage: React.FC = () => {
   const { eventId } = useParams()
@@ -144,6 +147,11 @@ const DashboardEventApplicationsPage: React.FC = () => {
         title={event?.eventName}
         description="申し込みサークル一覧"
         isLoading={!event} />
+      <FormSection>
+        <FormItem>
+          <LinkButton to={`/dashboard/events/${eventId}/spaces`} color="default" inlined>配置管理</LinkButton>
+        </FormItem>
+      </FormSection>
 
       {appsCSV && <p>
         配置データCSVをコピー <CopyToClipboard content={appsCSV} />

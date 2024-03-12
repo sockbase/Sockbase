@@ -66,7 +66,7 @@ service cloud.firestore {
     }
 
     match /_applicationHashIds/{hashId} {
-      allow write: if isOrganizationAdmin(request.auth.uid, resource.data.eventId);
+      allow write: if isOrganizationAdmin(request.auth.uid, resource.data.organizationId);
       allow read: if request.auth != null;
     }
     
@@ -134,10 +134,7 @@ service cloud.firestore {
 
     match /_spaceHashes/{spaceId} {
       allow read: if request.auth != null;
-
-      match /{spaceId} {
-        allow create: if isOrganizationAdmin(request.auth.uid, getEvent(request.resource.data.eventId)._organization.id);
-      }
+      allow create: if isOrganizationAdmin(request.auth.uid, getEvent(request.resource.data.eventId)._organization.id);
     }
 
     match /_tickets/{ticketId} {
