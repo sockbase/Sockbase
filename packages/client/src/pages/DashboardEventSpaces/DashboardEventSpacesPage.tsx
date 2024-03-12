@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { type SockbaseApplicationDocument, type SockbaseEvent, type SockbaseSpaceDocument } from 'sockbase'
-import DashboardBaseLayout from '../../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
-import PageTitle from '../../../components/Layout/DashboardBaseLayout/PageTitle'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import { MdAssignmentTurnedIn } from 'react-icons/md'
-import useEvent from '../../../hooks/useEvent'
-import BlinkField from '../../../components/Parts/BlinkField'
+import useEvent from '../../hooks/useEvent'
+import BlinkField from '../../components/Parts/BlinkField'
 import EventSpacesStepContainer from './StepContainer'
-import useApplication from '../../../hooks/useApplication'
+import useApplication from '../../hooks/useApplication'
 
 const DashboardEventSpacesPage: React.FC = () => {
   const { eventId } = useParams()
@@ -46,7 +46,7 @@ const DashboardEventSpacesPage: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardBaseLayout title={pageTitle} requireSystemRole={2}>
+    <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>

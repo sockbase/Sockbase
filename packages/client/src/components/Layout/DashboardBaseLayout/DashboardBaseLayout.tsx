@@ -16,11 +16,12 @@ import useRole from '../../../hooks/useRole'
 interface Props {
   children: React.ReactNode
   title: string
-  requireSystemRole: SockbaseRole
+  requireSystemRole?: SockbaseRole
+  requireCommonRole?: SockbaseRole
 }
 const DashboardBaseLayout: React.FC<Props> = (props) => {
   const firebase = useFirebase()
-  const { systemRole } = useRole()
+  const { systemRole, commonRole } = useRole()
   const navigate = useNavigate()
 
   const [sentVerifyMail, setSentVerifyMail] = useState(false)
@@ -40,10 +41,19 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
     setSentVerifyMail(true)
   }, [firebase.sendVerifyMail])
 
-  const isValidRole = useMemo((): boolean | null => {
-    if (systemRole === undefined) return null
-    return (systemRole ?? 0) >= props.requireSystemRole
-  }, [systemRole, props.requireSystemRole])
+  const isValidRole = useMemo((): boolean => {
+    if (systemRole === undefined && commonRole === undefined) return false
+
+    if (!props.requireSystemRole && !props.requireCommonRole) {
+      return true
+    } else if (props.requireSystemRole) {
+      return (systemRole ?? 0) >= props.requireSystemRole
+    } else if (props.requireCommonRole) {
+      return (commonRole ?? 0) >= props.requireCommonRole
+    }
+
+    return false
+  }, [systemRole, props.requireSystemRole, props.requireCommonRole])
 
   return (
     <StyledLayout>

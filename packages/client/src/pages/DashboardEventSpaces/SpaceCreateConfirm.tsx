@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { type RawEventSpace } from '../../../@types'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
+import { type RawEventSpace } from '../../@types'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 
 interface Props {
   rawSpaces: RawEventSpace[]

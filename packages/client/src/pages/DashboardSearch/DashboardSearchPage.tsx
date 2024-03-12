@@ -54,7 +54,7 @@ const DashboardSearchPage: React.FC = () => {
   }, [appHashId])
 
   return (
-    <DashboardBaseLayout title="検索(BETA)" requireSystemRole={2}>
+    <DashboardBaseLayout title="検索(BETA)" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

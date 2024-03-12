@@ -6,7 +6,7 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 
 const DashboardStoreListPage: React.FC = () => {
   return (
-    <DashboardBaseLayout title="チケットストア一覧" requireSystemRole={2}>
+    <DashboardBaseLayout title="チケットストア一覧" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

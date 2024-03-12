@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { type RawEventSpace } from '../../../@types'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import FormLabel from '../../../components/Form/Label'
-import FormTextarea from '../../../components/Form/Textarea'
+import { type RawEventSpace } from '../../@types'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormLabel from '../../components/Form/Label'
+import FormTextarea from '../../components/Form/Textarea'
 
 interface Props {
   rawSpaces: RawEventSpace[]

@@ -108,7 +108,7 @@ const DashboardPaymentListPage: React.FC = () => {
   useEffect(onInitialize, [user])
 
   return (
-    <DashboardBaseLayout title="決済一覧" requireSystemRole={0}>
+    <DashboardBaseLayout title="決済一覧">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
