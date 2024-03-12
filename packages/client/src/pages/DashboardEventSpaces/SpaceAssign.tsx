@@ -45,6 +45,10 @@ const SpaceAssign: React.FC<Props> = (props) => {
       <TwoColumnsLayout>
         <>
           <h2>STEP2: スペース配置作成</h2>
+          <p>
+            <code>申し込みID,スペースID</code> の形式で入力してください
+          </p>
+
           <FormSection>
             <FormItem>
               <FormLabel>スペース配置データ</FormLabel>

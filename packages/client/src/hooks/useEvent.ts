@@ -92,10 +92,7 @@ const useEvent = (): IUseEvent => {
       .query(spaceHashesRef, FirestoreDB.where('eventId', '==', eventId))
 
     const spaceHashesSnapshot = await FirestoreDB.getDocs(spaceHashesQuery)
-      .catch(err => {
-        console.log('ababab')
-        throw err
-      })
+      .catch(err => { throw err })
 
     const queryDocs = await Promise.all(spaceHashesSnapshot.docs
       .filter(doc => doc.exists())
@@ -156,11 +153,8 @@ const useEvent = (): IUseEvent => {
     const batch = FirestoreDB.writeBatch(db)
 
     rawAssignSpaces.forEach((space) => {
-      const appHashDocRef = FirestoreDB.doc(
-        db,
-        `/_applicationHashIds/${space.applicationHashId}`
-      ).withConverter(applicationHashIdConverter)
-
+      const appHashDocRef = FirestoreDB.doc(db, `/_applicationHashIds/${space.applicationHashId}`)
+        .withConverter(applicationHashIdConverter)
       batch.set(
         appHashDocRef,
         {
