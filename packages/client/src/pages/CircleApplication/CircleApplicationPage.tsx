@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type SockbaseEvent } from 'sockbase'
-import useEvent from '../../hooks/useEvent'
-import useFirebase from '../../hooks/useFirebase'
 import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
-import StepContainerComponent from './StepContainer/StepContainer'
 import Alert from '../../components/Parts/Alert'
 import Loading from '../../components/Parts/Loading'
+import useEvent from '../../hooks/useEvent'
+import useFirebase from '../../hooks/useFirebase'
+import StepContainerComponent from './StepContainer/StepContainer'
 
 const CircleApplicationPage: React.FC = () => {
   const params = useParams<{ eventId: string }>()

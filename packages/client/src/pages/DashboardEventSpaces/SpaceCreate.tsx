@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { type RawEventSpace } from '../../../@types'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import FormLabel from '../../../components/Form/Label'
-import FormTextarea from '../../../components/Form/Textarea'
+import { type RawEventSpace } from '../../@types'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormLabel from '../../components/Form/Label'
+import FormTextarea from '../../components/Form/Textarea'
 
 interface Props {
   rawSpaces: RawEventSpace[]
@@ -39,6 +39,9 @@ const SpaceCreate: React.FC<Props> = (props) => {
   return (
     <>
       <h2>STEP1: スペースデータ作成</h2>
+      <p>
+        <code>ブロック順序,スペース順序,スペース名</code> の形式で入力してください
+      </p>
       <FormSection>
         <FormItem>
           <FormLabel>スペースデータ</FormLabel>
@@ -47,7 +50,8 @@ const SpaceCreate: React.FC<Props> = (props) => {
         <FormItem>
           <FormButton
             onClick={handleSubmit}
-            inlined={true}>
+            inlined={true}
+            disabled={!rawSpaceData}>
             確認へ進む
           </FormButton>
         </FormItem>

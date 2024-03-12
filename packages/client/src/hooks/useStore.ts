@@ -1,8 +1,8 @@
+import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
-import type * as sockbase from 'sockbase'
 import * as FirebaseFunctions from 'firebase/functions'
 import useFirebase from './useFirebase'
-import { useCallback } from 'react'
+import type * as sockbase from 'sockbase'
 
 const storeConverter: FirestoreDB.FirestoreDataConverter<sockbase.SockbaseStoreDocument> =
   {
@@ -139,6 +139,9 @@ interface IUseStore {
   getTicketByIdAsync: (
     ticketId: string
   ) => Promise<sockbase.SockbaseTicketDocument>
+  getTicketByIdOptionalAsync: (
+    ticketId: string
+  ) => Promise<sockbase.SockbaseTicketDocument | null>
   getTicketMetaByIdAsync: (
     ticketId: string
   ) => Promise<sockbase.SockbaseTicketMeta>
@@ -269,6 +272,13 @@ const useStore = (): IUseStore => {
 
     return ticketDoc.data()
   }
+
+  const getTicketByIdOptionalAsync = async (ticketId: string): Promise<sockbase.SockbaseTicketDocument | null> =>
+    await getTicketByIdAsync(ticketId)
+      .catch((err: Error) => {
+        console.error(err)
+        return null
+      })
 
   const getTicketMetaByIdAsync = async (
     ticketId: string
@@ -498,6 +508,7 @@ const useStore = (): IUseStore => {
     createTicketForAdminAsync,
     getTicketIdByHashIdAsync,
     getTicketByIdAsync,
+    getTicketByIdOptionalAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
     getTicketUserByHashIdOptionalAsync,

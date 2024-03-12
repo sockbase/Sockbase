@@ -12,27 +12,27 @@ import {
   type SockbaseTicketUserDocument,
   type SockbaseApplicationStatus
 } from 'sockbase'
-import useStore from '../../hooks/useStore'
-import useDayjs from '../../hooks/useDayjs'
-import useUserData from '../../hooks/useUserData'
-import usePayment from '../../hooks/usePayment'
-import useRole from '../../hooks/useRole'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormTextarea from '../../components/Form/Textarea'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
-import BlinkField from '../../components/Parts/BlinkField'
-import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
-import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
-import TicketUsedStatusLabel from '../../components/Parts/StatusLabel/TicketUsedStatusLabel'
-import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
-import TicketAssignStatusLabel from '../../components/Parts/StatusLabel/TicketAssignStatusLabel'
 import LinkButton from '../../components/Parts/LinkButton'
-import FormSection from '../../components/Form/FormSection'
-import FormItem from '../../components/Form/FormItem'
-import FormButton from '../../components/Form/Button'
-import FormTextarea from '../../components/Form/Textarea'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
+import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
+import TicketAssignStatusLabel from '../../components/Parts/StatusLabel/TicketAssignStatusLabel'
+import TicketUsedStatusLabel from '../../components/Parts/StatusLabel/TicketUsedStatusLabel'
+import useDayjs from '../../hooks/useDayjs'
+import usePayment from '../../hooks/usePayment'
+import useRole from '../../hooks/useRole'
+import useStore from '../../hooks/useStore'
+import useUserData from '../../hooks/useUserData'
 
 const DashboardTicketDetailPage: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
@@ -197,7 +197,7 @@ const DashboardTicketDetailPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'} requireSystemRole={0}>
+    <DashboardBaseLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         {isAdmin
@@ -226,13 +226,15 @@ const DashboardTicketDetailPage: React.FC = () => {
               {type?.productInfo && <tr>
                 <th>お支払い状況</th>
                 <td>
-                  {(payment?.status !== undefined &&
-                    (payment.status === 0
+                  {(payment && (
+                    payment?.status === 0
                       ? <Link to="/dashboard/payments">
-                        <PaymentStatusLabel payment={payment} />
+                        <PaymentStatusLabel payment={payment} isLink={true}/>
                       </Link>
-                      : <PaymentStatusLabel payment={payment} />)) ||
-                    <BlinkField />}
+                      : <>
+                        <PaymentStatusLabel payment={payment} />
+                      </>)) ||
+                      <BlinkField />}
                 </td>
               </tr>}
               <tr>

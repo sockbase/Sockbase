@@ -1,6 +1,6 @@
-import { type SockbaseApplicationStatus } from 'sockbase'
-import styled from 'styled-components'
 import { useMemo } from 'react'
+import styled from 'styled-components'
+import { type SockbaseApplicationStatus } from 'sockbase'
 
 interface Props {
   status: SockbaseApplicationStatus | undefined

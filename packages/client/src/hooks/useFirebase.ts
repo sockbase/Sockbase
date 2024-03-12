@@ -19,15 +19,15 @@ import {
   getFirestore as getFirebaseFirestore
 } from 'firebase/firestore'
 import {
-  type FirebaseStorage,
-  getStorage as getFirebaseStorage
-} from 'firebase/storage'
-import {
   type Functions,
   getFunctions as getFirebaseFunctions
 } from 'firebase/functions'
-import type { SockbaseRole } from 'sockbase'
+import {
+  type FirebaseStorage,
+  getStorage as getFirebaseStorage
+} from 'firebase/storage'
 import { getFirebaseApp } from '../libs/FirebaseApp'
+import type { SockbaseRole } from 'sockbase'
 
 interface IUseFirebase {
   isLoggedIn: boolean | undefined

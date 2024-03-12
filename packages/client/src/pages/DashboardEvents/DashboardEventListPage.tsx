@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import { MdEditCalendar } from 'react-icons/md'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import EventList from './EventList'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 
 const DashboardEventListPage: React.FC = () => {
   return (
-    <DashboardBaseLayout title="管理イベント一覧" requireSystemRole={2}>
+    <DashboardBaseLayout title="管理イベント一覧" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

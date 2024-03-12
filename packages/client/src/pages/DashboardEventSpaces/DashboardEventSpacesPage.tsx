@@ -1,18 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
+import { MdAssignmentTurnedIn } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import { type SockbaseApplicationDocument, type SockbaseEvent, type SockbaseSpaceDocument } from 'sockbase'
-import DashboardBaseLayout from '../../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
-import PageTitle from '../../../components/Layout/DashboardBaseLayout/PageTitle'
-import { MdAssignmentTurnedIn } from 'react-icons/md'
-import useEvent from '../../../hooks/useEvent'
-import BlinkField from '../../../components/Parts/BlinkField'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import useApplication from '../../hooks/useApplication'
+import useEvent from '../../hooks/useEvent'
+
 import EventSpacesStepContainer from './StepContainer'
-import useApplication from '../../../hooks/useApplication'
 
 const DashboardEventSpacesPage: React.FC = () => {
   const { eventId } = useParams()
-  const { getEventByIdAsync, getSpacesAsync } = useEvent()
+  const { getEventByIdAsync, getSpacesByEventIdAsync } = useEvent()
   const { getApplicationsByEventIdAsync } = useApplication()
 
   const [event, setEvent] = useState<SockbaseEvent>()
@@ -27,7 +28,7 @@ const DashboardEventSpacesPage: React.FC = () => {
         .then(fetchedEvent => setEvent(fetchedEvent))
         .catch(err => { throw err })
 
-      getSpacesAsync(eventId)
+      getSpacesByEventIdAsync(eventId)
         .then(fetchedSpaces => setSpaces(fetchedSpaces))
         .catch(err => { throw err })
 
@@ -46,7 +47,7 @@ const DashboardEventSpacesPage: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardBaseLayout title={pageTitle} requireSystemRole={2}>
+    <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>

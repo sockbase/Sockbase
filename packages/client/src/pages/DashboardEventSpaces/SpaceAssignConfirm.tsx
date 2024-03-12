@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { type SockbaseApplicationDocument, type SockbaseSpaceDocument } from 'sockbase'
-import { type RawAssignEventSpace } from '../../../@types'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
+import { type RawAssignEventSpace } from '../../@types'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 
 interface Props {
   spacesData: SockbaseSpaceDocument[]
@@ -49,18 +49,18 @@ const SpaceAssignConfirm: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th>スペースID</th>
             <th>スペース名</th>
-            <th>サークルID</th>
             <th>サークル名</th>
+            <th>スペースID</th>
+            <th>サークルID</th>
           </tr>
         </thead>
         <tbody>
           {props.rawAssignSpaces.map((s, i) => <tr key={i}>
-            <td>{s.spaceId}</td>
             <td>{getSpaceData(s.spaceId)?.spaceName ?? 'エラー！'}</td>
-            <td>{s.applicationHashId}</td>
             <td>{getApplication(s.applicationHashId)?.circle.name ?? 'エラー！'}</td>
+            <td>{s.spaceId}</td>
+            <td>{s.applicationHashId}</td>
           </tr>)}
         </tbody>
       </table>

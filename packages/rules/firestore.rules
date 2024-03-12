@@ -7,11 +7,11 @@ service cloud.firestore {
     }
   	function isOrganizationAdmin(userId, organizationId) {
     	let isOrganizationAdmin = get(/databases/$(database)/documents/organizations/$(organizationId)/users/$(userId)).data.role >= 2;
-      return isOrganizationAdmin || isSystemAdmin(userId);
+      return isOrganizationAdmin;
     }
     function isOrganizationStaff(userId, organizationId) {
       let isOrganizationStaff = get(/databases/$(database)/documents/organizations/$(organizationId)/users/$(userId)).data.role >= 1;
-      return isOrganizationStaff || isSystemAdmin(userId);
+      return isOrganizationStaff;
     }
 
     function getEvent(eventId) {
@@ -66,7 +66,7 @@ service cloud.firestore {
     }
 
     match /_applicationHashIds/{hashId} {
-      allow write: if isSystemAdmin(request.auth.uid);
+      allow write: if isOrganizationAdmin(request.auth.uid, resource.data.organizationId);
       allow read: if request.auth != null;
     }
     
@@ -130,6 +130,11 @@ service cloud.firestore {
       allow create: if isOrganizationAdmin(request.auth.uid, getEvent(request.resource.data.eventId)._organization.id);
       allow read: if request.time.toMillis() >= getEvent(getSpace(spaceId).eventId).schedules.publishSpaces
         || isOrganizationAdmin(request.auth.uid, getEvent(getSpace(spaceId).eventId)._organization.id);
+    }
+
+    match /_spaceHashes/{spaceId} {
+      allow read: if request.auth != null;
+      allow create: if isOrganizationAdmin(request.auth.uid, getEvent(request.resource.data.eventId)._organization.id);
     }
 
     match /_tickets/{ticketId} {

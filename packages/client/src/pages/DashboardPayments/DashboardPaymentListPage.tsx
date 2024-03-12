@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { MdPayments } from 'react-icons/md'
+import { Link } from 'react-router-dom'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import Loading from '../../components/Parts/Loading'
+import useApplication from '../../hooks/useApplication'
+import useEvent from '../../hooks/useEvent'
+import useFirebase from '../../hooks/useFirebase'
+import usePayment from '../../hooks/usePayment'
+import useStore from '../../hooks/useStore'
+import PaymentList from './PaymentList'
 import type {
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
@@ -9,28 +19,18 @@ import type {
   SockbaseStoreDocument,
   SockbaseTicketDocument
 } from 'sockbase'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PaymentList from './PaymentList'
-import useFirebase from '../../hooks/useFirebase'
-import usePayment from '../../hooks/usePayment'
-import useApplication from '../../hooks/useApplication'
-import useEvent from '../../hooks/useEvent'
-import Loading from '../../components/Parts/Loading'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import useStore from '../../hooks/useStore'
 
 const DashboardPaymentListPage: React.FC = () => {
   const { user } = useFirebase()
   const { getPaymentsByUserId } = usePayment()
-  const { getApplicationByIdAsync } = useApplication()
+  const { getApplicationByIdOptionalAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
-  const { getTicketByIdAsync, getStoreByIdAsync } = useStore()
+  const { getTicketByIdOptionalAsync, getStoreByIdAsync } = useStore()
 
   const [payments, setPayments] = useState<SockbasePaymentDocument[]>()
-  const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
+  const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta } | null>>()
   const [events, setEvents] = useState<Record<string, SockbaseEvent>>()
-  const [tickets, setTickets] = useState<Record<string, SockbaseTicketDocument>>()
+  const [tickets, setTickets] = useState<Record<string, SockbaseTicketDocument | null>>()
   const [stores, setStores] = useState<Record<string, SockbaseStoreDocument>>()
 
   const onInitialize: () => void =
@@ -55,21 +55,25 @@ const DashboardPaymentListPage: React.FC = () => {
           const ticketIds = [...ticketIdsSet]
 
           const fetchedApps = await Promise.all(
-            appIds.map(async (appId) => ({ appId, data: await getApplicationByIdAsync(appId) }))
+            appIds.map(async (appId) => ({ appId, data: await getApplicationByIdOptionalAsync(appId) }))
           )
           const fetchedTickets = await Promise.all(
-            ticketIds.map(async (ticketId) => ({ ticketId, data: await getTicketByIdAsync(ticketId) }))
+            ticketIds.map(async (ticketId) => ({ ticketId, data: await getTicketByIdOptionalAsync(ticketId) }))
           )
 
           const objectMappedApps = fetchedApps
+            .filter(a => a)
             .reduce<Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>(
-            (p, c) => ({ ...p, [c.appId]: c.data }),
-            {})
+            (p, c) => {
+              if (!c.data) return p
+              return { ...p, [c.appId]: c.data }
+            }, {})
           const objectMappedTickets = fetchedTickets
             .reduce<Record<string, SockbaseTicketDocument>>(
-            (p, c) => ({ ...p, [c.ticketId]: c.data }),
-            {}
-          )
+            (p, c) => {
+              if (!c.data) return p
+              return { ...p, [c.ticketId]: c.data }
+            }, {})
 
           const eventIdsSet = Object.values(objectMappedApps)
             .reduce((p, c) => p.add(c.eventId), new Set<string>())
@@ -108,7 +112,7 @@ const DashboardPaymentListPage: React.FC = () => {
   useEffect(onInitialize, [user])
 
   return (
-    <DashboardBaseLayout title="決済一覧" requireSystemRole={0}>
+    <DashboardBaseLayout title="決済一覧">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

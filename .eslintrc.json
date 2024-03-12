@@ -4,6 +4,7 @@
     "node": true
   },
   "plugins": [
+    "import",
     "@stylistic"
   ],
   "extends": [
@@ -15,6 +16,33 @@
     "project": "./tsconfig.json"
   },
   "rules": {
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "unknown",
+          "parent",
+          "sibling",
+          "index",
+          "object",
+          "type"
+        ],
+        "pathGroups": [
+          {
+            "pattern": "{react,react-dom/**,react-router-dom,react-icons/**,styled-components}",
+            "group": "builtin",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "alphabetize": {
+          "order": "asc"
+        }
+      }
+    ],
     "@stylistic/semi": "off",
     "@stylistic/quotes": "off",
     "@stylistic/eol-last": "error",
@@ -30,11 +58,5 @@
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/prefer-nullish-coalescing": "off",
     "@typescript-eslint/no-confusing-void-expression": "off"
-    // "@typescript-eslint/no-confusing-void-expression": [
-    //   "warn",
-    //   {
-    //     "ignoreArrowShorthand": true
-    //   }
-    // ],
   }
 }

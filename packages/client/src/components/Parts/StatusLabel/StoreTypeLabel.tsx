@@ -1,5 +1,5 @@
-import { type SockbaseStoreType } from 'sockbase'
 import styled from 'styled-components'
+import { type SockbaseStoreType } from 'sockbase'
 import BlinkField from '../BlinkField'
 
 interface Props {

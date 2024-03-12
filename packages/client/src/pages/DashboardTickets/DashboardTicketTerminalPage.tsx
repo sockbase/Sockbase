@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { MdQrCodeScanner } from 'react-icons/md'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 import {
   type SockbaseTicketUsedStatus,
   type SockbaseAccount,
@@ -13,31 +13,31 @@ import {
   type SockbaseTicketMeta
 } from 'sockbase'
 import useSound from 'use-sound'
-import useStore from '../../hooks/useStore'
-import useDayjs from '../../hooks/useDayjs'
-import usePayment from '../../hooks/usePayment'
-import useUserData from '../../hooks/useUserData'
-import useFirebaseError from '../../hooks/useFirebaseError'
-import useQRReader from '../../hooks/useQRReader'
-import useValidate from '../../hooks/useValidate'
+import NGSound from '../../assets/se/ng.mp3'
+import OKSound from '../../assets/se/ok.mp3'
+import FormButton from '../../components/Form/Button'
+import FormCheckbox from '../../components/Form/Checkbox'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormInput from '../../components/Form/Input'
+import FormLabel from '../../components/Form/Label'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Alert from '../../components/Parts/Alert'
 import BlinkField from '../../components/Parts/BlinkField'
-import StoreTypeLabel from '../../components/Parts/StatusLabel/StoreTypeLabel'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
+import StoreTypeLabel from '../../components/Parts/StatusLabel/StoreTypeLabel'
 import TicketUsedStatusLabel from '../../components/Parts/StatusLabel/TicketUsedStatusLabel'
-import FormCheckbox from '../../components/Form/Checkbox'
-import FormSection from '../../components/Form/FormSection'
-import FormItem from '../../components/Form/FormItem'
-import FormLabel from '../../components/Form/Label'
-import FormInput from '../../components/Form/Input'
-import FormButton from '../../components/Form/Button'
-import OKSound from '../../assets/se/ok.mp3'
-import NGSound from '../../assets/se/ng.mp3'
+import useDayjs from '../../hooks/useDayjs'
+import useFirebaseError from '../../hooks/useFirebaseError'
+import usePayment from '../../hooks/usePayment'
+import useQRReader from '../../hooks/useQRReader'
+import useStore from '../../hooks/useStore'
+import useUserData from '../../hooks/useUserData'
+import useValidate from '../../hooks/useValidate'
 
 const DashboardTicketTerminalPage: React.FC = () => {
   const { formatByDate } = useDayjs()
@@ -220,7 +220,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
   }, [ticketMeta, ticketUser, type, payment])
 
   return (
-    <DashboardBaseLayout title="チケット照会ターミナル" requireSystemRole={1}>
+    <DashboardBaseLayout title="チケット照会ターミナル" requireCommonRole={1}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { type SockbaseSpaceDocument } from 'sockbase'
-import { type RawAssignEventSpace } from '../../../@types'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import FormLabel from '../../../components/Form/Label'
-import FormTextarea from '../../../components/Form/Textarea'
-import TwoColumnsLayout from '../../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
-import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
+import { type RawAssignEventSpace } from '../../@types'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormLabel from '../../components/Form/Label'
+import FormTextarea from '../../components/Form/Textarea'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
+import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 
 interface Props {
   spacesData: SockbaseSpaceDocument[]
@@ -45,6 +45,10 @@ const SpaceAssign: React.FC<Props> = (props) => {
       <TwoColumnsLayout>
         <>
           <h2>STEP2: スペース配置作成</h2>
+          <p>
+            <code>申し込みID,スペースID</code> の形式で入力してください
+          </p>
+
           <FormSection>
             <FormItem>
               <FormLabel>スペース配置データ</FormLabel>

@@ -1,24 +1,24 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { MdSettings } from 'react-icons/md'
-import type { SockbaseAccount } from 'sockbase'
-import useUserData from '../../hooks/useUserData'
-import useFirebase from '../../hooks/useFirebase'
-import usePostalCode from '../../hooks/usePostalCode'
-import useFirebaseError from '../../hooks/useFirebaseError'
-import useValidate from '../../hooks/useValidate'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import Loading from '../../components/Parts/Loading'
-import Alert from '../../components/Parts/Alert'
-import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
+import { Link } from 'react-router-dom'
 import FormButton from '../../components/Form/Button'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import FormInput from '../../components/Form/Input'
 import FormLabel from '../../components/Form/Label'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
+import Alert from '../../components/Parts/Alert'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import Loading from '../../components/Parts/Loading'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
+import useFirebase from '../../hooks/useFirebase'
+import useFirebaseError from '../../hooks/useFirebaseError'
+import usePostalCode from '../../hooks/usePostalCode'
+import useUserData from '../../hooks/useUserData'
+import useValidate from '../../hooks/useValidate'
+import type { SockbaseAccount } from 'sockbase'
 
 const DashboardSettingsPage: React.FC = () => {
   const { user, sendPasswordResetURLAsync } = useFirebase()
@@ -109,7 +109,7 @@ const DashboardSettingsPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title="マイページ設定" requireSystemRole={0}>
+    <DashboardBaseLayout title="マイページ設定">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
