@@ -19,6 +19,7 @@ import DashboardCircleApplicationEditOverviewPage from '../DashboardCircleApplic
 import DashboardCircleApplicationListPage from '../DashboardCircleApplication/DashboardCircleApplicationListPage'
 import DashboardCircleApplicationUpdateCutPage from '../DashboardCircleApplication/DashboardCircleApplicationUpdateCutPage'
 import DashboardContactPage from '../DashboardContact/DashboardContactPage'
+import DashboardEventCreatePage from '../DashboardEventManage/DashboardEventCreatePage'
 import DashboardEventSpacesPage from '../DashboardEventSpaces/DashboardEventSpacesPage'
 import DashboardEventApplicationsPage from '../DashboardEvents/DashboardEventCircleApplicationsPage'
 import DashboardEventListPage from '../DashboardEvents/DashboardEventListPage'
@@ -146,6 +147,10 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <DashboardEventListPage />
+              },
+              {
+                path: 'create',
+                element: <DashboardEventCreatePage />
               },
               {
                 path: ':eventId',
