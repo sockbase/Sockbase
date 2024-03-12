@@ -2,9 +2,8 @@ import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import useFirebase from '../../../hooks/useFirebase'
-
 import LogotypeSVG from '../../../assets/logotype.svg'
+import useFirebase from '../../../hooks/useFirebase'
 
 const Header: React.FC = () => {
   const { user, logout } = useFirebase()

@@ -1,4 +1,9 @@
 import {
+  type DocumentData,
+  type FirestoreDataConverter,
+  type QueryDocumentSnapshot
+} from 'firebase-admin/firestore'
+import {
   type SockbaseApplicationOverviewDocument,
   type SockbaseAccountDocument,
   type SockbaseApplicationDocument,
@@ -13,12 +18,6 @@ import {
   type SockbaseTicketUsedStatus,
   type SockbaseTicketUserDocument
 } from 'sockbase'
-
-import {
-  type DocumentData,
-  type FirestoreDataConverter,
-  type QueryDocumentSnapshot
-} from 'firebase-admin/firestore'
 
 export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> = {
   toFirestore: (payment: SockbasePaymentDocument): DocumentData => ({

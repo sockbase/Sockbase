@@ -8,12 +8,12 @@ import {
   type SockbaseApplicationPayload,
   type SockbaseApplicationLinks
 } from 'sockbase'
-import useFirebase from '../../../hooks/useFirebase'
-import useUserData from '../../../hooks/useUserData'
+import Alert from '../../../components/Parts/Alert'
+import StepProgress from '../../../components/Parts/StepProgress'
 import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
-import StepProgress from '../../../components/Parts/StepProgress'
-import Alert from '../../../components/Parts/Alert'
+import useFirebase from '../../../hooks/useFirebase'
+import useUserData from '../../../hooks/useUserData'
 import CheckAccount from './CheckAccount'
 import Introduction from './Introduction'
 import Step1 from './Step1'

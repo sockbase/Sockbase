@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
-import { type SockbaseEventDocument } from 'sockbase'
 import { Link } from 'react-router-dom'
-import useFirebase from '../../hooks/useFirebase'
+import { type SockbaseEventDocument } from 'sockbase'
 import useEvent from '../../hooks/useEvent'
+import useFirebase from '../../hooks/useFirebase'
 
 const EventList: React.FC = () => {
   const { roles } = useFirebase()

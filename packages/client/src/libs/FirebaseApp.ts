@@ -1,7 +1,7 @@
-import type { FirebaseApp } from 'firebase/app'
 import * as App from 'firebase/app'
-import type { AppCheck as FirebaseAppCheck } from 'firebase/app-check'
 import * as AppCheck from 'firebase/app-check'
+import type { FirebaseApp } from 'firebase/app'
+import type { AppCheck as FirebaseAppCheck } from 'firebase/app-check'
 
 export const getFirebaseApp: () => FirebaseApp =
   () => {

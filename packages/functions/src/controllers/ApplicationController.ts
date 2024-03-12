@@ -1,12 +1,12 @@
+import { firestore, https } from 'firebase-functions'
+
+import ApplicationService from '../services/ApplicationService'
+import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import type {
   SockbaseApplicationAddedResult,
   SockbaseApplicationDocument,
   SockbaseApplicationPayload
 } from 'sockbase'
-import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import { firestore, https } from 'firebase-functions'
-
-import ApplicationService from '../services/ApplicationService'
 
 export const onCreateApplication = firestore
   .document('/_applications/{applicationId}')

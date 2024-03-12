@@ -1,4 +1,5 @@
 import dayjs from '../helpers/dayjs'
+import { convertTypeText } from '../models/inquiry'
 import type {
   SockbaseAccountDocument,
   SockbaseEvent,
@@ -12,7 +13,6 @@ import type {
   SockbaseStoreType,
   SockbaseEventGenre
 } from 'sockbase'
-import { convertTypeText } from '../models/inquiry'
 
 const suffix = [
   '',

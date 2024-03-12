@@ -1,7 +1,6 @@
 import * as FirestoreDB from 'firebase/firestore'
-import type { SockbasePaymentDocument } from 'sockbase'
-
 import useFirebase from './useFirebase'
+import type { SockbasePaymentDocument } from 'sockbase'
 
 interface ApplicationHashIdDocument {
   applicationId: string

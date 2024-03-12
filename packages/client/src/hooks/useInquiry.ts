@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
+import * as FirestoreDB from 'firebase/firestore'
+import inquiryHelper from '../helpers/inquiryHelper'
+import useFirebase from './useFirebase'
 import type {
   SockbaseInquiryDocument,
   SockbaseInquiryMetaDocument,
   SockbaseInquiryStatus
 } from 'sockbase'
-import useFirebase from './useFirebase'
-import * as FirestoreDB from 'firebase/firestore'
-import inquiryHelper from '../helpers/inquiryHelper'
 
 interface IUseInquiry {
   submitInquiry: (inquiryType: string, inquiryBody: string) => Promise<void>

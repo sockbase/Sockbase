@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom'
 import { IconMCalendar } from 'react-fluentui-emoji/lib/modern'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import EventList from './EventList'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 
 const DashboardEventListPage: React.FC = () => {
   return (
