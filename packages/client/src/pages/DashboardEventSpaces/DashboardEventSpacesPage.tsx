@@ -12,7 +12,7 @@ import useApplication from '../../hooks/useApplication'
 
 const DashboardEventSpacesPage: React.FC = () => {
   const { eventId } = useParams()
-  const { getEventByIdAsync, getSpacesAsync } = useEvent()
+  const { getEventByIdAsync, getSpacesByEventIdAsync } = useEvent()
   const { getApplicationsByEventIdAsync } = useApplication()
 
   const [event, setEvent] = useState<SockbaseEvent>()
@@ -27,7 +27,7 @@ const DashboardEventSpacesPage: React.FC = () => {
         .then(fetchedEvent => setEvent(fetchedEvent))
         .catch(err => { throw err })
 
-      getSpacesAsync(eventId)
+      getSpacesByEventIdAsync(eventId)
         .then(fetchedSpaces => setSpaces(fetchedSpaces))
         .catch(err => { throw err })
 

@@ -15,7 +15,7 @@ const FormCheckbox: React.FC<Props> = (props) => {
         id={`${props.name}`}
         onChange={e => props.onChange(e.target.checked)}
         checked={props.checked} />
-      <StyledCheckboxLabel htmlFor={`${props.name}`} inlined={props.inlined}>{props.label}</StyledCheckboxLabel>
+      <StyledCheckboxLabel htmlFor={props.name} inlined={props.inlined}>{props.label}</StyledCheckboxLabel>
     </>
   )
 }
