@@ -132,10 +132,13 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
 
   await firestore.doc(`/_applicationHashIds/${hashId}`)
     .set({
+      userId,
       hashId,
       applicationId: appId,
       paymentId,
-      spaceId: null
+      spaceId: null,
+      eventId: payload.app.eventId,
+      organizationId: event._organization.id
     }, {
       merge: true
     })
