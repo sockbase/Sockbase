@@ -1,12 +1,35 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    function isSystemAdmin(userId) {
+      let isSystemAdmin = firestore.get(/databases/(default)/documents/organizations/system/users/$(userId)).data.role >= 2;
+      return isSystemAdmin;
+    }
+
+    function isOrganizationAdmin(userId, organizationId) {
+      let isOrganizationAdmin = firestore.get(/databases/(default)/documents/organizations/$(organizationId)/users/$(userId)).data.role >= 2;
+      return isOrganizationAdmin;
+    }
+
+    function isOrganizationStaff(userId, organizationId) {
+      let isOrganizationStaff = firestore.get(/databases/(default)/documents/organizations/$(organizationId)/users/$(userId)).data.role >= 1;
+      return isOrganizationStaff;
+    }
+
     function getApplication(appId) {
       return firestore.get(/databases/(default)/documents/_applications/$(appId)).data;
     }
 
+    function getApplicationHashById(appHashId) {
+      return firestore.get(/databases/(default)/documents/_applicationHashIds/$(appHashId)).data;
+    }
+
     function getApplicationByHashId(appHashId) {
-      return getApplication(firestore.get(/databases/(default)/documents/_applicationHashIds/$(appHashId)).data.applicationId);
+      return getApplication(getApplicationHashById(appHashId).applicationId);
+    }
+
+    function getEvent(eventId) {
+      return firestore.get(/databases/(default)/documents/events/$(eventId)).data;
     }
 
     match /events/{eventId}/{allPaths=**} {
@@ -16,7 +39,8 @@ service firebase.storage {
 
     match /circleCuts/{appHashId} {
       allow read: if true;
-      allow write: if getApplicationByHashId(appHashId).userId == request.auth.uid;
+      allow write: if getApplicationHashById(appHashId).userId == request.auth.uid
+        || isOrganizationAdmin(request.auth.uid, getApplicationHashById(appHashId).organizationId);
     }
 
     // match /{allPaths=**} {
