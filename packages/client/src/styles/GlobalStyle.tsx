@@ -93,6 +93,7 @@ a {
   &:hover {
     text-decoration: underline;
   }
+  cursor: pointer;
 }
 
 code {
