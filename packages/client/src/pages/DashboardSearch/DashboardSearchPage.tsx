@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { IconMMagnifyingGlassTiltedRight } from 'react-fluentui-emoji/lib/modern'
+import { MdSearch } from 'react-icons/md'
 import { type SockbaseApplicationHashIdDocument } from 'sockbase'
 import FormButton from '../../components/Form/Button'
 import FormItem from '../../components/Form/FormItem'
@@ -58,12 +58,7 @@ const DashboardSearchPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
-
-      <PageTitle
-        title="検索(BETA)"
-        icon={<IconMMagnifyingGlassTiltedRight />}
-        description="横断検索には対応していません" />
-
+      <PageTitle title="検索(BETA)" icon={<MdSearch />} description="横断検索には対応していません" />
       <TwoColumnsLayout>
         <>
           <h2>サークル参加申し込み情報</h2>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
+import { MdPayments } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import { IconMReceipt } from 'react-fluentui-emoji/lib/modern'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
@@ -117,7 +117,7 @@ const DashboardPaymentListPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
-        icon={<IconMReceipt />}
+        icon={<MdPayments />}
         title="決済履歴"
         description="Sockbaseでのお支払い状況の一覧を表示中" />
 

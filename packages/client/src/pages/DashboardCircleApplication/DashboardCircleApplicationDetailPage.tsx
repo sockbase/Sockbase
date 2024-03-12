@@ -1,19 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
+import { MdEdit } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import { IconMBlackNib } from 'react-fluentui-emoji/lib/modern'
 import sockbaseShared from 'shared'
-import {
-  type SockbasePaymentDocument,
-  type SockbaseAccount,
-  type SockbaseApplicationDocument,
-  type SockbaseApplicationMeta,
-  type SockbaseApplicationStatus,
-  type SockbaseEvent,
-  type SockbaseApplicationLinksDocument,
-  type SockbaseSpaceDocument,
-  type SockbaseEventSpace,
-  type SockbaseApplicationOverviewDocument
-} from 'sockbase'
 import FormButton from '../../components/Form/Button'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -34,6 +22,18 @@ import useEvent from '../../hooks/useEvent'
 import usePayment from '../../hooks/usePayment'
 import useRole from '../../hooks/useRole'
 import useUserData from '../../hooks/useUserData'
+import type {
+  SockbasePaymentDocument,
+  SockbaseAccount,
+  SockbaseApplicationDocument,
+  SockbaseApplicationMeta,
+  SockbaseApplicationStatus,
+  SockbaseEvent,
+  SockbaseApplicationLinksDocument,
+  SockbaseSpaceDocument,
+  SockbaseEventSpace,
+  SockbaseApplicationOverviewDocument
+} from 'sockbase'
 
 const DashboardCircleApplicationDetailPage: React.FC = () => {
   const {
@@ -174,7 +174,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
       </Breadcrumbs>
 
       <PageTitle
-        icon={<IconMBlackNib />}
+        icon={<MdEdit />}
         title={app?.circle.name}
         description="申し込み情報"
         isLoading={!app} />
@@ -354,7 +354,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
           {links !== undefined && hashedAppId && <FormSection>
             <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>頒布物情報を編集する</LinkButton>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>頒布物概要を編集する</LinkButton>
             </FormItem>
           </FormSection>}
         </>

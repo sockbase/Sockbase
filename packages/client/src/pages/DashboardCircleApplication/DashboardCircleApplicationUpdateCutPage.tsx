@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { IconMFramedPicture } from 'react-fluentui-emoji/lib/modern'
+import { MdPhoto } from 'react-icons/md'
 import {
   type SockbaseApplicationDocument,
   type SockbaseEvent
@@ -123,12 +123,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
           {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
-
-      <PageTitle
-        title={app?.circle.name}
-        description="サークルカット変更"
-        icon={<IconMFramedPicture />}
-        isLoading={!app} />
+      <PageTitle title={app?.circle.name} description="サークルカット変更" icon={<MdPhoto />} isLoading={!app} />
 
       <TwoColumnsLayout>
         <>

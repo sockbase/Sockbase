@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { IconMCalendar } from 'react-fluentui-emoji/lib/modern'
+import { MdEditCalendar } from 'react-icons/md'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
@@ -11,9 +11,8 @@ const DashboardEventListPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
-
       <PageTitle
-        icon={<IconMCalendar />}
+        icon={<MdEditCalendar />}
         title="管理イベント"
         description="管理中のイベント一覧" />
 

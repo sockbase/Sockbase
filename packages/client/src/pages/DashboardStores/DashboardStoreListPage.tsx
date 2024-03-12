@@ -1,5 +1,5 @@
+import { MdTableChart } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import { IconMClassicalBuilding } from 'react-fluentui-emoji/lib/modern'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
@@ -10,11 +10,7 @@ const DashboardStoreListPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
-
-      <PageTitle
-        title="管理チケットストア"
-        icon={<IconMClassicalBuilding />}
-        description="管理中のチケットストア一覧" />
+      <PageTitle title="管理チケットストア" icon={<MdTableChart />} description="管理中のチケットストア一覧" />
 
       <ul>
         <li>ねくたりしょん

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
+import { MdQrCodeScanner } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { IconMDesktopComputer } from 'react-fluentui-emoji/lib/modern'
 import {
   type SockbaseTicketUsedStatus,
   type SockbaseAccount,
@@ -224,7 +224,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle title="チケット照会ターミナル" icon={<IconMDesktopComputer />} description="チケット管理" />
+      <PageTitle title="チケット照会ターミナル" icon={<MdQrCodeScanner />} description="チケット管理" />
 
       <TwoColumnsLayout>
         <>
