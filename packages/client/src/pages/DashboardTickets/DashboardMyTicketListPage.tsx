@@ -72,7 +72,7 @@ const DashboardMyTicketsPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title="マイチケット" requireSystemRole={0}>
+    <DashboardBaseLayout title="マイチケット">
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>

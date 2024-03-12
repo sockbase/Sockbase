@@ -220,7 +220,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
   }, [ticketMeta, ticketUser, type, payment])
 
   return (
-    <DashboardBaseLayout title="チケット照会ターミナル" requireSystemRole={1}>
+    <DashboardBaseLayout title="チケット照会ターミナル" requireCommonRole={1}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

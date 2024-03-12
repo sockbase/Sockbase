@@ -229,7 +229,7 @@ const DashboardStoreDetailPage: React.FC = () => {
   useEffect(onFetchedAllData, [filteredTickets, ticketUsers, usableUsers])
 
   return (
-    <DashboardBaseLayout title={pageTitle} requireSystemRole={2}>
+    <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>

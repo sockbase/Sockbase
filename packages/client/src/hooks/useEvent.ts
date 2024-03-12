@@ -1,4 +1,4 @@
-import type { SockbaseEvent, SockbaseSpaceDocument } from 'sockbase'
+import type { SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 import { type RawAssignEventSpace, type RawEventSpace } from '../@types'
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseStorage from 'firebase/storage'
@@ -8,19 +8,16 @@ import {
   eventConverter,
   spaceConverter
 } from '../libs/converters'
+import { useCallback } from 'react'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent>
+  getEventsByOrganizationId: (organizationId: string) => Promise<SockbaseEventDocument[]>
   getEventEyecatch: (eventId: string) => Promise<string | null>
   getSpaceAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
-  getSpaceOptionalAsync: (
-    spaceId: string
-  ) => Promise<SockbaseSpaceDocument | null>
+  getSpaceOptionalAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
-  createSpacesAsync: (
-    eventId: string,
-    rawSpaces: RawEventSpace[]
-  ) => Promise<SockbaseSpaceDocument[]>
+  createSpacesAsync: (eventId: string, rawSpaces: RawEventSpace[]) => Promise<SockbaseSpaceDocument[]>
   assignSpacesAsync: (rawAssignSpaces: RawAssignEventSpace[]) => Promise<void>
 }
 
@@ -40,6 +37,18 @@ const useEvent = (): IUseEvent => {
 
     return eventDoc.data()
   }
+
+  const getEventsByOrganizationId = useCallback(async (organizationId: string): Promise<SockbaseEventDocument[]> => {
+    const db = getFirestore()
+    const eventsRef = FirestoreDB.collection(db, 'events')
+      .withConverter(eventConverter)
+    const eventsQuery = FirestoreDB.query(eventsRef, FirestoreDB.where('_organization.id', '==', organizationId))
+    const eventsSnapshot = await FirestoreDB.getDocs(eventsQuery)
+    const queryDocs = eventsSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+    return queryDocs
+  }, [])
 
   const getEventEyecatch = async (eventId: string): Promise<string | null> => {
     const storage = getStorage()
@@ -156,6 +165,7 @@ const useEvent = (): IUseEvent => {
 
   return {
     getEventByIdAsync,
+    getEventsByOrganizationId,
     getEventEyecatch,
     getSpaceAsync,
     getSpaceOptionalAsync,

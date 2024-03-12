@@ -11,7 +11,7 @@ const DashboardLicensePage: React.FC = () => {
   const { user, roles } = useFirebase()
 
   return (
-    <DashboardBaseLayout title="権限" requireSystemRole={1}>
+    <DashboardBaseLayout title="権限" requireCommonRole={1}>
       <Breadcrumbs>
         <li><Link to='/dashboard'>マイページ</Link></li>
       </Breadcrumbs>

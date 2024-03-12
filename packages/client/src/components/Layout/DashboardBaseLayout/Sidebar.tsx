@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import type { User } from 'firebase/auth'
@@ -31,7 +31,8 @@ interface MenuSection {
   sectionKey: string
   sectionName: string
   items: MenuItem[]
-  requiredRole?: SockbaseRole
+  requireSystemRole?: SockbaseRole
+  requireCommonRole?: SockbaseRole
 }
 interface MenuItem {
   key: string
@@ -40,7 +41,8 @@ interface MenuItem {
   link: string
   isImportant?: boolean
   isDisabled?: boolean
-  requiredRole?: SockbaseRole
+  requireSystemRole?: SockbaseRole
+  requireCommonRole?: SockbaseRole
 }
 const menu: MenuSection[] = [
   {
@@ -95,7 +97,7 @@ const menu: MenuSection[] = [
   {
     sectionKey: 'support',
     sectionName: 'イベント開催支援',
-    requiredRole: sockbaseShared.enumerations.user.permissionRoles.staff,
+    requireCommonRole: sockbaseShared.enumerations.user.permissionRoles.staff,
     items: [
       {
         key: 'terminal',
@@ -112,21 +114,15 @@ const menu: MenuSection[] = [
     ]
   },
   {
-    sectionKey: 'system',
-    sectionName: 'システム操作',
-    requiredRole: sockbaseShared.enumerations.user.permissionRoles.admin,
+    sectionKey: 'event',
+    sectionName: 'イベント管理',
+    requireCommonRole: sockbaseShared.enumerations.user.permissionRoles.admin,
     items: [
       {
         key: 'omnisearch',
         icon: <MdSearch />,
         text: '検索',
         link: '/dashboard/search'
-      },
-      {
-        key: 'manageInquiries',
-        icon: <MdInbox />,
-        text: '問い合わせ管理',
-        link: '/dashboard/inquiries'
       },
       {
         key: 'manageEvents',
@@ -141,6 +137,19 @@ const menu: MenuSection[] = [
         link: '/dashboard/stores'
       }
     ]
+  },
+  {
+    sectionKey: 'system',
+    sectionName: 'システム操作',
+    requireSystemRole: sockbaseShared.enumerations.user.permissionRoles.admin,
+    items: [
+      {
+        key: 'manageInquiries',
+        icon: <MdInbox />,
+        text: '問い合わせ管理',
+        link: '/dashboard/inquiries'
+      }
+    ]
   }
 ]
 
@@ -150,7 +159,7 @@ interface Props {
 }
 const Sidebar: React.FC<Props> = (props) => {
   const { width } = useWindowDimension()
-  const { systemRole } = useRole()
+  const { systemRole, commonRole } = useRole()
 
   const [isHideToggleMenu, setHideToggleMenu] = useState(false)
   const [isOpenMenu, setOpenMenu] = useState(false)
@@ -158,13 +167,6 @@ const Sidebar: React.FC<Props> = (props) => {
   const onChangeWidth: () => void =
     () => setHideToggleMenu(width >= 840)
   useEffect(onChangeWidth, [width])
-
-  const role = useMemo((): SockbaseRole | null => {
-    if (systemRole === undefined || systemRole === null) {
-      return null
-    }
-    return systemRole
-  }, [systemRole])
 
   return (
     <StyledSidebarContainer>
@@ -184,7 +186,7 @@ const Sidebar: React.FC<Props> = (props) => {
         </StyledMenu>
       </StyledSection>}
       {
-        (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) && role !== null &&
+        (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) &&
         <>
           <StyledStatePanel>
             <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
@@ -199,13 +201,17 @@ const Sidebar: React.FC<Props> = (props) => {
             </StyledMenu>
           </StyledSection>
           {menu
-            .filter(m => !m.requiredRole || m.requiredRole <= role)
+            .filter(m =>
+              (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
+              (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
             .map(sec => <StyledSection key={sec.sectionKey}>
               {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
               <StyledMenu>
                 {
                   sec.items
-                    .filter(item => !item.requiredRole || item.requiredRole <= role)
+                    .filter(m =>
+                      (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
+                      (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
                     .map(item =>
                       <StyledMenuItemLink key={item.key} to={item.link}>
                         <StyledMenuItemIcon isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>

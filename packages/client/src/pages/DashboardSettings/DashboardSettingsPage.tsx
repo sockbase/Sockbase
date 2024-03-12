@@ -109,7 +109,7 @@ const DashboardSettingsPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title="マイページ設定" requireSystemRole={0}>
+    <DashboardBaseLayout title="マイページ設定">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { type RawAssignEventSpace, type RawEventSpace } from '../../../@types'
+import { type RawAssignEventSpace, type RawEventSpace } from '../../@types'
 import { type SockbaseApplicationDocument, type SockbaseSpaceDocument } from 'sockbase'
 import SpaceCreate from './SpaceCreate'
 import SpaceCreateConfirm from './SpaceCreateConfirm'
 import SpaceAssign from './SpaceAssign'
 import SpaceAssignConfirm from './SpaceAssignConfirm'
 import SpaceView from './SpaceView'
-import useEvent from '../../../hooks/useEvent'
+import useEvent from '../../hooks/useEvent'
 
 interface Props {
   eventId: string

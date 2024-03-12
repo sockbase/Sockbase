@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { type SockbaseApplicationDocument, type SockbaseSpaceDocument } from 'sockbase'
-import { type RawAssignEventSpace } from '../../../@types'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
+import { type RawAssignEventSpace } from '../../@types'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 
 interface Props {
   spacesData: SockbaseSpaceDocument[]

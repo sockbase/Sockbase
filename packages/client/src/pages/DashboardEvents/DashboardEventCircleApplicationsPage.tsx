@@ -8,7 +8,7 @@ import {
   type SockbaseApplicationMeta,
   type SockbaseEvent,
   type SockbaseApplicationLinksDocument,
-  SockbaseApplicationOverviewDocument
+  type SockbaseApplicationOverviewDocument
 } from 'sockbase'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import EventApplications from './EventCircleApplications'
@@ -100,21 +100,21 @@ const DashboardEventApplicationsPage: React.FC = () => {
             })
             .catch(err => { throw err })
 
-            const fetchedMappedOverviews = await Promise.all(appIds.map(async appId => ({
-              appId,
-              data: await getOverviewByApplicationIdOptionalAsync(appId)
-            })))
-              .then(fetchedOverviews => {
-                const objectMappedOverviews = fetchedOverviews.reduce<Record<string, SockbaseApplicationOverviewDocument | null>>((p, c) => ({
-                  ...p,
-                  [c.appId]: c.data
-                }), {})
-                return objectMappedOverviews
-              })
-              .catch(err => { throw err})
+          const fetchedMappedOverviews = await Promise.all(appIds.map(async appId => ({
+            appId,
+            data: await getOverviewByApplicationIdOptionalAsync(appId)
+          })))
+            .then(fetchedOverviews => {
+              const objectMappedOverviews = fetchedOverviews.reduce<Record<string, SockbaseApplicationOverviewDocument | null>>((p, c) => ({
+                ...p,
+                [c.appId]: c.data
+              }), {})
+              return objectMappedOverviews
+            })
+            .catch(err => { throw err })
 
-            const appsCSV = exportCSV(fetchedApps, fetchedMappedLinks, fetchedMappedOverviews)
-            setAppsCSV(appsCSV)
+          const appsCSV = exportCSV(fetchedApps, fetchedMappedLinks, fetchedMappedOverviews)
+          setAppsCSV(appsCSV)
         }
 
       fetchAppsAsync()
@@ -130,7 +130,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardBaseLayout title={title} requireSystemRole={2}>
+    <DashboardBaseLayout title={title} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>

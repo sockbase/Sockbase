@@ -26,6 +26,13 @@ export interface SockbaseEvent {
 }
 
 /**
+ * イベント(DB取得)
+ */
+export type SockbaseEventDocument = SockbaseEvent & {
+  id: string
+}
+
+/**
  * スペース
  */
 export interface SockbaseEventSpace {

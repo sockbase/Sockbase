@@ -20,10 +20,10 @@ import useRole from '../../hooks/useRole'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 
 const DashboardTopPage: React.FC = () => {
-  const { systemRole } = useRole()
+  const { systemRole, commonRole } = useRole()
 
   return (
-    <DashboardBaseLayout title="マイページ トップ" requireSystemRole={0}>
+    <DashboardBaseLayout title="マイページ トップ">
       <PageTitle
         icon={<MdHome />}
         title="ホーム"
@@ -71,7 +71,7 @@ const DashboardTopPage: React.FC = () => {
           description="Sockbaseに登録している情報を変更します。" />
       </CardContainer>
 
-      {!!systemRole && systemRole >= 1 && <>
+      {!!commonRole && commonRole >= 1 && <>
         <h2>イベント開催支援</h2>
         <CardContainer>
           <TopCard
@@ -87,8 +87,8 @@ const DashboardTopPage: React.FC = () => {
         </CardContainer>
       </>}
 
-      {!!systemRole && systemRole >= 2 && <>
-        <h2>システム操作</h2>
+      {!!commonRole && commonRole >= 2 && <>
+        <h2>申し込み管理</h2>
         <CardContainer>
           <TopCard
             to="/dashboard/search"
@@ -105,6 +105,12 @@ const DashboardTopPage: React.FC = () => {
             icon={<MdStore />}
             title="チケットストア管理"
             description="Sockbaseで管理しているチケットストアを表示します。" />
+        </CardContainer>
+      </>}
+
+      {!!systemRole && systemRole >= 2 && <>
+        <h2>システム操作</h2>
+        <CardContainer>
           <TopCard
             to="/dashboard/inquiries"
             icon={<MdInbox />}
