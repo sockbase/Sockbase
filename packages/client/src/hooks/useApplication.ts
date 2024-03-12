@@ -138,23 +138,28 @@ const useApplication = (): IUseApplication => {
     eventId: string
   ): Promise<Record<string, sockbase.SockbaseApplicationDocument>> => {
     const db = getFirestore()
-    const appsRef = FirestoreDB.collection(db, '_applications').withConverter(
-      applicationConverter
+    const appHashesRef = FirestoreDB.collection(db, '_applicationHashIds').withConverter(
+      applicationHashIdConverter
     )
 
-    const appsQuery = FirestoreDB.query(
-      appsRef,
+    const appHashesQuery = FirestoreDB.query(
+      appHashesRef,
       FirestoreDB.where('eventId', '==', eventId)
     )
-    const querySnapshot = await FirestoreDB.getDocs(appsQuery)
-    const queryDocs = querySnapshot.docs
-      .filter((doc) => doc.exists())
-      .reduce<Record<string, sockbase.SockbaseApplicationDocument>>(
-      (p, c) => ({ ...p, [c.id]: c.data() }),
-      {}
-    )
-
-    return queryDocs
+    const appHashesQuerySnapshot = await FirestoreDB.getDocs(appHashesQuery)
+    const apps = await Promise.all(appHashesQuerySnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+      .map(async appHash => ({
+        id: appHash.applicationId,
+        data: await getApplicationByIdAsync(appHash.applicationId)
+      })))
+      .then(fetchedApps => fetchedApps.reduce<Record<string, sockbase.SockbaseApplicationDocument>>((p, c) => ({
+        ...p,
+        [c.id]: c.data
+      }), {}))
+      .catch(err => { throw err })
+    return apps
   }
 
   const getApplicationMetaByIdAsync = async (

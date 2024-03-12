@@ -69,10 +69,8 @@ const usePayment = (): IUsePayment => {
 
   const getPaymentIdByHashId = async (hashId: string): Promise<string> => {
     const db = getFirestore()
-    const hashRef = FirestoreDB.doc(
-      db,
-      `/_applicationHashIds/${hashId}`
-    ).withConverter(applicationHashIdConverter)
+    const hashRef = FirestoreDB.doc(db, `/_applicationHashIds/${hashId}`)
+      .withConverter(applicationHashIdConverter)
     const hashDoc = await FirestoreDB.getDoc(hashRef)
 
     const hash = hashDoc.data()

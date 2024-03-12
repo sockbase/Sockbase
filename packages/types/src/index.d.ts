@@ -251,6 +251,20 @@ export type SockbaseSpaceDocument = SockbaseSpace & {
 }
 
 /**
+ * スペースハッシュ情報
+ */
+export interface SockbaseSpaceHash {
+  eventId: string
+}
+
+/**
+ * スペースハッシュ情報(DB取得)
+ */
+export type SockbaseSpaceHashDocument = SockbaseSpaceHash & {
+  id: string
+}
+
+/**
  * チケット情報
  */
 export interface SockbaseTicket {

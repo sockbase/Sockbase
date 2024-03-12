@@ -1,4 +1,4 @@
-import type { SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
+import type { SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument, SockbaseSpaceHash } from 'sockbase'
 import { type RawAssignEventSpace, type RawEventSpace } from '../@types'
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseStorage from 'firebase/storage'
@@ -16,7 +16,7 @@ interface IUseEvent {
   getEventEyecatch: (eventId: string) => Promise<string | null>
   getSpaceAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceOptionalAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
-  getSpacesAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
+  getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
   createSpacesAsync: (eventId: string, rawSpaces: RawEventSpace[]) => Promise<SockbaseSpaceDocument[]>
   assignSpacesAsync: (rawAssignSpaces: RawAssignEventSpace[]) => Promise<void>
 }
@@ -83,23 +83,27 @@ const useEvent = (): IUseEvent => {
     return await getSpaceAsync(spaceId).catch(() => null)
   }
 
-  const getSpacesAsync = async (
-    eventId: string
-  ): Promise<SockbaseSpaceDocument[]> => {
+  const getSpacesByEventIdAsync = async (eventId: string): Promise<SockbaseSpaceDocument[]> => {
     const db = getFirestore()
-    const spacesRef = FirestoreDB.collection(db, 'spaces').withConverter(
-      spaceConverter
-    )
-    const spacesQuery = FirestoreDB.query(
-      spacesRef,
-      FirestoreDB.where('eventId', '==', eventId)
-    )
-    const spacesSnapshot = await FirestoreDB.getDocs(spacesQuery)
-    const queryDocs = spacesSnapshot.docs
-      .filter((doc) => doc.exists())
-      .map((doc) => doc.data())
-      .sort((a, b) => a.spaceOrder - b.spaceOrder)
-      .sort((a, b) => a.spaceGroupOrder - b.spaceGroupOrder)
+
+    const spaceHashesRef = FirestoreDB.collection(db, '_spaceHashes')
+      .withConverter(spaceConverter)
+    const spaceHashesQuery = FirestoreDB
+      .query(spaceHashesRef, FirestoreDB.where('eventId', '==', eventId))
+
+    const spaceHashesSnapshot = await FirestoreDB.getDocs(spaceHashesQuery)
+      .catch(err => {
+        console.log('ababab')
+        throw err
+      })
+
+    const queryDocs = await Promise.all(spaceHashesSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+      .map(async spaceHash => await getSpaceAsync(spaceHash.id)))
+      .then(fetchedSpaces => fetchedSpaces
+        .sort((a, b) => a.spaceOrder - b.spaceOrder)
+        .sort((a, b) => a.spaceGroupOrder - b.spaceGroupOrder))
 
     return queryDocs
   }
@@ -120,19 +124,27 @@ const useEvent = (): IUseEvent => {
           id: '',
           eventId
         }
-        const addResult = await FirestoreDB.addDoc(spacesRef, spaceDoc).catch(
-          (err) => {
-            throw err
-          }
-        )
+
+        const addResult = await FirestoreDB
+          .addDoc(spacesRef, spaceDoc)
+          .catch(err => { throw err })
+
+        const spaceId = addResult.id
+        const spaceHashRef = FirestoreDB.doc(db, `_spaceHashes/${spaceId}`)
+        const spaceHashDoc: SockbaseSpaceHash = {
+          eventId
+        }
+
+        await FirestoreDB
+          .setDoc(spaceHashRef, spaceHashDoc)
+          .catch(err => { throw err })
+
         return {
           ...spaceDoc,
           id: addResult.id
         }
-      })
-    ).catch((err) => {
-      throw err
-    })
+      }))
+      .catch(err => { throw err })
 
     return addResults
   }
@@ -169,7 +181,7 @@ const useEvent = (): IUseEvent => {
     getEventEyecatch,
     getSpaceAsync,
     getSpaceOptionalAsync,
-    getSpacesAsync,
+    getSpacesByEventIdAsync,
     createSpacesAsync,
     assignSpacesAsync
   }

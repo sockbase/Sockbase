@@ -30,7 +30,10 @@ const DashboardEventApplicationsPage: React.FC = () => {
     getOverviewByApplicationIdOptionalAsync,
     exportCSV
   } = useApplication()
-  const { getEventByIdAsync, getSpacesAsync } = useEvent()
+  const {
+    getEventByIdAsync,
+    getSpacesByEventIdAsync
+  } = useEvent()
 
   const [event, setEvent] = useState<SockbaseEvent>()
   const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
@@ -49,7 +52,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
             .then(fetchedEvent => setEvent(fetchedEvent))
             .catch(err => { throw err })
 
-          getSpacesAsync(eventId)
+          getSpacesByEventIdAsync(eventId)
             .then(fetchedSpaces => setSpaces(fetchedSpaces))
             .catch(err => { throw err })
 
