@@ -23,14 +23,14 @@ import type {
 const DashboardPaymentListPage: React.FC = () => {
   const { user } = useFirebase()
   const { getPaymentsByUserId } = usePayment()
-  const { getApplicationByIdAsync } = useApplication()
+  const { getApplicationByIdOptionalAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
-  const { getTicketByIdAsync, getStoreByIdAsync } = useStore()
+  const { getTicketByIdOptionalAsync, getStoreByIdAsync } = useStore()
 
   const [payments, setPayments] = useState<SockbasePaymentDocument[]>()
-  const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
+  const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta } | null>>()
   const [events, setEvents] = useState<Record<string, SockbaseEvent>>()
-  const [tickets, setTickets] = useState<Record<string, SockbaseTicketDocument>>()
+  const [tickets, setTickets] = useState<Record<string, SockbaseTicketDocument | null>>()
   const [stores, setStores] = useState<Record<string, SockbaseStoreDocument>>()
 
   const onInitialize: () => void =
@@ -55,21 +55,25 @@ const DashboardPaymentListPage: React.FC = () => {
           const ticketIds = [...ticketIdsSet]
 
           const fetchedApps = await Promise.all(
-            appIds.map(async (appId) => ({ appId, data: await getApplicationByIdAsync(appId) }))
+            appIds.map(async (appId) => ({ appId, data: await getApplicationByIdOptionalAsync(appId) }))
           )
           const fetchedTickets = await Promise.all(
-            ticketIds.map(async (ticketId) => ({ ticketId, data: await getTicketByIdAsync(ticketId) }))
+            ticketIds.map(async (ticketId) => ({ ticketId, data: await getTicketByIdOptionalAsync(ticketId) }))
           )
 
           const objectMappedApps = fetchedApps
+            .filter(a => a)
             .reduce<Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>(
-            (p, c) => ({ ...p, [c.appId]: c.data }),
-            {})
+            (p, c) => {
+              if (!c.data) return p
+              return { ...p, [c.appId]: c.data }
+            }, {})
           const objectMappedTickets = fetchedTickets
             .reduce<Record<string, SockbaseTicketDocument>>(
-            (p, c) => ({ ...p, [c.ticketId]: c.data }),
-            {}
-          )
+            (p, c) => {
+              if (!c.data) return p
+              return { ...p, [c.ticketId]: c.data }
+            }, {})
 
           const eventIdsSet = Object.values(objectMappedApps)
             .reduce((p, c) => p.add(c.eventId), new Set<string>())

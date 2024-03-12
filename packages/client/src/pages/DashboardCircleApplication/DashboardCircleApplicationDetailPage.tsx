@@ -204,9 +204,15 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               {eventSpace?.productInfo && <tr>
                 <th>お支払い状況</th>
                 <td>
-                  <Link to="/dashboard/payments">
-                    {(payment?.status !== undefined && <PaymentStatusLabel payment={payment} />) || <BlinkField />}
-                  </Link>
+                  {(payment && (
+                    payment?.status === 0
+                      ? <Link to="/dashboard/payments">
+                        <PaymentStatusLabel payment={payment} isLink={true}/>
+                      </Link>
+                      : <>
+                        <PaymentStatusLabel payment={payment} />
+                      </>)) ||
+                      <BlinkField />}
                 </td>
               </tr>}
               <tr>

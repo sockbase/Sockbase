@@ -226,13 +226,15 @@ const DashboardTicketDetailPage: React.FC = () => {
               {type?.productInfo && <tr>
                 <th>お支払い状況</th>
                 <td>
-                  {(payment?.status !== undefined &&
-                    (payment.status === 0
+                  {(payment && (
+                    payment?.status === 0
                       ? <Link to="/dashboard/payments">
-                        <PaymentStatusLabel payment={payment} />
+                        <PaymentStatusLabel payment={payment} isLink={true}/>
                       </Link>
-                      : <PaymentStatusLabel payment={payment} />)) ||
-                    <BlinkField />}
+                      : <>
+                        <PaymentStatusLabel payment={payment} />
+                      </>)) ||
+                      <BlinkField />}
                 </td>
               </tr>}
               <tr>
