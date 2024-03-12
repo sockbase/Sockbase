@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { MdMail } from 'react-icons/md'
+import { IconMEMail } from 'react-fluentui-emoji/lib/modern'
 import {
   type SockbaseInquiryMetaDocument,
   type SockbaseAccount,
@@ -99,7 +99,13 @@ const DashboardInquiryListPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/inquiries">問い合わせ一覧</Link></li>
       </Breadcrumbs>
-      <PageTitle icon={<MdMail />} title={inquiry && getInquiryType(inquiry?.inquiryType).name} description={`#${inquiryId}`} isLoading={!inquiry} />
+
+      <PageTitle
+        icon={<IconMEMail />}
+        title={inquiry && getInquiryType(inquiry?.inquiryType).name}
+        description={`#${inquiryId}`}
+        isLoading={!inquiry} />
+
       {(!inquiry || !inquiryMeta) && <Loading text={`問い合わせ情報 #${inquiryId}`} />}
       {inquiry && inquiryMeta && <TwoColumnsLayout>
         <>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MdInbox } from 'react-icons/md'
+import { IconMInboxTray } from 'react-fluentui-emoji/lib/modern'
 import { type SockbaseInquiryDocument, type SockbaseInquiryMetaDocument } from 'sockbase'
 import useInquiry from '../../hooks/useInquiry'
 import useDayjs from '../../hooks/useDayjs'
@@ -59,7 +59,10 @@ const DashboardInquiryListPage: React.FC = () => {
 
   return (
     <DashboardBaseLayout title="問い合わせ一覧" requireSystemRole={2}>
-      <PageTitle icon={<MdInbox />} title='問い合わせ一覧' description='問い合わせ情報を表示中' />
+      <PageTitle
+        icon={<IconMInboxTray />}
+        title='問い合わせ一覧'
+        description='問い合わせ情報を表示中' />
 
       {(!filteredInquiries || !inquiryMetas) && <Loading text='問い合わせ一覧' />}
 

@@ -1,11 +1,11 @@
-import { MdBadge } from 'react-icons/md'
-import sockbaseShared from 'shared'
 import { Link } from 'react-router-dom'
+import sockbaseShared from 'shared'
 
-import useFirebase from '../../hooks/useFirebase'
+import { IconMIdentificationCard } from 'react-fluentui-emoji/lib/modern'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import useFirebase from '../../hooks/useFirebase'
 
 const DashboardLicensePage: React.FC = () => {
   const { user, roles } = useFirebase()
@@ -15,8 +15,9 @@ const DashboardLicensePage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to='/dashboard'>マイページ</Link></li>
       </Breadcrumbs>
+
       <PageTitle
-        icon={<MdBadge />}
+        icon={<IconMIdentificationCard />}
         title="権限"
         description="付与されている権限情報を表示します" />
 

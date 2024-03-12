@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { MdLocalPlay } from 'react-icons/md'
+import { IconMTicket } from 'react-fluentui-emoji/lib/modern'
 import {
   type SockbaseStoreDocument,
   type SockbaseTicketUserDocument
@@ -74,7 +74,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/mytickets">マイチケット</Link></li>
       </Breadcrumbs>
-      <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="マイチケット情報" isLoading={!store} />
+      <PageTitle title={pageTitle} icon={<IconMTicket />} description="マイチケット情報" isLoading={!store} />
 
       {user && ticketUser?.userId === user.uid && !ticketUser.usableUserId &&
         <Alert type="danger" title="チケットの割り当てが完了していません">

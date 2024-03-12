@@ -13,7 +13,7 @@ import {
   type SockbaseApplicationOverviewDocument
 } from 'sockbase'
 import sockbaseShared from 'shared'
-import { MdEdit } from 'react-icons/md'
+import { IconMBlackNib } from 'react-fluentui-emoji/lib/modern'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import usePayment from '../../hooks/usePayment'
@@ -174,7 +174,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
       </Breadcrumbs>
 
       <PageTitle
-        icon={<MdEdit />}
+        icon={<IconMBlackNib />}
         title={app?.circle.name}
         description="申し込み情報"
         isLoading={!app} />
@@ -348,7 +348,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
           {links !== undefined && hashedAppId && <FormSection>
             <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>頒布物概要を編集する</LinkButton>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>頒布物情報を編集する</LinkButton>
             </FormItem>
           </FormSection>}
         </>

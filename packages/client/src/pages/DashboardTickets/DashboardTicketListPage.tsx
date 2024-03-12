@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MdWallet } from 'react-icons/md'
+import { IconMPurse } from 'react-fluentui-emoji/lib/modern'
 import {
   type SockbaseTicketMeta,
   type SockbaseStoreDocument,
@@ -103,7 +103,7 @@ const DashboardTicketListPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle title="購入済みチケット一覧" icon={<MdWallet />} description="あなたが購入したチケットを表示中" />
+      <PageTitle title="購入済みチケット一覧" icon={<IconMPurse />} description="あなたが購入したチケットを表示中" />
 
       <Alert title="受け取ったチケットが見つからない場合">
         受け取ったチケットは <Link to="/dashboard/mytickets">マイチケット</Link> で確認できます。

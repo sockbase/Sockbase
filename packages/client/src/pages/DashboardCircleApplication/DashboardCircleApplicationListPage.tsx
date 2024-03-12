@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MdCollectionsBookmark } from 'react-icons/md'
+import { IconMBooks } from 'react-fluentui-emoji/lib/modern'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import CircleApplicationList from './CircleApplicationList'
@@ -76,7 +76,7 @@ const DashboardCircleApplicationListPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
-        icon={<MdCollectionsBookmark />}
+        icon={<IconMBooks />}
         title="サークル申し込み履歴"
         description="今までに申し込んだイベントの一覧を表示中" />
 
