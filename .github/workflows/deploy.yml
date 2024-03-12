@@ -52,6 +52,8 @@ jobs:
           echo -e "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}\nFUNC_FIREBASE_PROJECT_ID=${{ vars.VITE_FIREBASE_PROJECT_ID }}" >> ./packages/functions/.env
 
       - name: Deploy to firebase
+        env:
+          NODE_OPTIONS: "--max_old_space_size=5000"
         run: |
           firebase use ${{ vars.VITE_FIREBASE_PROJECT_ID }}
           firebase deploy

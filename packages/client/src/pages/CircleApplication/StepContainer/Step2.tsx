@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import sockbaseShared from 'shared'
 import {
   type SockbaseApplication,
   type SockbaseAccountSecure,
@@ -8,15 +9,14 @@ import {
   type SockbaseEvent,
   type SockbaseApplicationLinks
 } from 'sockbase'
-import sockbaseShared from 'shared'
-import useFirebaseError from '../../../hooks/useFirebaseError'
-import FormSection from '../../../components/Form/FormSection'
-import FormItem from '../../../components/Form/FormItem'
 import FormButton from '../../../components/Form/Button'
+import FormItem from '../../../components/Form/FormItem'
+import FormSection from '../../../components/Form/FormSection'
 import Alert from '../../../components/Parts/Alert'
 import CircleCutImage from '../../../components/Parts/CircleCutImage'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import ProgressBar from '../../../components/Parts/ProgressBar'
+import useFirebaseError from '../../../hooks/useFirebaseError'
 
 interface Props {
   app: SockbaseApplication | undefined

@@ -1,8 +1,7 @@
 
-import type { SockbaseOrganizationWithMeta } from 'sockbase'
-import FirebaseAdmin from '../libs/FirebaseAdmin'
-
 import fetch from 'node-fetch'
+import FirebaseAdmin from '../libs/FirebaseAdmin'
+import type { SockbaseOrganizationWithMeta } from 'sockbase'
 
 const sendMessageToDiscord: (organizationId: string, messageBody: {
   username: string

@@ -1,27 +1,27 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { type SockbaseTicketCreatedResult, type SockbaseStoreDocument, type SockbaseStoreType } from 'sockbase'
 import { MdStore } from 'react-icons/md'
-import useStore from '../../hooks/useStore'
-import useDayjs from '../../hooks/useDayjs'
-import useValidate from '../../hooks/useValidate'
-import useFirebaseError from '../../hooks/useFirebaseError'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import BlinkField from '../../components/Parts/BlinkField'
-import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
-import CopyToClipboard from '../../components/Parts/CopyToClipboard'
-import Alert from '../../components/Parts/Alert'
-import FormSection from '../../components/Form/FormSection'
+import { Link, useParams } from 'react-router-dom'
+import FormButton from '../../components/Form/Button'
+import FormCheckbox from '../../components/Form/Checkbox'
 import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormHelp from '../../components/Form/Help'
 import FormInput from '../../components/Form/Input'
 import FormLabel from '../../components/Form/Label'
 import FormSelect from '../../components/Form/Select'
-import FormButton from '../../components/Form/Button'
-import FormHelp from '../../components/Form/Help'
-import FormCheckbox from '../../components/Form/Checkbox'
+import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
+import Alert from '../../components/Parts/Alert'
+import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import CopyToClipboard from '../../components/Parts/CopyToClipboard'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
+import useDayjs from '../../hooks/useDayjs'
+import useFirebaseError from '../../hooks/useFirebaseError'
+import useStore from '../../hooks/useStore'
+import useValidate from '../../hooks/useValidate'
+import type { SockbaseTicketCreatedResult, SockbaseStoreDocument, SockbaseStoreType } from 'sockbase'
 
 const DashboardStoreTicketCreatePage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
@@ -107,7 +107,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title={pageTitle} requireSystemRole={2}>
+    <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>

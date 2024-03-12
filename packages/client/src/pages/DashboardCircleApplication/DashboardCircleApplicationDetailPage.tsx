@@ -1,39 +1,39 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import {
-  type SockbasePaymentDocument,
-  type SockbaseAccount,
-  type SockbaseApplicationDocument,
-  type SockbaseApplicationMeta,
-  type SockbaseApplicationStatus,
-  type SockbaseEvent,
-  type SockbaseApplicationLinksDocument,
-  type SockbaseSpaceDocument,
-  type SockbaseEventSpace,
-  type SockbaseApplicationOverviewDocument
-} from 'sockbase'
-import sockbaseShared from 'shared'
 import { MdEdit } from 'react-icons/md'
-import useApplication from '../../hooks/useApplication'
-import useEvent from '../../hooks/useEvent'
-import usePayment from '../../hooks/usePayment'
-import useUserData from '../../hooks/useUserData'
-import useRole from '../../hooks/useRole'
-import useDayjs from '../../hooks/useDayjs'
+import { Link, useParams } from 'react-router-dom'
+import sockbaseShared from 'shared'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import Alert from '../../components/Parts/Alert'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
+import Alert from '../../components/Parts/Alert'
 import BlinkField from '../../components/Parts/BlinkField'
-import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CircleCutImage from '../../components/Parts/CircleCutImage'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
-import FormSection from '../../components/Form/FormSection'
-import FormItem from '../../components/Form/FormItem'
 import LinkButton from '../../components/Parts/LinkButton'
-import FormButton from '../../components/Form/Button'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
-import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
+import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
+import useApplication from '../../hooks/useApplication'
+import useDayjs from '../../hooks/useDayjs'
+import useEvent from '../../hooks/useEvent'
+import usePayment from '../../hooks/usePayment'
+import useRole from '../../hooks/useRole'
+import useUserData from '../../hooks/useUserData'
+import type {
+  SockbasePaymentDocument,
+  SockbaseAccount,
+  SockbaseApplicationDocument,
+  SockbaseApplicationMeta,
+  SockbaseApplicationStatus,
+  SockbaseEvent,
+  SockbaseApplicationLinksDocument,
+  SockbaseSpaceDocument,
+  SockbaseEventSpace,
+  SockbaseApplicationOverviewDocument
+} from 'sockbase'
 
 const DashboardCircleApplicationDetailPage: React.FC = () => {
   const {
@@ -204,9 +204,15 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               {eventSpace?.productInfo && <tr>
                 <th>お支払い状況</th>
                 <td>
-                  <Link to="/dashboard/payments">
-                    {(payment?.status !== undefined && <PaymentStatusLabel payment={payment} />) || <BlinkField />}
-                  </Link>
+                  {(payment && (
+                    payment?.status === 0
+                      ? <Link to="/dashboard/payments">
+                        <PaymentStatusLabel payment={payment} isLink={true}/>
+                      </Link>
+                      : <>
+                        <PaymentStatusLabel payment={payment} />
+                      </>)) ||
+                      <BlinkField />}
                 </td>
               </tr>}
               <tr>

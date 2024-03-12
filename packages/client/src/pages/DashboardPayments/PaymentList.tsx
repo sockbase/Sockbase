@@ -1,3 +1,6 @@
+import { useCallback } from 'react'
+import { Link } from 'react-router-dom'
+import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
 import type {
   PaymentMethod,
   SockbaseApplicationDocument,
@@ -7,49 +10,47 @@ import type {
   SockbaseStoreDocument,
   SockbaseTicketDocument
 } from 'sockbase'
-import { Link } from 'react-router-dom'
-import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
 
 interface Props {
   payments: SockbasePaymentDocument[]
-  apps: Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
+  apps: Record<string, SockbaseApplicationDocument & { meta: SockbaseApplicationMeta } | null>
   events: Record<string, SockbaseEvent>
-  tickets: Record<string, SockbaseTicketDocument>
+  tickets: Record<string, SockbaseTicketDocument | null>
   stores: Record<string, SockbaseStoreDocument>
   email: string
 }
 const PaymentList: React.FC<Props> = (props) => {
-  const linkTargetId: (appId: string | null, ticketId: string | null) => string =
-    (appId, ticketId) => {
-      if (appId) {
-        const app = props.apps[appId]
-        return `/dashboard/applications/${app.hashId ?? ''}`
-      } else if (ticketId) {
-        const ticket = props.tickets[ticketId]
-        return `/dashboard/tickets/${ticket.hashId ?? ''}`
-      }
-
-      return ''
+  const linkTargetId = useCallback((appId: string | null, ticketId: string | null): string => {
+    if (appId) {
+      const app = props.apps[appId]
+      return `/dashboard/applications/${app?.hashId ?? ''}`
+    } else if (ticketId) {
+      const ticket = props.tickets[ticketId]
+      return `/dashboard/tickets/${ticket?.hashId ?? ''}`
     }
+    return ''
+  }, [])
 
-  const paymentMethod: (method: PaymentMethod) => string =
-    (method) => {
-      switch (method) {
-        case 1:
-          return 'オンライン決済'
-
-        case 2:
-          return '銀行振込'
-      }
+  const paymentMethod = useCallback((method: PaymentMethod): string => {
+    switch (method) {
+      case 1:
+        return 'オンライン決済'
+      case 2:
+        return '銀行振込'
     }
+  }, [])
 
-  const getTargetName = (payment: SockbasePaymentDocument): string => {
+  const getTargetName = useCallback((payment: SockbasePaymentDocument): string => {
     if (payment.applicationId) {
       const app = props.apps[payment.applicationId]
+      if (!app) return '(不明なイベント)'
+
       const event = props.events[app.eventId]
       return event.eventName
     } else if (payment.ticketId) {
       const ticket = props.tickets[payment.ticketId]
+      if (!ticket) return '(不明なチケットストア)'
+
       const store = props.stores[ticket.storeId]
       const type = store.types
         .filter(t => t.id === ticket.typeId)[0]
@@ -58,31 +59,35 @@ const PaymentList: React.FC<Props> = (props) => {
     }
 
     return '-'
-  }
+  }, [])
 
-  const getPaymentLink = (payment: SockbasePaymentDocument): React.ReactNode => {
+  const getPaymentLink = useCallback((payment: SockbasePaymentDocument): React.ReactNode => {
     if (payment.status !== 0 || payment.paymentMethod !== 1) return '-'
 
     const emailLink = `?prefilled_email=${encodeURIComponent(props.email)}`
 
     if (payment.applicationId) {
       const app = props.apps[payment.applicationId]
+      if (!app) return '-'
+
       const space = props.events[app.eventId].spaces
         .filter(s => s.id === app.spaceId)[0]
-
       if (!space.productInfo) return '-'
+
       return <a href={`${space.productInfo.paymentURL}${emailLink}`} target="_blank" rel="noreferrer">お支払いはこちら</a>
     } else if (payment.ticketId) {
       const ticket = props.tickets[payment.ticketId]
+      if (!ticket) return '-'
+
       const typeInfo = props.stores[ticket.storeId].types
         .filter(t => t.id === ticket.typeId)[0]
-
       if (!typeInfo.productInfo) return '-'
+
       return <a href={`${typeInfo.productInfo.paymentURL}${emailLink}`} target="_blank" rel="noreferrer">お支払いはこちら</a>
     }
 
     return '-'
-  }
+  }, [])
 
   return (
     <>

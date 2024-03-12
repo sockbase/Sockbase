@@ -1,8 +1,8 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import type { SockbaseAccountDocument, SockbaseRole } from 'sockbase'
 import { firestore, type EventContext, type Change } from 'firebase-functions'
 
 import AccountService from '../services/AccountService'
+import type { SockbaseAccountDocument, SockbaseRole } from 'sockbase'
 
 export const onChangeOrganizationRoles = firestore
   .document('/organizations/{organizationId}/users/{userId}')

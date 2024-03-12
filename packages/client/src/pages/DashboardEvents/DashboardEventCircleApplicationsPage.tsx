@@ -8,17 +8,20 @@ import {
   type SockbaseApplicationMeta,
   type SockbaseEvent,
   type SockbaseApplicationLinksDocument,
-  SockbaseApplicationOverviewDocument
+  type SockbaseApplicationOverviewDocument
 } from 'sockbase'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import EventApplications from './EventCircleApplications'
-import useApplication from '../../hooks/useApplication'
-import useEvent from '../../hooks/useEvent'
-import Loading from '../../components/Parts/Loading'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
+import LinkButton from '../../components/Parts/LinkButton'
+import Loading from '../../components/Parts/Loading'
+import useApplication from '../../hooks/useApplication'
+import useEvent from '../../hooks/useEvent'
+import EventApplications from './EventCircleApplications'
 
 const DashboardEventApplicationsPage: React.FC = () => {
   const { eventId } = useParams()
@@ -30,7 +33,10 @@ const DashboardEventApplicationsPage: React.FC = () => {
     getOverviewByApplicationIdOptionalAsync,
     exportCSV
   } = useApplication()
-  const { getEventByIdAsync, getSpacesAsync } = useEvent()
+  const {
+    getEventByIdAsync,
+    getSpacesByEventIdAsync
+  } = useEvent()
 
   const [event, setEvent] = useState<SockbaseEvent>()
   const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
@@ -49,7 +55,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
             .then(fetchedEvent => setEvent(fetchedEvent))
             .catch(err => { throw err })
 
-          getSpacesAsync(eventId)
+          getSpacesByEventIdAsync(eventId)
             .then(fetchedSpaces => setSpaces(fetchedSpaces))
             .catch(err => { throw err })
 
@@ -100,21 +106,21 @@ const DashboardEventApplicationsPage: React.FC = () => {
             })
             .catch(err => { throw err })
 
-            const fetchedMappedOverviews = await Promise.all(appIds.map(async appId => ({
-              appId,
-              data: await getOverviewByApplicationIdOptionalAsync(appId)
-            })))
-              .then(fetchedOverviews => {
-                const objectMappedOverviews = fetchedOverviews.reduce<Record<string, SockbaseApplicationOverviewDocument | null>>((p, c) => ({
-                  ...p,
-                  [c.appId]: c.data
-                }), {})
-                return objectMappedOverviews
-              })
-              .catch(err => { throw err})
+          const fetchedMappedOverviews = await Promise.all(appIds.map(async appId => ({
+            appId,
+            data: await getOverviewByApplicationIdOptionalAsync(appId)
+          })))
+            .then(fetchedOverviews => {
+              const objectMappedOverviews = fetchedOverviews.reduce<Record<string, SockbaseApplicationOverviewDocument | null>>((p, c) => ({
+                ...p,
+                [c.appId]: c.data
+              }), {})
+              return objectMappedOverviews
+            })
+            .catch(err => { throw err })
 
-            const appsCSV = exportCSV(fetchedApps, fetchedMappedLinks, fetchedMappedOverviews)
-            setAppsCSV(appsCSV)
+          const appsCSV = exportCSV(fetchedApps, fetchedMappedLinks, fetchedMappedOverviews)
+          setAppsCSV(appsCSV)
         }
 
       fetchAppsAsync()
@@ -130,7 +136,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardBaseLayout title={title} requireSystemRole={2}>
+    <DashboardBaseLayout title={title} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
@@ -141,6 +147,11 @@ const DashboardEventApplicationsPage: React.FC = () => {
         title={event?.eventName}
         description="申し込みサークル一覧"
         isLoading={!event} />
+      <FormSection>
+        <FormItem>
+          <LinkButton to={`/dashboard/events/${eventId}/spaces`} color="default" inlined>配置管理</LinkButton>
+        </FormItem>
+      </FormSection>
 
       {appsCSV && <p>
         配置データCSVをコピー <CopyToClipboard content={appsCSV} />

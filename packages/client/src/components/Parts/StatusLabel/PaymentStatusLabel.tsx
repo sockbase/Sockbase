@@ -4,6 +4,7 @@ import type { PaymentStatus, SockbasePaymentDocument } from 'sockbase'
 
 interface Props {
   payment: SockbasePaymentDocument
+  isLink?: boolean
 }
 const PaymentStatusLabel: React.FC<Props> = (props) => {
   const statusText = useMemo(() => {
@@ -36,7 +37,7 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
   }, [props.payment.paymentMethod])
 
   return (
-    <Container status={props.payment.status ?? 0}>
+    <Container status={props.payment.status ?? 0} isLink={props.isLink}>
       {statusText}（{paymentMethodText}）
     </Container>
   )
@@ -44,7 +45,7 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
 
 export default PaymentStatusLabel
 
-const Container = styled.label<{ status: PaymentStatus }>`
+const Container = styled.label<{ status: PaymentStatus, isLink?: boolean }>`
   display: inline-block;
   padding: 2px 5px;
   border-radius: 5px;
@@ -67,5 +68,8 @@ const Container = styled.label<{ status: PaymentStatus }>`
       `
     }
   }};
+  
   color: #ffffff;
+
+  ${p => p.isLink && 'cursor: pointer;'}
 `

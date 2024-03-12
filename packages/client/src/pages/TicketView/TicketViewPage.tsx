@@ -1,13 +1,13 @@
-import styled from 'styled-components'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import styled from 'styled-components'
 import { type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
-import useStore from '../../hooks/useStore'
-import useFirebase from '../../hooks/useFirebase'
 import TicketBaseLayout from '../../components/Layout/TicketBaseLayout/TicketBaseLayout'
-import TicketView from './TicketView'
-import Loading from '../../components/Parts/Loading'
 import Alert from '../../components/Parts/Alert'
+import Loading from '../../components/Parts/Loading'
+import useFirebase from '../../hooks/useFirebase'
+import useStore from '../../hooks/useStore'
+import TicketView from './TicketView'
 
 const TicketViewPage: React.FC = () => {
   const { ticketHashId } = useParams<{ ticketHashId: string }>()

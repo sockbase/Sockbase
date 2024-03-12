@@ -26,6 +26,13 @@ export interface SockbaseEvent {
 }
 
 /**
+ * イベント(DB取得)
+ */
+export type SockbaseEventDocument = SockbaseEvent & {
+  id: string
+}
+
+/**
  * スペース
  */
 export interface SockbaseEventSpace {
@@ -240,6 +247,20 @@ export interface SockbaseSpace {
  * スペース情報(DB取得)
  */
 export type SockbaseSpaceDocument = SockbaseSpace & {
+  id: string
+}
+
+/**
+ * スペースハッシュ情報
+ */
+export interface SockbaseSpaceHash {
+  eventId: string
+}
+
+/**
+ * スペースハッシュ情報(DB取得)
+ */
+export type SockbaseSpaceHashDocument = SockbaseSpaceHash & {
   id: string
 }
 

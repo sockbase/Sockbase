@@ -1,7 +1,15 @@
 import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import type { SockbaseApplicationDocument, SockbaseApplicationHashIdDocument, SockbaseApplicationMeta, SockbaseEvent, SockbaseEventGenre, SockbaseEventSpace, SockbaseSpaceDocument } from 'sockbase'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import type {
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationMeta,
+  SockbaseEvent,
+  SockbaseEventGenre,
+  SockbaseEventSpace,
+  SockbaseSpaceDocument
+} from 'sockbase'
 
 interface Props {
   event: SockbaseEvent

@@ -2,17 +2,17 @@ import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MdSearch } from 'react-icons/md'
 import { type SockbaseApplicationHashIdDocument } from 'sockbase'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormInput from '../../components/Form/Input'
+import FormLabel from '../../components/Form/Label'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import useApplication from '../../hooks/useApplication'
 import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
-import FormSection from '../../components/Form/FormSection'
-import FormItem from '../../components/Form/FormItem'
-import FormLabel from '../../components/Form/Label'
-import FormInput from '../../components/Form/Input'
-import FormButton from '../../components/Form/Button'
 import Alert from '../../components/Parts/Alert'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import useApplication from '../../hooks/useApplication'
 
 const DashboardSearchPage: React.FC = () => {
   const { getApplicationIdByHashedIdAsync } = useApplication()
@@ -54,7 +54,7 @@ const DashboardSearchPage: React.FC = () => {
   }, [appHashId])
 
   return (
-    <DashboardBaseLayout title="検索(BETA)" requireSystemRole={2}>
+    <DashboardBaseLayout title="検索(BETA)" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

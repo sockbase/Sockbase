@@ -1,17 +1,17 @@
 import { MdBadge } from 'react-icons/md'
-import sockbaseShared from 'shared'
 import { Link } from 'react-router-dom'
+import sockbaseShared from 'shared'
 
-import useFirebase from '../../hooks/useFirebase'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import useFirebase from '../../hooks/useFirebase'
 
 const DashboardLicensePage: React.FC = () => {
   const { user, roles } = useFirebase()
 
   return (
-    <DashboardBaseLayout title="権限" requireSystemRole={1}>
+    <DashboardBaseLayout title="権限" requireCommonRole={1}>
       <Breadcrumbs>
         <li><Link to='/dashboard'>マイページ</Link></li>
       </Breadcrumbs>

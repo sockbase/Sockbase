@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 import { MdMail } from 'react-icons/md'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import Contact from './Contact'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import Contact from './Contact'
 
 const DashboardContactPage: React.FC = () => {
   return (

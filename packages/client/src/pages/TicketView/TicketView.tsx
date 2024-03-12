@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import ReactQRCode from 'react-qr-code'
 import { type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
 
 import logotypeSVG from '../../assets/logotype.svg'
-import Alert from '../../components/Parts/Alert'
-import { Link } from 'react-router-dom'
-import FormSection from '../../components/Form/FormSection'
-import FormItem from '../../components/Form/FormItem'
 import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import Alert from '../../components/Parts/Alert'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
-import useStore from '../../hooks/useStore'
 import useDayjs from '../../hooks/useDayjs'
+import useStore from '../../hooks/useStore'
 
 interface Props {
   ticketHashId: string

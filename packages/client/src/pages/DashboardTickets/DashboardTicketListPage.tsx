@@ -9,16 +9,16 @@ import {
   type SockbaseApplicationStatus,
   type SockbaseTicketUserDocument
 } from 'sockbase'
-import useStore from '../../hooks/useStore'
-import useDayjs from '../../hooks/useDayjs'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Alert from '../../components/Parts/Alert'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
-import TicketAssignStatusLabel from '../../components/Parts/StatusLabel/TicketAssignStatusLabel'
 import StoreTypeLabel from '../../components/Parts/StatusLabel/StoreTypeLabel'
+import TicketAssignStatusLabel from '../../components/Parts/StatusLabel/TicketAssignStatusLabel'
+import useDayjs from '../../hooks/useDayjs'
+import useStore from '../../hooks/useStore'
 
 const DashboardTicketListPage: React.FC = () => {
   const {
@@ -99,7 +99,7 @@ const DashboardTicketListPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title="購入済みチケット一覧" requireSystemRole={0}>
+    <DashboardBaseLayout title="購入済みチケット一覧">
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>

@@ -1,5 +1,5 @@
-import styled, { keyframes } from 'styled-components'
 import { MdCloudDownload } from 'react-icons/md'
+import styled, { keyframes } from 'styled-components'
 
 interface Props {
   text?: string

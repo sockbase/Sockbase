@@ -3,13 +3,13 @@ import { type User } from 'firebase/auth'
 import FormButton from '../../../components/Form/Button'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
-import FormLabel from '../../../components/Form/Label'
 import FormInput from '../../../components/Form/Input'
+import FormLabel from '../../../components/Form/Label'
+import Alert from '../../../components/Parts/Alert'
 import LinkButton from '../../../components/Parts/LinkButton'
 import Loading from '../../../components/Parts/Loading'
-import Alert from '../../../components/Parts/Alert'
-import useValidate from '../../../hooks/useValidate'
 import useFirebaseError from '../../../hooks/useFirebaseError'
+import useValidate from '../../../hooks/useValidate'
 
 interface Props {
   user: User | null | undefined

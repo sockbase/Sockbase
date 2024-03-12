@@ -1,8 +1,7 @@
 import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
-import type { SockbaseAccount } from 'sockbase'
-
 import useFirebase from './useFirebase'
+import type { SockbaseAccount } from 'sockbase'
 
 const userConverter: FirestoreDB.FirestoreDataConverter<SockbaseAccount> = {
   toFirestore: (userData: SockbaseAccount): FirestoreDB.DocumentData => ({

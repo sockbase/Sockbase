@@ -4,9 +4,10 @@ import {
   type SockbaseApplicationMeta,
   type SockbaseApplicationHashIdDocument,
   type SockbaseApplicationLinksDocument,
-  type SockbaseEvent,
   type SockbaseSpaceDocument,
-  type SockbaseApplicationOverviewDocument
+  type SockbaseApplicationOverviewDocument,
+  type SockbaseEventDocument,
+  type SockbaseSpaceHashDocument
 } from 'sockbase'
 
 export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
@@ -83,11 +84,12 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
   }
 }
 
-export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
+export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
   toFirestore: (): DocumentData => ({}),
-  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseEvent => {
-    const event = snapshot.data() as SockbaseEvent
+  fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseEventDocument => {
+    const event = snapshot.data() as SockbaseEventDocument
     return {
+      id: snapshot.id,
       eventName: event.eventName,
       descriptions: event.descriptions,
       rules: event.rules,
@@ -116,6 +118,19 @@ export const spaceConverter: FirestoreDataConverter<SockbaseSpaceDocument> = {
       spaceGroupOrder: space.spaceGroupOrder,
       spaceOrder: space.spaceOrder,
       spaceName: space.spaceName
+    }
+  }
+}
+
+export const spaceHashConverter: FirestoreDataConverter<SockbaseSpaceHashDocument> = {
+  toFirestore: (spaceHash: SockbaseSpaceHashDocument) => ({
+    eventId: spaceHash.eventId
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseSpaceHashDocument => {
+    const spaceHash = snapshot.data()
+    return {
+      id: snapshot.id,
+      eventId: spaceHash.eventId
     }
   }
 }

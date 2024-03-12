@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import type { SockbaseApplication, SockbaseApplicationAddedResult, SockbaseEvent } from 'sockbase'
 
 import FormButton from '../../../components/Form/Button'
 import FormItem from '../../../components/Form/FormItem'
@@ -7,6 +6,7 @@ import FormSection from '../../../components/Form/FormSection'
 import Alert from '../../../components/Parts/Alert'
 import AnchorButton from '../../../components/Parts/AnchorButton'
 import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
+import type { SockbaseApplication, SockbaseApplicationAddedResult, SockbaseEvent } from 'sockbase'
 
 interface Props {
   appResult?: SockbaseApplicationAddedResult

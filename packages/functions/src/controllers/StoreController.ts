@@ -1,5 +1,5 @@
-import { firestore, https, type Change, type EventContext } from 'firebase-functions'
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
+import { firestore, https, type Change, type EventContext } from 'firebase-functions'
 import {
   type SockbaseTicketAddedResult,
   type SockbaseTicket,

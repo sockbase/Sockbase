@@ -10,24 +10,24 @@ import {
   type SockbaseTicketMeta,
   type SockbaseTicketUserDocument
 } from 'sockbase'
-import useStore from '../../hooks/useStore'
-import useDayjs from '../../hooks/useDayjs'
-import useUserData from '../../hooks/useUserData'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormSelect from '../../components/Form/Select'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import Loading from '../../components/Parts/Loading'
 import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import LinkButton from '../../components/Parts/LinkButton'
-import TicketUsedStatusLabel from '../../components/Parts/StatusLabel/TicketUsedStatusLabel'
+import Loading from '../../components/Parts/Loading'
+import Small from '../../components/Parts/Small'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import StoreTypeLabel from '../../components/Parts/StatusLabel/StoreTypeLabel'
-import FormSection from '../../components/Form/FormSection'
-import FormItem from '../../components/Form/FormItem'
-import FormSelect from '../../components/Form/Select'
-import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import TicketAssignStatusLabel from '../../components/Parts/StatusLabel/TicketAssignStatusLabel'
-import Small from '../../components/Parts/Small'
+import TicketUsedStatusLabel from '../../components/Parts/StatusLabel/TicketUsedStatusLabel'
+import useDayjs from '../../hooks/useDayjs'
+import useStore from '../../hooks/useStore'
+import useUserData from '../../hooks/useUserData'
 
 const DashboardStoreDetailPage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
@@ -229,7 +229,7 @@ const DashboardStoreDetailPage: React.FC = () => {
   useEffect(onFetchedAllData, [filteredTickets, ticketUsers, usableUsers])
 
   return (
-    <DashboardBaseLayout title={pageTitle} requireSystemRole={2}>
+    <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
