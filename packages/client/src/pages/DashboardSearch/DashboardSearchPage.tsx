@@ -103,6 +103,18 @@ const DashboardSearchPage: React.FC = () => {
                 <th>スペース内部ID</th>
                 <td>{appHashDoc?.spaceId}</td>
               </tr>
+              <tr>
+                <th>イベント組織ID</th>
+                <td>{appHashDoc?.organizationId}</td>
+              </tr>
+              <tr>
+                <th>イベントID</th>
+                <td>{appHashDoc?.eventId}</td>
+              </tr>
+              <tr>
+                <th>ユーザID</th>
+                <td>{appHashDoc?.userId}</td>
+              </tr>
             </tbody>
           </table>
         </>

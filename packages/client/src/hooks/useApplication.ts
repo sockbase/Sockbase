@@ -332,7 +332,7 @@ const useApplication = (): IUseApplication => {
     links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
     overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>): string => {
     const header =
-      'id\tname\tyomi\tpenName\tgenre\tspace\thasAdult\tunionId\tdescription\ttotalAmount\tremarks\ttwitter\tpixiv\tweb\tmenu'
+      'id\tname\tyomi\tpenName\tgenre\tspace\thasAdult\tunionId\tdescription\ttotalAmount\tremarks\ttwitter\tpixiv\tweb\tmenu\tuserId'
     const entries = Object.entries(apps)
       .map(([id, a]) => [
         a.hashId,
@@ -353,7 +353,8 @@ const useApplication = (): IUseApplication => {
         links[id]?.twitterScreenName,
         links[id]?.pixivUserId,
         links[id]?.websiteURL,
-        links[id]?.menuURL
+        links[id]?.menuURL,
+        a.userId
       ])
       .map((a) => a.join('\t'))
       .join('\n')
