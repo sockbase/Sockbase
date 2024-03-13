@@ -19,6 +19,7 @@ interface IUseEvent {
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
   createSpacesAsync: (eventId: string, rawSpaces: RawEventSpace[]) => Promise<SockbaseSpaceDocument[]>
   assignSpacesAsync: (rawAssignSpaces: RawAssignEventSpace[]) => Promise<void>
+  createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
 }
 
 const useEvent = (): IUseEvent => {
@@ -169,6 +170,14 @@ const useEvent = (): IUseEvent => {
     })
   }
 
+  const createEventAsync = async (eventId: string, event: SockbaseEvent): Promise<void> => {
+    const db = getFirestore()
+    const eventRef = FirestoreDB.doc(db, `/events/${eventId}`)
+      .withConverter(eventConverter)
+    await FirestoreDB.setDoc(eventRef, event)
+      .catch(err => { throw err })
+  }
+
   return {
     getEventByIdAsync,
     getEventsByOrganizationId,
@@ -177,7 +186,8 @@ const useEvent = (): IUseEvent => {
     getSpaceOptionalAsync,
     getSpacesByEventIdAsync,
     createSpacesAsync,
-    assignSpacesAsync
+    assignSpacesAsync,
+    createEventAsync
   }
 }
 

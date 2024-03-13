@@ -39,11 +39,11 @@ const Introduction: React.FC<Props> = (props) => {
           </tr>
           <tr>
             <th>申し込み受付終了</th>
-            <td>{formatByDate(props.event.schedules.endApplication, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>カタログ情報確定日</th>
-            <td>{formatByDate(props.event.schedules.fixedApplication, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.fixedApplication - 1, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>配置発表(予定)</th>
