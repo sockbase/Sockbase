@@ -21,7 +21,6 @@ const EventCreateStepContainer: React.FC = () => {
       throw new Error('eventId or event is undefined')
     }
     await createEventAsync(eventId, event)
-      .then(() => alert('作成しました'))
       .catch(err => { throw err })
   }, [eventId, event])
 

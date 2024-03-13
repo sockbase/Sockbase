@@ -6,9 +6,9 @@ import FormSection from '../../../../components/Form/FormSection'
 import FormInput from '../../../../components/Form/Input'
 import FormLabel from '../../../../components/Form/Label'
 import FormTextarea from '../../../../components/Form/Textarea'
+import EyecatchPreview from '../../../../components/Parts/EyecatchPreview'
 import useDayjs from '../../../../hooks/useDayjs'
 import useFile from '../../../../hooks/useFile'
-import EyecatchPreview from '../EyecatchPreview'
 import type { SockbaseEvent, SockbaseEventDocument, SockbaseEventSpace } from 'sockbase'
 
 interface Props {
@@ -177,7 +177,7 @@ const InformationImport: React.FC<Props> = (props) => {
     const eventPackage = JSON.parse(eventPackageJSON) as SockbaseEventDocument
     setEventId(eventPackage.id)
     fetchEvent(eventPackage)
-    alert('インポートしました')
+    setEventPackageJSON('')
   }, [eventPackageJSON])
 
   useEffect(() => {

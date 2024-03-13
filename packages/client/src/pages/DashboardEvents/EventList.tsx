@@ -37,10 +37,13 @@ const EventList: React.FC = () => {
   return (
     <>
       <ul>
-        {events && Object.entries(events).map(([id, ev]) => (
+        {events && Object.entries(events).map(([id, evs]) => (
           <li key={id}>{id}
             <ul>
-              {ev.map(e => <li key={e.id}><Link to={`/dashboard/events/${e.id}`}>{e.eventName}</Link></li>)}
+              {evs.map(e =>
+                <li key={e.id}>
+                  <Link to={`/dashboard/events/${e.id}`}>{e.eventName}</Link>
+                </li>)}
             </ul>
           </li>))}
       </ul>

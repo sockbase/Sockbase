@@ -103,7 +103,7 @@ const DashboardTopPage: React.FC = () => {
           <TopCard
             to="/dashboard/stores"
             icon={<MdStore />}
-            title="チケットストア管理"
+            title="管理チケットストア"
             description="Sockbaseで管理しているチケットストアを表示します。" />
         </CardContainer>
       </>}

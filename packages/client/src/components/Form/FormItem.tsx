@@ -9,6 +9,10 @@ const FormItem = styled.fieldset<{ inlined?: boolean }>`
   &:last-child {
     margin-bottom: 0;
   }
+
+  @media screen and (max-width: 840px) {
+    flex-flow: column;
+  }
 `
 
 export default FormItem
