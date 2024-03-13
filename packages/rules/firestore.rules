@@ -45,6 +45,7 @@ service cloud.firestore {
     
     match /stores/{storeId} {
       allow read: if true;
+      allow write: if isSystemAdmin(request.auth.uid);
 
       match /_users/{userId} {
         allow read: if request.auth.uid == userId
@@ -54,6 +55,7 @@ service cloud.firestore {
     
   	match /events/{eventId} {
     	allow read: if true;
+      allow write: if isSystemAdmin(request.auth.uid);
 
       match /_users/{userId} {
         allow read: if request.auth.uid == userId

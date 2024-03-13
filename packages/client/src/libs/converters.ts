@@ -1,13 +1,27 @@
-import { type DocumentData, type SnapshotOptions, type FirestoreDataConverter, type QueryDocumentSnapshot } from 'firebase/firestore'
 import {
-  type SockbaseApplicationDocument,
-  type SockbaseApplicationMeta,
-  type SockbaseApplicationHashIdDocument,
-  type SockbaseApplicationLinksDocument,
-  type SockbaseSpaceDocument,
-  type SockbaseApplicationOverviewDocument,
-  type SockbaseEventDocument,
-  type SockbaseSpaceHashDocument
+  serverTimestamp
+} from 'firebase/firestore'
+import type {
+  DocumentData,
+  SnapshotOptions,
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
+} from 'firebase/firestore'
+import type {
+  SockbaseApplicationDocument,
+  SockbaseApplicationMeta,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationLinksDocument,
+  SockbaseSpaceDocument,
+  SockbaseApplicationOverviewDocument,
+  SockbaseEventDocument,
+  SockbaseSpaceHashDocument,
+  SockbaseStoreDocument,
+  SockbaseTicketDocument,
+  SockbaseTicketHashIdDocument,
+  SockbaseTicketMeta,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketUserDocument
 } from 'sockbase'
 
 export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
@@ -85,12 +99,23 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
 }
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
-  toFirestore: (): DocumentData => ({}),
+  toFirestore: (event: SockbaseEventDocument): DocumentData => ({
+    eventName: event.eventName,
+    eventWebURL: event.eventWebURL,
+    descriptions: event.descriptions,
+    rules: event.rules,
+    spaces: event.spaces,
+    genres: event.genres,
+    schedules: event.schedules,
+    _organization: event._organization,
+    permissions: event.permissions
+  }),
   fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseEventDocument => {
     const event = snapshot.data() as SockbaseEventDocument
     return {
       id: snapshot.id,
       eventName: event.eventName,
+      eventWebURL: event.eventWebURL,
       descriptions: event.descriptions,
       rules: event.rules,
       spaces: event.spaces
@@ -150,6 +175,120 @@ export const overviewConverter: FirestoreDataConverter<SockbaseApplicationOvervi
       applicationId: overview.applicationId,
       description: overview.description,
       totalAmount: overview.totalAmount
+    }
+  }
+}
+
+export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
+  toFirestore: (store: SockbaseStoreDocument): DocumentData => ({
+    storeName: store.storeName,
+    storeWebURL: store.storeWebURL,
+    descriptions: store.descriptions,
+    rules: store.rules,
+    schedules: store.schedules,
+    _organization: store._organization,
+    types: store.types
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseStoreDocument => {
+    const store = snapshot.data()
+    return {
+      id: snapshot.id,
+      storeName: store.storeName,
+      storeWebURL: store.storeWebURL,
+      descriptions: store.descriptions,
+      rules: store.rules,
+      schedules: store.schedules,
+      _organization: store._organization,
+      types: store.types
+    }
+  }
+}
+
+export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot
+  ): SockbaseTicketDocument => {
+    const data = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: data.userId,
+      storeId: data.storeId,
+      typeId: data.typeId,
+      paymentMethod: data.paymentMethod,
+      paymentProductId: data.paymentProductId,
+      createdAt: data.createdAt
+        ? new Date(data.createdAt.seconds * 1000)
+        : null,
+      updatedAt: data.updatedAt
+        ? new Date(data.updatedAt.seconds * 1000)
+        : null,
+      hashId: data.hashId,
+      createdUserId: data.createdUserId
+    }
+  }
+}
+
+export const ticketMetaConverter: FirestoreDataConverter<SockbaseTicketMeta> = {
+  toFirestore: (ticketMeta: SockbaseTicketMeta) => ({
+    applicationStatus: ticketMeta.applicationStatus
+  }),
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot
+  ): SockbaseTicketMeta => {
+    const data = snapshot.data()
+    return {
+      applicationStatus: data.applicationStatus
+    }
+  }
+}
+
+export const ticketUserConverter: FirestoreDataConverter<SockbaseTicketUserDocument> = {
+  toFirestore: (data: SockbaseTicketUserDocument) => ({
+    usableUserId: data.usableUserId
+  }),
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot
+  ): SockbaseTicketUserDocument => {
+    const data = snapshot.data()
+    return {
+      hashId: snapshot.id,
+      userId: data.userId,
+      storeId: data.storeId,
+      typeId: data.typeId,
+      usableUserId: data.usableUserId,
+      used: data.used,
+      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const ticketUsedStatusConverter: FirestoreDataConverter<SockbaseTicketUsedStatus> = {
+  toFirestore: (usedStatus: SockbaseTicketUsedStatus) => ({
+    used: usedStatus.used,
+    usedAt: serverTimestamp()
+  }),
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot
+  ): SockbaseTicketUsedStatus => {
+    const data = snapshot.data()
+    return {
+      used: data.used,
+      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const ticketHashIdConverter: FirestoreDataConverter<SockbaseTicketHashIdDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot
+  ): SockbaseTicketHashIdDocument => {
+    const data = snapshot.data()
+    return {
+      hashId: data.hashId,
+      ticketId: data.ticketId,
+      paymentId: data.paymentId
     }
   }
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { MdPhoto } from 'react-icons/md'
+import { Link, useParams } from 'react-router-dom'
 import {
   type SockbaseApplicationDocument,
   type SockbaseEvent

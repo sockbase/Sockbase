@@ -5,6 +5,7 @@ export type valueOf<T> = T[keyof T]
  */
 export interface SockbaseEvent {
   eventName: string
+  eventWebURL: string
   descriptions: string[]
   rules: string[]
   spaces: SockbaseEventSpace[]

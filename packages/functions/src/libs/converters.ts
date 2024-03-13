@@ -137,6 +137,7 @@ export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
     const event = snapshot.data()
     return {
       eventName: event.eventName,
+      eventWebURL: event.eventWebURL,
       descriptions: event.descriptions,
       rules: event.rules,
       spaces: event.spaces,
