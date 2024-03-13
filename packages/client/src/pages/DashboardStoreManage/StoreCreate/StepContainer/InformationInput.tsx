@@ -56,7 +56,7 @@ const InformationInput: React.FC<Props> = (props) => {
     const storePackage = JSON.parse(storePackageJSON) as SockbaseStoreDocument
     setStoreId(storePackage.id)
     fetchStore(storePackage)
-    alert('インポートしました')
+    setStorePackageJSON('')
   }, [storePackageJSON])
 
   const handleEditDescription = useCallback((index: number, description: string) => {
@@ -113,7 +113,7 @@ const InformationInput: React.FC<Props> = (props) => {
             paymentURL: t.paymentURL,
             productId: t.productId
           })) || null,
-          color: t.color,
+          color: t.color || '#000000',
           private: t.isPrivate
         }))
       })
@@ -421,8 +421,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.name,
                   t.description,
                   t.price,
+                  t.productId,
                   e.target.value,
-                  t.paymentURL,
                   t.color,
                   t.isPrivate)}/>
             </td>
@@ -435,8 +435,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.name,
                   t.description,
                   t.price,
-                  t.productId,
                   e.target.value,
+                  t.paymentURL,
                   t.color,
                   t.isPrivate)}/>
             </td>

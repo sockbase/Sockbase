@@ -10,7 +10,7 @@ const DashboardStoreCreatePage: React.FC = () => {
     <DashboardBaseLayout title="チケットストア作成" requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/stores">チケットストア管理</Link></li>
+        <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
       </Breadcrumbs>
 
       <PageTitle

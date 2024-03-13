@@ -9,6 +9,7 @@ import PageTitle from '../../../components/Layout/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import EventInfo from '../../../components/Parts/EventInfo'
 import useEvent from '../../../hooks/useEvent'
 import type { SockbaseEvent } from 'sockbase'
 
@@ -50,23 +51,10 @@ const DashboardEventInfoPage: React.FC = () => {
         <>
           <h2>イベント情報</h2>
 
-          <h3>基礎情報</h3>
-          <table>
-            <tbody>
-              <tr>
-                <th>イベントID</th>
-                <td>{eventId}</td>
-              </tr>
-              <tr>
-                <th>イベント名</th>
-                <td>{event?.eventName ?? <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>イベントWebサイト</th>
-                <td>{event?.eventWebURL ?? <BlinkField />}</td>
-              </tr>
-            </tbody>
-          </table>
+          <EventInfo
+            eventId={eventId}
+            event={event}
+            eyecatchData={null} />
         </>
         <>
           <h2>管理</h2>

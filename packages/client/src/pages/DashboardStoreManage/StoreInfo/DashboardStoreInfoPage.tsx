@@ -9,6 +9,7 @@ import DashboardBaseLayout from '../../../components/Layout/DashboardBaseLayout/
 import PageTitle from '../../../components/Layout/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import StoreInfo from '../../../components/Parts/StoreInfo'
 import useStore from '../../../hooks/useStore'
 
 const DashboardStoreInfoPage: React.FC = () => {
@@ -47,8 +48,9 @@ const DashboardStoreInfoPage: React.FC = () => {
       <TwoColumnsLayout>
         <>
           <h2>チケットストア情報</h2>
-
-          <h3>基礎情報</h3>
+          <StoreInfo
+            storeId={storeId}
+            store={store} />
         </>
         <>
           <h2>管理</h2>

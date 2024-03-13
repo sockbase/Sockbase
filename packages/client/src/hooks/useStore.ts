@@ -1,13 +1,21 @@
 import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseFunctions from 'firebase/functions'
-import { storeConverter, ticketConverter, ticketHashIdConverter, ticketMetaConverter, ticketUsedStatusConverter, ticketUserConverter } from '../libs/converters'
+import {
+  storeConverter,
+  ticketConverter,
+  ticketHashIdConverter,
+  ticketMetaConverter,
+  ticketUsedStatusConverter,
+  ticketUserConverter
+} from '../libs/converters'
 import useFirebase from './useFirebase'
 import type * as sockbase from 'sockbase'
 
 interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<sockbase.SockbaseStoreDocument>
   getStoreByIdOptionalAsync: (storeId: string) => Promise<sockbase.SockbaseStoreDocument | null>
+  getStoresByOrganizationIdAsync: (organizationId: string) => Promise<sockbase.SockbaseStoreDocument[]>
   createStoreAsync: (storeId: string, store: sockbase.SockbaseStore) => Promise<void>
   createTicketAsync: (ticket: sockbase.SockbaseTicket) => Promise<sockbase.SockbaseTicketAddedResult>
   createTicketForAdminAsync: (storeId: string, createTicketData: { email: string, typeId: string }) => Promise<sockbase.SockbaseTicketCreatedResult>
@@ -57,6 +65,20 @@ const useStore = (): IUseStore => {
     await getStoreByIdAsync(storeId)
       .then((store) => store)
       .catch(() => null)
+
+  const getStoresByOrganizationIdAsync = async (organizationId: string): Promise<sockbase.SockbaseStoreDocument[]> => {
+    const db = getFirestore()
+    const storesRef = FirestoreDB.collection(db, 'stores')
+      .withConverter(storeConverter)
+    const storesQuery = FirestoreDB.query(
+      storesRef,
+      FirestoreDB.where('_organization.id', '==', organizationId))
+    const storesSnapshot = await FirestoreDB.getDocs(storesQuery)
+    const queryDocs = storesSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+    return queryDocs
+  }
 
   const createStoreAsync = async (storeId: string, store: sockbase.SockbaseStore): Promise<void> => {
     const db = getFirestore()
@@ -339,6 +361,7 @@ const useStore = (): IUseStore => {
   return {
     getStoreByIdAsync,
     getStoreByIdOptionalAsync,
+    getStoresByOrganizationIdAsync,
     createStoreAsync,
     createTicketAsync,
     createTicketForAdminAsync,
