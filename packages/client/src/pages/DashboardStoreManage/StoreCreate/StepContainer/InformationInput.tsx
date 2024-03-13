@@ -124,7 +124,8 @@ const InformationInput: React.FC<Props> = (props) => {
     const fetchedStore = {
       ...st,
       descriptions: (st.descriptions.length && st.descriptions) || [''],
-      rules: (st.rules.length && st.rules) || ['']
+      rules: (st.rules.length && st.rules) || [''],
+      isPublic: !!st.isPublic
     }
     setStore(fetchedStore)
 

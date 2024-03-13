@@ -147,7 +147,8 @@ const InformationImport: React.FC<Props> = (props) => {
       genres: (ev.genres.length && ev.genres) || [{
         id: '',
         name: ''
-      }]
+      }],
+      isPublic: !!ev.isPublic
     }
     setEvent(fetchedEvent)
 
