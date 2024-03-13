@@ -185,7 +185,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
 
       {!links && event && <Alert type="danger" title="広報情報を入力してください">
         広報情報は<Link to={`/dashboard/applications/${hashedAppId}/links`}>こちら</Link>から入力できます。<br />
-        カタログ等に掲載する情報は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日 H時mm分')}</b>」時点のものとさせていただきます。
+        カタログ等に掲載する情報は「<b>{formatByDate(event.schedules.fixedApplication - 1, 'YYYY年M月D日')}</b>」時点のものとさせていただきます。
       </Alert>}
 
       {space && <Alert type="success" title="スペース配置情報">

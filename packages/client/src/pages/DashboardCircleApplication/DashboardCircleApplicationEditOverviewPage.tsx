@@ -142,7 +142,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
               </>
               : <>
                 <Alert>
-                配置情報の入力締め切り日は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日')}</b>」です。<br />
+                配置情報の入力締め切り日は「<b>{formatByDate(event.schedules.fixedApplication - 1, 'YYYY年M月D日')}</b>」です。<br />
                 締め切り日以降は編集できませんのでご注意ください。
                 </Alert>
                 <FormSection>
