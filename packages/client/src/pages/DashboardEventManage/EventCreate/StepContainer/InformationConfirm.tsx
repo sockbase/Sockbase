@@ -67,7 +67,7 @@ const InformationConfirm: React.FC<Props> = (props) => {
             <td>{props.event?._organization.name || '(空欄)'}</td>
           </tr>
           <tr>
-            <th>連絡先</th>
+            <th>連絡先URL</th>
             <td>{props.event?._organization.contactUrl || '(空欄)'}</td>
           </tr>
         </tbody>
@@ -77,16 +77,16 @@ const InformationConfirm: React.FC<Props> = (props) => {
       <table>
         <tbody>
           <tr>
-            <th>申し込み開始</th>
+            <th>申し込み受付開始</th>
             <td>{formatByDate(props.event?.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
-            <th>申し込み終了</th>
-            <td>{formatByDate(props.event?.schedules.endApplication, 'YYYY年 M月 D日 H時mm分')}</td>
+            <th>申し込み受付終了</th>
+            <td>{formatByDate((props.event?.schedules.endApplication ?? 0) - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>サークル情報締切</th>
-            <td>{formatByDate(props.event?.schedules.fixedApplication, 'YYYY年 M月 D日 H時mm分')}</td>
+            <td>{formatByDate((props.event?.schedules.fixedApplication ?? 0) - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>配置発表</th>

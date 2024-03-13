@@ -75,9 +75,9 @@ const InformationImport: React.FC<Props> = (props) => {
   const [eyecatchData, setEyecatchData] = useState<string>()
 
   const handleEditDescription = useCallback((index: number, description: string) => {
-    const newDescription = [...event.descriptions]
-    newDescription[index] = description
-    setEvent(s => ({ ...s, descriptions: newDescription }))
+    const newDescriptions = [...event.descriptions]
+    newDescriptions[index] = description
+    setEvent(s => ({ ...s, descriptions: newDescriptions }))
   }, [event.descriptions])
 
   const handleEditRule = useCallback((index: number, rule: string) => {
@@ -136,7 +136,7 @@ const InformationImport: React.FC<Props> = (props) => {
       },
       eyecatchFile,
       eyecatchData)
-  }, [eventId, event, eyecatchFile, eyecatchData])
+  }, [eventId, event, editableSpaces, eyecatchFile, eyecatchData])
 
   const fetchEvent = useCallback((ev: SockbaseEvent) => {
     const fetchedEvent = {
@@ -369,7 +369,7 @@ const InformationImport: React.FC<Props> = (props) => {
             onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, name: e.target.value } }))}/>
         </FormItem>
         <FormItem>
-          <FormLabel>連絡先</FormLabel>
+          <FormLabel>連絡先URL</FormLabel>
           <FormInput
             value={event._organization.contactUrl}
             onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, contactUrl: e.target.value } }))}/>
@@ -379,14 +379,14 @@ const InformationImport: React.FC<Props> = (props) => {
       <h3>全体スケジュール</h3>
       <FormSection>
         <FormItem>
-          <FormLabel>申し込み開始</FormLabel>
+          <FormLabel>申し込み受付開始</FormLabel>
           <FormInput
             type="datetime-local"
             value={formatByDate(event.schedules.startApplication, 'YYYY-MM-DDTHH:mm')}
             onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, startApplication: new Date(e.target.value).getTime() } }))} />
         </FormItem>
         <FormItem>
-          <FormLabel>申し込み終了</FormLabel>
+          <FormLabel>申し込み受付終了</FormLabel>
           <FormInput
             type="datetime-local"
             value={formatByDate(event.schedules.endApplication, 'YYYY-MM-DDTHH:mm')}
