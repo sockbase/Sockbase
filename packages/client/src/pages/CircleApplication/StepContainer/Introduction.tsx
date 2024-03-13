@@ -35,27 +35,27 @@ const Introduction: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>申し込み受付開始</th>
-            <td>{formatByDate(props.event.schedules.startApplication, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>申し込み受付終了</th>
-            <td>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>カタログ情報確定日</th>
-            <td>{formatByDate(props.event.schedules.fixedApplication - 1, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.fixedApplication - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>配置発表(予定)</th>
-            <td>{formatByDate(props.event.schedules.publishSpaces, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.publishSpaces, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>会期開始</th>
-            <td>{formatByDate(props.event.schedules.startEvent, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>会期終了</th>
-            <td>{formatByDate(props.event.schedules.endEvent, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.endEvent, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
         </tbody>
       </table>
@@ -85,7 +85,7 @@ const Introduction: React.FC<Props> = (props) => {
 
       <h4>配置発表・デジタル通行証発券</h4>
       <p>
-        配置発表を {formatByDate(props.event.schedules.publishSpaces, 'YYYY年M月D日 H時mm分')} に行う予定です。
+        配置発表を {formatByDate(props.event.schedules.publishSpaces, 'YYYY年 M月 D日 H時mm分')} に行う予定です。
       </p>
       <p>
         配置は、申し込み後にログインできる「申し込み履歴」のページからご確認いただけます。<br />
