@@ -12,8 +12,7 @@ const Complete: React.FC<Props> = (props) => {
   const handleInitialize = useCallback(() => {
     if (!confirm('新しいイベントを作るために入力フォームをリセットします。\nよろしいですか？')) return
     props.init()
-    alert('リセットしました')
-  }, [])
+  }, [props.init])
 
   return (
     <>

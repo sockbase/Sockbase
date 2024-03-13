@@ -21,7 +21,6 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import LinkButton from '../../components/Parts/LinkButton'
 import Loading from '../../components/Parts/Loading'
-import Small from '../../components/Parts/Small'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import StoreTypeLabel from '../../components/Parts/StatusLabel/StoreTypeLabel'
 import TicketAssignStatusLabel from '../../components/Parts/StatusLabel/TicketAssignStatusLabel'
@@ -234,6 +233,7 @@ const DashboardStoreDetailPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
+        <li>{store?._organization.name ?? <BlinkField />}</li>
       </Breadcrumbs>
       <PageTitle title={store?.storeName} icon={<MdStore />} description="発券済みチケットの一覧" isLoading={!store} />
 
@@ -323,8 +323,6 @@ const DashboardStoreDetailPage: React.FC = () => {
                     {t.hashId && ticketUsers?.[t.hashId]?.usableUserId
                       ? (t.id && getUsableUser(t.id)?.name) || <BlinkField />
                       : '-'}
-                    &nbsp;
-                    {t.hashId && <Small>{ticketUsers?.[t.hashId]?.usableUserId}</Small>}
                   </td>
                   <td><Link to={`/dashboard/tickets/${t.hashId}`}>{t.hashId}</Link></td>
                   <td>{formatByDate(t.updatedAt ?? t.createdAt, 'YYYY/MM/DD H:mm:ss')}</td>

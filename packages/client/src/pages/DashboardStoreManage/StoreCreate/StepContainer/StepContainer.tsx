@@ -19,7 +19,6 @@ const StoreCreateStepContainer: React.FC = () => {
       throw new Error('storeId or store is undefined')
     }
     await createStoreAsync(storeId, store)
-      .then(() => alert('作成しました'))
       .catch(err => { throw err })
   }, [storeId, store])
 
