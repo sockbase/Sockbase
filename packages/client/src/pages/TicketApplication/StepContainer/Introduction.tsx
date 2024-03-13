@@ -38,7 +38,7 @@ const Introduction: React.FC<Props> = (props) => {
           </tr>
           <tr>
             <th>申し込み受付終了</th>
-            <td>{formatByDate(props.store.schedules.endApplication, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年M月D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>会期開始</th>

@@ -85,12 +85,23 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
 }
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
-  toFirestore: (): DocumentData => ({}),
+  toFirestore: (event: SockbaseEventDocument): DocumentData => ({
+    eventName: event.eventName,
+    eventWebURL: event.eventWebURL,
+    descriptions: event.descriptions,
+    rules: event.rules,
+    spaces: event.spaces,
+    genres: event.genres,
+    schedules: event.schedules,
+    _organization: event._organization,
+    permissions: event.permissions
+  }),
   fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseEventDocument => {
     const event = snapshot.data() as SockbaseEventDocument
     return {
       id: snapshot.id,
       eventName: event.eventName,
+      eventWebURL: event.eventWebURL,
       descriptions: event.descriptions,
       rules: event.rules,
       spaces: event.spaces
