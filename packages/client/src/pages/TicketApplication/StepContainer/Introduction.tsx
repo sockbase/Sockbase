@@ -34,19 +34,19 @@ const Introduction: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>申し込み受付開始</th>
-            <td>{formatByDate(props.store.schedules.startApplication, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.store.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>申し込み受付終了</th>
-            <td>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>会期開始</th>
-            <td>{formatByDate(props.store.schedules.startEvent, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.store.schedules.startEvent, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>会期終了</th>
-            <td>{formatByDate(props.store.schedules.endEvent, 'YYYY年M月D日 H時mm分')}</td>
+            <td>{formatByDate(props.store.schedules.endEvent, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
         </tbody>
       </table>
