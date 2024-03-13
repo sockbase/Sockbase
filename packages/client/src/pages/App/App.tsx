@@ -30,6 +30,8 @@ import DashboardLicensePage from '../DashboardLicense/DashboardLicensePage'
 import DashboardPaymentListPage from '../DashboardPayments/DashboardPaymentListPage'
 import DashboardSearchPage from '../DashboardSearch/DashboardSearchPage'
 import DashboardSettingsPage from '../DashboardSettings/DashboardSettingsPage'
+import DashboardStoreCreatePage from '../DashboardStoreManage/StoreCreate/DashboardStoreCreatePage'
+import DashboardStoreInfoPage from '../DashboardStoreManage/StoreInfo/DashboardStoreInfoPage'
 import DashboardStoreDetailPage from '../DashboardStores/DashboardStoreDetailPage'
 import DashboardStoreListPage from '../DashboardStores/DashboardStoreListPage'
 import DashboardTicketCreatePage from '../DashboardStores/DashboardStoreTicketCreatePage'
@@ -227,6 +229,10 @@ const router = createBrowserRouter([
                 element: <DashboardStoreListPage />
               },
               {
+                path: 'create',
+                element: <DashboardStoreCreatePage />
+              },
+              {
                 path: ':storeId',
                 children: [
                   {
@@ -236,6 +242,10 @@ const router = createBrowserRouter([
                   {
                     path: 'create',
                     element: <DashboardTicketCreatePage />
+                  },
+                  {
+                    path: 'info',
+                    element: <DashboardStoreInfoPage />
                   }
                 ]
               }

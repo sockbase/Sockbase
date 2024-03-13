@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { MdStore } from 'react-icons/md'
+import { Link, useParams } from 'react-router-dom'
 import {
   type SockbaseTicketDocument,
   type SockbaseStoreDocument,
@@ -15,6 +15,7 @@ import FormSection from '../../components/Form/FormSection'
 import FormSelect from '../../components/Form/Select'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import AnchorButton from '../../components/Parts/AnchorButton'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
@@ -236,9 +237,14 @@ const DashboardStoreDetailPage: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title={store?.storeName} icon={<MdStore />} description="発券済みチケットの一覧" isLoading={!store} />
 
-      <p>
-        <LinkButton to={`/dashboard/stores/${storeId}/create`} inlined={true}>チケット作成</LinkButton>
-      </p>
+      <FormSection>
+        <FormItem inlined>
+          <LinkButton to={`/dashboard/stores/${storeId}/create`} inlined>チケット作成</LinkButton>
+          <LinkButton to={`/dashboard/stores/${storeId}/info`} color="default" inlined>メタ情報参照</LinkButton>
+          <AnchorButton href={`/stores/${storeId}`} color="default" inlined target="_blank">申し込みページを開く</AnchorButton>
+        </FormItem>
+      </FormSection>
+
       <p>
         参加者リストCSVコピー <CopyToClipboard content={ticketCSV} />
       </p>

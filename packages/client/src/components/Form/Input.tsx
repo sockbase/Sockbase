@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 const FormInput = styled.input<{ hasError?: boolean }>`
   width: 100%;
+  min-height: calc(3rem + 1px);
   padding: 10px;
   border: 2px solid #a0a0a0;
   border-radius: 5px 5px 0 0;

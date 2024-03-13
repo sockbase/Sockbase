@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import useEvent from '../../../../hooks/useEvent'
-import CompleteCreate from './CompleteCreate'
+import Complete from './Complete'
 import InformationConfirm from './InformationConfirm'
 import InformationImport from './InformationInput'
 import type { SockbaseEvent } from 'sockbase'
@@ -10,6 +10,7 @@ const EventCreateStepContainer: React.FC = () => {
 
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
   const [step, setStep] = useState(0)
+
   const [eventId, setEventId] = useState<string | null>()
   const [event, setEvent] = useState<SockbaseEvent | null>()
   const [eyecatchFile, setEyecatchFile] = useState<File | null>()
@@ -56,8 +57,8 @@ const EventCreateStepContainer: React.FC = () => {
         prevStep={() => setStep(0)}
         nextStep={() => setStep(2)}
         handleCreateAsync={handleCreateAsync} />,
-      <CompleteCreate
-        key="complete-create"
+      <Complete
+        key="complete"
         eventId={eventId}
         init={handleInitialize} />
     ])
