@@ -55,7 +55,8 @@ const InformationImport: React.FC<Props> = (props) => {
     },
     permissions: {
       allowAdult: false
-    }
+    },
+    isPublic: false
   })
 
   const [editableSpaces, setEditableSpaces] = useState([{
@@ -322,13 +323,24 @@ const InformationImport: React.FC<Props> = (props) => {
         </FormSection>
       </details>
 
+      <h3>公開設定</h3>
+      <FormSection>
+        <FormItem>
+          <FormCheckbox
+            label="イベントを公開する"
+            name="is-public"
+            checked={event.isPublic}
+            onChange={checked => setEvent(s => ({ ...s, isPublic: checked }))}/>
+        </FormItem>
+      </FormSection>
+
       <h3>イベント基礎情報</h3>
       <FormSection>
         <FormItem>
           <FormLabel>イベントID</FormLabel>
           <FormInput
             value={eventId}
-            onChange={e => setEventId(e.target.value)}/>
+            onChange={e => setEventId(e.target.value)} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント名</FormLabel>

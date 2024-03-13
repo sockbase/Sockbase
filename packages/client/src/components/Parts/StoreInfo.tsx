@@ -1,4 +1,5 @@
 import useDayjs from '../../hooks/useDayjs'
+import Alert from './Alert'
 import StoreTypeLabel from './StatusLabel/StoreTypeLabel'
 import type { SockbaseStore } from 'sockbase'
 
@@ -11,6 +12,10 @@ const StoreInfo: React.FC<Props> = (props) => {
 
   return (
     <>
+      {props.store && (props.store.isPublic
+        ? <Alert type="success">チケットストアは公開されます</Alert>
+        : <Alert type="danger">チケットストアは公開されません</Alert>)}
+
       <h3>チケットストア基礎情報</h3>
       <table>
         <tbody>

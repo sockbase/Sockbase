@@ -37,7 +37,6 @@ const DashboardStoreListPage: React.FC = () => {
         }), {}))
         .catch(err => { throw err })
       setStores(fetchedStores)
-      console.log(fetchedStores)
     }
 
     fetchAsync()
