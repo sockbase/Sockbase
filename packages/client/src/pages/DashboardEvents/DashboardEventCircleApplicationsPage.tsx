@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { MdEditCalendar } from 'react-icons/md'
+import { Link, useParams } from 'react-router-dom'
 import {
   type SockbaseSpaceDocument,
   type SockbaseApplicationDocument,
@@ -14,6 +14,7 @@ import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import AnchorButton from '../../components/Parts/AnchorButton'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
@@ -148,8 +149,10 @@ const DashboardEventApplicationsPage: React.FC = () => {
         description="申し込みサークル一覧"
         isLoading={!event} />
       <FormSection>
-        <FormItem>
+        <FormItem inlined>
           <LinkButton to={`/dashboard/events/${eventId}/spaces`} color="default" inlined>配置管理</LinkButton>
+          <LinkButton to={`/dashboard/events/${eventId}/info`} color="default" inlined>メタ情報参照</LinkButton>
+          <AnchorButton href={`/events/${eventId}`} color="default" inlined target="_blank">申し込みページを開く</AnchorButton>
         </FormItem>
       </FormSection>
 
