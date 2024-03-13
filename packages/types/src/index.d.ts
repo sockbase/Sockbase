@@ -24,6 +24,7 @@ export interface SockbaseEvent {
   permissions: {
     allowAdult: boolean
   }
+  isPublic: boolean
 }
 
 /**
@@ -73,6 +74,7 @@ export interface SockbaseStore {
   _organization: SockbaseOrganization & {
     id: string
   }
+  isPublic: boolean
 }
 
 /**

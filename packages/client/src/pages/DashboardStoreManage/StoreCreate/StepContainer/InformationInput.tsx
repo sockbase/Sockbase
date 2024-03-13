@@ -36,7 +36,8 @@ const InformationInput: React.FC<Props> = (props) => {
       id: '',
       name: '',
       contactUrl: ''
-    }
+    },
+    isPublic: false
   })
 
   const [editableTypes, setEditableTypes] = useState([{
@@ -263,6 +264,17 @@ const InformationInput: React.FC<Props> = (props) => {
           </FormItem>
         </FormSection>
       </details>
+
+      <h3>公開設定</h3>
+      <FormSection>
+        <FormItem>
+          <FormCheckbox
+            label="イベントを公開する"
+            name="is-public"
+            checked={store.isPublic}
+            onChange={checked => setStore(s => ({ ...s, isPublic: checked }))}/>
+        </FormItem>
+      </FormSection>
 
       <h3>チケットストア基礎情報</h3>
       <FormSection>
