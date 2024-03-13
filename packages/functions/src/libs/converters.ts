@@ -155,7 +155,8 @@ export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
         name: '',
         contactUrl: ''
       },
-      permissions: event.permissions
+      permissions: event.permissions,
+      isPublic: event.isPublic
     }
   }
 }
@@ -198,7 +199,8 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
       rules: storeDoc.rules,
       types: storeDoc.types,
       schedules: storeDoc.schedules,
-      _organization: storeDoc._organization
+      _organization: storeDoc._organization,
+      isPublic: storeDoc.isPublic
     }
   }
 }
