@@ -133,7 +133,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
                 オンライン掲載情報の更新は可能です。
               </Alert>
               : event && <Alert>
-                カタログ掲載情報の確定日は「<b>{formatByDate(event.schedules.fixedApplication, 'YYYY年M月D日')}</b>」です。<br />
+                カタログ掲載情報の確定日は「<b>{formatByDate(event.schedules.fixedApplication - 1, 'YYYY年M月D日')}</b>」です。<br />
                 確定日以降の情報は掲載されませんのでご注意ください。
               </Alert>}
 
