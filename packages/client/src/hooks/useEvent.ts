@@ -43,7 +43,9 @@ const useEvent = (): IUseEvent => {
     const db = getFirestore()
     const eventsRef = FirestoreDB.collection(db, 'events')
       .withConverter(eventConverter)
-    const eventsQuery = FirestoreDB.query(eventsRef, FirestoreDB.where('_organization.id', '==', organizationId))
+    const eventsQuery = FirestoreDB.query(
+      eventsRef,
+      FirestoreDB.where('_organization.id', '==', organizationId))
     const eventsSnapshot = await FirestoreDB.getDocs(eventsQuery)
     const queryDocs = eventsSnapshot.docs
       .filter(doc => doc.exists())
