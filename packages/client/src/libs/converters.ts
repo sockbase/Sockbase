@@ -108,7 +108,8 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
     genres: event.genres,
     schedules: event.schedules,
     _organization: event._organization,
-    permissions: event.permissions
+    permissions: event.permissions,
+    isPublic: event.isPublic
   }),
   fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseEventDocument => {
     const event = snapshot.data() as SockbaseEventDocument
@@ -123,7 +124,8 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
       genres: event.genres,
       schedules: event.schedules,
       _organization: event._organization,
-      permissions: event.permissions
+      permissions: event.permissions,
+      isPublic: event.isPublic
     }
   }
 }
@@ -187,7 +189,8 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
     rules: store.rules,
     schedules: store.schedules,
     _organization: store._organization,
-    types: store.types
+    types: store.types,
+    isPublic: store.isPublic
   }),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseStoreDocument => {
     const store = snapshot.data()
@@ -199,7 +202,8 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
       rules: store.rules,
       schedules: store.schedules,
       _organization: store._organization,
-      types: store.types
+      types: store.types,
+      isPublic: store.isPublic
     }
   }
 }

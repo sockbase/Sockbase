@@ -1,4 +1,5 @@
 import useDayjs from '../../hooks/useDayjs'
+import Alert from './Alert'
 import EyecatchPreview from './EyecatchPreview'
 import type { SockbaseEvent } from 'sockbase'
 
@@ -12,6 +13,10 @@ const EventInfo: React.FC<Props> = (props) => {
 
   return (
     <>
+      {props.event && (props.event.isPublic
+        ? <Alert type="success">イベントは公開されます</Alert>
+        : <Alert type="danger">イベントは公開されません</Alert>)}
+
       <h3>イベント基礎情報</h3>
       <table>
         <tbody>
