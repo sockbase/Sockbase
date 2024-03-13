@@ -8,7 +8,7 @@ interface Props {
   eventId: string | null | undefined
   init: () => void
 }
-const CompleteCreate: React.FC<Props> = (props) => {
+const Complete: React.FC<Props> = (props) => {
   const handleInitialize = useCallback(() => {
     if (!confirm('新しいイベントを作るために入力フォームをリセットします。\nよろしいですか？')) return
     props.init()
@@ -28,4 +28,4 @@ const CompleteCreate: React.FC<Props> = (props) => {
   )
 }
 
-export default CompleteCreate
+export default Complete
