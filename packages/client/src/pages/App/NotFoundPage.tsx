@@ -28,7 +28,7 @@ const StatusCodeHeader = styled.section`
   font-size: 10em;
   font-weight: bold;
   text-align: center;
-  color: var(--primary-color);
+  color: var(--primary-brand-color);
 
   @media screen and (max-width: 840px) {
     font-size: 5em;
@@ -38,5 +38,5 @@ const StatusCodeHeader = styled.section`
 const StatusDescription = styled.p`
   font-size: 2em;
   text-align: center;
-  color: #404040;
+  color: var(--text-color);
 `

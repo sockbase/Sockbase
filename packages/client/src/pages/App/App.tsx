@@ -9,7 +9,6 @@ import {
   getFirebaseApp,
   initializeAppCheck
 } from '../../libs/FirebaseApp'
-import Colors from '../../styles/Colors'
 import GlobalStyle from '../../styles/GlobalStyle'
 import ResetStyle from '../../styles/ResetStyle'
 import EventApplicationPage from '../CircleApplication/CircleApplicationPage'
@@ -303,7 +302,6 @@ const App: React.FC = () => {
   return (
     <HelmetProvider>
       <ResetStyle />
-      <Colors />
       <GlobalStyle />
       <RouterProvider router={router} />
     </HelmetProvider>

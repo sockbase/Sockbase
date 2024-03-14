@@ -25,7 +25,7 @@ const StyledPageTitleContainer = styled.header`
   display: grid;
   padding-bottom: 20px;
   margin-bottom: 20px;
-  border-bottom: 1px solid #c0c0c0;
+  border-bottom: 1px solid var(--border-color);
 
   grid-template-columns: 64px 1fr;
   grid-template-rows: auto auto;
@@ -37,17 +37,18 @@ const StyledIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ea6183;
+  color: var(--primary-brand-color);
 `
 const StyledTitle = styled.div`
   grid-column: 2;
   font-size: 1.5em;
   font-weight: bold;
+  color: var(--text-color);
 `
 const StyledDescription = styled.div`
   grid-column: 2;
   grid-row: 2;
-  color: #404040;
+  color: var(--text-light-color);
 `
 
 export default PageTitle
