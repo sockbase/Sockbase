@@ -12,8 +12,6 @@ import MailService from '../services/MailService'
 export const acceptApplication = firestore
   .document('/_applications/{applicationId}')
   .onUpdate(async (change: Change<QueryDocumentSnapshot>) => {
-    console.log(change.before.data(), change.after.data())
-
     if (!change.before.exists || !change.after.exists) return
 
     const beforeApp = change.before.data() as SockbaseApplicationDocument
