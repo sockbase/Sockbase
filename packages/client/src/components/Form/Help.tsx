@@ -14,6 +14,7 @@ const FormHelp = styled.label<{ hasError?: boolean }>`
   *:focus + & {
     background-color: var(--primary-brand-color);
     border: 2px solid var(--primary-brand-color);
+    color: var(--text-foreground-color);
   }
 
   ${props => props.hasError && `
