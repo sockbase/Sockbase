@@ -32,21 +32,13 @@ const Container = styled.label<{ status: SockbaseApplicationStatus }>`
 
   ${p => {
     if (p.status === 0) {
-      return `
-        background-color: #808080;
-        color: #000000;
-      `
+      return 'background-color: var(--pending-color);'
     } else if (p.status === 1) {
-      return `
-        background-color: #b83340;
-        color: #000000;
-      `
+      return 'background-color: var(--danger-color);'
     } else if (p.status === 2) {
-      return `
-        background-color: #20a0f0;
-        color: #000000;
-      `
+      return 'background-color: var(--info-color);'
     }
   }};
-  color: #ffffff;
+
+  color: var(--text-foreground-color);
 `

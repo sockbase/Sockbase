@@ -16,48 +16,49 @@ export const buttonStyle = css<{ color?: ColorTypes, disabled?: boolean }>`
   font-size: 1rem;
   font-weight: bold;
 
-  color: #ffffff;
+  color: var(--text-color);
 
   cursor: pointer;
   transition: background-color 0.1s linear;
 
   ${props => props.color === 'default'
     ? {
-      backgroundColor: '#e0e0e0',
-      color: '#000000',
+      backgroundColor: 'var(--background-dark-color)',
+      color: 'var(--text-color)',
       '&:active': {
-        backgroundColor: '#b3b3b3'
+        backgroundColor: 'var(--background-dark-active-color)'
       }
     }
     : props.color === 'info'
       ? {
-        backgroundColor: '#20a0f0',
+        backgroundColor: 'var(--info-color)',
         '&:active': {
-          backgroundColor: '#1080e0'
+          backgroundColor: 'var(--info-active-color)'
         }
       }
       : props.color === 'danger'
         ? {
-          backgroundColor: '#bf4040',
+          backgroundColor: 'var(--danger-color)',
           '&:active': {
-            backgroundColor: '#9f2020'
+            backgroundColor: 'var(--danger-active-color)'
           }
         }
         : {
-          backgroundColor: '#ea6183',
+          backgroundColor: 'var(--primary-brand-color)',
+          color: 'var(--text-foreground-color)',
           '&:active': {
-            backgroundColor: '#99334c'
+            backgroundColor: 'var(--primary-brand-active-color)'
           }
         }}
 
   ${props => props.disabled
     ? {
-      backgroundColor: '#c0c0c0',
-      color: '#808080',
+      backgroundColor: 'var(--background-disabled-color)',
+      color: 'var(--text-disabled-color)',
       cursor: 'auto',
       '&:active': {
-        backgroundColor: '#c0c0c0',
-        color: '#808080'
+        backgroundColor: 'var(--background-disabled-color)',
+        color: 'var(--text-disabled-color)'
       }
     }
     : {}}

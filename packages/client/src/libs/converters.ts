@@ -47,6 +47,7 @@ export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDoc
   fromFirestore: (snapshot: QueryDocumentSnapshot, options: SnapshotOptions): SockbaseApplicationDocument => {
     const app = snapshot.data()
     return {
+      id: snapshot.id,
       hashId: app.hashId,
       userId: app.userId,
       eventId: app.eventId,

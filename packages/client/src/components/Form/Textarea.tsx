@@ -4,8 +4,10 @@ const FormTextarea = styled.textarea<{ hasError?: boolean }>`
   display: block;
   width: 100%;
   padding: 10px;
-  border: 2px solid #a0a0a0;
+  border: 2px solid var(--outline-color);
   border-radius: 5px 5px 0 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
   
   resize: vertical;
   min-height: 50px;
@@ -13,7 +15,7 @@ const FormTextarea = styled.textarea<{ hasError?: boolean }>`
   transition: border 0.1s linear;
 
   &:focus {
-    border: 2px solid #ea6183;
+    border: 2px solid var(--primary-brand-color);
     outline: none;
   }
 

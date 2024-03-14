@@ -26,8 +26,8 @@ const Breadcrumbs = styled.ul`
       top: calc(50% - 4px);
       right: 10px;
       
-      border-bottom: 2px solid #c0c0c0;
-      border-right: 2px solid #c0c0c0;
+      border-bottom: 2px solid var(--border-color);
+      border-right: 2px solid var(--border-color);
       transform: rotate(-45deg);
     }
   }
