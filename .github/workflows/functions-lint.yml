@@ -16,7 +16,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version-file: 'package.json'
-          cache: yarn
       
       - run: |
           corepack enable yarn
