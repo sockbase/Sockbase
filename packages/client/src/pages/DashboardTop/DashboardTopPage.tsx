@@ -14,8 +14,11 @@ import {
   MdSearch
 } from 'react-icons/md'
 import styled from 'styled-components'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import AnchorButton from '../../components/Parts/AnchorButton'
 import TopCard from '../../components/Parts/TopCard'
 import useRole from '../../hooks/useRole'
 
@@ -118,6 +121,14 @@ const DashboardTopPage: React.FC = () => {
             description="利用者から届いたお問い合わせを管理します。" />
         </CardContainer>
       </>}
+
+      <h2>法令に基づく表記</h2>
+      <FormSection>
+        <FormItem inlined>
+          <AnchorButton href="/tos" target="_blank" color="default" inlined>利用規約・特商法に基づく表記</AnchorButton>
+          <AnchorButton href="/privacy-policy" target="_blank" color="default" inlined>プライバシーポリシー</AnchorButton>
+        </FormItem>
+      </FormSection>
     </DashboardBaseLayout>
   )
 }
