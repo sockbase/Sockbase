@@ -65,6 +65,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
   }
 
   const appDoc: SockbaseApplicationDocument = {
+    id: '',
     ...payload.app,
     circle: {
       ...payload.app.circle,
