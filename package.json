@@ -4,6 +4,9 @@
   "workspaces": [
     "./packages/*"
   ],
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
     "format": "prettier . --ignore-path .gitignore --write",
     "lint": "eslint --ext .ts,.tsx . --ignore-path .gitignore"
