@@ -39,11 +39,14 @@ const Container = styled.main`
 
   @media screen and (max-width: 840px) {
     margin: 0;
-    padding: 20px;
   }
 `
 
 const Wrapper = styled.div`
   padding: 40px;
   background-color: var(--background-color);
+
+  @media screen and (max-width: 840px) {
+    padding: 20px;
+  }
 `
