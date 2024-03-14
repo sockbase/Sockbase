@@ -6,7 +6,10 @@ import {
   type SockbaseApplication,
   type SockbaseEvent,
   type SockbaseApplicationPayload,
-  type SockbaseApplicationLinks
+  type SockbaseApplicationLinks,
+  type SockbaseApplicationDocument,
+  type SockbaseApplicationLinksDocument,
+  type SockbaseEventDocument
 } from 'sockbase'
 import Alert from '../../../components/Parts/Alert'
 import StepProgress from '../../../components/Parts/StepProgress'
@@ -28,6 +31,9 @@ interface Props {
   event: SockbaseEvent
   eyecatchURL: string | null
   isLoggedIn: boolean
+  pastApps: SockbaseApplicationDocument[] | undefined
+  pastAppLinks: Record<string, SockbaseApplicationLinksDocument | null> | undefined
+  pastEvents: Record<string, SockbaseEventDocument> | undefined
 }
 const StepContainer: React.FC<Props> = (props) => {
   const { user, createUser, loginByEmail, logout } = useFirebase()
@@ -122,6 +128,9 @@ const StepContainer: React.FC<Props> = (props) => {
           leaderUserData={leaderUserData}
           circleCutFile={circleCutFile}
           isLoggedIn={props.isLoggedIn}
+          pastApps={props.pastApps}
+          pastAppLinks={props.pastAppLinks}
+          pastEvents={props.pastEvents}
           prevStep={() => setStep(1)}
           nextStep={(app, links, leaderUserData, circleCutData, circleCutFile) => {
             setApp(app)
@@ -152,7 +161,16 @@ const StepContainer: React.FC<Props> = (props) => {
           appResult={appResult} />
       ])
     }
-  useEffect(onInitialize, [props, user, app, links, leaderUserData, circleCutData, userData, appResult, submitProgressPercent])
+  useEffect(onInitialize, [
+    props,
+    user,
+    app,
+    links,
+    leaderUserData,
+    circleCutData,
+    userData,
+    appResult,
+    submitProgressPercent])
 
   return (
     <>

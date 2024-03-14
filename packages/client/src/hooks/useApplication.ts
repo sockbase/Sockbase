@@ -44,11 +44,8 @@ const useApplication = (): IUseApplication => {
     hashedAppId: string
   ): Promise<sockbase.SockbaseApplicationHashIdDocument> => {
     const db = getFirestore()
-    const hashIdMVRef = FirestoreDB.doc(
-      db,
-      '_applicationHashIds',
-      hashedAppId
-    ).withConverter(applicationHashIdConverter)
+    const hashIdMVRef = FirestoreDB.doc(db, '_applicationHashIds', hashedAppId)
+      .withConverter(applicationHashIdConverter)
 
     const hashIdMVDoc = await FirestoreDB.getDoc(hashIdMVRef)
     if (!hashIdMVDoc.exists()) {
@@ -60,10 +57,9 @@ const useApplication = (): IUseApplication => {
   const getApplicationByIdAsync = async (appId: string):
   Promise<sockbase.SockbaseApplicationDocument & { meta: sockbase.SockbaseApplicationMeta }> => {
     const db = getFirestore()
+    const appRef = FirestoreDB.doc(db, '_applications', appId)
+      .withConverter(applicationConverter)
 
-    const appRef = FirestoreDB.doc(db, '_applications', appId).withConverter(
-      applicationConverter
-    )
     const appDoc = await FirestoreDB.getDoc(appRef)
     if (!appDoc.exists()) {
       throw new Error('application not found')
@@ -93,14 +89,12 @@ const useApplication = (): IUseApplication => {
     userId: string
   ): Promise<sockbase.SockbaseApplicationDocument[]> => {
     const db = getFirestore()
-    const appsRef = FirestoreDB.collection(db, '_applications').withConverter(
-      applicationConverter
-    )
+    const appsRef = FirestoreDB.collection(db, '_applications')
+      .withConverter(applicationConverter)
 
     const appsQuery = FirestoreDB.query(
       appsRef,
-      FirestoreDB.where('userId', '==', userId)
-    )
+      FirestoreDB.where('userId', '==', userId))
     const querySnapshot = await FirestoreDB.getDocs(appsQuery)
     const queryDocs = querySnapshot.docs
       .filter((doc) => doc.exists())
@@ -113,14 +107,12 @@ const useApplication = (): IUseApplication => {
     userId: string
   ): Promise<Record<string, sockbase.SockbaseApplicationDocument>> => {
     const db = getFirestore()
-    const appsRef = FirestoreDB.collection(db, '_applications').withConverter(
-      applicationConverter
-    )
+    const appsRef = FirestoreDB.collection(db, '_applications')
+      .withConverter(applicationConverter)
 
     const appsQuery = FirestoreDB.query(
       appsRef,
-      FirestoreDB.where('userId', '==', userId)
-    )
+      FirestoreDB.where('userId', '==', userId))
     const querySnapshot = await FirestoreDB.getDocs(appsQuery)
     const queryDocs = querySnapshot.docs
       .filter((doc) => doc.exists())
@@ -164,13 +156,8 @@ const useApplication = (): IUseApplication => {
     appId: string
   ): Promise<sockbase.SockbaseApplicationMeta> => {
     const db = getFirestore()
-    const metaRef = FirestoreDB.doc(
-      db,
-      '_applications',
-      appId,
-      'private',
-      'meta'
-    ).withConverter(applicationMetaConverter)
+    const metaRef = FirestoreDB.doc(db, '_applications', appId, 'private', 'meta')
+      .withConverter(applicationMetaConverter)
     const metaDoc = await FirestoreDB.getDoc(metaRef)
     if (!metaDoc.exists()) {
       throw new Error('meta not found')
@@ -206,13 +193,8 @@ const useApplication = (): IUseApplication => {
     status: sockbase.SockbaseApplicationStatus
   ): Promise<void> => {
     const db = getFirestore()
-    const metaRef = FirestoreDB.doc(
-      db,
-      '_applications',
-      appId,
-      'private',
-      'meta'
-    ).withConverter(applicationMetaConverter)
+    const metaRef = FirestoreDB.doc(db, '_applications', appId, 'private', 'meta')
+      .withConverter(applicationMetaConverter)
 
     FirestoreDB.setDoc(
       metaRef,
@@ -269,11 +251,8 @@ const useApplication = (): IUseApplication => {
       if (!user) return
 
       const db = getFirestore()
-      const linksRef = FirestoreDB.doc(
-        db,
-        '_applicationLinks',
-        appId
-      ).withConverter(applicationLinksConverter)
+      const linksRef = FirestoreDB.doc(db, '_applicationLinks', appId)
+        .withConverter(applicationLinksConverter)
 
       const linksDoc: sockbase.SockbaseApplicationLinksDocument = {
         ...links,

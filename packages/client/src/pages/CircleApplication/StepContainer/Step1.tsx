@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
-
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import sockbaseShared from 'shared'
 import {
   type SockbaseEventSpace,
   type SockbaseApplication,
   type SockbaseAccountSecure,
   type SockbaseEvent,
-  type SockbaseApplicationLinks
+  type SockbaseApplicationLinks,
+  type SockbaseApplicationDocument,
+  type SockbaseApplicationLinksDocument,
+  type SockbaseEventDocument
 } from 'sockbase'
-
 import FormButton from '../../../components/Form/Button'
 import FormCheckbox from '../../../components/Form/Checkbox'
 import FormItem from '../../../components/Form/FormItem'
@@ -26,6 +27,34 @@ import useFile from '../../../hooks/useFile'
 import usePostalCode from '../../../hooks/usePostalCode'
 import useValidate from '../../../hooks/useValidate'
 
+const initialAppBase: SockbaseApplication = {
+  eventId: '',
+  spaceId: '',
+  circle: {
+    name: '',
+    yomi: '',
+    penName: '',
+    penNameYomi: '',
+    hasAdult: null,
+    genre: ''
+  },
+  overview: {
+    description: '',
+    totalAmount: ''
+  },
+  unionCircleId: '',
+  petitCode: '',
+  paymentMethod: '',
+  remarks: ''
+}
+
+const initialAppLinksBase: SockbaseApplicationLinks = {
+  twitterScreenName: '',
+  pixivUserId: '',
+  websiteURL: '',
+  menuURL: ''
+}
+
 interface Props {
   eventId: string
   event: SockbaseEvent
@@ -33,6 +62,9 @@ interface Props {
   links: SockbaseApplicationLinks | undefined
   leaderUserData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
+  pastApps: SockbaseApplicationDocument[] | undefined
+  pastAppLinks: Record<string, SockbaseApplicationLinksDocument | null> | undefined
+  pastEvents: Record<string, SockbaseEventDocument> | undefined
   prevStep: () => void
   nextStep: (app: SockbaseApplication, links: SockbaseApplicationLinks, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
   isLoggedIn: boolean
@@ -49,26 +81,12 @@ const Step1: React.FC<Props> = (props) => {
   const [circleCutFile, setCircleCutFile] = useState<File | null>()
   const [circleCutData, setCircleCutData] = useState<string>()
 
-  const [app, setApp] = useState<SockbaseApplication>({
-    eventId: props.eventId,
-    spaceId: '',
-    circle: {
-      name: '',
-      yomi: '',
-      penName: '',
-      penNameYomi: '',
-      hasAdult: null,
-      genre: ''
-    },
-    overview: {
-      description: '',
-      totalAmount: ''
-    },
-    unionCircleId: '',
-    petitCode: '',
-    paymentMethod: '',
-    remarks: ''
-  })
+  const initialApp = useMemo(() => ({
+    ...initialAppBase,
+    eventId: props.eventId
+  }), [props.eventId])
+
+  const [app, setApp] = useState<SockbaseApplication>(initialApp)
   const [leaderUserData, setLeaderUserData] = useState({
     name: '',
     birthday: 0,
@@ -80,13 +98,10 @@ const Step1: React.FC<Props> = (props) => {
     rePassword: ''
   })
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
+  const [links, setLinks] = useState<SockbaseApplicationLinks>(initialAppLinksBase)
 
-  const [links, setLinks] = useState<SockbaseApplicationLinks>({
-    twitterScreenName: '',
-    pixivUserId: '',
-    websiteURL: '',
-    menuURL: ''
-  })
+  const [pastAppId, setPastAppId] = useState<string>()
+  const [isApplyPastApp, setApplyPastApp] = useState(false)
 
   const [isAgreed, setAgreed] = useState(false)
 
@@ -94,6 +109,35 @@ const Step1: React.FC<Props> = (props) => {
   const [paymentMethodIds, setPaymentMethodIds] = useState<string[]>()
   const [isAllValid, setAllValid] = useState(false)
   const [invalidFieldCount, setInvalidFieldCount] = useState(0)
+
+  const handleApplyPastApp = useCallback(() => {
+    setApplyPastApp(false)
+    if (!props.pastApps || !props.pastAppLinks || !props.pastEvents) return
+
+    if (!pastAppId) {
+      if (!confirm('この操作を行うと入力した情報がリセットされます。\nリセットしてもよろしいですか？')) { setApp(initialApp) }
+      setLinks(initialAppLinksBase)
+      return
+    }
+
+    const pastApp = props.pastApps?.filter(a => a.id === pastAppId)[0]
+    if (!pastApp) return
+    if (!confirm(`${pastApp.circle.name} (${props.pastEvents[pastApp.eventId].eventName}) から申し込み情報を引用します。\nよろしいですか？`)) return
+
+    setApp({
+      ...pastApp,
+      spaceId: '',
+      unionCircleId: '',
+      petitCode: ''
+    })
+
+    const pastLinks = props.pastAppLinks[pastApp.id]
+    if (pastLinks) {
+      setLinks(pastLinks)
+    }
+
+    setApplyPastApp(true)
+  }, [pastAppId, props.pastApps, props.pastAppLinks, props.pastEvents])
 
   const [error, setError] = useState<string | undefined>()
 
@@ -281,6 +325,25 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
+      {props.pastApps && <>
+        <h2>過去の申し込み情報を引用</h2>
+        <FormSection>
+          <FormItem>
+            <FormLabel>引用する申し込み情報</FormLabel>
+            <FormSelect
+              value={pastAppId}
+              onChange={e => setPastAppId(e.target.value)}>
+              <option value="">選択してください</option>
+              {props.pastApps.map(a =>
+                <option key={a.id} value={a.id}>{a.circle.name} ({props.pastEvents?.[a.eventId].eventName})</option>)}
+            </FormSelect>
+          </FormItem>
+          <FormItem inlined>
+            <FormButton onClick={handleApplyPastApp} inlined>引用する</FormButton>
+          </FormItem>
+        </FormSection>
+      </>}
+
       <h2>申込むスペース数</h2>
       <FormSection>
         <FormItem>
@@ -294,7 +357,8 @@ const Step1: React.FC<Props> = (props) => {
               }))
             }
             onChange={(spaceId) => setApp(s => ({ ...s, spaceId }))}
-            value={app.spaceId} />
+            value={app.spaceId}
+            hasError={isApplyPastApp && !app.spaceId} />
         </FormItem>
       </FormSection>
 
@@ -310,7 +374,8 @@ const Step1: React.FC<Props> = (props) => {
           <FormInput
             type="file"
             accept="image/png"
-            onChange={e => setCircleCutFile(e.target.files?.[0])} />
+            onChange={e => setCircleCutFile(e.target.files?.[0])}
+            hasError={isApplyPastApp && !circleCutData}/>
         </FormItem>
         <FormItem>
           {circleCutData && <CircleCutImage src={circleCutData} />}
@@ -402,11 +467,12 @@ const Step1: React.FC<Props> = (props) => {
           <FormLabel>頒布物のジャンル</FormLabel>
           <FormSelect
             value={app.circle.genre}
-            onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}>
+            onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}
+            hasError={isApplyPastApp && !app.circle.genre}>
             <option value="">選択してください</option>
             {props.event.genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
           </FormSelect>
-          <FormHelp>
+          <FormHelp hasError={isApplyPastApp && !app.circle.genre}>
             頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
           </FormHelp>
         </FormItem>
