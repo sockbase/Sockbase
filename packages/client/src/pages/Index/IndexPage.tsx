@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
+import Alert from '../../components/Parts/Alert'
 import LinkButton from '../../components/Parts/LinkButton'
 import Loading from '../../components/Parts/Loading'
 import useFirebase from '../../hooks/useFirebase'
@@ -16,6 +17,7 @@ export interface User {
 
 const IndexPage: React.FC = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const firebase = useFirebase()
   const { localize: localizeFirebaseError } = useFirebaseError()
 
@@ -24,13 +26,15 @@ const IndexPage: React.FC = () => {
   const [isProccesing, setProcessing] = useState(false)
   const [error, setError] = useState<{ title: string, content: string } | null>()
 
+  const fromPathName = location.state?.from?.pathname
+
   const login: () => void =
     () => {
       setProcessing(true)
       setError(null)
 
       firebase.loginByEmail(email, password)
-        .then(() => navigate('/dashboard'))
+        .then(() => navigate(fromPathName || '/dashboard', { replace: true }))
         .catch((e: Error) => {
           const message = localizeFirebaseError(e.message)
           setError({ title: 'ログインに失敗しました', content: message })
@@ -44,6 +48,10 @@ const IndexPage: React.FC = () => {
   return (
     <DefaultBaseLayout>
       <h2>Sockbaseマイページにログイン</h2>
+
+      {fromPathName && <Alert title="ログインが必要です" type="danger">
+        このページにアクセスするにはログインが必要です。
+      </Alert>}
 
       {firebase.user === undefined
         ? <Loading text='認証情報' />

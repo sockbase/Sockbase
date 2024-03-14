@@ -1,18 +1,18 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 import useFirebase from '../hooks/useFirebase'
 
 const RequiredLogin: React.FC = () => {
   const { isLoggedIn } = useFirebase()
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const onChangeLoggedInState: () => void =
-    () => {
-      if (isLoggedIn === undefined) return
-      if (!isLoggedIn) navigate('/')
-    }
-  useEffect(onChangeLoggedInState, [isLoggedIn])
+  useEffect((): void => {
+    if (isLoggedIn === undefined) return
+    if (!isLoggedIn) navigate('/', { state: { from: location }, replace: true })
+  }, [isLoggedIn])
+
   return null
 }
 
