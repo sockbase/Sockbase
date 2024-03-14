@@ -339,7 +339,10 @@ const Step1: React.FC<Props> = (props) => {
             </FormSelect>
           </FormItem>
           <FormItem inlined>
-            <FormButton onClick={handleApplyPastApp} inlined>引用する</FormButton>
+            <FormButton
+              onClick={handleApplyPastApp}
+              disabled={pastAppId === undefined}
+              inlined>引用する</FormButton>
           </FormItem>
         </FormSection>
       </>}
