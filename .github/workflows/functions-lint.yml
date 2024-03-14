@@ -11,8 +11,13 @@ jobs:
         working-directory: ./packages/functions
 
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: 'package.json'
+          cache: yarn
+          
       - name: Install monorepo packages
         working-directory: ./
         run: yarn install
