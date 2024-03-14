@@ -36,14 +36,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: corepack enable
+      # - run: corepack enable
 
       - uses: actions/setup-node@v3
         with:
           node-version-file: 'package.json'
+          cache: yarn
       
-      - run: |
-          yarn set version 1.22.1
+      # - run: |
+      #     yarn set version 1.22.1
           
       - uses: google-github-actions/auth@v2
         with:
