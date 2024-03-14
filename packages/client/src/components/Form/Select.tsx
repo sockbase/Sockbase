@@ -3,14 +3,16 @@ import styled from 'styled-components'
 const FormSelect = styled.select<{ hasError?: boolean }>`
   width: 100%;
   padding: 10px;
-  border: 2px solid #a0a0a0;
+  border: 2px solid var(--outline-color);
   border-radius: 5px 5px 0 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
 
   transition: background-color 0.1s linear,
               border 0.1s linear;
 
   &:focus {
-    border: 2px solid #ea6183;
+    border: 2px solid var(--primary-brand-color);
     outline: none;
   }
 

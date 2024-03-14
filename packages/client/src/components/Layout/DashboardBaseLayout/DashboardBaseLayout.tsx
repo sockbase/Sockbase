@@ -96,8 +96,7 @@ const StyledLayout = styled.section`
 `
 const StyledHeader = styled.header`
   padding: 10px;
-  background-color: #ea6183;
-  background-color: #404040;
+  background-color: var(--primary-brand-color);
 `
 const StyledContainer = styled.section`
   display: grid;
@@ -118,12 +117,13 @@ const StyledWrapAlert = styled.section`
 const Alert = styled.div`
   padding: 10px 10%;
   text-align: center;
-  background-color: #ffff00;
+  background-color: var(--warning-color);
+  color: #000000;
   box-shadow: 0 2px 5px #00000040;
 `
 const StyledSidebar = styled.nav`
   padding: 10px;
-  background-color: #ffdede;
+  background-color: var(--primary-brand-light-color);
   overflow-y: auto;
   grid-row: 1 / 3;
   grid-column: 1;
@@ -142,7 +142,7 @@ const StyledMain = styled.div`
   min-height: 100%;
   padding: 20px;
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
-  background-color: #ffffff;
+  background-color: var(--background-color);
 `
 const Logotype = styled.img`
   height: 16px;

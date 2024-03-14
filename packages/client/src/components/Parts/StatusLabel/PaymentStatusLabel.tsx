@@ -52,24 +52,15 @@ const Container = styled.label<{ status: PaymentStatus, isLink?: boolean }>`
 
   ${p => {
     if (p.status === 0) {
-      return `
-        background-color: #808080;
-        color: #000000;
-      `
+      return 'background-color: var(--pending-color);'
     } else if (p.status === 1) {
-      return `
-        background-color: #32c041;
-        color: #000000;
-      `
+      return 'background-color: var(--success-color);'
     } else if (p.status === 2 || p.status === 3 || p.status === 4) {
-      return `
-        background-color: #b83340;
-        color: #000000;
-      `
+      return 'background-color: var(--danger-color);'
     }
   }};
   
-  color: #ffffff;
+  color: var(--text-foreground-color);
 
   ${p => p.isLink && 'cursor: pointer;'}
 `

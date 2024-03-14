@@ -102,7 +102,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
   }, [appId, overview, errorCount])
 
   return (
-    <DashboardBaseLayout title="頒布物概要編集" requireSystemRole={0}>
+    <DashboardBaseLayout title="頒布物情報編集" requireSystemRole={0}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         {isAdmin
@@ -119,7 +119,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
           {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
-      <PageTitle title={app?.circle.name} description="頒布物概要編集" icon={<MdEdit />} isLoading={!app} />
+      <PageTitle title={app?.circle.name} description="頒布物情報編集" icon={<MdEdit />} isLoading={!app} />
 
       {app && event && overview
         ? <TwoColumnsLayout>

@@ -63,7 +63,7 @@ const TicketView: React.FC<Props> = (props) => {
   return (
     <Container>
       <TicketContainer>
-        <TitleWrapper color={type?.color || '#808080'} disabled={!ticketUser?.usableUserId || ticketUser?.used}>
+        <TitleWrapper color={type?.color || 'var(--background-disabled-color)'} disabled={!ticketUser?.usableUserId || ticketUser?.used}>
           <TitleContainer>
             <StoreName>{props.store.storeName}</StoreName>
             <TypeName>{type?.name}</TypeName>
@@ -152,8 +152,8 @@ const TicketContainer = styled.div`
 `
 const TitleWrapper = styled.section<{ disabled?: boolean, color: string }>`
   background-color: ${props => props.disabled
-    ? '#c0c0c0'
-    : props.color || '#404040'};
+    ? 'var(--pending-color)'
+    : props.color || 'var(--background-disabled-color)'};
   border-radius: 5px 5px 0 0;
   @media screen and (max-width: 840px) {
     border-radius: 0;
@@ -170,7 +170,7 @@ const loopBackgroundKeyframes = keyframes`
 `
 const TitleContainer = styled.section`
   padding: 20px;
-  color: #ffffff;
+  color: var(--text-foreground-color);
   text-align: center;
   border-radius: 5px 5px 0 0;
   @media screen and (max-width: 840px) {
@@ -200,7 +200,7 @@ const Code = styled.div`
 `
 const ContentContainer = styled.section`
   padding: 20px;
-  background-color:#ffffff;
+  background-color: var(--background-color);
 `
 const Footer = styled.footer`
   display: flex;
@@ -209,7 +209,7 @@ const Footer = styled.footer`
 
   padding: 10px;
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
-  background-color: #404040;
+  background-color: var(--shadow-color);
   text-align: right;
   border-radius: 0 0 5px 5px;
 
@@ -220,7 +220,7 @@ const Footer = styled.footer`
 
 const UpdatedDate = styled.section`
   margin-top: -2px;
-  color: #ffffff;
+  color: var(--text-foreground-color);
 `
 const LogotypeArea = styled.section``
 

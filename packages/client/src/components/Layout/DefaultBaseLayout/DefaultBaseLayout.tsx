@@ -45,5 +45,5 @@ const Container = styled.main`
 
 const Wrapper = styled.div`
   padding: 40px;
-  background-color: #ffffff;
+  background-color: var(--background-color);
 `

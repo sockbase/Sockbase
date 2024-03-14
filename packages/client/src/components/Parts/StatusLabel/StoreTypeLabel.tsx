@@ -7,7 +7,7 @@ interface Props {
 }
 const StoreTypeLabel: React.FC<Props> = (props) => {
   return (
-    <Container bgColor={props.type?.color || '#808080'}>
+    <Container bgColor={props.type?.color || 'var(--pending-color)'}>
       {props.type?.name ?? <BlinkField />}
     </Container>
   )
@@ -21,5 +21,5 @@ const Container = styled.label<{ bgColor: string }>`
   border-radius: 5px;
 
   background-color: ${props => props.bgColor};
-  color: #ffffff;
+  color: var(--text-foreground-color);
 `

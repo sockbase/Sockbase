@@ -4,13 +4,15 @@ const FormInput = styled.input<{ hasError?: boolean }>`
   width: 100%;
   min-height: calc(3rem + 1px);
   padding: 10px;
-  border: 2px solid #a0a0a0;
+  border: 2px solid var(--outline-color);
   border-radius: 5px 5px 0 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
   
   transition: border 0.1s linear;
   
   &:focus {
-    border: 2px solid #ea6183;
+    border: 2px solid var(--primary-brand-color);
     outline: none;
     box-shadow: none;
   }
@@ -25,7 +27,8 @@ const FormInput = styled.input<{ hasError?: boolean }>`
   }}
 
   &:disabled {
-    background-color: #c0c0c0;
+    background-color: var(--background-disabled-color);
+    color: var(--text-disabled-color);
   }
 `
 

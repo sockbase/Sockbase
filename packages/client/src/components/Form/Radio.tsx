@@ -46,7 +46,7 @@ const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
 
   padding: 10px;
   padding-left: 44px;
-  border: 2px solid #a0a0a0;
+  border: 2px solid var(--outline-color);
   border-radius: 5px;
 
   cursor: pointer;
@@ -69,8 +69,9 @@ const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 3px solid #808080;
+    border: 3px solid var(--outline-color);
   }
+
   &::after {
     position: absolute;
     content: '';
@@ -79,17 +80,17 @@ const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: #ffffff;
+    background-color: var(--text-foreground-color);
     opacity: 0;
   }
 
   input:checked + & {
-    border: 2px solid #ea6183;
-    background-color: #ea6183;
-    color: #ffffff;
+    border: 2px solid var(--primary-brand-color);
+    background-color: var(--primary-brand-color);
+    color: var(--text-foreground-color);
     font-weight: bold;
     &::before {
-      border: 3px solid #ffffff;
+      border: 3px solid var(--text-foreground-color);
     }
     &::after {
       opacity: 1;
