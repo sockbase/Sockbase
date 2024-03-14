@@ -20,7 +20,7 @@ const Container = styled.div`
     margin-bottom: 0;
   }
   
-  background-color: #e0e0e0;
+  background-color: var(--border-color);
   border-radius: 5px;
 `
 

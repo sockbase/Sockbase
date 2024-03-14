@@ -238,7 +238,7 @@ const StyledSectionHeader = styled.h2`
   padding: 0;
   border-bottom: none;
   font-size: 1em;
-  color: #000000;
+  color: var(--text-color);
   &::after {
     display: none;
   }
@@ -268,7 +268,7 @@ const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boo
   padding: 10px;
   border-radius: 5px 0 0 5px;
   border-right: none;
-  color: #ffffff;
+  color: var(--text-foreground-color);
   text-align: center;
   font-size: 24px;
   
@@ -278,19 +278,19 @@ const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boo
 
   ${props => props.isDisabled
     ? {
-      backgroundColor: '#808080'
+      backgroundColor: 'var(--text-disabled-color)'
     }
     : props.isImportant
       ? {
-        backgroundColor: '#bf4040'
+        backgroundColor: 'var(--danger-color)'
       }
       : {
-        backgroundColor: '#ea6183'
+        backgroundColor: 'var(--primary-brand-color)'
       }}
 `
 const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
   padding: 10px;
-  background-color: #f8f8f8;
+  background-color: var(--background-light-color);
   border-radius: 0 5px 5px 0;
   border-left: none;
 
@@ -300,28 +300,28 @@ const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boo
   *:visited & {
     ${props => props.isDisabled
     ? {
-      backgroundColor: '#c0c0c0',
-      border: '2px solid #808080',
-      color: '#808080'
+      backgroundColor: 'var(--background-disabled-color)',
+      border: '2px solid var(--text-disabled-color)',
+      color: 'var(--text-disabled-color)'
     }
     : props.isImportant
       ? {
-        backgroundColor: '#ffffff',
-        border: '2px solid #bf4040',
-        color: '#bf4040',
+        backgroundColor: 'var(--background-light-color)',
+        border: '2px solid var(--danger-color)',
+        color: 'var(--danger-color)',
         fontWeight: 'bold'
       }
       : {
-        border: '2px solid #ea6183',
-        color: '#000000'
+        border: '2px solid var(--primary-brand-color)',
+        color: 'var(--text-color)'
       }}
   }
 `
 const StyledStatePanel = styled.div`
   padding: 10px;
   border-radius: 5px;
-  background-color: #ea6183;
-  color: #ffffff;
+  background-color: var(--primary-brand-color);
+  color: var(--text-foreground-color);
 
   margin-bottom: 5px;
   &:last-child {

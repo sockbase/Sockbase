@@ -49,13 +49,13 @@ const StyledCopyButton = styled.button<{ isActive: boolean }>`
   border-radius: 5px;
   font-size: 1.25em;
   background-color: transparent;
-  color: #ea6183;
+  color: var(--primary-brand-color);
   cursor: pointer;
 
   vertical-align: middle;
   
   &:active {
-    color: #aa2143;
+    color: var(--primary-brand-active-color);
     outline: none;
   }
 `

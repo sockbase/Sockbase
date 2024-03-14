@@ -20,7 +20,7 @@ export default StepProgress
 const StyledStepProgress = styled.ol`
   margin-bottom: 20px;
   padding: 20px 0;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--border-color);
   display: flex;
   list-style: none;
   
@@ -38,7 +38,7 @@ const StyledStepProgress = styled.ol`
       display: inline-block;
       width: 24px;
       height: 24px;
-      background-color: #808080;
+      background-color: var(--background-dark-color);
       border-radius: 50%;
 
       transition: background-color 100ms linear,
@@ -50,14 +50,18 @@ const StyledStepProgress = styled.ol`
       left: 7px;
       counter-increment: listItemCount 1;
       content: counter(listItemCount);
-      color: #ffffff;
+      color: var(--text-color);
       text-align: center;
     }
 
     &.active {
       font-weight: bold;
       &::before {
-        background-color: var(--primary-color);
+        background-color: var(--primary-brand-color);
+      }
+      
+      &::after {
+        color: var(--text-foreground-color);
       }
     }
   }

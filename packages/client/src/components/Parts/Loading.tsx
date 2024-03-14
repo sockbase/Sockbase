@@ -1,4 +1,4 @@
-import { MdCloudDownload } from 'react-icons/md'
+import { MdRefresh } from 'react-icons/md'
 import styled, { keyframes } from 'styled-components'
 
 interface Props {
@@ -7,25 +7,27 @@ interface Props {
 const Loading: React.FC<Props> = (props) => {
   return (
     <Container>
-      <Icon><MdCloudDownload /></Icon>
-      <Title>読み込み中です</Title>
-      {props.text && <Description>{props.text} を読み込んでいます。</Description>}
+      <Icon><MdRefresh /></Icon>
+      <Title>読み込み中...</Title>
+      {props.text && <Description>{props.text}を読み込んでいます。</Description>}
     </Container>
   )
 }
 
 const blinkKeyframe = keyframes`
   0% {
-    background-color: #ea618320;
+    background-color: var(--background-primary-brand-color);
   }
   100% {
-    background-color: #ea618340;
+    background-color: var(--background-primary-brand2-color);
   }
 `
 const Container = styled.div`
   display: grid;
   grid-template-rows: auto auto;
   grid-template-columns: 64px 1fr;
+  
+  color: var(--text-color);
 
   padding: 10px;
   margin-bottom: 20px;

@@ -354,7 +354,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
           {links !== undefined && hashedAppId && <FormSection>
             <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>頒布物概要を編集する</LinkButton>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>頒布物情報を編集する</LinkButton>
             </FormItem>
           </FormSection>}
         </>

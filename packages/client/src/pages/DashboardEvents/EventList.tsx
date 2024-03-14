@@ -6,7 +6,7 @@ import useFirebase from '../../hooks/useFirebase'
 
 const EventList: React.FC = () => {
   const { roles } = useFirebase()
-  const { getEventsByOrganizationId } = useEvent()
+  const { getEventsByOrganizationIdAsync } = useEvent()
 
   const [events, setEvents] = useState<Record<string, SockbaseEventDocument[]>>()
 
@@ -20,7 +20,7 @@ const EventList: React.FC = () => {
 
       const fetchedEvents = await Promise.all(orgIds.map(async id => ({
         id,
-        data: await getEventsByOrganizationId(id)
+        data: await getEventsByOrganizationIdAsync(id)
       })))
         .then(e => e.reduce<Record<string, SockbaseEventDocument[]>>((p, c) => ({
           ...p,

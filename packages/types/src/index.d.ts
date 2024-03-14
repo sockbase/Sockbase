@@ -149,6 +149,7 @@ export type CircleGenreType = ''
  * サークル申し込み情報(DB取得)
  */
 export type SockbaseApplicationDocument = SockbaseApplication & {
+  id: string
   userId: string
   createdAt: Date | null
   updatedAt: Date | null

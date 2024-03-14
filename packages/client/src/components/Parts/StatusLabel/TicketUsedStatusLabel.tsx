@@ -29,16 +29,11 @@ const Container = styled.label<{ status: boolean }>`
 
   ${p => {
     if (p.status) {
-      return `
-        background-color: #b83340;
-        color: #000000;
-      `
+      return 'background-color: var(--danger-color);'
     } else {
-      return `
-        background-color: #808080;
-        color: #000000;
-      `
+      return 'background-color: var(--pending-color);'
     }
   }};
-  color: #ffffff;
+
+  color: var(--text-foreground-color);
 `

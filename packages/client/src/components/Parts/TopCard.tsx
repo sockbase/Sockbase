@@ -35,7 +35,7 @@ const CardHeader = styled.div<{ important: boolean | undefined }>`
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 5px;
-  background-color: ${props => props.important ? 'var(--primary-color)' : '#e0e0e0'};
+  background-color: ${props => props.important ? 'var(--primary-brand-color)' : 'var(--background-dark-color)'};
   border-radius: 5px 5px 0 0;
 `
 const CardIcon = styled.div<{ important: boolean | undefined }>`
@@ -45,16 +45,17 @@ const CardIcon = styled.div<{ important: boolean | undefined }>`
   svg {
     width: 24px;
     height: 24px;
-  color: ${props => props.important ? '#ffffff' : '#000000'};
+  color: ${props => props.important ? 'var(--text-foreground-color)' : 'var(--text-color)'};
   }
 `
 const CardTitle = styled.div<{ important: boolean | undefined }>`
   font-weight: bold;
-  color: ${props => props.important ? '#ffffff' : '#000000'};
+  color: ${props => props.important ? 'var(--text-foreground-color)' : 'var(--text-color)'};
 `
 const CardDescription = styled.div`
   padding: 10px;
   border-radius: 0 0 5px 5px;
-  background-color: #f0f0f0;
-  border-bottom: 2px solid #e0e0e0;
+  background-color: var(--background-light-color);
+  color: var(--text-color);
+  border-bottom: 2px solid var(--shadow-color);
 `

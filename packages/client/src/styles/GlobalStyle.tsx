@@ -6,14 +6,19 @@ html, body {
   height: 100vh;
   height: 100dvh;
 }
+
 body {
-  background-image: url('/assets/bg-pattern.png');
-  background-position: center;
+  // background-image: url('/assets/bg-pattern.png');
+  // background-position: center;
+  background-color: var(--background-body-color);
+  color: var(--text-color);
 }
+
 input, select, textarea {
   font-family: "LINE Seed JP", sans-serif;
   font-size: 1rem;
 }
+
 #root {
   height: 100%;
 }
@@ -26,8 +31,8 @@ h1 { font-size: 2em; }
 h2 {
   padding-bottom: 4px;
   font-size: 1.5em;
-  color: var(--primary-color);
-  border-bottom: 4px solid var(--primary-color);
+  color: var(--primary-brand-color);
+  border-bottom: 4px solid var(--primary-brand-color);
   position: relative;
   display: inline;
   z-index: 0;
@@ -35,7 +40,7 @@ h2 {
     display: block;
     content: '';
     height: 6px;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid var(--border-color);
     position: inherit;
     z-index: -1;
     margin-bottom: 20px;
@@ -43,7 +48,7 @@ h2 {
 }
 h3 {
   font-size: 1em;
-  color: var(--primary-color);
+  color: var(--primary-brand-color);
 }
 h4 { font-size: 0.9em; }
 h5 { font-size: 0.8em; }
@@ -58,11 +63,12 @@ table {
   width: 100%;
   border-collapse: collapse;
 
+  color: var(--text-color);
 
   tr {
-    background-color: #ffffff;
+    background-color: var(--background-color);
     &:nth-child(2n) {
-      background-color: #f8f8f8;
+      background-color: var(--background-light2-color);
     }
   }
   th, td {
@@ -72,14 +78,14 @@ table {
 
   thead {
     tr {
-      background-color: #ffffff !important;
-      color: #000000 !important;
+      background-color: var(--background-color) !important;
+      color: var(--text-color) !important;
     }
   }
 
   tbody {
-    border-top: 2px solid #ea6183;
-    border-bottom: 2px solid #ea6183;
+    border-top: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--border-color);
 
     th {
       width: 30%;
@@ -88,12 +94,16 @@ table {
 }
 
 a {
-  color: #ea6183;
+  color: var(--link-color);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
   }
   cursor: pointer;
+}
+
+ul, ol, p {
+  color: var(--text-color);
 }
 
 code {
@@ -105,7 +115,25 @@ code {
   font-family: 'Consolas', 'Osaka-Mono', monospace;
   font-size: 1em;
   
-  background-color: #e0e0e0;
+  background-color: var(--background-dark-color);
+}
+
+details {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: var(--background-light-color);
+  color: var(--text-color);
+
+  &:not([open]) summary {
+    margin-bottom: 0;
+  }
+}
+
+summary {
+  margin: 0;
+  margin-bottom: 10px;
+  user-select: none;
+  cursor: pointer;
 }
 `
 

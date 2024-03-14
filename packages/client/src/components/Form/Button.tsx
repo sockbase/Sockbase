@@ -10,7 +10,7 @@ const FormButton = styled.button<{ inlined?: boolean, color?: 'default' | 'info'
   font-size: 1rem;
   font-weight: bold;
 
-  color: #ffffff;
+  color: var(--text-foreground-color);
 
   cursor: pointer;
   transition: background-color 0.1s linear;
@@ -18,31 +18,31 @@ const FormButton = styled.button<{ inlined?: boolean, color?: 'default' | 'info'
 ${props => {
     if (props.color === 'default') {
       return {
-        backgroundColor: '#e0e0e0',
-        color: '#000000',
+        backgroundColor: 'var(--background-dark-color)',
+        color: 'var(--text-color)',
         '&:active': {
-          backgroundColor: '#b3b3b3'
+          backgroundColor: 'var(--background-dark-active-color)'
         }
       }
     } else if (props.color === 'info') {
       return {
-        backgroundColor: '#20a0f0',
+        backgroundColor: 'var(--info-color)',
         '&:active': {
-          backgroundColor: '#1080e0'
+          backgroundColor: 'var(--info-active-color)'
         }
       }
     } else if (props.color === 'danger') {
       return {
-        backgroundColor: '#b83340',
+        backgroundColor: 'var(--danger-color)',
         '&:active': {
-          backgroundColor: '#8a2e38'
+          backgroundColor: 'var(--danger-active-color)'
         }
       }
     } else {
       return {
-        backgroundColor: '#ea6183',
+        backgroundColor: 'var(--primary-brand-color)',
         '&:active': {
-          backgroundColor: '#99334c'
+          backgroundColor: 'var(--primary-brand-active-color)'
         }
       }
     }
@@ -50,12 +50,12 @@ ${props => {
 
 ${props => props.disabled
     ? {
-      backgroundColor: '#c0c0c0',
-      color: '#808080',
+      backgroundColor: 'var(--background-disabled-color)',
+      color: 'var(--text-disabled-color)',
       cursor: 'auto',
       '&:active': {
-        backgroundColor: '#c0c0c0',
-        color: '#808080'
+        backgroundColor: 'var(--background-disabled-color)',
+        color: 'var(--text-disabled-color)'
       }
     }
     : {}}

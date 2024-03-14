@@ -17,7 +17,7 @@ const TicketCard: React.FC<Props> = (props) => {
 
   return (
     <Container key={props.ticketUser.hashId} to={`/dashboard/mytickets/${props.ticketUser.hashId}`}>
-      <Header color={props.ticketUser.used ? '#c0c0c0' : props.type?.color ?? '#404040'}>
+      <Header color={props.ticketUser.used ? 'var(--pending-color)' : props.type?.color ?? 'var(--background-disabled-color)'}>
         {props.store?.storeName}
       </Header>
       <Content>
@@ -47,36 +47,36 @@ const Container = styled(Link)`
 `
 const Header = styled.div<{ color: string }>`
   background-color: ${props => props.color};
-  color: #ffffff;
+  color: var(--text-foreground-color);
   padding: 10px;
   border-radius: 5px 5px 0 0;
 `
 const Content = styled.div`
-  background-color: #f0f0f0;
-  color: initial;
+  background-color: var(--background-light-color);
+  color: var(--text-color);
   padding: 10px;
 `
 const Footer = styled.div`
   color: initial;
   padding: 10px;
-  background-color: #e0e0e0;
-  border-bottom: 2px solid #d8d8d8;
+  background-color: var(--background-dark-color);
+  border-bottom: 2px solid var(--shadow-color);
   border-radius: 0 0 5px 5px;
 `
 const UsedStatus = styled.div`
-  color: #404040;
+  color: var(--text-color);
 `
 const TicketId = styled.div`
   font-size: 0.75em;
   word-break: break-all;
-  color: #808080;
+  color: var(--text-light-color);
 `
 const ContentTitle = styled.div`
   margin-bottom: 1px;
   &:last-child {
     margin-bottom: 0;
   }
-  color: #808080;
+  color: var(--text-light-color);
   font-size: 0.9em;
 `
 const ContentBody = styled.p`

@@ -11,9 +11,9 @@ import useFirebase from './useFirebase'
 import type { SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument, SockbaseSpaceHash } from 'sockbase'
 
 interface IUseEvent {
-  getEventByIdAsync: (eventId: string) => Promise<SockbaseEvent>
-  getEventsByOrganizationId: (organizationId: string) => Promise<SockbaseEventDocument[]>
-  getEventEyecatch: (eventId: string) => Promise<string | null>
+  getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
+  getEventsByOrganizationIdAsync: (organizationId: string) => Promise<SockbaseEventDocument[]>
+  getEventEyecatchAsync: (eventId: string) => Promise<string | null>
   getSpaceAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceOptionalAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
@@ -25,11 +25,10 @@ interface IUseEvent {
 const useEvent = (): IUseEvent => {
   const { getFirestore, getStorage } = useFirebase()
 
-  const getEventByIdAsync = async (eventId: string): Promise<SockbaseEvent> => {
+  const getEventByIdAsync = async (eventId: string): Promise<SockbaseEventDocument> => {
     const db = getFirestore()
-    const eventRef = FirestoreDB.doc(db, 'events', eventId).withConverter(
-      eventConverter
-    )
+    const eventRef = FirestoreDB.doc(db, 'events', eventId)
+      .withConverter(eventConverter)
 
     const eventDoc = await FirestoreDB.getDoc(eventRef)
     if (!eventDoc.exists()) {
@@ -39,7 +38,7 @@ const useEvent = (): IUseEvent => {
     return eventDoc.data()
   }
 
-  const getEventsByOrganizationId = useCallback(async (organizationId: string): Promise<SockbaseEventDocument[]> => {
+  const getEventsByOrganizationIdAsync = useCallback(async (organizationId: string): Promise<SockbaseEventDocument[]> => {
     const db = getFirestore()
     const eventsRef = FirestoreDB.collection(db, 'events')
       .withConverter(eventConverter)
@@ -53,7 +52,7 @@ const useEvent = (): IUseEvent => {
     return queryDocs
   }, [])
 
-  const getEventEyecatch = async (eventId: string): Promise<string | null> => {
+  const getEventEyecatchAsync = async (eventId: string): Promise<string | null> => {
     const storage = getStorage()
     const eyecatchRef = FirebaseStorage.ref(
       storage,
@@ -182,8 +181,8 @@ const useEvent = (): IUseEvent => {
 
   return {
     getEventByIdAsync,
-    getEventsByOrganizationId,
-    getEventEyecatch,
+    getEventsByOrganizationIdAsync,
+    getEventEyecatchAsync,
     getSpaceAsync,
     getSpaceOptionalAsync,
     getSpacesByEventIdAsync,
