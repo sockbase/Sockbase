@@ -9,6 +9,7 @@ interface Props {
   }>
   value: string
   onChange: (value: string) => void
+  hasError?: boolean
 }
 const FormRadio: React.FC<Props> = (props) => {
   return (
@@ -17,12 +18,13 @@ const FormRadio: React.FC<Props> = (props) => {
         <StyledRadio
           name={props.name}
           id={`${props.name}-${opt.value}`}
-
           value={opt.value}
           onChange={e => props.onChange(e.target.value)}
           checked={props.value === opt.value}
           defaultChecked={opt.checked} />
-        <StyledRadioLabel htmlFor={`${props.name}-${opt.value}`}>{opt.text}</StyledRadioLabel>
+        <StyledRadioLabel
+          htmlFor={`${props.name}-${opt.value}`}
+          hasError={props.hasError}>{opt.text}</StyledRadioLabel>
       </StyledRadioItem>)}
     </>
   )
@@ -39,7 +41,7 @@ const StyledRadio = styled.input.attrs({ type: 'radio' })`
   display: none;
 `
 
-const StyledRadioLabel = styled.label`
+const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
   display: block;
 
   padding: 10px;
@@ -53,6 +55,12 @@ const StyledRadioLabel = styled.label`
               opacity 0.1s linear;
 
   position: relative;
+
+  ${props => props.hasError && {
+    border: '2px solid #ff2222 !important',
+    boxShadow: '0 2px 5px #ff222288 !important'
+  }}
+
   &::before {
     position: absolute;
     content: '';
