@@ -12,31 +12,38 @@ interface Props {
 }
 const DefaultBaseLayout: React.FC<Props> = (props) => {
   return (
-    <StyledLayout>
+    <Layout>
       <HeadHelper title={props.title} />
       {/* <Header /> */}
-      <StyledContainer>{props.children}</StyledContainer>
+      <Container>
+        <Wrapper>
+          {props.children}
+        </Wrapper>
+      </Container>
       <Footer />
-    </StyledLayout>
+    </Layout>
   )
 }
 
 export default DefaultBaseLayout
 
-const StyledLayout = styled.section`
+const Layout = styled.section`
   display: grid;
   height: 100%;
   /* grid-template-rows: auto 1fr auto; */
   grid-template-rows: 1fr auto;
 `
-const StyledContainer = styled.main`
+const Container = styled.main`
   margin: 40px 25%;
-  padding: 40px;
-  background-color: #ffffff;
   justify-items: start;
 
   @media screen and (max-width: 840px) {
     margin: 0;
     padding: 20px;
   }
+`
+
+const Wrapper = styled.div`
+  padding: 40px;
+  background-color: #ffffff;
 `

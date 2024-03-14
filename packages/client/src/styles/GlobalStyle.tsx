@@ -78,8 +78,8 @@ table {
   }
 
   tbody {
-    border-top: 2px solid #ea6183;
-    border-bottom: 2px solid #ea6183;
+    border-top: 2px solid #e0e0e0;
+    border-bottom: 2px solid #e0e0e0;
 
     th {
       width: 30%;

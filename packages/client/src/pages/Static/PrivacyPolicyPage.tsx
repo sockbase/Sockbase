@@ -1,5 +1,7 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import StaticDocumentProvider from '../../components/Providers/StaticDocumentProvider/StaticDocumentProvider'
 
 const PrivacyPolicyPage: React.FC =
@@ -8,6 +10,10 @@ const PrivacyPolicyPage: React.FC =
 
     return (
       <DefaultBaseLayout title={title}>
+        <Breadcrumbs>
+          <li><Link to="/">ホーム</Link></li>
+        </Breadcrumbs>
+
         <StaticDocumentProvider
           docId='privacy-policy'
           setTitle={t => setTitle(t)} />
