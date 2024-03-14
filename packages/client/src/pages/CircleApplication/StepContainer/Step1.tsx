@@ -126,6 +126,7 @@ const Step1: React.FC<Props> = (props) => {
 
     setApp({
       ...pastApp,
+      eventId: props.eventId,
       spaceId: '',
       unionCircleId: '',
       petitCode: ''
