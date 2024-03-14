@@ -119,9 +119,14 @@ const Contact: React.FC = () => {
                     {inquiryContext?.description ?? ''}
                   </Alert>
                 </FormItem>}
-                <FormTextarea value={body} onChange={e => setBody(e.target.value)} />
-                <FormHelp>お問い合わせ内容を{maxBodyLength}文字以下で入力してください。</FormHelp>
-                <FormLabel>{bodyLength} / {maxBodyLength}</FormLabel>
+                <FormTextarea
+                  value={body}
+                  onChange={e => setBody(e.target.value)}
+                  hasError={bodyLength > maxBodyLength} />
+                <FormHelp hasError={bodyLength > maxBodyLength}>
+                  お問い合わせ内容を{maxBodyLength.toLocaleString()}文字以下で入力してください。
+                </FormHelp>
+                <FormLabel>{bodyLength.toLocaleString()}文字 / {maxBodyLength.toLocaleString()}文字</FormLabel>
               </FormItem>
             </FormSection>
 
