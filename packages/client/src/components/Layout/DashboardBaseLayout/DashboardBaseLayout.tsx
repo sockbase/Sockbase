@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { type SockbaseRole } from 'sockbase'
 
@@ -59,7 +59,11 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
       <RequiredLogin />
       {firebase.isLoggedIn && firebase.user && isValidRole && <>
         <HeadHelper title={props.title} />
-        <StyledHeader><Logotype src={LogotypeSVG} alt="Sockbase Logotype" /></StyledHeader>
+        <StyledHeader>
+          <Link to="/dashboard">
+            <Logotype src={LogotypeSVG} alt="Sockbase Logotype" />
+          </Link>
+        </StyledHeader>
         <StyledContainer>
           {!firebase.user.emailVerified && <StyledWrapAlert>
             <Alert>
@@ -93,6 +97,7 @@ const StyledLayout = styled.section`
 const StyledHeader = styled.header`
   padding: 10px;
   background-color: #ea6183;
+  background-color: #404040;
 `
 const StyledContainer = styled.section`
   display: grid;
@@ -141,6 +146,8 @@ const StyledMain = styled.div`
 `
 const Logotype = styled.img`
   height: 16px;
+  vertical-align: middle;
+  margin-top: -4px;
 `
 const Button = styled(FormButton)`
   margin-left: 10px;
