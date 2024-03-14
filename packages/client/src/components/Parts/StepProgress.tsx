@@ -50,7 +50,7 @@ const StyledStepProgress = styled.ol`
       left: 7px;
       counter-increment: listItemCount 1;
       content: counter(listItemCount);
-      color: #ffffff;
+      color: var(--text-color);
       text-align: center;
     }
 
@@ -58,6 +58,10 @@ const StyledStepProgress = styled.ol`
       font-weight: bold;
       &::before {
         background-color: var(--primary-brand-color);
+      }
+      
+      &::after {
+        color: var(--text-foreground-color);
       }
     }
   }
