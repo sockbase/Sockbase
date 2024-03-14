@@ -33,7 +33,7 @@ const DashboardEventInfoPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DashboardBaseLayout title="イベント メタ情報" requireCommonRole={2}>
+    <DashboardBaseLayout title="イベントメタ情報" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>

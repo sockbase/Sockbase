@@ -31,7 +31,7 @@ const DashboardStoreInfoPage: React.FC = () => {
   }, [storeId])
 
   return (
-    <DashboardBaseLayout title="チケットストア メタ情報" requireSystemRole={2}>
+    <DashboardBaseLayout title="チケットストアメタ情報" requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
