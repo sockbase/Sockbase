@@ -46,12 +46,12 @@
   --background-dark-color: #282828;
   --background-dark-active-color: #181818;
   --background-gray-color: #000000;
-  --background-disabled-color: #505050;
+  --background-disabled-color: #808080;
   --text-color: #e0e0e0;
   --text-foreground-color: #ffffff;
   --link-color: #ea6183;
   --text-light-color: #a0a0a0;
-  --text-disabled-color: #909090;
+  --text-disabled-color: #505050;
   --info-color: #3b8bbd;
   --info-active-color: #266288;
   --pending-color: #404040;
