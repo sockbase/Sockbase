@@ -43,7 +43,7 @@
   --background-body-color: #080808;
   --background-light-color: #303030;
   --background-light2-color: #181818;
-  --background-dark-color: #303030;
+  --background-dark-color: #282828;
   --background-dark-active-color: #181818;
   --background-gray-color: #000000;
   --background-disabled-color: #505050;
@@ -55,7 +55,7 @@
   --info-color: #3b8bbd;
   --info-active-color: #266288;
   --pending-color: #404040;
-  --danger-color: #c04d3b;
+  --danger-color: #c06051;
   --danger-active-color: #973c2e;
   --warning-color: #cfcf00;
   --success-color: #3a8343;
