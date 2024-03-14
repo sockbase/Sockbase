@@ -5,7 +5,8 @@ import {
   type SockbaseTicket,
   type SockbaseTicketAddedResult,
   type SockbaseTicketCreatedResult,
-  type SockbaseTicketUsedStatus
+  type SockbaseTicketUsedStatus,
+  type SockbaseStoreDocument
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
@@ -146,16 +147,8 @@ const generateTicketHashId = (now: Date): string => {
   return hashId
 }
 
-const createTicketForAdminAsync = async (createdUserId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
+const createTicketForAdminAsync = async (createdUserId: string, store: SockbaseStoreDocument, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
   const now = new Date()
-
-  const storeDoc = await firestore.doc(`stores/${storeId}`)
-    .withConverter(storeConverter)
-    .get()
-  const store = storeDoc.data()
-  if (!store) {
-    throw new functions.https.HttpsError('not-found', 'store')
-  }
 
   const user = await auth
     .getUserByEmail(email)
@@ -168,11 +161,11 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
       }
     })
 
-  await updateTicketUserDataAsync(storeId, user.uid)
+  await updateTicketUserDataAsync(store.id, user.uid)
 
   const hashId = generateTicketHashId(now)
   const ticketDoc: SockbaseTicketDocument = {
-    storeId,
+    storeId: store.id,
     typeId,
     paymentMethod: 'online',
     userId: user.uid,
@@ -212,7 +205,7 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
     .doc(`/_ticketUsers/${hashId}`)
     .set({
       userId: user.uid,
-      storeId,
+      storeId: store.id,
       typeId,
       usableUserId: null,
       used: false,

@@ -22,5 +22,6 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^2.8.4"
-  }
+  },
+  "packageManager": "yarn@1.22.1"
 }
