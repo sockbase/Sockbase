@@ -42,9 +42,9 @@ jobs:
           cache: yarn
           
       - run: |
-        corepack enable yarn
-        yarn set version 1.22.1
-        
+          corepack enable yarn
+          yarn set version 1.22.1
+
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS_JSON }}
