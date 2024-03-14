@@ -17,6 +17,7 @@
     ]
   },
   "functions": {
+    "runtime": "nodejs18",
     "source": "./packages/functions",
     "predeploy": [
       "yarn workspace functions lint",
