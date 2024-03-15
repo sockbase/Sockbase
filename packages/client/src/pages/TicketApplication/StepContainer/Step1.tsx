@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import sockbaseShared from 'shared'
 import FormButton from '../../../components/Form/Button'
 import FormCheckbox from '../../../components/Form/Checkbox'
@@ -27,12 +27,15 @@ const Step1: React.FC<Props> = (props) => {
   const { getAddressByPostalCode } = usePostalCode()
   const { formatByDate } = useDayjs()
 
-  const [isAgreed, setAgreed] = useState(false)
-  const [ticketInfo, setTicketInfo] = useState<SockbaseTicket>({
+  const initialTicket = useMemo(() => ({
     storeId: props.store.id,
     typeId: '',
-    paymentMethod: ''
-  })
+    paymentMethod: (!props.store.permissions.canUseBankTransfer && 'online') || ''
+  }), [props.store])
+
+  const [isAgreed, setAgreed] = useState(false)
+  const [ticketInfo, setTicketInfo] = useState<SockbaseTicket>(initialTicket)
+
   const [userData, setUserData] = useState<SockbaseAccountSecure>({
     name: '',
     email: '',
@@ -45,39 +48,17 @@ const Step1: React.FC<Props> = (props) => {
   })
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
 
-  const onInitialize = (): void => {
+  useEffect(() => {
     if (!props.ticketInfo || !props.userData) return
     setTicketInfo(props.ticketInfo)
     setUserData(props.userData)
     setDisplayBirthday(s => formatByDate(props.userData?.birthday, 'YYYY-MM-DD'))
-  }
-  useEffect(onInitialize, [props.ticketInfo, props.userData])
+  }, [props.ticketInfo, props.userData])
 
-  const onChangeBirthday = (): void => {
+  useEffect(() => {
     if (!displayBirthday) return
     setUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
-  }
-  useEffect(onChangeBirthday, [displayBirthday])
-
-  const handleFilledPostalCode: (postalCode: string) => void =
-    (postalCode) => {
-      const sanitizedPostalCode = postalCode.replaceAll('-', '')
-      if (sanitizedPostalCode.length !== 7) return
-
-      getAddressByPostalCode(sanitizedPostalCode)
-        .then(address => setUserData(s => ({
-          ...s,
-          address
-        })))
-        .catch(err => {
-          throw err
-        })
-    }
-
-  const handleSubmit = (): void => {
-    if (!isAgreed || errorCount > 0) return
-    props.nextStep(ticketInfo, userData)
-  }
+  }, [displayBirthday])
 
   const selectedType = useMemo((): SockbaseStoreType | null => {
     if (!ticketInfo.typeId) return null
@@ -88,6 +69,7 @@ const Step1: React.FC<Props> = (props) => {
   const errorCount = useMemo((): number => {
     const validators = [
       !validator.isEmpty(ticketInfo.typeId),
+      props.store.permissions.canUseBankTransfer || ticketInfo.paymentMethod === 'online',
       !selectedType?.productInfo || !validator.isEmpty(ticketInfo.paymentMethod)
     ]
 
@@ -111,7 +93,24 @@ const Step1: React.FC<Props> = (props) => {
     return validators
       .filter(v => !v)
       .length
-  }, [ticketInfo, userData, props.isLoggedIn])
+  }, [ticketInfo, userData, props.isLoggedIn, props.store])
+
+  const handleSubmit = useCallback(() => {
+    if (!isAgreed || errorCount > 0) return
+    props.nextStep(ticketInfo, userData)
+  }, [isAgreed, errorCount, ticketInfo, userData])
+
+  const handleFilledPostalCode = useCallback((postalCode: string): void => {
+    const sanitizedPostalCode = postalCode.replaceAll('-', '')
+    if (sanitizedPostalCode.length !== 7) return
+
+    getAddressByPostalCode(sanitizedPostalCode)
+      .then(address => setUserData(s => ({
+        ...s,
+        address
+      })))
+      .catch(err => { throw err })
+  }, [])
 
   return (
     <>
@@ -165,10 +164,12 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormRadio
                 name="paymentMethod"
-                values={sockbaseShared.constants.payment.methods.map(i => ({
-                  text: i.description,
-                  value: i.id
-                }))}
+                values={sockbaseShared.constants.payment.methods
+                  .filter(i => i.id !== 'bankTransfer' || props.store.permissions.canUseBankTransfer)
+                  .map(i => ({
+                    text: i.description,
+                    value: i.id
+                  }))}
                 value={ticketInfo.paymentMethod}
                 onChange={paymentMethod => setTicketInfo(s => ({ ...s, paymentMethod }))} />
             </FormItem>

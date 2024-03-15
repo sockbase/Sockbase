@@ -54,7 +54,8 @@ const InformationImport: React.FC<Props> = (props) => {
       contactUrl: ''
     },
     permissions: {
-      allowAdult: false
+      allowAdult: false,
+      canUseBankTransfer: true
     },
     isPublic: false
   })
@@ -74,6 +75,8 @@ const InformationImport: React.FC<Props> = (props) => {
   } = useFile()
   const [eyecatchFile, setEyecatchFile] = useState<File>()
   const [eyecatchData, setEyecatchData] = useState<string>()
+
+  const [openPackageInputArea, setOpenPackageInputArea] = useState(false)
 
   const handleEditDescription = useCallback((index: number, description: string) => {
     const newDescriptions = [...event.descriptions]
@@ -148,6 +151,10 @@ const InformationImport: React.FC<Props> = (props) => {
         id: '',
         name: ''
       }],
+      permissions: {
+        allowAdult: !!ev.permissions.allowAdult,
+        canUseBankTransfer: !!ev.permissions.canUseBankTransfer
+      },
       isPublic: !!ev.isPublic
     }
     setEvent(fetchedEvent)
@@ -180,7 +187,13 @@ const InformationImport: React.FC<Props> = (props) => {
     setEventId(eventPackage.id)
     fetchEvent(eventPackage)
     setEventPackageJSON('')
+    setOpenPackageInputArea(false)
   }, [eventPackageJSON])
+
+  const handleTogglePackageInputArea = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    event.preventDefault()
+    setOpenPackageInputArea(s => !s)
+  }, [])
 
   useEffect(() => {
     if (!eyecatchFile) return
@@ -309,8 +322,8 @@ const InformationImport: React.FC<Props> = (props) => {
       <h2>STEP1: イベント情報入力</h2>
 
       <h3>インポート</h3>
-      <details>
-        <summary>イベント設定データ入力欄</summary>
+      <details open={openPackageInputArea}>
+        <summary onClick={handleTogglePackageInputArea}>イベント設定データ入力欄</summary>
         <FormSection>
           <FormItem>
             <FormLabel>イベント設定データ</FormLabel>
@@ -579,6 +592,11 @@ const InformationImport: React.FC<Props> = (props) => {
             label="成人向け頒布を許可する"
             checked={event.permissions.allowAdult}
             onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, allowAdult: checked } })) }/>
+          <FormCheckbox
+            name="canUseBankTransfer"
+            label="参加費の銀行振込を許可する"
+            checked={event.permissions.canUseBankTransfer}
+            onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } })) }/>
         </FormItem>
       </FormSection>
 

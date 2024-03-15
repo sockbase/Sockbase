@@ -168,6 +168,10 @@ const EventInfo: React.FC<Props> = (props) => {
             <th>成人向け作品の頒布</th>
             <td>{props.event?.permissions.allowAdult ? '許可する' : '許可しない'}</td>
           </tr>
+          <tr>
+            <th>参加費の銀行振込を許可</th>
+            <td>{props.event?.permissions.canUseBankTransfer ? '許可する' : '許可しない'}</td>
+          </tr>
         </tbody>
       </table>
     </>

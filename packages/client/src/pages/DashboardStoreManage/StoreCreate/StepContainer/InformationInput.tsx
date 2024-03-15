@@ -37,6 +37,9 @@ const InformationInput: React.FC<Props> = (props) => {
       name: '',
       contactUrl: ''
     },
+    permissions: {
+      canUseBankTransfer: true
+    },
     isPublic: false
   })
 
@@ -51,14 +54,7 @@ const InformationInput: React.FC<Props> = (props) => {
     isPrivate: true
   }])
 
-  const handleImportStorePackage = useCallback(() => {
-    if (!storePackageJSON) return
-    if (!confirm('チケットストア設定データをインポートします。\nよろしいですか？')) return
-    const storePackage = JSON.parse(storePackageJSON) as SockbaseStoreDocument
-    setStoreId(storePackage.id)
-    fetchStore(storePackage)
-    setStorePackageJSON('')
-  }, [storePackageJSON])
+  const [openPackageInputArea, setOpenPackageInputArea] = useState(false)
 
   const handleEditDescription = useCallback((index: number, description: string) => {
     const newDescriptions = [...store.descriptions]
@@ -125,6 +121,9 @@ const InformationInput: React.FC<Props> = (props) => {
       ...st,
       descriptions: (st.descriptions.length && st.descriptions) || [''],
       rules: (st.rules.length && st.rules) || [''],
+      permissions: {
+        canUseBankTransfer: !!st.permissions.canUseBankTransfer
+      },
       isPublic: !!st.isPublic
     }
     setStore(fetchedStore)
@@ -152,6 +151,21 @@ const InformationInput: React.FC<Props> = (props) => {
         isPrivate: true
       }]
     setEditableTypes(fetchedEditableTypes)
+  }, [])
+
+  const handleImportStorePackage = useCallback(() => {
+    if (!storePackageJSON) return
+    if (!confirm('チケットストア設定データをインポートします。\nよろしいですか？')) return
+    const storePackage = JSON.parse(storePackageJSON) as SockbaseStoreDocument
+    setStoreId(storePackage.id)
+    fetchStore(storePackage)
+    setStorePackageJSON('')
+    setOpenPackageInputArea(false)
+  }, [storePackageJSON])
+
+  const handleTogglePackageInputArea = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    event.preventDefault()
+    setOpenPackageInputArea(s => !s)
   }, [])
 
   useEffect(() => {
@@ -251,8 +265,8 @@ const InformationInput: React.FC<Props> = (props) => {
       <h2>STEP1: チケットストア情報</h2>
 
       <h3>インポート</h3>
-      <details>
-        <summary>チケットストア設定データ入力欄</summary>
+      <details open={openPackageInputArea}>
+        <summary onClick={handleTogglePackageInputArea}>チケットストア設定データ入力欄</summary>
         <FormSection>
           <FormItem>
             <FormLabel>チケットストア設定データ</FormLabel>
@@ -507,6 +521,17 @@ const InformationInput: React.FC<Props> = (props) => {
             value={d}
             onChange={e => handleEditDescription(i, e.target.value)}/>
         </FormItem>)}
+      </FormSection>
+
+      <h3>制限設定</h3>
+      <FormSection>
+        <FormItem>
+          <FormCheckbox
+            name="canUseBankTransfer"
+            label="参加費の銀行振込を許可する"
+            checked={store.permissions.canUseBankTransfer}
+            onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } })) }/>
+        </FormItem>
       </FormSection>
 
       <FormSection>

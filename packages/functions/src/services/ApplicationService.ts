@@ -62,6 +62,8 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     throw new https.HttpsError('deadline-exceeded', 'application_out_of_term')
   } else if (!event.permissions.allowAdult && payload.app.circle.hasAdult) {
     throw new https.HttpsError('invalid-argument', 'invalid_argument_adult')
+  } else if (!event.permissions.canUseBankTransfer && payload.app.paymentMethod === 'bankTransfer') {
+    throw new https.HttpsError('invalid-argument', 'invalid_argument_bankTransfer')
   }
 
   const appDoc: SockbaseApplicationDocument = {
@@ -71,6 +73,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
       ...payload.app.circle,
       hasAdult: event.permissions.allowAdult && payload.app.circle.hasAdult
     },
+    paymentMethod: (!event.permissions.canUseBankTransfer && 'online') || payload.app.paymentMethod,
     userId,
     createdAt: now,
     updatedAt: null,
