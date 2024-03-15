@@ -20,6 +20,7 @@ interface IUseApplication {
   getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
   submitApplicationAsync: (payload: sockbase.SockbaseApplicationPayload) => Promise<sockbase.SockbaseApplicationAddedResult>
+  deleteApplicationAsync: (appId: string) => Promise<void>
   uploadCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
   getApplicationMetaByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationMeta>
   updateApplicationStatusByIdAsync: (appId: string, status: sockbase.SockbaseApplicationStatus) => Promise<void>
@@ -171,12 +172,43 @@ const useApplication = (): IUseApplication => {
   ): Promise<sockbase.SockbaseApplicationAddedResult> => {
     const functions = getFunctions()
     const createApplicationFunction = FirebaseFunctions.httpsCallable<
-    sockbase.SockbaseApplicationPayload,
-    sockbase.SockbaseApplicationAddedResult
+      sockbase.SockbaseApplicationPayload,
+      sockbase.SockbaseApplicationAddedResult
     >(functions, 'application-createApplication')
 
     const appResult = await createApplicationFunction(payload)
     return appResult.data
+  }
+
+  const deleteApplicationAsync = async (appId: string): Promise<void> => {
+    const appHash = await getApplicationIdByHashedIdAsync(appId)
+      .catch(err => { throw err })
+
+    const db = getFirestore()
+    const appOverviewRef = FirestoreDB.doc(db, `_applicationOverviews/${appHash.applicationId}`)
+    const appLinksRef = FirestoreDB.doc(db, `_applicationLinks/${appHash.applicationId}`)
+    const appMetaRef = FirestoreDB.doc(db, `_applications/${appHash.applicationId}/private/meta`)
+    const appRef = FirestoreDB.doc(db, `_applications/${appHash.applicationId}`)
+    const appHashRef = FirestoreDB.doc(db, `_applicationHashIds/${appHash.hashId}`)
+    const paymentRef = (appHash.paymentId && FirestoreDB.doc(db, `_payments/${appHash.paymentId}`)) || null
+
+    await FirestoreDB.runTransaction(db, async (transaction) => {
+      transaction.delete(appOverviewRef)
+      transaction.delete(appLinksRef)
+      transaction.delete(appMetaRef)
+      transaction.delete(appRef)
+      transaction.delete(appHashRef)
+
+      if (paymentRef) {
+        transaction.delete(paymentRef)
+      }
+    })
+      .catch(err => { throw err })
+
+    const storage = getStorage()
+    const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${appHash.hashId}`)
+    await FirebaseStorage.deleteObject(circleCutRef)
+      .catch(err => { throw err })
   }
 
   const uploadCircleCutFileAsync = async (
@@ -352,6 +384,7 @@ const useApplication = (): IUseApplication => {
     getApplicationsByUserIdWithIdAsync,
     getApplicationsByEventIdAsync,
     submitApplicationAsync,
+    deleteApplicationAsync,
     uploadCircleCutFileAsync,
     getApplicationMetaByIdAsync,
     updateApplicationStatusByIdAsync,
