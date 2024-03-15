@@ -1,6 +1,7 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 import FormButton from '../../../components/Form/Button'
+import FormCheckbox from '../../../components/Form/Checkbox'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import Alert from '../../../components/Parts/Alert'
@@ -16,6 +17,8 @@ interface Props {
   nextStep: () => void
 }
 const Step3: React.FC<Props> = (props) => {
+  const [checkedPayment, setCheckedPayment] = useState(false)
+
   const space = useMemo(() => {
     if (!props.app) return undefined
 
@@ -80,7 +83,10 @@ const Step3: React.FC<Props> = (props) => {
                 </p>
                 <FormSection>
                   <FormItem>
-                    <AnchorButton href={`${space.productInfo.paymentURL}?prefilled_email=${encodeURIComponent(props.email)}`} target="_blank">決済画面を開く</AnchorButton>
+                    <AnchorButton
+                      href={`${space.productInfo.paymentURL}?prefilled_email=${encodeURIComponent(props.email ?? '')}`}
+                      target="_blank"
+                      onClick={() => setCheckedPayment(true)}>決済画面を開く</AnchorButton>
                   </FormItem>
                 </FormSection>
               </>
@@ -133,15 +139,22 @@ const Step3: React.FC<Props> = (props) => {
                   </tbody>
                 </table>
                 <Alert>
-                  ※払込みにかかる手数料は、サークル様のご負担となります。<br />
+                  ※振込みにかかる手数料は、サークル様のご負担となります。
                 </Alert>
+                <FormSection>
+                  <FormCheckbox
+                    name="check-payment"
+                    label="振込情報を確認しました"
+                    checked={checkedPayment}
+                    onChange={checked => setCheckedPayment(checked)} />
+                </FormSection>
               </>}
           </>
         }
 
         <FormSection>
           <FormItem>
-            <FormButton color='default' onClick={() => props.nextStep()}>次へ進む</FormButton>
+            <FormButton color='default' onClick={() => props.nextStep()} disabled={!checkedPayment}>次へ進む</FormButton>
           </FormItem>
         </FormSection>
       </>
