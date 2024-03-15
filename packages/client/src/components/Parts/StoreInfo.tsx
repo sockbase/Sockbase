@@ -129,6 +129,16 @@ const StoreInfo: React.FC<Props> = (props) => {
           </tr>
         </tbody>
       </table>
+
+      <h3>制限設定</h3>
+      <table>
+        <tbody>
+          <tr>
+            <th>参加費の銀行振込を許可</th>
+            <td>{props.store?.permissions.canUseBankTransfer ? '許可する' : '許可しない'}</td>
+          </tr>
+        </tbody>
+      </table>
     </>
   )
 }

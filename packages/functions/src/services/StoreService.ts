@@ -33,6 +33,8 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     throw new functions.https.HttpsError('not-found', 'store')
   } else if (store.schedules.startApplication >= timestamp || timestamp > store.schedules.endApplication) {
     throw new functions.https.HttpsError('deadline-exceeded', 'store_out_of_term')
+  } else if (!store.permissions.canUseBankTransfer && ticket.paymentMethod === 'bankTransfer') {
+    throw new functions.https.HttpsError('invalid-argument', 'invalid_argument_bankTransfer')
   }
 
   await updateTicketUserDataAsync(storeId, userId)

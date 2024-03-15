@@ -201,6 +201,9 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
       types: storeDoc.types,
       schedules: storeDoc.schedules,
       _organization: storeDoc._organization,
+      permissions: {
+        ...storeDoc.permissions
+      },
       isPublic: storeDoc.isPublic
     }
   }
