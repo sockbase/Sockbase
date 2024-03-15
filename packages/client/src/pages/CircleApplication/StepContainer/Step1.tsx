@@ -326,7 +326,7 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      {props.pastApps && <>
+      {props.pastApps?.length && <>
         <h2>過去の申し込み情報を引用</h2>
         <FormSection>
           <FormItem>

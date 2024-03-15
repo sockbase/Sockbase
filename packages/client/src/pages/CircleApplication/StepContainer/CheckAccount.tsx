@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { type User } from 'firebase/auth'
 import dummyEyecatchImage from '../../../assets/dummy-eyecatch.jpg'
 import FormButton from '../../../components/Form/Button'
 import FormItem from '../../../components/Form/FormItem'
@@ -12,10 +12,14 @@ import LinkButton from '../../../components/Parts/LinkButton'
 import Loading from '../../../components/Parts/Loading'
 import useFirebaseError from '../../../hooks/useFirebaseError'
 import useValidate from '../../../hooks/useValidate'
+import type { User } from 'firebase/auth'
+import type { SockbaseApplicationDocument } from 'sockbase'
 
 interface Props {
   user: User | null | undefined
   eyecatchURL: string | null
+  eventId: string
+  pastApps: SockbaseApplicationDocument[] | undefined
   nextStep: () => void
   login: (email: string, password: string) => Promise<void>
   logout: () => void
@@ -49,6 +53,11 @@ const CheckAccount: React.FC<Props> = (props) => {
     ]
     return validators.filter(v => !v).length
   }, [email, password])
+
+  const applicatedApp = useMemo((): SockbaseApplicationDocument | undefined => {
+    if (!props.pastApps || !props.eventId) return
+    return props.pastApps.filter(a => a.eventId === props.eventId)[0]
+  }, [props.pastApps, props.eventId])
 
   return (
     <>
@@ -108,6 +117,10 @@ const CheckAccount: React.FC<Props> = (props) => {
           <p>
             現在、<b>{props.user?.email}</b> としてログインしています。<br />
           </p>
+          {applicatedApp && <Alert title="二重申し込みはできません" type="danger">
+            このイベントには申し込み済みです。<br />
+            申し込み情報は <Link to={`/dashboard/applications/${applicatedApp.hashId}`}>こちら</Link> からご確認いただけます。
+          </Alert>}
           <Alert>
             別のアカウントで申し込みを行うには、ログアウトしてください。
           </Alert>
@@ -118,11 +131,11 @@ const CheckAccount: React.FC<Props> = (props) => {
           </FormSection>
         </>}
 
-      <FormSection>
+      {!applicatedApp && <FormSection>
         <FormItem>
           <FormButton onClick={props.nextStep}>申し込み説明画面へ進む</FormButton>
         </FormItem>
-      </FormSection>
+      </FormSection>}
     </>
   )
 }
