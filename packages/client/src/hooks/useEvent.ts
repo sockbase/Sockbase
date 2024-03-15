@@ -20,6 +20,7 @@ interface IUseEvent {
   createSpacesAsync: (eventId: string, rawSpaces: RawEventSpace[]) => Promise<SockbaseSpaceDocument[]>
   assignSpacesAsync: (rawAssignSpaces: RawAssignEventSpace[]) => Promise<void>
   createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
+  uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
 }
 
 const useEvent = (): IUseEvent => {
@@ -179,6 +180,12 @@ const useEvent = (): IUseEvent => {
       .catch(err => { throw err })
   }
 
+  const uploadEventEyecatchAsync = async (eventId: string, eyecatchFile: File): Promise<void> => {
+    const storage = getStorage()
+    const eyecatchRef = FirebaseStorage.ref(storage, `events/${eventId}/eyecatch.jpg`)
+    await FirebaseStorage.uploadBytes(eyecatchRef, eyecatchFile)
+  }
+
   return {
     getEventByIdAsync,
     getEventsByOrganizationIdAsync,
@@ -188,7 +195,8 @@ const useEvent = (): IUseEvent => {
     getSpacesByEventIdAsync,
     createSpacesAsync,
     assignSpacesAsync,
-    createEventAsync
+    createEventAsync,
+    uploadEventEyecatchAsync
   }
 }
 
