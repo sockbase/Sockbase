@@ -23,6 +23,7 @@ export interface SockbaseEvent {
   }
   permissions: {
     allowAdult: boolean
+    canUseBankTransfer: boolean
   }
   isPublic: boolean
 }
@@ -73,6 +74,9 @@ export interface SockbaseStore {
   }
   _organization: SockbaseOrganization & {
     id: string
+  }
+  permissions: {
+    canUseBankTransfer: boolean
   }
   isPublic: boolean
 }

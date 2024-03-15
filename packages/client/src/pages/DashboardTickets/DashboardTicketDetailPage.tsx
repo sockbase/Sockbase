@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdWallet } from 'react-icons/md'
+import { Link, useParams } from 'react-router-dom'
 import {
   type SockbaseTicketMeta,
   type SockbaseAccount,
@@ -46,11 +46,12 @@ const DashboardTicketDetailPage: React.FC = () => {
     getTicketUsedStatusByIdAsync,
     assignTicketUserAsync,
     unassignTicketUserAsync,
-    updateTicketApplicationStatusAsync
+    updateTicketApplicationStatusAsync,
+    deleteTicketAsync
   } = useStore()
   const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
   const { getPaymentAsync } = usePayment()
-  const { checkIsAdminByOrganizationId } = useRole()
+  const { checkIsAdminByOrganizationId, isSystemAdmin } = useRole()
 
   const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument>()
   const [ticket, setTicket] = useState<SockbaseTicketDocument>()
@@ -60,14 +61,101 @@ const DashboardTicketDetailPage: React.FC = () => {
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus>()
-
   const [isAdmin, setAdmin] = useState<boolean | null>()
+  const [ticketDeleted, setTicketDeleted] = useState(false)
 
   const [openAssignPanel, setOpenAssignPanel] = useState(false)
   const [isProgressForAssignMe, setProgressForAssignMe] = useState(false)
   const [isProgressForUnassign, setProgressForUnassign] = useState(false)
 
-  const onInitialize = (): void => {
+  const type = useMemo(() => {
+    if (!store || !ticket) return
+    return store.types
+      .filter(t => t.id === ticket.typeId)[0]
+  }, [store, ticket])
+
+  const pageTitle = useMemo(() => {
+    if (!store || !type) return undefined
+    return `${store.storeName} (${type.name})`
+  }, [store, type])
+
+  const assignURL = useMemo(() =>
+    (ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}`) || '',
+  [ticketHash])
+
+  const handleAssignMe = useCallback(() => {
+    if (!ticket || !ticketHash) return
+    setProgressForAssignMe(true)
+
+    assignTicketUserAsync(ticket.userId, ticketHash.hashId)
+      .then(() => {
+        alert('割り当てに成功しました。')
+        setTicketUser(s => (s && { ...s, usableUserId: ticket.userId }))
+      })
+      .catch(err => {
+        alert('割り当て時にエラーが発生しました')
+        throw err
+      })
+      .finally(() => setProgressForAssignMe(false))
+  }, [ticket, ticketHash])
+
+  const handleUnassign = useCallback(() => {
+    if (!ticketHash) return
+    if (!confirm('チケットの割り当てを解除します。\nよろしいですか？')) return
+
+    setProgressForUnassign(true)
+
+    unassignTicketUserAsync(ticketHash.hashId)
+      .then(() => {
+        alert('割り当て解除に成功しました。')
+        setTicketUser(s => (s && { ...s, usableUserId: null }))
+      })
+      .catch(err => {
+        alert('割り当て解除に失敗しました')
+        throw err
+      })
+      .finally(() => setProgressForUnassign(false))
+  }, [ticketHash])
+
+  const handleChangeStatus = useCallback((status: SockbaseApplicationStatus) => {
+    if (!ticket?.id || !isAdmin) return
+    if (!confirm('ステータスを変更します。\nよろしいですか？')) return
+
+    updateTicketApplicationStatusAsync(ticket.id, status)
+      .then(() => {
+        alert('ステータスの変更に成功しました。')
+        setTicketMeta(s => (s && { ...s, applicationStatus: status }))
+      })
+      .catch(err => {
+        throw err
+      })
+  }, [ticket])
+
+  const handleDelete = useCallback(() => {
+    if (!hashedTicketId) return
+
+    const promptAppId = prompt(`この申し込みを削除するには ${hashedTicketId} と入力してください`)
+    if (promptAppId === null) {
+      return
+    } else if (promptAppId !== hashedTicketId) {
+      alert('入力が間違っています')
+      return
+    }
+
+    if (!confirm('※不可逆的操作です※\nこの申し込みを削除します。\nよろしいですか？')) return
+
+    deleteTicketAsync(hashedTicketId)
+      .then(() => {
+        setTicketDeleted(true)
+        alert('削除が完了しました')
+      })
+      .catch(err => {
+        alert('削除する際にエラーが発生しました')
+        throw err
+      })
+  }, [hashedTicketId])
+
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!hashedTicketId) return
 
@@ -82,10 +170,9 @@ const DashboardTicketDetailPage: React.FC = () => {
 
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onInitialize, [hashedTicketId])
+  }, [hashedTicketId])
 
-  const onFetchedTicketHash = (): void => {
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!ticketHash) return
       getTicketByIdAsync(ticketHash.ticketId)
@@ -108,10 +195,9 @@ const DashboardTicketDetailPage: React.FC = () => {
 
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onFetchedTicketHash, [ticketHash])
+  }, [ticketHash])
 
-  const onFetchedTicket = (): void => {
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!ticket?.id) return
 
@@ -130,71 +216,7 @@ const DashboardTicketDetailPage: React.FC = () => {
 
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onFetchedTicket, [ticket, checkIsAdminByOrganizationId])
-
-  const type = useMemo(() => {
-    if (!store || !ticket) return
-    return store.types
-      .filter(t => t.id === ticket.typeId)[0]
-  }, [store, ticket])
-
-  const pageTitle = useMemo(() => {
-    if (!store || !type) return undefined
-    return `${store.storeName} (${type.name})`
-  }, [store, type])
-
-  const assignURL = useMemo(() =>
-    (ticketHash && `${location.protocol}//${location.host}/assign-tickets?thi=${ticketHash.hashId}`) || '',
-  [ticketHash])
-
-  const handleAssignMe = (): void => {
-    if (!ticket || !ticketHash) return
-    setProgressForAssignMe(true)
-
-    assignTicketUserAsync(ticket.userId, ticketHash.hashId)
-      .then(() => {
-        alert('割り当てに成功しました。')
-        setTicketUser(s => (s && { ...s, usableUserId: ticket.userId }))
-      })
-      .catch(err => {
-        alert('割り当て時にエラーが発生しました')
-        throw err
-      })
-      .finally(() => setProgressForAssignMe(false))
-  }
-
-  const handleUnassign = (): void => {
-    if (!ticketHash) return
-    if (!confirm('チケットの割り当てを解除します。\nよろしいですか？')) return
-
-    setProgressForUnassign(true)
-
-    unassignTicketUserAsync(ticketHash.hashId)
-      .then(() => {
-        alert('割り当て解除に成功しました。')
-        setTicketUser(s => (s && { ...s, usableUserId: null }))
-      })
-      .catch(err => {
-        alert('割り当て解除に失敗しました')
-        throw err
-      })
-      .finally(() => setProgressForUnassign(false))
-  }
-
-  const handleChangeStatus = (status: SockbaseApplicationStatus): void => {
-    if (!ticket?.id || !isAdmin) return
-    if (!confirm('ステータスを変更します。\nよろしいですか？')) return
-
-    updateTicketApplicationStatusAsync(ticket.id, status)
-      .then(() => {
-        alert('ステータスの変更に成功しました。')
-        setTicketMeta(s => (s && { ...s, applicationStatus: status }))
-      })
-      .catch(err => {
-        throw err
-      })
-  }
+  }, [ticket, checkIsAdminByOrganizationId])
 
   return (
     <DashboardBaseLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
@@ -353,6 +375,15 @@ const DashboardTicketDetailPage: React.FC = () => {
                   color="danger"
                   onClick={() => handleChangeStatus(1)}>キャンセル状態にする</FormButton>
               </FormItem>}
+            </FormSection>
+          </>}
+
+          {isSystemAdmin && <>
+            <h2>システム管理操作</h2>
+            <FormSection>
+              <FormItem>
+                <FormButton color="danger" onClick={handleDelete} disabled={ticketDeleted}>申し込み削除</FormButton>
+              </FormItem>
             </FormSection>
           </>}
         </>

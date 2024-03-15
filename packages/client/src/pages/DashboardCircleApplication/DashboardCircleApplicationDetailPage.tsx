@@ -65,6 +65,22 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const [isAdmin, setAdmin] = useState<boolean | null>()
   const [applicationDeleted, setApplicationDeleted] = useState(false)
 
+  const title = useMemo(() => {
+    if (!event) return '申し込み情報を読み込み中'
+    return `${event.eventName} 申し込み情報`
+  }, [event])
+
+  const eventSpace = useMemo((): SockbaseEventSpace | undefined => {
+    if (!event || !app) return
+    return event.spaces.filter(s => s.id === app.spaceId)[0]
+  }, [event, app])
+
+  const genreName = useMemo(() => {
+    if (!event || !app) return ''
+    const genreInfo = event.genres.filter(g => g.id === app.circle.genre)[0]
+    return genreInfo.name
+  }, [event, app])
+
   const handleChangeStatus = useCallback((status: SockbaseApplicationStatus): void => {
     if (!appId || !isAdmin) return
     if (!confirm('ステータスを変更します。\nよろしいですか？')) return
@@ -164,22 +180,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
     fetch()
       .catch(err => { throw err })
   }, [app, checkIsAdminByOrganizationId])
-
-  const title = useMemo(() => {
-    if (!event) return '申し込み情報を読み込み中'
-    return `${event.eventName} 申し込み情報`
-  }, [event])
-
-  const eventSpace = useMemo((): SockbaseEventSpace | undefined => {
-    if (!event || !app) return
-    return event.spaces.filter(s => s.id === app.spaceId)[0]
-  }, [event, app])
-
-  const genreName = useMemo(() => {
-    if (!event || !app) return ''
-    const genreInfo = event.genres.filter(g => g.id === app.circle.genre)[0]
-    return genreInfo.name
-  }, [event, app])
 
   return (
     <DashboardBaseLayout title={title} requireSystemRole={0}>
