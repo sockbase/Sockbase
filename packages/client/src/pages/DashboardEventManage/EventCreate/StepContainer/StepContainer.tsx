@@ -6,7 +6,7 @@ import InformationImport from './InformationInput'
 import type { SockbaseEvent } from 'sockbase'
 
 const EventCreateStepContainer: React.FC = () => {
-  const { createEventAsync } = useEvent()
+  const { createEventAsync, uploadEventEyecatchAsync } = useEvent()
 
   const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
   const [step, setStep] = useState(0)
@@ -18,11 +18,15 @@ const EventCreateStepContainer: React.FC = () => {
 
   const handleCreateAsync = useCallback(async (): Promise<void> => {
     if (!eventId || !event) {
-      throw new Error('eventId or event is undefined')
+      throw new Error('event data is empty')
     }
     await createEventAsync(eventId, event)
       .catch(err => { throw err })
-  }, [eventId, event])
+
+    if (!eyecatchFile) return
+    await uploadEventEyecatchAsync(eventId, eyecatchFile)
+      .catch(err => { throw err })
+  }, [eventId, event, eyecatchFile])
 
   const handleInitialize = useCallback(() => {
     setStep(0)
