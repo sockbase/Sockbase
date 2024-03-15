@@ -63,14 +63,14 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
   const email = session.customer_details.email
   if (!email) {
     res.status(400).send({ error: 'EmailIsMissing', detail: 'email is missing' })
-    noticeMessage(orgId, paymentId, null, 'email is missing')
+    noticeMessage(orgId, paymentId, 'email is missing')
     return
   }
 
   const user = await getUser(email)
   if (!user) {
     res.status(404).send({ error: 'NotFound', detail: `user(${email}) is not found` })
-    noticeMessage(orgId, paymentId, null, `user(${email}) is not found`)
+    noticeMessage(orgId, paymentId, `user(${email}) is not found`)
     return
   }
 
@@ -81,7 +81,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
 
   const payment = await collectPayment(user.uid, Status.Pending, productItemIds)
   if (!payment) {
-    noticeMessage(orgId, paymentId, null, 'required payment is not found')
+    noticeMessage(orgId, paymentId, 'required payment is not found')
     res.status(404).send({ error: 'NotFound', detail: 'required payment is not found' })
     return
   }
@@ -94,7 +94,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
 
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(orgId, paymentId, payment, 'required product item is not found')
+        noticeMessage(orgId, paymentId, 'required product item is not found')
         return
       }
       break
@@ -103,7 +103,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     case HANDLEABLE_EVENTS.asyncPaymentSuccessed: {
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(orgId, paymentId, payment, 'required product item is not found')
+        noticeMessage(orgId, paymentId, 'required product item is not found')
         return
       }
       break
@@ -112,7 +112,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     case HANDLEABLE_EVENTS.asyncPaymentFailed: {
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.PaymentFailure, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(orgId, paymentId, payment, 'required product item is not found')
+        noticeMessage(orgId, paymentId, 'required product item is not found')
         return
       }
       break
@@ -124,7 +124,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     userId: user.uid,
     paymentId: payment.id
   })
-  noticeMessage(orgId, paymentId, payment, null)
+  noticeMessage(orgId, paymentId, null)
 }
 
 const getUser = async (email: string): Promise<UserRecord> => {
@@ -174,7 +174,7 @@ const updateStatus = async (
   return true
 }
 
-const noticeMessage = (orgId: string | null, stripePaymentId: string, payment: SockbasePaymentDocument | null, errorDetail: string | null): void => {
+const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetail: string | null): void => {
   const body = errorDetail
     ? {
       username: 'Sockbase: 決済エラー',
@@ -196,14 +196,7 @@ const noticeMessage = (orgId: string | null, stripePaymentId: string, payment: S
             {
               name: 'Stripe決済ID',
               value: stripePaymentId
-            },
-            ...((payment && [{
-              name: 'Sockbase決済ID',
-              value: payment.id
-            }, {
-              name: `${payment.applicationId ? 'イベント' : payment.ticketId ? 'チケットストア' : ''}ID`,
-              value: payment.applicationId || payment.ticketId || '-'
-            }]) || [])
+            }
           ]
         }
       ]
@@ -224,14 +217,7 @@ const noticeMessage = (orgId: string | null, stripePaymentId: string, payment: S
             {
               name: 'Stripe決済ID',
               value: stripePaymentId
-            },
-            ...((payment && [{
-              name: 'Sockbase決済ID',
-              value: payment.id
-            }, {
-              name: `${payment.applicationId ? 'イベント' : payment.ticketId ? 'チケットストア' : ''}ID`,
-              value: payment.applicationId || payment.ticketId || '-'
-            }]) || [])
+            }
           ]
         }
       ]
