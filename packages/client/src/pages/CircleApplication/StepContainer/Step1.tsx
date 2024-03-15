@@ -83,7 +83,8 @@ const Step1: React.FC<Props> = (props) => {
 
   const initialApp = useMemo(() => ({
     ...initialAppBase,
-    eventId: props.eventId
+    eventId: props.eventId,
+    paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || ''
   }), [props.eventId])
 
   const [app, setApp] = useState<SockbaseApplication>(initialApp)

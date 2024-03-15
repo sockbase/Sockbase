@@ -20,7 +20,7 @@ interface IUseApplication {
   getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
   submitApplicationAsync: (payload: sockbase.SockbaseApplicationPayload) => Promise<sockbase.SockbaseApplicationAddedResult>
-  deleteApplicationAsync: (appId: string) => Promise<void>
+  deleteApplicationAsync: (appHashId: string) => Promise<void>
   uploadCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
   getApplicationMetaByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationMeta>
   updateApplicationStatusByIdAsync: (appId: string, status: sockbase.SockbaseApplicationStatus) => Promise<void>
@@ -180,8 +180,8 @@ const useApplication = (): IUseApplication => {
     return appResult.data
   }
 
-  const deleteApplicationAsync = async (appId: string): Promise<void> => {
-    const appHash = await getApplicationIdByHashedIdAsync(appId)
+  const deleteApplicationAsync = async (appHashId: string): Promise<void> => {
+    const appHash = await getApplicationIdByHashedIdAsync(appHashId)
       .catch(err => { throw err })
 
     const db = getFirestore()

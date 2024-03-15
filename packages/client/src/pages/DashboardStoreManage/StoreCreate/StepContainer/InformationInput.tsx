@@ -37,6 +37,9 @@ const InformationInput: React.FC<Props> = (props) => {
       name: '',
       contactUrl: ''
     },
+    permissions: {
+      canUseBankTransfer: true
+    },
     isPublic: false
   })
 
@@ -125,6 +128,9 @@ const InformationInput: React.FC<Props> = (props) => {
       ...st,
       descriptions: (st.descriptions.length && st.descriptions) || [''],
       rules: (st.rules.length && st.rules) || [''],
+      permissions: {
+        canUseBankTransfer: !!st.permissions.canUseBankTransfer
+      },
       isPublic: !!st.isPublic
     }
     setStore(fetchedStore)
@@ -507,6 +513,17 @@ const InformationInput: React.FC<Props> = (props) => {
             value={d}
             onChange={e => handleEditDescription(i, e.target.value)}/>
         </FormItem>)}
+      </FormSection>
+
+      <h3>制限設定</h3>
+      <FormSection>
+        <FormItem>
+          <FormCheckbox
+            name="canUseBankTransfer"
+            label="参加費の銀行振込を許可する"
+            checked={store.permissions.canUseBankTransfer}
+            onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } })) }/>
+        </FormItem>
       </FormSection>
 
       <FormSection>
