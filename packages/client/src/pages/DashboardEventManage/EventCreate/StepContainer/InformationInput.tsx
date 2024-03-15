@@ -54,7 +54,8 @@ const InformationImport: React.FC<Props> = (props) => {
       contactUrl: ''
     },
     permissions: {
-      allowAdult: false
+      allowAdult: false,
+      canUseBankTransfer: true
     },
     isPublic: false
   })
@@ -148,6 +149,10 @@ const InformationImport: React.FC<Props> = (props) => {
         id: '',
         name: ''
       }],
+      permissions: {
+        allowAdult: !!ev.permissions.allowAdult,
+        canUseBankTransfer: !!ev.permissions.canUseBankTransfer
+      },
       isPublic: !!ev.isPublic
     }
     setEvent(fetchedEvent)
@@ -579,6 +584,11 @@ const InformationImport: React.FC<Props> = (props) => {
             label="成人向け頒布を許可する"
             checked={event.permissions.allowAdult}
             onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, allowAdult: checked } })) }/>
+          <FormCheckbox
+            name="canUseBankTransfer"
+            label="参加費の銀行振込を許可する"
+            checked={event.permissions.canUseBankTransfer}
+            onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } })) }/>
         </FormItem>
       </FormSection>
 

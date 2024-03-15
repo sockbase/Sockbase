@@ -23,6 +23,7 @@ export interface SockbaseEvent {
   }
   permissions: {
     allowAdult: boolean
+    canUseBankTransfer: boolean
   }
   isPublic: boolean
 }
