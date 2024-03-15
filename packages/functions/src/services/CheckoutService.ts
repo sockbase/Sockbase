@@ -10,7 +10,6 @@ import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { paymentConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '', { apiVersion: '2022-11-15' })
 const firebaseProjectId = process.env.FUNC_FIREBASE_PROJECT_ID ?? ''
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
@@ -32,6 +31,14 @@ enum Status {
 const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<void> => {
   const now = new Date()
   const event = req.body
+
+  const orgId = req.query.orgId?.toString()
+
+  const stripe = new Stripe(
+    orgId === 'npjpnet'
+      ? process.env.STRIPE_SECRET_KEY_NPJPNET ?? ''
+      : process.env.STRIPE_SECRET_KEY ?? '',
+    { apiVersion: '2022-11-15' })
 
   if (!Object.values(HANDLEABLE_EVENTS).includes(event.type)) {
     res.send({})
@@ -56,14 +63,14 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
   const email = session.customer_details.email
   if (!email) {
     res.status(400).send({ error: 'EmailIsMissing', detail: 'email is missing' })
-    noticeMessage(paymentId, 'email is missing')
+    noticeMessage(orgId, paymentId, 'email is missing')
     return
   }
 
   const user = await getUser(email)
   if (!user) {
     res.status(404).send({ error: 'NotFound', detail: `user(${email}) is not found` })
-    noticeMessage(paymentId, `user(${email}) is not found`)
+    noticeMessage(orgId, paymentId, `user(${email}) is not found`)
     return
   }
 
@@ -72,10 +79,10 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     .filter(p => p.price)
     .map(p => p.price?.id ?? '')
 
-  const payment = await collectPayments(user.uid, Status.Pending, productItemIds)
+  const payment = await collectPayment(user.uid, Status.Pending, productItemIds)
   if (!payment) {
+    noticeMessage(orgId, paymentId, 'required payment is not found')
     res.status(404).send({ error: 'NotFound', detail: 'required payment is not found' })
-    noticeMessage(paymentId, 'required payment is not found')
     return
   }
 
@@ -87,7 +94,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
 
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(paymentId, 'required product item is not found')
+        noticeMessage(orgId, paymentId, 'required product item is not found')
         return
       }
       break
@@ -96,7 +103,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     case HANDLEABLE_EVENTS.asyncPaymentSuccessed: {
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(paymentId, 'required product item is not found')
+        noticeMessage(orgId, paymentId, 'required product item is not found')
         return
       }
       break
@@ -105,7 +112,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     case HANDLEABLE_EVENTS.asyncPaymentFailed: {
       if (!await updateStatus(payment, lineItems.data, paymentId, Status.PaymentFailure, now)) {
         res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-        noticeMessage(paymentId, 'required product item is not found')
+        noticeMessage(orgId, paymentId, 'required product item is not found')
         return
       }
       break
@@ -117,7 +124,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     userId: user.uid,
     paymentId: payment.id
   })
-  noticeMessage(paymentId, null)
+  noticeMessage(orgId, paymentId, null)
 }
 
 const getUser = async (email: string): Promise<UserRecord> => {
@@ -125,7 +132,7 @@ const getUser = async (email: string): Promise<UserRecord> => {
   return user
 }
 
-const collectPayments =
+const collectPayment =
   async (userId: string, status: number, productItemIds: Array<string | undefined>): Promise<SockbasePaymentDocument | null> => {
     const paymentSnapshot = await firestore.collection('_payments')
       .withConverter(paymentConverter)
@@ -167,7 +174,7 @@ const updateStatus = async (
   return true
 }
 
-const noticeMessage = (paymentId: string, errorDetail: string | null): void => {
+const noticeMessage = (orgId: string | undefined, paymentId: string, errorDetail: string | null): void => {
   const body = errorDetail
     ? {
       username: 'Sockbase: 決済エラー',
@@ -216,7 +223,7 @@ const noticeMessage = (paymentId: string, errorDetail: string | null): void => {
       ]
     }
 
-  sendMessageToDiscord('system', body)
+  sendMessageToDiscord(orgId || 'system', body)
     .catch(err => { throw err })
 }
 
