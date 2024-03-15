@@ -126,9 +126,7 @@ const DashboardTicketDetailPage: React.FC = () => {
         alert('ステータスの変更に成功しました。')
         setTicketMeta(s => (s && { ...s, applicationStatus: status }))
       })
-      .catch(err => {
-        throw err
-      })
+      .catch(err => { throw err })
   }, [ticket, isAdmin])
 
   const handleDelete = useCallback(() => {
