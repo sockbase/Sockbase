@@ -85,7 +85,10 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const handleDelete = useCallback(() => {
     if (!hashedAppId) return
 
-    if (prompt(`この申し込みを削除するには ${hashedAppId} と入力してください`) !== hashedAppId) {
+    const promptAppId = prompt(`この申し込みを削除するには ${hashedAppId} と入力してください`)
+    if (promptAppId === null) {
+      return
+    } else if (promptAppId !== hashedAppId) {
       alert('入力が間違っています')
       return
     }

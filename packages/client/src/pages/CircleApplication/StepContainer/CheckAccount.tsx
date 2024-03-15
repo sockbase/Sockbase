@@ -56,7 +56,7 @@ const CheckAccount: React.FC<Props> = (props) => {
 
   const applicatedApp = useMemo((): SockbaseApplicationDocument | undefined => {
     if (!props.pastApps || !props.eventId) return
-    return props.pastApps.filter(a => a.eventId === props.eventId)[0]
+    return (props.pastApps.filter(a => a.eventId === props.eventId)[0]) || null
   }, [props.pastApps, props.eventId])
 
   return (
