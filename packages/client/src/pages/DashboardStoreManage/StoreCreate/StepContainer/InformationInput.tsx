@@ -54,14 +54,7 @@ const InformationInput: React.FC<Props> = (props) => {
     isPrivate: true
   }])
 
-  const handleImportStorePackage = useCallback(() => {
-    if (!storePackageJSON) return
-    if (!confirm('チケットストア設定データをインポートします。\nよろしいですか？')) return
-    const storePackage = JSON.parse(storePackageJSON) as SockbaseStoreDocument
-    setStoreId(storePackage.id)
-    fetchStore(storePackage)
-    setStorePackageJSON('')
-  }, [storePackageJSON])
+  const [openPackageInputArea, setOpenPackageInputArea] = useState(false)
 
   const handleEditDescription = useCallback((index: number, description: string) => {
     const newDescriptions = [...store.descriptions]
@@ -158,6 +151,21 @@ const InformationInput: React.FC<Props> = (props) => {
         isPrivate: true
       }]
     setEditableTypes(fetchedEditableTypes)
+  }, [])
+
+  const handleImportStorePackage = useCallback(() => {
+    if (!storePackageJSON) return
+    if (!confirm('チケットストア設定データをインポートします。\nよろしいですか？')) return
+    const storePackage = JSON.parse(storePackageJSON) as SockbaseStoreDocument
+    setStoreId(storePackage.id)
+    fetchStore(storePackage)
+    setStorePackageJSON('')
+    setOpenPackageInputArea(false)
+  }, [storePackageJSON])
+
+  const handleTogglePackageInputArea = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    event.preventDefault()
+    setOpenPackageInputArea(s => !s)
   }, [])
 
   useEffect(() => {
@@ -257,8 +265,8 @@ const InformationInput: React.FC<Props> = (props) => {
       <h2>STEP1: チケットストア情報</h2>
 
       <h3>インポート</h3>
-      <details>
-        <summary>チケットストア設定データ入力欄</summary>
+      <details open={openPackageInputArea}>
+        <summary onClick={handleTogglePackageInputArea}>チケットストア設定データ入力欄</summary>
         <FormSection>
           <FormItem>
             <FormLabel>チケットストア設定データ</FormLabel>
