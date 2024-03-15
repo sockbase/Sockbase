@@ -129,7 +129,7 @@ const DashboardTicketDetailPage: React.FC = () => {
       .catch(err => {
         throw err
       })
-  }, [ticket])
+  }, [ticket, isAdmin])
 
   const handleDelete = useCallback(() => {
     if (!hashedTicketId) return
