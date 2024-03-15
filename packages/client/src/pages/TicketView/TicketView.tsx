@@ -209,7 +209,7 @@ const Footer = styled.footer`
 
   padding: 10px;
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
-  background-color: var(--shadow-color);
+  background-color: var(--background-gray-color);
   text-align: right;
   border-radius: 0 0 5px 5px;
 
