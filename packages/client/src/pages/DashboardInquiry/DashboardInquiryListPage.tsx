@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { MdInbox } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 import { type SockbaseInquiryDocument, type SockbaseInquiryMetaDocument } from 'sockbase'
 import FormCheckbox from '../../components/Form/Checkbox'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
 import InquiryStatusLabel from '../../components/Parts/StatusLabel/InquiryStatusLabel'
 import useDayjs from '../../hooks/useDayjs'
@@ -59,7 +60,14 @@ const DashboardInquiryListPage: React.FC = () => {
 
   return (
     <DashboardBaseLayout title="問い合わせ一覧" requireSystemRole={2}>
-      <PageTitle icon={<MdInbox />} title='問い合わせ一覧' description='問い合わせ情報を表示中' />
+      <Breadcrumbs>
+        <li><Link to="/dashboard">マイページ</Link></li>
+      </Breadcrumbs>
+
+      <PageTitle
+        icon={<MdInbox />}
+        title='問い合わせ一覧'
+        description='問い合わせ情報を表示中' />
 
       {(!filteredInquiries || !inquiryMetas) && <Loading text='問い合わせ一覧' />}
 
