@@ -41,6 +41,7 @@ service firebase.storage {
       allow read: if true;
       allow write: if getApplicationHashById(appHashId).userId == request.auth.uid
         || isOrganizationAdmin(request.auth.uid, getApplicationHashById(appHashId).organizationId);
+      allow delete: if isSystemAdmin(request.auth.uid);
     }
 
     // match /{allPaths=**} {
