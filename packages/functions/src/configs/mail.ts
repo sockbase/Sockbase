@@ -31,6 +31,7 @@ const templates = {
       'お申し込みいただいた内容は以下の通りです。',
       '',
       '[サークル情報]',
+      `申し込みID: ${app.hashId}`,
       `サークル名: ${app.circle.name}`,
       `サークル名(よみ): ${app.circle.yomi}`,
       `ペンネーム: ${app.circle.penName}`,

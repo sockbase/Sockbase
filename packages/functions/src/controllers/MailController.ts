@@ -1,5 +1,5 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import { type Change, type EventContext, firestore } from 'firebase-functions'
+import { type Change, firestore } from 'firebase-functions'
 import {
   type SockbaseApplicationDocument,
   type SockbaseInquiryDocument,
@@ -11,9 +11,15 @@ import MailService from '../services/MailService'
 
 export const acceptApplication = firestore
   .document('/_applications/{applicationId}')
-  .onCreate(async (snapshot: QueryDocumentSnapshot) => {
-    const app = snapshot.data() as SockbaseApplicationDocument
-    await MailService.sendMailAcceptCircleApplicationAsync(app)
+  .onUpdate(async (change: Change<QueryDocumentSnapshot>) => {
+    if (!change.before.exists || !change.after.exists) return
+
+    const beforeApp = change.before.data() as SockbaseApplicationDocument
+    const afterApp = change.after.data() as SockbaseApplicationDocument
+
+    if (beforeApp.hashId || beforeApp.hashId === afterApp.hashId) return
+
+    await MailService.sendMailAcceptCircleApplicationAsync(afterApp)
   })
 
 export const acceptTicket = firestore
@@ -25,7 +31,7 @@ export const acceptTicket = firestore
 
 export const onUpdateApplication = firestore
   .document('/_applications/{applicationId}')
-  .onUpdate(async (change: Change<QueryDocumentSnapshot>, context: EventContext<{ applicationId: string }>) => {
+  .onUpdate(async (change: Change<QueryDocumentSnapshot>) => {
     if (!change.after.exists) return
 
     const beforeApp = change.before.data() as SockbaseApplicationDocument
@@ -39,14 +45,14 @@ export const onUpdateApplication = firestore
 
 export const requestPayment = firestore
   .document('/_payments/{paymentId}')
-  .onCreate(async (snapshot: QueryDocumentSnapshot, context: EventContext<{ paymentId: string }>) => {
+  .onCreate(async (snapshot: QueryDocumentSnapshot) => {
     const payment = snapshot.data() as SockbasePaymentDocument
     await MailService.sendMailRequestPaymentAsync(payment)
   })
 
 export const acceptPayment = firestore
   .document('/_payments/{paymentId}')
-  .onUpdate(async (change: Change<QueryDocumentSnapshot>, context: EventContext<{ paymentId: string }>) => {
+  .onUpdate(async (change: Change<QueryDocumentSnapshot>) => {
     if (!change.after) return
 
     const payment = change.after.data() as SockbasePaymentDocument

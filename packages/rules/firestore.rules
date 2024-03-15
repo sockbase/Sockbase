@@ -45,6 +45,7 @@ service cloud.firestore {
     
     match /stores/{storeId} {
       allow read: if resource.data.isPublic
+        || request.time.toMillis() >= resource.data.schedules.startApplication
         || isOrganizationStaff(request.auth.uid, resource.data._organization.id);
       allow write: if isSystemAdmin(request.auth.uid);
 
@@ -56,6 +57,7 @@ service cloud.firestore {
     
   	match /events/{eventId} {
     	allow read: if resource.data.isPublic
+        || request.time.toMillis() >= resource.data.schedules.startApplication
         || isOrganizationStaff(request.auth.uid, resource.data._organization.id);
       allow write: if isSystemAdmin(request.auth.uid);
 
@@ -70,8 +72,9 @@ service cloud.firestore {
     }
 
     match /_applicationHashIds/{hashId} {
-      allow write: if isOrganizationAdmin(request.auth.uid, resource.data.organizationId);
       allow read: if request.auth != null;
+      allow write: if isOrganizationAdmin(request.auth.uid, resource.data.organizationId);
+      allow delete: if isSystemAdmin(request.auth.uid);
     }
     
     match /_applications/{applicationId} {
@@ -97,15 +100,15 @@ service cloud.firestore {
       
       allow read: if request.auth.uid == resource.data.userId
         || isOrganizationAdmin(request.auth.uid, getEvent(resource.data.eventId)._organization.id);
-      allow write: if request.auth != null && request.auth.uid == resource.data.userId
-        && isValidApplication(request.resource.data);
-      allow create: if request.auth != null
-        && isValidApplication(request.resource.data);
+      // allow create: if request.auth != null && isValidApplication(request.resource.data);
+      // allow update: if request.auth != null && request.auth.uid == resource.data.userId && isValidApplication(request.resource.data);
+      allow delete: if isSystemAdmin(request.auth.uid);
 
       match /private/meta {
         allow read: if getApplication(applicationId).userId == request.auth.uid
           || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
         allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
+        allow delete: if isSystemAdmin(request.auth.uid);
       }
     }
 
@@ -115,8 +118,8 @@ service cloud.firestore {
         
       allow create: if request.auth.uid == request.resource.data.userId
         && getApplication(applicationId) != null;
-
-      allow write: if request.auth.uid == resource.data.userId;
+      allow update: if request.auth.uid == resource.data.userId;
+      allow delete: if isSystemAdmin(request.auth.uid);
     }
 
     match /_applicationOverviews/{applicationId} {
@@ -125,9 +128,9 @@ service cloud.firestore {
 
       allow create: if request.auth.uid == request.resource.data.userId
         && getApplication(applicationId) != null;
-
-      allow write: if request.auth.uid == resource.data.userId
+      allow update: if request.auth.uid == resource.data.userId
         && request.time.toMillis() < getEvent(getApplication(applicationId).eventId).schedules.fixedApplication;
+      allow delete: if isSystemAdmin(request.auth.uid);
     }
 
     match /spaces/{spaceId} {

@@ -114,6 +114,8 @@ const StepContainer: React.FC<Props> = (props) => {
           login={async (email, password) => {
             await loginByEmail(email, password)
           }}
+          eventId={props.eventId}
+          pastApps={props.pastApps}
           logout={() => logout()}
           nextStep={() => setStep(1)} />,
         <Introduction key="introduction"

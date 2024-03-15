@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { MdEdit } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import sockbaseShared from 'shared'
@@ -42,12 +42,13 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
     getCircleCutURLByHashedIdAsync,
     updateApplicationStatusByIdAsync,
     getLinksByApplicationIdOptionalAsync,
-    getOverviewByApplicationIdOptionalAsync
+    getOverviewByApplicationIdOptionalAsync,
+    deleteApplicationAsync
   } = useApplication()
   const { getPaymentIdByHashId, getPaymentAsync } = usePayment()
   const { getEventByIdAsync, getSpaceOptionalAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
-  const { checkIsAdminByOrganizationId } = useRole()
+  const { checkIsAdminByOrganizationId, isSystemAdmin } = useRole()
   const { formatByDate } = useDayjs()
 
   const { hashedAppId } = useParams()
@@ -62,8 +63,50 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const [space, setSpace] = useState<SockbaseSpaceDocument | null>()
   const [circleCutURL, setCircleCutURL] = useState<string>()
   const [isAdmin, setAdmin] = useState<boolean | null>()
+  const [applicationDeleted, setApplicationDeleted] = useState(false)
 
-  const onInitialize = (): void => {
+  const handleChangeStatus = useCallback((status: SockbaseApplicationStatus): void => {
+    if (!appId || !isAdmin) return
+    if (!confirm('ステータスを変更します。\nよろしいですか？')) return
+
+    updateApplicationStatusByIdAsync(appId, status)
+      .then(() => {
+        alert('ステータスの変更に成功しました。')
+        setApp(s => {
+          if (!s) return
+          return { ...s, meta: { ...s.meta, applicationStatus: status } }
+        })
+      })
+      .catch(err => {
+        throw err
+      })
+  }, [appId, isAdmin])
+
+  const handleDelete = useCallback(() => {
+    if (!hashedAppId) return
+
+    const promptAppId = prompt(`この申し込みを削除するには ${hashedAppId} と入力してください`)
+    if (promptAppId === null) {
+      return
+    } else if (promptAppId !== hashedAppId) {
+      alert('入力が間違っています')
+      return
+    }
+
+    if (!confirm('※不可逆的操作です※\nこの申し込みを削除します。\nよろしいですか？')) return
+
+    deleteApplicationAsync(hashedAppId)
+      .then(() => {
+        setApplicationDeleted(true)
+        alert('削除が完了しました')
+      })
+      .catch(err => {
+        alert('削除する際にエラーが発生しました')
+        throw err
+      })
+  }, [hashedAppId])
+
+  useEffect(() => {
     const fetchApplicationAsync: () => Promise<void> =
       async () => {
         if (!hashedAppId) return
@@ -102,10 +145,9 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
       .catch(err => {
         throw err
       })
-  }
-  useEffect(onInitialize, [hashedAppId])
+  }, [hashedAppId])
 
-  const onFetchedApp = (): void => {
+  useEffect(() => {
     const fetch = async (): Promise<void> => {
       if (!app) return
 
@@ -121,25 +163,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
     }
     fetch()
       .catch(err => { throw err })
-  }
-  useEffect(onFetchedApp, [app, checkIsAdminByOrganizationId])
-
-  const handleChangeStatus = (status: SockbaseApplicationStatus): void => {
-    if (!appId || !isAdmin) return
-    if (!confirm('ステータスを変更します。\nよろしいですか？')) return
-
-    updateApplicationStatusByIdAsync(appId, status)
-      .then(() => {
-        alert('ステータスの変更に成功しました。')
-        setApp(s => {
-          if (!s) return
-          return { ...s, meta: { ...s.meta, applicationStatus: status } }
-        })
-      })
-      .catch(err => {
-        throw err
-      })
-  }
+  }, [app, checkIsAdminByOrganizationId])
 
   const title = useMemo(() => {
     if (!event) return '申し込み情報を読み込み中'
@@ -420,6 +444,15 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
                 color="danger"
                 onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.canceled)}>キャンセル状態にする</FormButton>
             </FormItem>}
+        </FormSection>
+      </>}
+
+      {isSystemAdmin && <>
+        <h2>システム管理操作</h2>
+        <FormSection>
+          <FormItem>
+            <FormButton color="danger" onClick={handleDelete} disabled={applicationDeleted}>申し込み削除</FormButton>
+          </FormItem>
         </FormSection>
       </>}
     </DashboardBaseLayout>
