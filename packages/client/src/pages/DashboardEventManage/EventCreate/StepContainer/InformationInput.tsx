@@ -76,6 +76,8 @@ const InformationImport: React.FC<Props> = (props) => {
   const [eyecatchFile, setEyecatchFile] = useState<File>()
   const [eyecatchData, setEyecatchData] = useState<string>()
 
+  const [openPackageInputArea, setOpenPackageInputArea] = useState(false)
+
   const handleEditDescription = useCallback((index: number, description: string) => {
     const newDescriptions = [...event.descriptions]
     newDescriptions[index] = description
@@ -185,7 +187,13 @@ const InformationImport: React.FC<Props> = (props) => {
     setEventId(eventPackage.id)
     fetchEvent(eventPackage)
     setEventPackageJSON('')
+    setOpenPackageInputArea(false)
   }, [eventPackageJSON])
+
+  const handleTogglePackageInputArea = useCallback((event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    event.preventDefault()
+    setOpenPackageInputArea(s => !s)
+  }, [])
 
   useEffect(() => {
     if (!eyecatchFile) return
@@ -314,8 +322,8 @@ const InformationImport: React.FC<Props> = (props) => {
       <h2>STEP1: イベント情報入力</h2>
 
       <h3>インポート</h3>
-      <details>
-        <summary>イベント設定データ入力欄</summary>
+      <details open={openPackageInputArea}>
+        <summary onClick={handleTogglePackageInputArea}>イベント設定データ入力欄</summary>
         <FormSection>
           <FormItem>
             <FormLabel>イベント設定データ</FormLabel>
