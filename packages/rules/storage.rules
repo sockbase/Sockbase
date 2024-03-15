@@ -34,7 +34,7 @@ service firebase.storage {
 
     match /events/{eventId}/{allPaths=**} {
       allow read: if true;
-      allow write: if false;
+      allow write: if isSystemAdmin(request.auth.uid);
     }
 
     match /circleCuts/{appHashId} {
