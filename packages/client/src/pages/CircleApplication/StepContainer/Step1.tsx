@@ -129,7 +129,8 @@ const Step1: React.FC<Props> = (props) => {
       eventId: props.eventId,
       spaceId: '',
       unionCircleId: '',
-      petitCode: ''
+      petitCode: '',
+      paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || ''
     })
 
     const pastLinks = props.pastAppLinks[pastApp.id]
@@ -142,9 +143,12 @@ const Step1: React.FC<Props> = (props) => {
 
   const [error, setError] = useState<string | undefined>()
 
-  const onInitialize = (): void => {
+  useEffect(() => {
     if (props.app) {
-      setApp(props.app)
+      setApp({
+        ...props.app,
+        paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || ''
+      })
     }
 
     if (props.links) {
@@ -164,162 +168,108 @@ const Step1: React.FC<Props> = (props) => {
       setSpaceIds(props.event.spaces.map(i => i.id))
     }
 
-    setPaymentMethodIds(sockbaseShared.constants.payment.methods.map(i => i.id))
-  }
-  useEffect(onInitialize, [props.app, props.links, props.leaderUserData, props.circleCutFile, props.event])
+    setPaymentMethodIds(
+      sockbaseShared.constants.payment.methods
+        .filter(i => i.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
+        .map(i => i.id))
+  }, [props.app, props.links, props.leaderUserData, props.circleCutFile, props.event])
 
-  const onChangeCircleCutFile: () => void =
-    () => {
-      if (!circleCutFile) return
-      openCircleCut(circleCutFile)
-    }
-  useEffect(onChangeCircleCutFile, [circleCutFile])
+  useEffect(() => {
+    if (!circleCutFile) return
+    openCircleCut(circleCutFile)
+  }, [circleCutFile])
 
   const [selectedSpace, setSelectedSpace] = useState<SockbaseEventSpace | undefined>()
-  const onChangeSpaceSelect: () => void =
-    () => setSelectedSpace(props.event.spaces.filter(i => i.id === app.spaceId)[0])
-  useEffect(onChangeSpaceSelect, [app.spaceId])
+  useEffect(() => setSelectedSpace(props.event.spaces.filter(i => i.id === app.spaceId)[0]), [app.spaceId])
 
-  const onChangeForm: () => void =
-    () => {
-      if (!spaceIds || !paymentMethodIds) return
+  useEffect(() => {
+    if (!spaceIds || !paymentMethodIds) return
 
-      const validators = [
-        validator.isIn(app.spaceId, spaceIds),
-        !validator.isNull(circleCutFile),
-        !!circleCutData && !validator.isEmpty(circleCutData),
-        !validator.isEmpty(app.circle.name),
-        validator.isOnlyHiragana(app.circle.yomi),
-        !validator.isEmpty(app.circle.penName),
-        validator.isOnlyHiragana(app.circle.penNameYomi),
-        !props.event.permissions.allowAdult || !validator.isNull(app.circle.hasAdult),
-        validator.isIn(app.circle.genre, props.event.genres.map(g => g.id)),
-        !validator.isEmpty(app.overview.description),
-        !validator.isEmpty(app.overview.totalAmount),
-        validator.isIn(app.paymentMethod, paymentMethodIds),
-        (!app.unionCircleId || validator.isApplicationHashId(app.unionCircleId)),
-        !links.twitterScreenName || validator.isTwitterScreenName(links.twitterScreenName),
-        !links.pixivUserId || validator.isOnlyNumber(links.pixivUserId),
-        !links.websiteURL || validator.isURL(links.websiteURL),
-        !links.menuURL || validator.isURL(links.menuURL)
+    const validators = [
+      validator.isIn(app.spaceId, spaceIds),
+      !validator.isNull(circleCutFile),
+      !!circleCutData && !validator.isEmpty(circleCutData),
+      !validator.isEmpty(app.circle.name),
+      validator.isOnlyHiragana(app.circle.yomi),
+      !validator.isEmpty(app.circle.penName),
+      validator.isOnlyHiragana(app.circle.penNameYomi),
+      !props.event.permissions.allowAdult || !validator.isNull(app.circle.hasAdult),
+      validator.isIn(app.circle.genre, props.event.genres.map(g => g.id)),
+      !validator.isEmpty(app.overview.description),
+      !validator.isEmpty(app.overview.totalAmount),
+      props.event.permissions.canUseBankTransfer || app.paymentMethod === 'online',
+      validator.isIn(app.paymentMethod, paymentMethodIds),
+      (!app.unionCircleId || validator.isApplicationHashId(app.unionCircleId)),
+      !links.twitterScreenName || validator.isTwitterScreenName(links.twitterScreenName),
+      !links.pixivUserId || validator.isOnlyNumber(links.pixivUserId),
+      !links.websiteURL || validator.isURL(links.websiteURL),
+      !links.menuURL || validator.isURL(links.menuURL)
+    ]
+    const invalidCount = validators
+      .filter(i => !i)
+      .length
+    const hasValidationError = validators
+      .reduce((p, c) => p.add(c), new Set<boolean>())
+      .has(false)
+
+    if (!props.isLoggedIn) {
+      const accountValidators = [
+        !validator.isEmpty(leaderUserData.name),
+        // validator.isDate(leaderUserData.birthday),
+        validator.isPostalCode(leaderUserData.postalCode),
+        validator.isEmail(leaderUserData.email),
+        validator.isStrongPassword(leaderUserData.password),
+        !validator.isEmpty(leaderUserData.rePassword),
+        validator.equals(leaderUserData.password, leaderUserData.rePassword)
       ]
-      const invalidCount = validators
+      const accountInvalidFieldCount = accountValidators
         .filter(i => !i)
         .length
-      const hasValidationError = validators
+      const hasAccountValidationError = accountValidators
         .reduce((p, c) => p.add(c), new Set<boolean>())
         .has(false)
 
-      if (!props.isLoggedIn) {
-        const accountValidators = [
-          !validator.isEmpty(leaderUserData.name),
-          // validator.isDate(leaderUserData.birthday),
-          validator.isPostalCode(leaderUserData.postalCode),
-          validator.isEmail(leaderUserData.email),
-          validator.isStrongPassword(leaderUserData.password),
-          !validator.isEmpty(leaderUserData.rePassword),
-          validator.equals(leaderUserData.password, leaderUserData.rePassword)
-        ]
-        const accountInvalidFieldCount = accountValidators
-          .filter(i => !i)
-          .length
-        const hasAccountValidationError = accountValidators
-          .reduce((p, c) => p.add(c), new Set<boolean>())
-          .has(false)
-
-        setInvalidFieldCount(invalidCount + accountInvalidFieldCount)
-        setAllValid(!hasValidationError && !hasAccountValidationError)
-        return
-      }
-
-      setInvalidFieldCount(invalidCount)
-      setAllValid(!hasValidationError)
+      setInvalidFieldCount(invalidCount + accountInvalidFieldCount)
+      setAllValid(!hasValidationError && !hasAccountValidationError)
+      return
     }
-  useEffect(onChangeForm, [spaceIds, app, links, leaderUserData, circleCutFile, circleCutData, props.event])
 
-  const onChangeBirthday: () => void =
-    () => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
-  useEffect(onChangeBirthday, [displayBirthday])
+    setInvalidFieldCount(invalidCount)
+    setAllValid(!hasValidationError)
+  }, [spaceIds, app, links, leaderUserData, circleCutFile, circleCutData, props.event])
 
-  const onChangeCircleCutData: () => void =
-    () => {
-      if (!circleCutDataWithHook) return
-      setCircleCutData(circleCutDataWithHook)
+  useEffect(() => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() })), [displayBirthday])
+
+  useEffect(() => {
+    if (!circleCutDataWithHook) return
+    setCircleCutData(circleCutDataWithHook)
+  }, [circleCutDataWithHook])
+
+  const handleSubmit = useCallback(() => {
+    setError(undefined)
+    if (!isAllValid || !circleCutData || !circleCutFile) {
+      setError('入力内容に不備があります')
+      return
     }
-  useEffect(onChangeCircleCutData, [circleCutDataWithHook])
+    props.nextStep(app, links, leaderUserData, circleCutData, circleCutFile)
+  }, [app, links, leaderUserData, isAllValid, circleCutData, circleCutFile])
 
-  const setTestData: () => void =
-    () => {
-      setApp({
-        eventId: props.eventId,
-        spaceId: props.event.spaces[0].id,
-        circle: {
-          name: 'test',
-          yomi: 'てすと',
-          penName: 'nirsmmy',
-          penNameYomi: 'そめみやねいろ',
-          hasAdult: false,
-          genre: 'aiueo1'
-        },
-        overview: {
-          description: 'ここには頒布物概要が入ります',
-          totalAmount: '123冊'
-        },
-        unionCircleId: '',
-        petitCode: '',
-        paymentMethod: 'online',
-        remarks: '備考'
+  const handleFilledPostalCode = useCallback((postalCode: string) => {
+    const sanitizedPostalCode = postalCode.replaceAll('-', '')
+
+    if (sanitizedPostalCode.length !== 7) return
+    getAddressByPostalCode(sanitizedPostalCode)
+      .then(address => setLeaderUserData(s => ({
+        ...s,
+        address
+      })))
+      .catch(err => {
+        throw err
       })
-      setLeaderUserData({
-        name: '染宮ねいろ',
-        birthday: new Date('2000/01/01').getTime(),
-        postalCode: '1000001',
-        address: '住所',
-        telephone: '00012345678',
-        email: 'nirsmmy@gmail.com',
-        password: 'Password1234',
-        rePassword: 'Password1234'
-      })
-      setDisplayBirthday('2000/01/01')
-      setAgreed(true)
-    }
-
-  const handleSubmit: () => void =
-    () => {
-      setError(undefined)
-      if (!isAllValid || !circleCutData || !circleCutFile) {
-        setError('入力内容に不備があります')
-        return
-      }
-
-      props.nextStep(app, links, leaderUserData, circleCutData, circleCutFile)
-    }
-
-  const handleFilledPostalCode: (postalCode: string) => void =
-    (postalCode) => {
-      const sanitizedPostalCode = postalCode.replaceAll('-', '')
-
-      if (sanitizedPostalCode.length !== 7) return
-      getAddressByPostalCode(sanitizedPostalCode)
-        .then(address => setLeaderUserData(s => ({
-          ...s,
-          address
-        })))
-        .catch(err => {
-          throw err
-        })
-    }
+  }, [])
 
   return (
     <>
-      {import.meta.env.DEV &&
-        <FormSection>
-          <FormItem>
-            <FormButton onClick={setTestData} color="info">テストデータ入力(開発用)</FormButton>
-          </FormItem>
-        </FormSection>
-      }
-
       <FormSection>
         <FormItem>
           <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
@@ -701,10 +651,12 @@ const Step1: React.FC<Props> = (props) => {
             <FormItem>
               <FormRadio
                 name="paymentMethod"
-                values={sockbaseShared.constants.payment.methods.map(i => ({
-                  text: i.description,
-                  value: i.id
-                }))}
+                values={sockbaseShared.constants.payment.methods
+                  .filter(i => i.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
+                  .map(i => ({
+                    text: i.description,
+                    value: i.id
+                  }))}
                 value={app.paymentMethod}
                 onChange={paymentMethod => setApp(s => ({ ...s, paymentMethod }))} />
             </FormItem>
