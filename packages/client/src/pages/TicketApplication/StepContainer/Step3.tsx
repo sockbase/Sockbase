@@ -141,7 +141,7 @@ const Step3: React.FC<Props> = (props) => {
                 </tbody>
               </table>
               <Alert>
-                ※払込みにかかる手数料は、お客様負担となります。
+                ※振込みにかかる手数料は、お客様負担となります。
               </Alert>
               <FormSection>
                 <FormCheckbox
