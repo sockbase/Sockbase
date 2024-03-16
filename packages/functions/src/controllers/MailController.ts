@@ -24,9 +24,15 @@ export const acceptApplication = firestore
 
 export const acceptTicket = firestore
   .document('/_tickets/{ticketId}')
-  .onCreate(async (snapshot: QueryDocumentSnapshot) => {
-    const ticket = snapshot.data() as SockbaseTicketDocument
-    await MailService.sendMailAcceptTicketAsync(ticket)
+  .onUpdate(async (change: Change<QueryDocumentSnapshot>) => {
+    if (!change.before.exists || !change.after.exists) return
+
+    const beforeTicket = change.before.data() as SockbaseTicketDocument
+    const afterTicket = change.after.data() as SockbaseTicketDocument
+
+    if (beforeTicket.hashId || beforeTicket.hashId === afterTicket.hashId) return
+
+    await MailService.sendMailAcceptTicketAsync(afterTicket)
   })
 
 export const onUpdateApplication = firestore
