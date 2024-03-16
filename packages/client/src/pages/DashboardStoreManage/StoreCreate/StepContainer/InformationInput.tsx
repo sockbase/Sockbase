@@ -38,7 +38,8 @@ const InformationInput: React.FC<Props> = (props) => {
       contactUrl: ''
     },
     permissions: {
-      canUseBankTransfer: true
+      canUseBankTransfer: true,
+      ticketUserAutoAssign: true
     },
     isPublic: false
   })
@@ -122,7 +123,8 @@ const InformationInput: React.FC<Props> = (props) => {
       descriptions: (st.descriptions.length && st.descriptions) || [''],
       rules: (st.rules.length && st.rules) || [''],
       permissions: {
-        canUseBankTransfer: !!st.permissions.canUseBankTransfer
+        canUseBankTransfer: !!st.permissions.canUseBankTransfer,
+        ticketUserAutoAssign: !!st.permissions.ticketUserAutoAssign
       },
       isPublic: !!st.isPublic
     }
@@ -531,6 +533,11 @@ const InformationInput: React.FC<Props> = (props) => {
             label="参加費の銀行振込を許可する"
             checked={store.permissions.canUseBankTransfer}
             onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } })) }/>
+          <FormCheckbox
+            name="ticketUserAutoAssign"
+            label="チケット使用者を自動で割り当てる"
+            checked={store.permissions.ticketUserAutoAssign}
+            onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, ticketUserAutoAssign: checked } })) }/>
         </FormItem>
       </FormSection>
 
