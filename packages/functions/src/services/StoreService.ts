@@ -11,7 +11,7 @@ import {
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { storeConverter, ticketConverter, ticketUserConverter, userConverter } from '../libs/converters'
+import { storeConverter, ticketConverter, ticketUsedStatusConverter, ticketUserConverter, userConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import PaymentService from './PaymentService'
 
@@ -61,6 +61,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
 
   await firestore
     .doc(`/_tickets/${ticketId}/private/usedStatus`)
+    .withConverter(ticketUsedStatusConverter)
     .set({
       used: false,
       usedAt: null
@@ -101,7 +102,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
       userId,
       storeId,
       typeId: ticket.typeId,
-      usableUserId: null,
+      usableUserId: store.permissions.ticketUserAutoAssign ? userId : null,
       used: false,
       usedAt: null
     })

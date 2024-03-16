@@ -77,6 +77,7 @@ export interface SockbaseStore {
   }
   permissions: {
     canUseBankTransfer: boolean
+    ticketUserAutoAssign: boolean
   }
   isPublic: boolean
 }
