@@ -98,43 +98,27 @@ const Step3: React.FC<Props> = (props) => {
                 <Alert>
                   お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「{props.appResult.bankTransferCode}」を入力してください。
                 </Alert>
-
-                <h3>ゆうちょ銀行からお振込みの場合</h3>
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>加入者名</th>
-                      <td>ノートセンディング</td>
-                    </tr>
-                    <tr>
-                      <th>口座記号・口座番号</th>
-                      <td>10740-30814531</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <h3>ゆうちょ銀行以外からお振込みの場合</h3>
                 <table>
                   <tbody>
                     <tr>
                       <th>振込先銀行</th>
-                      <td>ゆうちょ銀行(金融機関コード9900)</td>
+                      <td>GMOあおぞらネット銀行(金融機関コード0310)</td>
                     </tr>
                     <tr>
                       <th>加入者名</th>
-                      <td>ノートセンディング</td>
+                      <td>サイグサトモタダ</td>
                     </tr>
                     <tr>
                       <th>預金種目</th>
                       <td>普通</td>
                     </tr>
                     <tr>
-                      <th>支店番号･支店名</th>
-                      <td>078(〇七八)</td>
+                      <th>支店名</th>
+                      <td>チャイム支店</td>
                     </tr>
                     <tr>
                       <th>口座番号</th>
-                      <td>3081453</td>
+                      <td>4598308</td>
                     </tr>
                   </tbody>
                 </table>
