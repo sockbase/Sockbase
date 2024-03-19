@@ -10,8 +10,6 @@ html, body {
 body {
   // background-image: url('/assets/bg-pattern.png');
   // background-position: center;
-  background-color: var(--background-body-color);
-  color: var(--text-color);
 }
 
 input, select, textarea {
