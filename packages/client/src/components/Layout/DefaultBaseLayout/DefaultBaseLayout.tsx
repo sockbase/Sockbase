@@ -32,6 +32,8 @@ const Layout = styled.section`
   height: 100%;
   /* grid-template-rows: auto 1fr auto; */
   grid-template-rows: 1fr auto;
+  background-color: var(--background-body-color);
+  color: var(--text-color);
 `
 const Container = styled.main`
   margin: 40px 25%;

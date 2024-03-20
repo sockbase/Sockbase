@@ -38,4 +38,6 @@ export default TicketBaseLayout
 const TicketBaseLayoutContainer = styled.main`
   height: 100vh;
   height: 100dvh;
+  background-color: var(--background-body-color);
+  color: var(--text-color);
 `
