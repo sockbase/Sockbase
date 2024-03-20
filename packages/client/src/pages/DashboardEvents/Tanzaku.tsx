@@ -1,13 +1,21 @@
+import { useMemo } from 'react'
 import styled from 'styled-components'
-import type { SockbaseApplicationDocument, SockbaseEventSpace } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEventDocument, SockbaseEventSpace } from 'sockbase'
 
 interface Props {
   app: SockbaseApplicationDocument
+  event: SockbaseEventDocument
+  userData: SockbaseAccount
   unionCircle: SockbaseApplicationDocument | null
   space: SockbaseEventSpace | null
   circleCutData: string | null
 }
 const Tanzaku: React.FC<Props> = (props) => {
+  const eventAge = useMemo(() => {
+    const span = props.event.schedules.startEvent - props.userData.birthday
+    return Math.floor(span / (365 * 24 * 60 * 60 * 1000))
+  }, [props.event, props.userData])
+
   return (
     <Container>
       <MetaArea>
@@ -59,8 +67,18 @@ const Tanzaku: React.FC<Props> = (props) => {
           <Header>総搬入量</Header>
           {props.app.overview.totalAmount}
         </TotalAmount>
+        <Age>
+          <>
+            <Header>開催時年齢</Header>
+            {eventAge}
+          </>
+        </Age>
+        <SpecialRemarks>
+          <Header>特殊処理メモ</Header>
+        </SpecialRemarks>
       </CircleArea>
       {props.app.circle.hasAdult && <AdultBar />}
+      {props.space?.isDualSpace && <DualSpaceBar />}
     </Container>
   )
 }
@@ -85,14 +103,23 @@ const Header = styled.div`
   display: inline-block;
   background-color: #000000;
   color: #ffffff;
+  margin-right: 4px;
 `
 const AdultBar = styled.div`
-  width: 20px;
+  width: 25px;
   height: 100%;
   position: absolute;
   top: 0;
   right: 0;
-  background-color: #00000080;
+  background-color: #00000020;
+`
+const DualSpaceBar = styled.div`
+  width: 100%;
+  height: 15px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #00000020;
 `
 const MetaArea = styled.div`
   display: grid;
@@ -172,14 +199,17 @@ const Remarks = styled.div`
 `
 const CircleArea = styled.div`
   display: grid;
-  grid-template-rows: auto auto 1fr 1fr;
+  grid-template-rows: auto auto 2fr 2fr 1fr;
+  grid-template-columns: 1fr 1fr;
   border-left: 1px dotted #000000;
 `
 const AppId = styled.div`
+  grid-column: 1 / 3;
   border-bottom: 1px dotted #000000;
 `
 
 const CircleMeta = styled.div`
+  grid-column: 1 / 3;
   border-bottom: 1px dotted #000000;
 `
 const CircleName = styled.div`
@@ -195,7 +225,19 @@ const PenName = styled.div`
   font-weight: bold;
 `
 const Overview = styled.div`
+  grid-column: 1 / 3;
   border-bottom: 1px dotted #000000;
+  overflow: hidden;
 `
 const TotalAmount = styled.div`
+  grid-column: 1 / 3;
+  border-bottom: 1px dotted #000000;
+  overflow: hidden;
+`
+const Age = styled.div`
+  grid-column: 1;
+  border-right: 1px dotted #000000;
+`
+const SpecialRemarks = styled.div`
+  grid-column: 2;
 `
