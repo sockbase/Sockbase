@@ -15,6 +15,7 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import useUserData from '../../hooks/useUserData'
+import Atamagami from './Atamagami'
 import Tanzaku from './Tanzaku'
 
 const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
@@ -33,18 +34,41 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
   const [circleCuts, setCircleCuts] = useState<Record<string, string | null>>()
   const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount>>()
 
+  const [printAtamagami, setPrintAtamagami] = useState(true)
+  const [printCircleTanzaku, setPrintCircleTanzaku] = useState(true)
+  const [printDummyTanzaku, setPrintDummyTanzaku] = useState(false)
   const [dummyCount, setDummyCount] = useState('0')
-  const [isDummyOnly, setDummyOnly] = useState(false)
+  const [dummyBaseCount, setDummyBaseCount] = useState('0')
 
   const dummyApps = useMemo(() => {
     if (!event) return []
 
     const results = []
     for (let i = 0; i < Number(dummyCount); i++) {
-      results.push(<Tanzaku isDummy={true} dummyNumber={i + 1} event={event} />)
+      results.push(<Tanzaku isDummy={true} dummyNumber={i + 1 + Number(dummyBaseCount)} event={event} />)
     }
     return results
-  }, [dummyCount])
+  }, [dummyCount, dummyBaseCount])
+
+  const activeCircles = useMemo(() => {
+    if (!apps || !appMetas) return []
+    return apps.filter(a => appMetas[a.id].applicationStatus === 2)
+  }, [apps, appMetas])
+
+  const circleCount = useMemo(() => activeCircles.length, [activeCircles])
+
+  const spaceCount = useMemo(() => {
+    if (!apps || !event) return 0
+    const dualSpaceIds = event.spaces
+      .filter(s => s.isDualSpace)
+      .map(s => s.id)
+    return activeCircles.length + activeCircles
+      .filter(a => dualSpaceIds.includes(a.spaceId)).length
+  }, [activeCircles])
+
+  const adultCount = useMemo(() => activeCircles.filter(a => a.circle.hasAdult).length, [activeCircles])
+
+  const unionCircleCount = useMemo(() => activeCircles.filter(a => a.unionCircleId).length, [activeCircles])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -119,23 +143,47 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
           description="配置短冊印刷"
           icon={<MdPrint />}
           isLoading={!event} />
+
         <FormSection>
           <FormItem>
-            <FormLabel>準備会スペースのみ印刷</FormLabel>
+            <FormLabel>印刷する短冊</FormLabel>
             <FormCheckbox
-              name="dummy-only"
-              label="準備会スペースのみ印刷"
-              checked={isDummyOnly}
-              onChange={checked => setDummyOnly(checked)} />
-          </FormItem>
-          <FormItem>
-            <FormLabel>事故スペース数</FormLabel>
-            <FormInput value={dummyCount} onChange={e => setDummyCount(e.target.value)} />
+              name="atamagami"
+              label="頭紙"
+              checked={printAtamagami}
+              onChange={checked => setPrintAtamagami(checked)} />
+            <FormCheckbox
+              name="circle"
+              label="配置短冊"
+              checked={printCircleTanzaku}
+              onChange={checked => setPrintCircleTanzaku(checked)} />
+            <FormCheckbox
+              name="dummy"
+              label="準備会スペース"
+              checked={printDummyTanzaku}
+              onChange={checked => setPrintDummyTanzaku(checked)} />
           </FormItem>
         </FormSection>
+        {printDummyTanzaku && <FormSection>
+          <FormItem>
+            <FormLabel>準備会スペース 印刷枚数</FormLabel>
+            <FormInput value={dummyCount} onChange={e => setDummyCount(e.target.value)} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>準備会スペース短冊 スペース数開始値</FormLabel>
+            <FormInput value={dummyBaseCount} onChange={e => setDummyBaseCount(e.target.value)} />
+          </FormItem>
+        </FormSection>}
       </ControlContainer>
+
       <TanzakuContainer>
-        {!isDummyOnly && apps && event && circleCuts && appMetas && userDatas && apps
+        {printAtamagami && event && <Atamagami
+          event={event}
+          circleCount={circleCount}
+          spaceCount={spaceCount}
+          adultCount={adultCount}
+          unionCircleCount={unionCircleCount} />}
+        {printCircleTanzaku && apps && event && circleCuts && appMetas && userDatas && apps
           .filter(a => appMetas[a.id].applicationStatus === 2)
           .map(a => a.hashId && <Tanzaku
             key={a.id}
@@ -145,7 +193,7 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
             userData={userDatas[a.userId]}
             unionCircle={getUnionCircle(a)}
             circleCutData={circleCuts[a.hashId]} />)}
-        {dummyApps}
+        {printDummyTanzaku && dummyApps}
       </TanzakuContainer>
     </DashboardPrintLayout>
   )
