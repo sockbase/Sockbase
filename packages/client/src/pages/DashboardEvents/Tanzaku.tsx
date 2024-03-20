@@ -236,7 +236,7 @@ const CircleName = styled.div`
 const PenName = styled.div`
   padding: 6px;
   padding-top: 9px;
-  font-size: 1.5em;
+  font-size: 1.25em;
   font-weight: bold;
 `
 const Genre = styled.div`
