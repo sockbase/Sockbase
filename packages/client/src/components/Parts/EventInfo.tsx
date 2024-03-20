@@ -117,6 +117,7 @@ const EventInfo: React.FC<Props> = (props) => {
             <th>参加費</th>
             <th>支払いURL</th>
             <th>商品ID</th>
+            <th>2スペース</th>
           </tr>
         </thead>
         <tbody>
@@ -128,6 +129,7 @@ const EventInfo: React.FC<Props> = (props) => {
               <td>{s.price.toLocaleString()}円</td>
               <td>{s.productInfo?.paymentURL}</td>
               <td>{s.productInfo?.productId}</td>
+              <td>{s.isDualSpace ? '2スペース' : '-'}</td>
             </tr>)
             : <tr>
               <td colSpan={6}>スペース情報が入力されていません</td>

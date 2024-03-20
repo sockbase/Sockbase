@@ -51,12 +51,18 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
     return event.spaces.filter(s => s.id === app.spaceId)[0]
   }, [event])
 
+  const getUnionCircle = useCallback((app: SockbaseApplicationDocument): SockbaseApplicationDocument | null => {
+    if (!apps) return null
+    return apps.filter(a => a.hashId === app.unionCircleId)[0]
+  }, [apps])
+
   return (
     <DashboardPrintLayout title="配置短冊印刷" requireCommonRole={2}>
       <TanzakuContainer>
         {circleCuts && apps?.map(a => a.hashId && <Tanzaku
           key={a.id}
           app={a}
+          unionCircle={getUnionCircle(a)}
           space={getSpace(a)}
           circleCutData={circleCuts[a.hashId]} />)}
       </TanzakuContainer>
