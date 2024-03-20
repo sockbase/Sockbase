@@ -166,11 +166,11 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
         </FormSection>
         {printDummyTanzaku && <FormSection>
           <FormItem>
-            <FormLabel>準備会スペース数</FormLabel>
+            <FormLabel>準備会スペース 印刷枚数</FormLabel>
             <FormInput value={dummyCount} onChange={e => setDummyCount(e.target.value)} />
           </FormItem>
           <FormItem>
-            <FormLabel>準備会スペース短冊 開始値</FormLabel>
+            <FormLabel>準備会スペース短冊 スペース数開始値</FormLabel>
             <FormInput value={dummyBaseCount} onChange={e => setDummyBaseCount(e.target.value)} />
           </FormItem>
         </FormSection>}
