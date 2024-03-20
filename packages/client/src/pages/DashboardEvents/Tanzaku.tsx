@@ -3,6 +3,7 @@ import type { SockbaseApplicationDocument, SockbaseEventSpace } from 'sockbase'
 
 interface Props {
   app: SockbaseApplicationDocument
+  unionCircle: SockbaseApplicationDocument | null
   space: SockbaseEventSpace | null
   circleCutData: string | null
 }
@@ -11,16 +12,16 @@ const Tanzaku: React.FC<Props> = (props) => {
     <Container>
       <MetaArea>
         <SpaceMeta>
-          <AdultIndicator>{props.app.circle.hasAdult && '成'}</AdultIndicator>
-          <DualSpaceIndicator>２</DualSpaceIndicator>
+          <AdultIndicator active={!!props.app.circle.hasAdult}>{props.app.circle.hasAdult && '成'}</AdultIndicator>
+          <DualSpaceIndicator active={!!props.space?.isDualSpace}>{props.space?.isDualSpace && '２'}</DualSpaceIndicator>
           <SpaceAssignName></SpaceAssignName>
         </SpaceMeta>
         <UnionCircleMeta>
-          <UnionCircleIndicator>合</UnionCircleIndicator>
-          <UnionCircleName>{props.app.unionCircleId}</UnionCircleName>
+          <UnionCircleIndicator active={!!props.app.unionCircleId}>{props.app.unionCircleId && '合'}</UnionCircleIndicator>
+          <UnionCircleName>{props.unionCircle?.circle.name}</UnionCircleName>
         </UnionCircleMeta>
         <PetitMeta>
-          <PetitIndicator>プ</PetitIndicator>
+          <PetitIndicator active={!!props.app.petitCode}>{props.app.petitCode && 'プ'}</PetitIndicator>
           <PetitCode>{props.app.petitCode}</PetitCode>
         </PetitMeta>
         <CircleCutMeta>
@@ -32,6 +33,10 @@ const Tanzaku: React.FC<Props> = (props) => {
         </Remarks>
       </MetaArea>
       <CircleArea>
+        <AppId>
+          <Header>申込みID</Header>
+          {props.app.hashId}
+        </AppId>
         <CircleMeta>
           <CircleName>
             <ruby>
@@ -54,27 +59,8 @@ const Tanzaku: React.FC<Props> = (props) => {
           <Header>総搬入量</Header>
           {props.app.overview.totalAmount}
         </TotalAmount>
-        <AppId>
-          <Header>申込みID</Header>
-          {props.app.hashId}
-        </AppId>
       </CircleArea>
-      {/* <AssignMeta>
-        {props.space?.name} / {props.app.circle.hasAdult ? '成' : 'ー'}
-      </AssignMeta>
-      <SpaceArea />
-      <CircleCutArea>
-        {props.circleCutData && <CircleCut src={props.circleCutData} />}
-      </CircleCutArea>
-      <CircleMeta>
-        {props.app.circle.name}
-        {props.app.circle.penName}
-      </CircleMeta>
-      {props.app.circle.genre}
-      {props.app.circle.hasAdult}
-      {props.app.overview.description}
-      {props.app.overview.totalAmount}
-      {props.app.remarks} */}
+      {props.app.circle.hasAdult && <AdultBar />}
     </Container>
   )
 }
@@ -92,11 +78,21 @@ const Container = styled.div`
   break-inside: avoid;
   overflow: hidden;
   line-height: 1em;
+
+  position: relative;
 `
 const Header = styled.div`
   display: inline-block;
   background-color: #000000;
   color: #ffffff;
+`
+const AdultBar = styled.div`
+  width: 20px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #00000080;
 `
 const MetaArea = styled.div`
   display: grid;
@@ -109,15 +105,19 @@ const SpaceMeta = styled.div`
   height: calc(2em + 4px);
   border-bottom: 1px dotted #000000;
 `
-const AdultIndicator = styled.div`
-  /* background-color: #000000;
-  color: #ffffff; */
+const AdultIndicator = styled.div<{ active: boolean }>`
+  ${props => props.active && `
+    background-color: #000000;
+    color: #ffffff;
+  `}
   padding: 2px;
   border-right: 1px dotted #000000;
 `
-const DualSpaceIndicator = styled.div`
-  /* background-color: #000000;
-  color: #ffffff; */
+const DualSpaceIndicator = styled.div<{ active: boolean }>`
+  ${props => props.active && `
+    background-color: #000000;
+    color: #ffffff;
+  `}
   padding: 2px;
   border-right: 1px dotted #000000;
 `
@@ -130,7 +130,11 @@ const UnionCircleMeta = styled.div`
   height: calc(1em + 4px);
   border-bottom: 1px dotted #000000;
 `
-const UnionCircleIndicator = styled.div`
+const UnionCircleIndicator = styled.div<{ active: boolean }>`
+  ${props => props.active && `
+    background-color: #000000;
+    color: #ffffff;
+  `}
   padding: 2px;
   border-right: 1px dotted #000000;
 `
@@ -143,7 +147,11 @@ const PetitMeta = styled.div`
   height: calc(1em + 4px);
   border-bottom: 1px dotted #000000;
 `
-const PetitIndicator = styled.div`
+const PetitIndicator = styled.div<{ active: boolean }>`
+  ${props => props.active && `
+    background-color: #000000;
+    color: #ffffff;
+  `}
   padding: 2px;
   border-right: 1px dotted #000000;
 `
@@ -163,9 +171,13 @@ const Remarks = styled.div`
 `
 const CircleArea = styled.div`
   display: grid;
-  grid-template-rows: auto 1fr 1fr auto;
+  grid-template-rows: auto auto 1fr 1fr;
   border-left: 1px dotted #000000;
 `
+const AppId = styled.div`
+  border-bottom: 1px dotted #000000;
+`
+
 const CircleMeta = styled.div`
   border-bottom: 1px dotted #000000;
 `
@@ -185,6 +197,4 @@ const Overview = styled.div`
   border-bottom: 1px dotted #000000;
 `
 const TotalAmount = styled.div`
-  border-bottom: 1px dotted #000000;
 `
-const AppId = styled.div``
