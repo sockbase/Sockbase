@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { MdPrint } from 'react-icons/md'
+import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { type SockbaseApplicationDocument, type SockbaseEventDocument, type SockbaseApplicationMeta, type SockbaseAccount } from 'sockbase'
 import FormCheckbox from '../../components/Form/Checkbox'
@@ -7,7 +8,10 @@ import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import FormInput from '../../components/Form/Input'
 import FormLabel from '../../components/Form/Label'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import DashboardPrintLayout from '../../components/Layout/DashboardPrintLayout/DashboardPrintLayout'
+import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import useUserData from '../../hooks/useUserData'
@@ -103,6 +107,18 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
   return (
     <DashboardPrintLayout title="配置短冊印刷" requireCommonRole={2}>
       <ControlContainer>
+        <Breadcrumbs>
+          <li><Link to="/dashboard">マイページ</Link></li>
+          <li><Link to="/dashboard/events">管理イベント</Link></li>
+          <li>{event?._organization.name ?? <BlinkField />}</li>
+          <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName ?? <BlinkField />}</Link></li>
+        </Breadcrumbs>
+
+        <PageTitle
+          title={event?.eventName}
+          description="配置短冊印刷"
+          icon={<MdPrint />}
+          isLoading={!event} />
         <FormSection>
           <FormItem>
             <FormLabel>準備会スペースのみ印刷</FormLabel>
