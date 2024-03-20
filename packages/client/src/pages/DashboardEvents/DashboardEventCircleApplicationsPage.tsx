@@ -151,6 +151,7 @@ const DashboardEventApplicationsPage: React.FC = () => {
       <FormSection>
         <FormItem inlined>
           <LinkButton to={`/dashboard/events/${eventId}/spaces`} color="default" inlined>配置管理</LinkButton>
+          <AnchorButton href={`/dashboard/events/${eventId}/tanzaku`} color="default" inlined target="_blank">配置短冊印刷</AnchorButton>
           <LinkButton to={`/dashboard/events/${eventId}/info`} color="default" inlined>メタ情報参照</LinkButton>
           <AnchorButton href={`/events/${eventId}`} color="default" inlined target="_blank">申し込みページを開く</AnchorButton>
         </FormItem>
