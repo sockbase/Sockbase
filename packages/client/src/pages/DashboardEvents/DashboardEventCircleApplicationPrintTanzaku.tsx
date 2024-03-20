@@ -67,8 +67,8 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
   }, [activeCircles])
 
   const adultCount = useMemo(() => activeCircles.filter(a => a.circle.hasAdult).length, [activeCircles])
-
   const unionCircleCount = useMemo(() => activeCircles.filter(a => a.unionCircleId).length, [activeCircles])
+  const petitCount = useMemo(() => activeCircles.filter(a => a.petitCode).length, [activeCircles])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -182,7 +182,8 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
           circleCount={circleCount}
           spaceCount={spaceCount}
           adultCount={adultCount}
-          unionCircleCount={unionCircleCount} />}
+          unionCircleCount={unionCircleCount}
+          petitCount={petitCount} />}
         {printCircleTanzaku && apps && event && circleCuts && appMetas && userDatas && apps
           .filter(a => appMetas[a.id].applicationStatus === 2)
           .map(a => a.hashId && <Tanzaku
