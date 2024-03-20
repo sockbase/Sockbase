@@ -93,6 +93,8 @@ const StyledLayout = styled.section`
   height: 100%;
   grid-template-rows: auto 1fr;
   overflow: hidden;
+  background-color: var(--background-body-color);
+  color: var(--text-color);
 `
 const StyledHeader = styled.header`
   padding: 10px;

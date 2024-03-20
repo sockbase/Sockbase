@@ -66,7 +66,8 @@ const InformationImport: React.FC<Props> = (props) => {
     description: '',
     price: '',
     productId: '',
-    paymentURL: ''
+    paymentURL: '',
+    isDualSpace: false
   }])
 
   const {
@@ -104,7 +105,8 @@ const InformationImport: React.FC<Props> = (props) => {
     description: string,
     price: string,
     paymentURL: string,
-    productId: string) => {
+    productId: string,
+    isDualSpace: boolean) => {
     const newSpaces = [...editableSpaces]
     newSpaces[index] = {
       id,
@@ -112,7 +114,8 @@ const InformationImport: React.FC<Props> = (props) => {
       description,
       price,
       productId,
-      paymentURL
+      paymentURL,
+      isDualSpace
     }
     setEditableSpaces(newSpaces)
   }, [editableSpaces])
@@ -135,7 +138,8 @@ const InformationImport: React.FC<Props> = (props) => {
           productInfo: (Number(s.price) > 0 && {
             paymentURL: s.paymentURL,
             productId: s.productId
-          }) || null
+          }) || null,
+          isDualSpace: s.isDualSpace
         }))
       },
       eyecatchFile,
@@ -167,7 +171,8 @@ const InformationImport: React.FC<Props> = (props) => {
           description: s.description,
           price: s.price.toString(),
           productId: s.productInfo?.productId ?? '',
-          paymentURL: s.productInfo?.paymentURL ?? ''
+          paymentURL: s.productInfo?.paymentURL ?? '',
+          isDualSpace: !!s.isDualSpace
         }))
       : [{
         id: '',
@@ -175,7 +180,8 @@ const InformationImport: React.FC<Props> = (props) => {
         description: '',
         price: '',
         productId: '',
-        paymentURL: ''
+        paymentURL: '',
+        isDualSpace: false
       }]
     setEditableSpaces(fetchedEditableSpaces)
   }, [])
@@ -290,14 +296,16 @@ const InformationImport: React.FC<Props> = (props) => {
       lastSpace.description ||
       lastSpace.price ||
       lastSpace.paymentURL ||
-      lastSpace.productId) {
+      lastSpace.productId ||
+      lastSpace.isDualSpace) {
       const newSpaces = [...editableSpaces, {
         id: '',
         name: '',
         description: '',
         price: '',
         paymentURL: '',
-        productId: ''
+        productId: '',
+        isDualSpace: false
       }]
       setEditableSpaces(newSpaces)
       return
@@ -309,7 +317,8 @@ const InformationImport: React.FC<Props> = (props) => {
       inputedSpace?.description ||
       inputedSpace?.price ||
       inputedSpace?.paymentURL ||
-      inputedSpace?.productId) return
+      inputedSpace?.productId ||
+      inputedSpace?.isDualSpace) return
 
     const trimedSpaces = editableSpaces.slice(undefined, -1)
     if (trimedSpaces.length < 1) return
@@ -496,7 +505,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.description,
                   s.price,
                   s.paymentURL,
-                  s.productId)}/>
+                  s.productId,
+                  s.isDualSpace)}/>
             </td>
             <td>
               <FormInput
@@ -508,7 +518,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.description,
                   s.price,
                   s.paymentURL,
-                  s.productId)}/>
+                  s.productId,
+                  s.isDualSpace)}/>
             </td>
             <td>
               <FormInput
@@ -520,7 +531,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   e.target.value,
                   s.price,
                   s.paymentURL,
-                  s.productId)}/>
+                  s.productId,
+                  s.isDualSpace)}/>
             </td>
             <td>
               <FormInput
@@ -532,7 +544,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.description,
                   e.target.value,
                   s.paymentURL,
-                  s.productId)}/>
+                  s.productId,
+                  s.isDualSpace)}/>
             </td>
             <td>
               <FormInput
@@ -544,7 +557,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.description,
                   s.price,
                   e.target.value,
-                  s.productId)}/>
+                  s.productId,
+                  s.isDualSpace)}/>
             </td>
             <td>
               <FormInput
@@ -556,7 +570,23 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.description,
                   s.price,
                   s.paymentURL,
-                  e.target.value)}/>
+                  e.target.value,
+                  s.isDualSpace)}/>
+            </td>
+            <td>
+              <FormCheckbox
+                name={`is-dualspace-${i}`}
+                label="2スペース"
+                checked={s.isDualSpace}
+                onChange={checked => handleEditSpace(
+                  i,
+                  s.id,
+                  s.name,
+                  s.description,
+                  s.price,
+                  s.paymentURL,
+                  s.productId,
+                  checked)}/>
             </td>
           </tr>))}
         </tbody>

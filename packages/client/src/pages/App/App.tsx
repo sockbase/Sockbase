@@ -21,6 +21,7 @@ import DashboardContactPage from '../DashboardContact/DashboardContactPage'
 import DashboardEventCreatePage from '../DashboardEventManage/EventCreate/DashboardEventCreatePage'
 import DashboardEventInfoPage from '../DashboardEventManage/EventInfo/DashboardEventInfoPage'
 import DashboardEventSpacesPage from '../DashboardEventSpaces/DashboardEventSpacesPage'
+import DashboardEventCircleApplicationPrintTanzakuPage from '../DashboardEvents/DashboardEventCircleApplicationPrintTanzaku'
 import DashboardEventApplicationsPage from '../DashboardEvents/DashboardEventCircleApplicationsPage'
 import DashboardEventListPage from '../DashboardEvents/DashboardEventListPage'
 import DashboardInquiryDetailPage from '../DashboardInquiry/DashboardInquiryDetailPage'
@@ -168,6 +169,10 @@ const router = createBrowserRouter([
                   {
                     path: 'info',
                     element: <DashboardEventInfoPage />
+                  },
+                  {
+                    path: 'tanzaku',
+                    element: <DashboardEventCircleApplicationPrintTanzakuPage />
                   }
                 ]
               }
