@@ -1,13 +1,12 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
-import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEventDocument, SockbaseEventSpace } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEventDocument, SockbaseEventGenre, SockbaseEventSpace } from 'sockbase'
 
 interface Props {
   app: SockbaseApplicationDocument
   event: SockbaseEventDocument
   userData: SockbaseAccount
   unionCircle: SockbaseApplicationDocument | null
-  space: SockbaseEventSpace | null
   circleCutData: string | null
 }
 const Tanzaku: React.FC<Props> = (props) => {
@@ -16,12 +15,20 @@ const Tanzaku: React.FC<Props> = (props) => {
     return Math.floor(span / (365 * 24 * 60 * 60 * 1000))
   }, [props.event, props.userData])
 
+  const space = useMemo((): SockbaseEventSpace => {
+    return props.event.spaces.filter(s => s.id === props.app.spaceId)[0]
+  }, [props.event, props.app])
+
+  const genre = useMemo((): SockbaseEventGenre => {
+    return props.event.genres.filter(g => g.id === props.app.circle.genre)[0]
+  }, [props.event, props.app])
+
   return (
     <Container>
       <MetaArea>
         <SpaceMeta>
           <AdultIndicator active={!!props.app.circle.hasAdult}>{props.app.circle.hasAdult && '成'}</AdultIndicator>
-          <DualSpaceIndicator active={!!props.space?.isDualSpace}>{props.space?.isDualSpace && '２'}</DualSpaceIndicator>
+          <DualSpaceIndicator active={!!space.isDualSpace}>{space.isDualSpace && '２'}</DualSpaceIndicator>
           <SpaceAssignName></SpaceAssignName>
         </SpaceMeta>
         <UnionCircleMeta>
@@ -59,6 +66,10 @@ const Tanzaku: React.FC<Props> = (props) => {
             </ruby>
           </PenName>
         </CircleMeta>
+        <Genre>
+          <Header>ジャンル</Header>
+          {genre.name}
+        </Genre>
         <Overview>
           <Header>頒布物概要</Header>
           {props.app.overview.description}
@@ -78,7 +89,7 @@ const Tanzaku: React.FC<Props> = (props) => {
         </SpecialRemarks>
       </CircleArea>
       {props.app.circle.hasAdult && <AdultBar />}
-      {props.space?.isDualSpace && <DualSpaceBar />}
+      {space?.isDualSpace && <DualSpaceBar />}
     </Container>
   )
 }
@@ -136,6 +147,7 @@ const AdultIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
     background-color: #000000;
     color: #ffffff;
+    font-weight: bold;
   `}
   padding: 2px;
   border-right: 1px dotted #000000;
@@ -144,6 +156,7 @@ const DualSpaceIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
     background-color: #000000;
     color: #ffffff;
+    font-weight: bold;
   `}
   padding: 2px;
   border-right: 1px dotted #000000;
@@ -161,6 +174,7 @@ const UnionCircleIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
     background-color: #000000;
     color: #ffffff;
+    font-weight: bold;
   `}
   padding: 2px;
   border-right: 1px dotted #000000;
@@ -178,6 +192,7 @@ const PetitIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
     background-color: #000000;
     color: #ffffff;
+    font-weight: bold;
   `}
   padding: 2px;
   border-right: 1px dotted #000000;
@@ -199,7 +214,7 @@ const Remarks = styled.div`
 `
 const CircleArea = styled.div`
   display: grid;
-  grid-template-rows: auto auto 2fr 2fr 1fr;
+  grid-template-rows: auto auto auto 2fr 2fr 1fr;
   grid-template-columns: 1fr 1fr;
   border-left: 1px dotted #000000;
 `
@@ -223,6 +238,11 @@ const PenName = styled.div`
   padding-top: 9px;
   font-size: 1.5em;
   font-weight: bold;
+`
+const Genre = styled.div`
+  grid-column: 1 / 3;
+  border-bottom: 1px dotted #000000;
+  overflow: hidden;
 `
 const Overview = styled.div`
   grid-column: 1 / 3;

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { type SockbaseEventSpace, type SockbaseApplicationDocument, type SockbaseEventDocument, type SockbaseApplicationMeta, type SockbaseAccount } from 'sockbase'
+import { type SockbaseApplicationDocument, type SockbaseEventDocument, type SockbaseApplicationMeta, type SockbaseAccount } from 'sockbase'
 import DashboardPrintLayout from '../../components/Layout/DashboardPrintLayout/DashboardPrintLayout'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
@@ -77,11 +77,6 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
       .catch(err => { throw err })
   }, [eventId])
 
-  const getSpace = useCallback((app: SockbaseApplicationDocument): SockbaseEventSpace | null => {
-    if (!event) return null
-    return event.spaces.filter(s => s.id === app.spaceId)[0]
-  }, [event])
-
   const getUnionCircle = useCallback((app: SockbaseApplicationDocument): SockbaseApplicationDocument | null => {
     if (!apps) return null
     return apps.filter(a => a.hashId === app.unionCircleId)[0]
@@ -98,7 +93,6 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
             app={a}
             userData={userDatas[a.userId]}
             unionCircle={getUnionCircle(a)}
-            space={getSpace(a)}
             circleCutData={circleCuts[a.hashId]} />)}
       </TanzakuContainer>
     </DashboardPrintLayout>
