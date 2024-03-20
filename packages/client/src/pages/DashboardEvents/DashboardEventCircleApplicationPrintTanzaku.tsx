@@ -1,8 +1,17 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MdPrint } from 'react-icons/md'
+import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import { type SockbaseApplicationDocument, type SockbaseEventDocument, type SockbaseApplicationMeta, type SockbaseAccount } from 'sockbase'
+import FormCheckbox from '../../components/Form/Checkbox'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import FormInput from '../../components/Form/Input'
+import FormLabel from '../../components/Form/Label'
+import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import DashboardPrintLayout from '../../components/Layout/DashboardPrintLayout/DashboardPrintLayout'
+import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import useUserData from '../../hooks/useUserData'
@@ -23,6 +32,19 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
   const [appMetas, setAppMetas] = useState<Record<string, SockbaseApplicationMeta>>()
   const [circleCuts, setCircleCuts] = useState<Record<string, string | null>>()
   const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount>>()
+
+  const [dummyCount, setDummyCount] = useState('0')
+  const [isDummyOnly, setDummyOnly] = useState(false)
+
+  const dummyApps = useMemo(() => {
+    if (!event) return []
+
+    const results = []
+    for (let i = 0; i < Number(dummyCount); i++) {
+      results.push(<Tanzaku isDummy={true} dummyNumber={i + 1} event={event} />)
+    }
+    return results
+  }, [dummyCount])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -84,16 +106,46 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
 
   return (
     <DashboardPrintLayout title="配置短冊印刷" requireCommonRole={2}>
+      <ControlContainer>
+        <Breadcrumbs>
+          <li><Link to="/dashboard">マイページ</Link></li>
+          <li><Link to="/dashboard/events">管理イベント</Link></li>
+          <li>{event?._organization.name ?? <BlinkField />}</li>
+          <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName ?? <BlinkField />}</Link></li>
+        </Breadcrumbs>
+
+        <PageTitle
+          title={event?.eventName}
+          description="配置短冊印刷"
+          icon={<MdPrint />}
+          isLoading={!event} />
+        <FormSection>
+          <FormItem>
+            <FormLabel>準備会スペースのみ印刷</FormLabel>
+            <FormCheckbox
+              name="dummy-only"
+              label="準備会スペースのみ印刷"
+              checked={isDummyOnly}
+              onChange={checked => setDummyOnly(checked)} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>事故スペース数</FormLabel>
+            <FormInput value={dummyCount} onChange={e => setDummyCount(e.target.value)} />
+          </FormItem>
+        </FormSection>
+      </ControlContainer>
       <TanzakuContainer>
-        {apps && event && circleCuts && appMetas && userDatas && apps
+        {isDummyOnly && apps && event && circleCuts && appMetas && userDatas && apps
           .filter(a => appMetas[a.id].applicationStatus === 2)
           .map(a => a.hashId && <Tanzaku
             key={a.id}
+            isDummy={false}
             event={event}
             app={a}
             userData={userDatas[a.userId]}
             unionCircle={getUnionCircle(a)}
             circleCutData={circleCuts[a.hashId]} />)}
+        {dummyApps}
       </TanzakuContainer>
     </DashboardPrintLayout>
   )
@@ -101,6 +153,14 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
 
 export default DashboardEventCircleApplicationPrintTanzaku
 
+const ControlContainer = styled.div`
+  padding: 20px;
+  background-color: var(--background-color);
+  margin-bottom: 20px;
+  @media print {
+    display: none;
+  }
+`
 const TanzakuContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;

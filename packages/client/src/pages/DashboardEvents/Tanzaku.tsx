@@ -3,92 +3,102 @@ import styled from 'styled-components'
 import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEventDocument, SockbaseEventGenre, SockbaseEventSpace } from 'sockbase'
 
 interface Props {
-  app: SockbaseApplicationDocument
+  isDummy: boolean
+  dummyNumber?: number
+  app?: SockbaseApplicationDocument
   event: SockbaseEventDocument
-  userData: SockbaseAccount
-  unionCircle: SockbaseApplicationDocument | null
-  circleCutData: string | null
+  userData?: SockbaseAccount
+  unionCircle?: SockbaseApplicationDocument | null
+  circleCutData?: string | null
 }
 const Tanzaku: React.FC<Props> = (props) => {
   const eventAge = useMemo(() => {
-    const span = props.event.schedules.startEvent - props.userData.birthday
+    const span = props.event.schedules.startEvent - (props.userData?.birthday ?? 0)
     return Math.floor(span / (365 * 24 * 60 * 60 * 1000))
   }, [props.event, props.userData])
 
-  const space = useMemo((): SockbaseEventSpace => {
-    return props.event.spaces.filter(s => s.id === props.app.spaceId)[0]
+  const space = useMemo((): SockbaseEventSpace | null => {
+    return props.event.spaces.filter(s => s.id === props.app?.spaceId)[0]
   }, [props.event, props.app])
 
-  const genre = useMemo((): SockbaseEventGenre => {
-    return props.event.genres.filter(g => g.id === props.app.circle.genre)[0]
+  const genre = useMemo((): SockbaseEventGenre | null => {
+    return props.event.genres.filter(g => g.id === props.app?.circle.genre)[0]
   }, [props.event, props.app])
 
   return (
     <Container>
       <MetaArea>
         <SpaceMeta>
-          <AdultIndicator active={!!props.app.circle.hasAdult}>{props.app.circle.hasAdult && '成'}</AdultIndicator>
-          <DualSpaceIndicator active={!!space.isDualSpace}>{space.isDualSpace && '２'}</DualSpaceIndicator>
+          <AdultIndicator active={!!props.app?.circle.hasAdult}>{props.app?.circle.hasAdult && '成'}</AdultIndicator>
+          <DualSpaceIndicator active={!!space?.isDualSpace}>{space?.isDualSpace && '２'}</DualSpaceIndicator>
           <SpaceAssignName></SpaceAssignName>
         </SpaceMeta>
         <UnionCircleMeta>
-          <UnionCircleIndicator active={!!props.app.unionCircleId}>{props.app.unionCircleId && '合'}</UnionCircleIndicator>
+          <UnionCircleIndicator active={!!props.app?.unionCircleId}>{props.app?.unionCircleId && '合'}</UnionCircleIndicator>
           <UnionCircleName>{props.unionCircle?.circle.name}</UnionCircleName>
         </UnionCircleMeta>
         <PetitMeta>
-          <PetitIndicator active={!!props.app.petitCode}>{props.app.petitCode && 'プ'}</PetitIndicator>
-          <PetitCode>{props.app.petitCode}</PetitCode>
+          <PetitIndicator active={!!props.app?.petitCode}>{props.app?.petitCode && 'プ'}</PetitIndicator>
+          <PetitCode>{props.app?.petitCode}</PetitCode>
         </PetitMeta>
         <CircleCutMeta>
           {props.circleCutData && <CircleCut src={props.circleCutData}/>}
         </CircleCutMeta>
         <Remarks>
           <Header>通信欄</Header>
-          {props.app.remarks}
+          {props.app?.remarks}
         </Remarks>
       </MetaArea>
       <CircleArea>
+        <EventName>
+          <Header>イベント</Header>
+          {props.event.eventName}
+        </EventName>
         <AppId>
           <Header>申込みID</Header>
-          {props.app.hashId}
+          {props.app?.hashId}
         </AppId>
         <CircleMeta>
           <CircleName>
-            <ruby>
-              {props.app.circle.name}
-              <rt>{props.app.circle.yomi}</rt>
-            </ruby>
+            {props.app && <ruby>
+              {props.app?.circle.name}
+              <rt>{props.app?.circle.yomi}</rt>
+            </ruby>}
+            {props.isDummy && <ruby>
+              準備会スペース #{props.dummyNumber}
+              <rt>じゅんびかいすぺーす</rt>
+            </ruby>}
           </CircleName>
           <PenName>
             <ruby>
-              {props.app.circle.penName}
-              <rt>{props.app.circle.penNameYomi}</rt>
+              {props.app?.circle.penName}
+              <rt>{props.app?.circle.penNameYomi}</rt>
             </ruby>
           </PenName>
         </CircleMeta>
         <Genre>
           <Header>ジャンル</Header>
-          {genre.name}
+          {genre?.name}
         </Genre>
         <Overview>
           <Header>頒布物概要</Header>
-          {props.app.overview.description}
+          {props.app?.overview.description}
         </Overview>
         <TotalAmount>
           <Header>総搬入量</Header>
-          {props.app.overview.totalAmount}
+          {props.app?.overview.totalAmount}
         </TotalAmount>
         <Age>
           <>
             <Header>開催時年齢</Header>
-            {eventAge}
+            {props.userData && eventAge}
           </>
         </Age>
         <SpecialRemarks>
           <Header>特殊処理メモ</Header>
         </SpecialRemarks>
       </CircleArea>
-      {props.app.circle.hasAdult && <AdultBar />}
+      {props.app?.circle.hasAdult && <AdultBar />}
       {space?.isDualSpace && <DualSpaceBar />}
     </Container>
   )
@@ -214,15 +224,18 @@ const Remarks = styled.div`
 `
 const CircleArea = styled.div`
   display: grid;
-  grid-template-rows: auto auto auto 2fr 2fr 1fr;
+  grid-template-rows: auto auto auto auto 2fr 2fr 1fr;
   grid-template-columns: 1fr 1fr;
   border-left: 1px dotted #000000;
+`
+const EventName = styled.div`
+  grid-column: 1 / 3;
+  border-bottom: 1px dotted #000000;
 `
 const AppId = styled.div`
   grid-column: 1 / 3;
   border-bottom: 1px dotted #000000;
 `
-
 const CircleMeta = styled.div`
   grid-column: 1 / 3;
   border-bottom: 1px dotted #000000;
