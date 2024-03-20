@@ -7,6 +7,7 @@ interface Props {
   spaceCount: number
   adultCount: number
   unionCircleCount: number
+  petitCount: number
 }
 const Atamagami: React.FC<Props> = (props) => {
   return (
@@ -34,6 +35,10 @@ const Atamagami: React.FC<Props> = (props) => {
           <Header>合体申込サークル</Header>
           {props.unionCircleCount}サークル
         </UnionCircleCount>
+        <PetitCount>
+          <Header>プチオンリー申込</Header>
+          {props.petitCount}サークル
+        </PetitCount>
         <Header>備考</Header>
       </EventMeta>
       <AssignMeta>
@@ -81,6 +86,9 @@ const AdultCount = styled.div`
   border-bottom: 1px dotted #000000;
 `
 const UnionCircleCount = styled.div`
+  border-bottom: 1px dotted #000000;
+`
+const PetitCount = styled.div`
   border-bottom: 1px dotted #000000;
 `
 const AssignMeta = styled.div`
