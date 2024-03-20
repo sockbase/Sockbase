@@ -1,20 +1,28 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
+import { type SockbaseEventSpace, type SockbaseApplicationDocument, type SockbaseEventDocument, type SockbaseApplicationMeta, type SockbaseAccount } from 'sockbase'
 import DashboardPrintLayout from '../../components/Layout/DashboardPrintLayout/DashboardPrintLayout'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
+import useUserData from '../../hooks/useUserData'
 import Tanzaku from './Tanzaku'
-import type { SockbaseEventSpace, SockbaseApplicationDocument, SockbaseEventDocument } from 'sockbase'
 
 const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>()
   const { getEventByIdAsync } = useEvent()
-  const { getApplicationsByEventIdAsync, getCircleCutURLByHashedIdAsync } = useApplication()
+  const {
+    getApplicationsByEventIdAsync,
+    getCircleCutURLByHashedIdAsync,
+    getApplicationMetaByIdAsync
+  } = useApplication()
+  const { getUserDataByUserIdAndEventIdAsync } = useUserData()
 
   const [event, setEvent] = useState<SockbaseEventDocument>()
   const [apps, setApps] = useState<SockbaseApplicationDocument[]>()
+  const [appMetas, setAppMetas] = useState<Record<string, SockbaseApplicationMeta>>()
   const [circleCuts, setCircleCuts] = useState<Record<string, string | null>>()
+  const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount>>()
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -29,7 +37,7 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
           .catch(err => { throw err }))
       setApps(fetchedApps)
 
-      const fetchedCircleCuts = await Promise.all(
+      Promise.all(
         fetchedApps.map(a => a.hashId)
           .filter(id => id)
           .map(id => id ?? '')
@@ -39,7 +47,30 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
           }))
       )
         .then(fetchedCircleCuts => fetchedCircleCuts.reduce<Record<string, string>>((p, c) => ({ ...p, [c.id]: c.data }), {}))
-      setCircleCuts(fetchedCircleCuts)
+        .then(fetchedCircleCuts => setCircleCuts(fetchedCircleCuts))
+        .catch(err => { throw err })
+
+      Promise.all(
+        fetchedApps.map(a => a.id)
+          .map(async id => ({
+            id,
+            data: await getApplicationMetaByIdAsync(id)
+          }))
+      )
+        .then(fetchedAppMetas => fetchedAppMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({ ...p, [c.id]: c.data }), {}))
+        .then(fetchedAppMetas => setAppMetas(fetchedAppMetas))
+        .catch(err => { throw err })
+
+      Promise.all(
+        fetchedApps.map(a => a.userId)
+          .map(async id => ({
+            id,
+            data: await getUserDataByUserIdAndEventIdAsync(id, eventId)
+          }))
+      )
+        .then(fetchedUserDatas => fetchedUserDatas.reduce<Record<string, SockbaseAccount>>((p, c) => ({ ...p, [c.id]: c.data }), {}))
+        .then(fetchedUserDatas => setUserDatas(fetchedUserDatas))
+        .catch(err => { throw err })
     }
 
     fetchAsync()
@@ -59,12 +90,16 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
   return (
     <DashboardPrintLayout title="配置短冊印刷" requireCommonRole={2}>
       <TanzakuContainer>
-        {circleCuts && apps?.map(a => a.hashId && <Tanzaku
-          key={a.id}
-          app={a}
-          unionCircle={getUnionCircle(a)}
-          space={getSpace(a)}
-          circleCutData={circleCuts[a.hashId]} />)}
+        {apps && event && circleCuts && appMetas && userDatas && apps
+          .filter(a => appMetas[a.id].applicationStatus === 2)
+          .map(a => a.hashId && <Tanzaku
+            key={a.id}
+            event={event}
+            app={a}
+            userData={userDatas[a.userId]}
+            unionCircle={getUnionCircle(a)}
+            space={getSpace(a)}
+            circleCutData={circleCuts[a.hashId]} />)}
       </TanzakuContainer>
     </DashboardPrintLayout>
   )
