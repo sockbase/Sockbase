@@ -135,7 +135,7 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
         </FormSection>
       </ControlContainer>
       <TanzakuContainer>
-        {isDummyOnly && apps && event && circleCuts && appMetas && userDatas && apps
+        {!isDummyOnly && apps && event && circleCuts && appMetas && userDatas && apps
           .filter(a => appMetas[a.id].applicationStatus === 2)
           .map(a => a.hashId && <Tanzaku
             key={a.id}
