@@ -42,7 +42,7 @@ export default DashboardPrintLayout
 const PrintContainer = styled.div`
   @page {
     size: A4 landscape;
-    margin: 10mm;
+    margin: 5mm;
     padding: 0;
   }
 `

@@ -165,7 +165,8 @@ const CircleCutMeta = styled.div`
   overflow: hidden;
 `
 const CircleCut = styled.img`
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
 `
 const Remarks = styled.div`
 `
