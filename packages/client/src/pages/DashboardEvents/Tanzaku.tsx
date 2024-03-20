@@ -117,7 +117,7 @@ const Header = styled.div`
   margin-right: 4px;
 `
 const AdultBar = styled.div`
-  width: 25px;
+  width: 15px;
   height: 100%;
   position: absolute;
   top: 0;
