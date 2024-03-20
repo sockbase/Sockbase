@@ -47,6 +47,7 @@ export interface SockbaseEventSpace {
     productId: string
     paymentURL: string
   } | null
+  isDualSpace: boolean
 }
 
 /**
