@@ -108,6 +108,11 @@ const DashboardTopPage: React.FC = () => {
             icon={<MdStore />}
             title="管理チケットストア"
             description="Sockbaseで管理しているチケットストアを表示します。" />
+          <TopCard
+            to="/dashboard/stream"
+            icon={<MdQrCodeScanner />}
+            title="ストリームターミナル"
+            description="QRコードの情報を読み取りストリームに出力します。" />
         </CardContainer>
       </>}
 

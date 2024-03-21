@@ -15,6 +15,10 @@ import {
   sendEmailVerification
 } from 'firebase/auth'
 import {
+  type Database,
+  getDatabase as getFirebaseDatabase
+} from 'firebase/database'
+import {
   type Firestore,
   getFirestore as getFirebaseFirestore
 } from 'firebase/firestore'
@@ -42,6 +46,7 @@ interface IUseFirebase {
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
   getFunctions: () => Functions
+  getDatabase: () => Database
 }
 
 const useFirebase = (): IUseFirebase => {
@@ -122,6 +127,8 @@ const useFirebase = (): IUseFirebase => {
     return getFirebaseFunctions(app)
   }
 
+  const getDatabase = (): Database => getFirebaseDatabase()
+
   const onAuthenticationUpdated = (): Unsubscribe => {
     const auth = getAuth()
     const unSubscribe = onIdTokenChanged(auth, (user) => {
@@ -164,7 +171,8 @@ const useFirebase = (): IUseFirebase => {
     sendVerifyMail,
     getFirestore,
     getStorage,
-    getFunctions
+    getFunctions,
+    getDatabase
   }
 }
 
