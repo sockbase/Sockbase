@@ -99,7 +99,7 @@ const Tanzaku: React.FC<Props> = (props) => {
           {props.userData && eventAge}
         </Age>
         <SpecialRemarks>
-          <Header>特殊処理メモ</Header>
+          <Header>メモ</Header>
         </SpecialRemarks>
       </CircleArea>
       {props.app?.circle.hasAdult && <AdultBar />}
