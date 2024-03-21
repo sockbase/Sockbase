@@ -133,6 +133,12 @@ const menu: MenuSection[] = [
         icon: <MdStore />,
         text: 'チケットストア管理',
         link: '/dashboard/stores'
+      },
+      {
+        key: 'streamTerminal',
+        icon: <MdQrCodeScanner />,
+        text: 'ストリームターミナル',
+        link: '/dashboard/stream'
       }
     ]
   },

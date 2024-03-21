@@ -35,6 +35,7 @@ import DashboardStoreInfoPage from '../DashboardStoreManage/StoreInfo/DashboardS
 import DashboardStoreDetailPage from '../DashboardStores/DashboardStoreDetailPage'
 import DashboardStoreListPage from '../DashboardStores/DashboardStoreListPage'
 import DashboardTicketCreatePage from '../DashboardStores/DashboardStoreTicketCreatePage'
+import DashboardStreamTerminalPage from '../DashboardStreamTerminalPage/DashboardStreamTerminalPage'
 import DashboardMyTicketDetailPage from '../DashboardTickets/DashboardMyTicketDetailPage'
 import DashboardMyTicketListPage from '../DashboardTickets/DashboardMyTicketListPage'
 import DashboardTicketDetailPage from '../DashboardTickets/DashboardTicketDetailPage'
@@ -292,6 +293,10 @@ const router = createBrowserRouter([
           {
             path: 'search',
             element: <DashboardSearchPage />
+          },
+          {
+            path: 'stream',
+            element: <DashboardStreamTerminalPage />
           }
         ]
       }
