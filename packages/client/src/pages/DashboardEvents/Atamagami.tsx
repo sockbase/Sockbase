@@ -42,7 +42,7 @@ const Atamagami: React.FC<Props> = (props) => {
         <Header>備考</Header>
       </EventMeta>
       <AssignMeta>
-        <Header>メモ</Header>
+        <Header>特殊対応履歴</Header>
       </AssignMeta>
     </Container>
   )
