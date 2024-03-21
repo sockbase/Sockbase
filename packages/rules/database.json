@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "_userMetas": {
+      "$userId": {
+        ".read": "auth.uid == $userId"
+      }
+    },
+    "users": {
+      "$userId": {
+        "streams": {
+          "$channelId": {
+            ".read": "auth.uid == $userId",
+            ".write": "auth.uid == $userId"
+          }
+        }
+      }
+    }
+  }
+}
