@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
+import ReactQRCode from 'react-qr-code'
 import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEventDocument, SockbaseEventGenre, SockbaseEventSpace } from 'sockbase'
 
 interface Props {
@@ -28,19 +29,24 @@ const Tanzaku: React.FC<Props> = (props) => {
   return (
     <Container>
       <MetaArea>
-        <SpaceMeta>
-          <AdultIndicator active={!!props.app?.circle.hasAdult}>{props.app?.circle.hasAdult && '成'}</AdultIndicator>
-          <DualSpaceIndicator active={!!space?.isDualSpace}>{space?.isDualSpace && '２'}</DualSpaceIndicator>
-          <SpaceAssignName></SpaceAssignName>
-        </SpaceMeta>
-        <UnionCircleMeta>
-          <UnionCircleIndicator active={!!props.app?.unionCircleId}>{props.app?.unionCircleId && '合'}</UnionCircleIndicator>
-          <UnionCircleName>{props.unionCircle?.circle.name}</UnionCircleName>
-        </UnionCircleMeta>
-        <PetitMeta>
-          <PetitIndicator active={!!props.app?.petitCode}>{props.app?.petitCode && 'プ'}</PetitIndicator>
-          <PetitCode>{props.app?.petitCode}</PetitCode>
-        </PetitMeta>
+        <AssignMetaArea>
+          <SpaceMeta>
+            <AdultIndicator active={!!props.app?.circle.hasAdult}>{props.app?.circle.hasAdult && '成'}</AdultIndicator>
+            <DualSpaceIndicator active={!!space?.isDualSpace}>{space?.isDualSpace && '２'}</DualSpaceIndicator>
+            <SpaceAssignName></SpaceAssignName>
+          </SpaceMeta>
+          <UnionCircleMeta>
+            <UnionCircleIndicator active={!!props.app?.unionCircleId}>{props.app?.unionCircleId && '合'}</UnionCircleIndicator>
+            <UnionCircleName>{props.unionCircle?.circle.name}</UnionCircleName>
+          </UnionCircleMeta>
+          <PetitMeta>
+            <PetitIndicator active={!!props.app?.petitCode}>{props.app?.petitCode && 'プ'}</PetitIndicator>
+            <PetitCode>{props.app?.petitCode}</PetitCode>
+          </PetitMeta>
+          <AppIdQRArea>
+            {props.app && <AppIdQR value={props.app.hashId ?? ''} size={64} />}
+          </AppIdQRArea>
+        </AssignMetaArea>
         <CircleCutMeta>
           {props.circleCutData && <CircleCut src={props.circleCutData}/>}
         </CircleCutMeta>
@@ -89,10 +95,8 @@ const Tanzaku: React.FC<Props> = (props) => {
           {props.app?.overview.totalAmount}
         </TotalAmount>
         <Age>
-          <>
-            <Header>開催時年齢</Header>
-            {props.userData && eventAge}
-          </>
+          <Header>開催時年齢</Header>
+          {props.userData && eventAge}
         </Age>
         <SpecialRemarks>
           <Header>特殊処理メモ</Header>
@@ -144,14 +148,22 @@ const DualSpaceBar = styled.div`
 `
 const MetaArea = styled.div`
   display: grid;
-  grid-template-rows: auto auto auto 1fr 20%;
+  grid-template-rows: auto 50% 25%;
   overflow: hidden;
 `
+const AssignMetaArea = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 64px;
+  grid-template-rows: 1fr auto auto;
+  border-bottom: 1px dotted #000000;
+`
 const SpaceMeta = styled.div`
+  grid-column: 1;
   display: grid;
   grid-template-columns: calc(1em + 4px) calc(1em + 4px) 1fr;
-  height: calc(2em + 4px);
+  /* height: calc(2em + 4px); */
   border-bottom: 1px dotted #000000;
+  border-right: 1px dotted #000000;
 `
 const AdultIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
@@ -175,10 +187,12 @@ const SpaceAssignName = styled.div`
   padding: 2px;
 `
 const UnionCircleMeta = styled.div`
+  grid-column: 1;
   display: grid;
   grid-template-columns: calc(1em + 4px) 1fr;
   height: calc(1em + 4px);
   border-bottom: 1px dotted #000000;
+  border-right: 1px dotted #000000;
 `
 const UnionCircleIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
@@ -193,10 +207,11 @@ const UnionCircleName = styled.div`
   padding: 2px;
 `
 const PetitMeta = styled.div`
+  grid-column: 1;
   display: grid;
   grid-template-columns: calc(1em + 4px) 1fr;
   height: calc(1em + 4px);
-  border-bottom: 1px dotted #000000;
+  border-right: 1px dotted #000000;
 `
 const PetitIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
@@ -222,22 +237,31 @@ const CircleCut = styled.img`
 `
 const Remarks = styled.div`
 `
+const AppIdQRArea = styled.div`
+  grid-column: 2;
+  grid-row: 1 / 4;
+  overflow: hidden;
+`
+const AppIdQR = styled(ReactQRCode)`
+  max-height: 100%;
+  padding: 7px;
+`
 const CircleArea = styled.div`
   display: grid;
   grid-template-rows: auto auto auto auto 2fr 2fr 1fr;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr auto;
   border-left: 1px dotted #000000;
 `
 const EventName = styled.div`
-  grid-column: 1 / 3;
+  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
 `
 const AppId = styled.div`
-  grid-column: 1 / 3;
+  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
 `
 const CircleMeta = styled.div`
-  grid-column: 1 / 3;
+  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
 `
 const CircleName = styled.div`
@@ -253,17 +277,17 @@ const PenName = styled.div`
   font-weight: bold;
 `
 const Genre = styled.div`
-  grid-column: 1 / 3;
+  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
   overflow: hidden;
 `
 const Overview = styled.div`
-  grid-column: 1 / 3;
+  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
   overflow: hidden;
 `
 const TotalAmount = styled.div`
-  grid-column: 1 / 3;
+  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
   overflow: hidden;
 `
