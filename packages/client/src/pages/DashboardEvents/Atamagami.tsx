@@ -14,8 +14,8 @@ const Atamagami: React.FC<Props> = (props) => {
     <Container>
       <EventMeta>
         <OrganizationName>
-          <Header>組織名</Header>
-          {props.event._organization.name}</OrganizationName>
+          {props.event._organization.name}
+        </OrganizationName>
         <EventName>
           {props.event.eventName}
         </EventName>
@@ -65,7 +65,6 @@ const Header = styled.div`
   margin-right: 4px;
 `
 const EventMeta = styled.div`
-  grid-template-rows: ;
   border-right: 1px dotted #000000;
 `
 const OrganizationName = styled.div`
