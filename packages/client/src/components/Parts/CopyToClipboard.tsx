@@ -1,33 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { MdCopyAll, MdLibraryAddCheck } from 'react-icons/md'
 import styled from 'styled-components'
+import useClipboard from '../../hooks/useClipboard'
 
 interface Props {
   content: string
 }
 const CopyToClipboard: React.FC<Props> = (props) => {
   const [isCopied, setCopied] = useState(false)
+  const { copyToClipboardAsync } = useClipboard()
 
-  const onChangeCopiedStatus: () => void =
-    () => {
-      if (!isCopied) return
-      const cancelarationToken = setTimeout(() => setCopied(false), 1000)
-      return () => cancelarationToken
-    }
-  useEffect(onChangeCopiedStatus, [isCopied])
+  const copyToClipboard = useCallback((): void => {
+    copyToClipboardAsync(props.content)
+      .then(() => setCopied(true))
+      .catch(err => {
+        throw err
+      })
+  }, [props.content])
 
-  const copyToClipboard: () => void =
-    () => {
-      const copyToClipboardAsync: () => Promise<void> =
-        async () => {
-          await navigator.clipboard.writeText(props.content)
-        }
-      copyToClipboardAsync()
-        .then(() => setCopied(true))
-        .catch(err => {
-          throw err
-        })
-    }
+  useEffect(() => {
+    if (!isCopied) return
+
+    const cancelarationToken = setTimeout(() => setCopied(false), 1000)
+    return () => clearTimeout(cancelarationToken)
+  }, [isCopied])
 
   return (
     <StyledCopyButton onClick={copyToClipboard} isActive={isCopied}>
