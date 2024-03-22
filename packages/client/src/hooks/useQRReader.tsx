@@ -21,6 +21,7 @@ const useQRReader = (): IUseQRReader => {
         <QrReader
           constraints={{ facingMode: 'environment' }}
           onResult={handleResult}
+          scanDelay={250}
           videoStyle={
             {
               // position: 'unset'
