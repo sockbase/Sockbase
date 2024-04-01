@@ -29,7 +29,7 @@ export default DefaultBaseLayout
 
 const Layout = styled.section`
   display: grid;
-  height: 100%;
+  min-height: 100%;
   /* grid-template-rows: auto 1fr auto; */
   grid-template-rows: 1fr auto;
   background-color: var(--background-body-color);
