@@ -212,7 +212,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
         カタログ等に掲載する情報は「<b>{formatByDate(event.schedules.fixedApplication - 1, 'YYYY年M月D日')}</b>」時点のものとさせていただきます。
       </Alert>}
 
-      {space && <Alert type="success" title="スペース配置情報">
+      {event && event.schedules.publishSpaces <= new Date().getTime() && space && <Alert type="success" title="スペース配置情報">
         あなたのサークル「{app?.circle.name}」は <b>{space.spaceName}</b> に配置されています。
       </Alert>}
 
