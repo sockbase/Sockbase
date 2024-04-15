@@ -51,29 +51,6 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     return
   }
 
-  const paymentId = session.payment_intent
-  if (!paymentId) {
-    res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
-    return
-  } else if (typeof paymentId !== 'string') {
-    res.status(500).send({ error: 'MissingType', detail: 'paymentId type is missing' })
-    return
-  }
-
-  const email = session.customer_details.email
-  if (!email) {
-    res.status(400).send({ error: 'EmailIsMissing', detail: 'email is missing' })
-    noticeMessage(orgId, paymentId, 'email is missing')
-    return
-  }
-
-  const user = await getUser(email)
-  if (!user) {
-    res.status(404).send({ error: 'NotFound', detail: `user(${email}) is not found` })
-    noticeMessage(orgId, paymentId, `user(${email}) is not found`)
-    return
-  }
-
   const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
   const productItemIds = lineItems.data
     .filter(p => p.price)
@@ -105,6 +82,29 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     .length > 0
   if (!systemExistProductIds) {
     res.status(204)
+    return
+  }
+
+  const paymentId = session.payment_intent
+  if (!paymentId) {
+    res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
+    return
+  } else if (typeof paymentId !== 'string') {
+    res.status(500).send({ error: 'MissingType', detail: 'paymentId type is missing' })
+    return
+  }
+
+  const email = session.customer_details.email
+  if (!email) {
+    res.status(400).send({ error: 'EmailIsMissing', detail: 'email is missing' })
+    noticeMessage(orgId, paymentId, 'email is missing')
+    return
+  }
+
+  const user = await getUser(email)
+  if (!user) {
+    res.status(404).send({ error: 'NotFound', detail: `user(${email}) is not found` })
+    noticeMessage(orgId, paymentId, `user(${email}) is not found`)
     return
   }
 
