@@ -81,7 +81,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     .filter(exists => exists)
     .length > 0
   if (!systemExistProductIds) {
-    res.status(204).send({ error: 'ProductIdNotExists' })
+    res.status(204).send()
     return
   }
 
