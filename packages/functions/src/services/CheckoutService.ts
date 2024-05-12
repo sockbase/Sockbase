@@ -7,7 +7,7 @@ import {
 } from 'sockbase'
 import { Stripe } from 'stripe'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { paymentConverter } from '../libs/converters'
+import { eventConverter, paymentConverter, storeConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 
 const firebaseProjectId = process.env.FUNC_FIREBASE_PROJECT_ID ?? ''
@@ -51,6 +51,40 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     return
   }
 
+  const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
+  const productItemIds = lineItems.data
+    .filter(p => p.price)
+    .map(p => p.price?.id ?? '')
+
+  const storeDocs = await firestore.collection('stores')
+    .withConverter(storeConverter)
+    .get()
+  const ticketTypeProductIds = storeDocs.docs
+    .map(s => s.data())
+    .map(s => s.types.map(t => t.productInfo?.productId))
+    .filter(id => id)
+    .reduce((p, c) => ([...p, ...c]), []) as string[]
+
+  const eventDocs = await firestore.collection('events')
+    .withConverter(eventConverter)
+    .get()
+  const spaceTypeProductIds = eventDocs.docs
+    .map(e => e.data())
+    .map(e => e.spaces.map(s => s.productInfo?.productId))
+    .filter(id => id)
+    .reduce((p, c) => ([...p, ...c]), []) as string[]
+
+  const productIds = [...ticketTypeProductIds, ...spaceTypeProductIds]
+
+  const systemExistProductIds = productItemIds
+    .map(id => productIds.includes(id))
+    .filter(exists => exists)
+    .length > 0
+  if (!systemExistProductIds) {
+    res.status(204).send()
+    return
+  }
+
   const paymentId = session.payment_intent
   if (!paymentId) {
     res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
@@ -73,11 +107,6 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
     noticeMessage(orgId, paymentId, `user(${email}) is not found`)
     return
   }
-
-  const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
-  const productItemIds = lineItems.data
-    .filter(p => p.price)
-    .map(p => p.price?.id ?? '')
 
   const payment = await collectPayment(user.uid, Status.Pending, productItemIds)
   if (!payment) {
