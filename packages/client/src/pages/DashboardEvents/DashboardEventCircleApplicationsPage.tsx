@@ -8,7 +8,8 @@ import {
   type SockbaseApplicationMeta,
   type SockbaseEvent,
   type SockbaseApplicationLinksDocument,
-  type SockbaseApplicationOverviewDocument
+  type SockbaseApplicationOverviewDocument,
+  type SockbaseAccount
 } from 'sockbase'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -22,6 +23,7 @@ import LinkButton from '../../components/Parts/LinkButton'
 import Loading from '../../components/Parts/Loading'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
+import useUserData from '../../hooks/useUserData'
 import EventApplications from './EventCircleApplications'
 
 const DashboardEventApplicationsPage: React.FC = () => {
@@ -38,6 +40,9 @@ const DashboardEventApplicationsPage: React.FC = () => {
     getEventByIdAsync,
     getSpacesByEventIdAsync
   } = useEvent()
+  const {
+    getUserDataByUserIdAndEventIdAsync
+  } = useUserData()
 
   const [event, setEvent] = useState<SockbaseEvent>()
   const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
@@ -66,8 +71,10 @@ const DashboardEventApplicationsPage: React.FC = () => {
           const appIds = Object.keys(fetchedApps)
           const appHashIds = Object.values(fetchedApps)
             .map(a => a.hashId)
+          const userIds = Object.values(fetchedApps)
+            .map(a => a.userId)
 
-          Promise.all(appIds.map(async (appId) => ({
+          const fetchedMetas = await Promise.all(appIds.map(async (appId) => ({
             appId,
             data: await getApplicationMetaByIdAsync(appId)
           })))
@@ -76,9 +83,10 @@ const DashboardEventApplicationsPage: React.FC = () => {
                 ...p,
                 [c.appId]: c.data
               }), {})
-              setMetas(objectMappedMetas)
+              return objectMappedMetas
             })
             .catch(err => { throw err })
+          setMetas(fetchedMetas)
 
           Promise.all(appHashIds.map(async (hashId) => {
             if (!hashId) return
@@ -120,7 +128,20 @@ const DashboardEventApplicationsPage: React.FC = () => {
             })
             .catch(err => { throw err })
 
-          const appsCSV = exportCSV(fetchedApps, fetchedMappedLinks, fetchedMappedOverviews)
+          const fetchedUserDatas = await Promise.all(userIds.map(async userId => ({
+            userId,
+            data: await getUserDataByUserIdAndEventIdAsync(userId, eventId)
+          })))
+            .then(fetchedUserDatas => {
+              const objectMappedUserDatas = fetchedUserDatas.reduce<Record<string, SockbaseAccount>>((p, c) => ({
+                ...p,
+                [c.userId]: c.data
+              }), {})
+              return objectMappedUserDatas
+            })
+            .catch(err => { throw err })
+
+          const appsCSV = exportCSV(fetchedApps, fetchedMetas, fetchedUserDatas, fetchedMappedLinks, fetchedMappedOverviews)
           setAppsCSV(appsCSV)
         }
 
