@@ -350,9 +350,10 @@ const useApplication = (): IUseApplication => {
     links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
     overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>): string => {
     const header =
-      'id\tstatus\tname\tyomi\tpenName\tgenre\tspace\thasAdult\tunionId\tdescription\ttotalAmount\tremarks\ttwitter\tpixiv\tweb\tmenu\tuserId\temail'
+      'eventId\tid\tstatus\tname\tyomi\tpenName\tgenre\tspace\thasAdult\tunionId\tdescription\ttotalAmount\tremarks\ttwitter\tpixiv\tweb\tmenu\tuserId\temail'
     const entries = Object.entries(apps)
       .map(([id, a]) => [
+        a.eventId,
         a.hashId,
         metas[id]?.applicationStatus,
         a.circle.name,
