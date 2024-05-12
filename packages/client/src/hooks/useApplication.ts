@@ -33,6 +33,8 @@ interface IUseApplication {
   setOverviewByApplicationIdAsync: (appId: string, overview: sockbase.SockbaseApplicationOverview) => Promise<void>
   exportCSV: (
     apps: Record<string, sockbase.SockbaseApplicationDocument>,
+    metas: Record<string, sockbase.SockbaseApplicationMeta>,
+    users: Record<string, sockbase.SockbaseAccount>,
     links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
     overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>
   ) => string
@@ -343,13 +345,17 @@ const useApplication = (): IUseApplication => {
 
   const exportCSV = (
     apps: Record<string, sockbase.SockbaseApplicationDocument>,
+    metas: Record<string, sockbase.SockbaseApplicationMeta>,
+    users: Record<string, sockbase.SockbaseAccount>,
     links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
     overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>): string => {
     const header =
-      'id\tname\tyomi\tpenName\tgenre\tspace\thasAdult\tunionId\tdescription\ttotalAmount\tremarks\ttwitter\tpixiv\tweb\tmenu\tuserId'
+      'eventId\tid\tstatus\tname\tyomi\tpenName\tgenre\tspace\thasAdult\tunionId\tdescription\ttotalAmount\tremarks\ttwitter\tpixiv\tweb\tmenu\tuserId\temail'
     const entries = Object.entries(apps)
       .map(([id, a]) => [
+        a.eventId,
         a.hashId,
+        metas[id]?.applicationStatus,
         a.circle.name,
         a.circle.yomi,
         a.circle.penName,
@@ -368,7 +374,8 @@ const useApplication = (): IUseApplication => {
         links[id]?.pixivUserId,
         links[id]?.websiteURL,
         links[id]?.menuURL,
-        a.userId
+        a.userId,
+        users[a.userId]?.email
       ])
       .map((a) => a.join('\t'))
       .join('\n')
