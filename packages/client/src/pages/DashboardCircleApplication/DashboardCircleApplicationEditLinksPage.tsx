@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { MdEdit } from 'react-icons/md'
+import { MdBookmarkAdd } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import { type SockbaseApplicationLinks, type SockbaseApplicationDocument, type SockbaseEvent } from 'sockbase'
 import FormButton from '../../components/Form/Button'
@@ -107,7 +107,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title="広報情報編集" requireSystemRole={0}>
+    <DashboardBaseLayout title="カタログ掲載情報編集" requireSystemRole={0}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         {isAdmin
@@ -124,7 +124,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
           {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
-      <PageTitle title={app?.circle.name} description="広報情報編集" icon={<MdEdit />} isLoading={!app} />
+      <PageTitle title={app?.circle.name} description="カタログ掲載情報編集" icon={<MdBookmarkAdd />} isLoading={!app} />
       {app && event
         ? <TwoColumnsLayout>
           <>

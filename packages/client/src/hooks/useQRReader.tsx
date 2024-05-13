@@ -4,16 +4,19 @@ import { QrReader } from 'react-qr-reader'
 interface IUseQRReader {
   data: string | undefined
   QRReaderComponent: React.FC
+  resetData: () => void
 }
 
 const useQRReader = (): IUseQRReader => {
   const [data, setData] = useState<string>()
 
-  const handleResult = (result: any): void => {
+  const handleResult = useCallback((result: any) => {
     if (!result) return
     if (result.text === data) return
     setData(result.text)
-  }
+  }, [])
+
+  const resetData = useCallback(() => setData(undefined), [])
 
   const QRReaderComponent: React.FC = useCallback(
     () => (
@@ -40,7 +43,8 @@ const useQRReader = (): IUseQRReader => {
 
   return {
     data,
-    QRReaderComponent
+    QRReaderComponent,
+    resetData
   }
 }
 

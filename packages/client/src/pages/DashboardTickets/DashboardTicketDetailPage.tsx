@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MdWallet } from 'react-icons/md'
+import { MdAccountCircle, MdLinkOff, MdOpenInNew, MdOutlineSupervisorAccount, MdWallet } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import {
   type SockbaseTicketMeta,
@@ -22,6 +22,7 @@ import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumn
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
+import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
@@ -306,19 +307,29 @@ const DashboardTicketDetailPage: React.FC = () => {
         </>
 
         <>
+          {hashedTicketId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && !ticketUsedStatus?.used && <>
+            <h3>チケットを表示</h3>
+            <FormSection>
+              <FormItem>
+                <LinkButton to={`/tickets/${hashedTicketId}`}><IconLabel label="チケットを表示する" icon={<MdOpenInNew />} /></LinkButton>
+              </FormItem>
+            </FormSection>
+          </>}
+
           {ticketUser && !ticketUser.usableUserId && ticketUsedStatus && !ticketUsedStatus?.used && <>
             <h3>チケット割り当て</h3>
             <p>
+              チケットを使用するためにはチケット使用者の割り当てを行う必要があります。<br />
               このチケットを使う人を選択してください。
             </p>
             <FormSection>
               <FormItem>
                 <LoadingCircleWrapper isLoading={isProgressForAssignMe}>
-                  <FormButton onClick={handleAssignMe} disabled={isProgressForAssignMe}>自分で使う</FormButton>
+                  <FormButton onClick={handleAssignMe} disabled={isProgressForAssignMe}><IconLabel label="自分で使う" icon={<MdAccountCircle />} /></FormButton>
                 </LoadingCircleWrapper>
               </FormItem>
               <FormItem>
-                <FormButton color="default" onClick={() => setOpenAssignPanel(s => !s)}>他の方へ割り当てる</FormButton>
+                <FormButton color="default" onClick={() => setOpenAssignPanel(s => !s)}><IconLabel label="他の方へ割り当てる" icon={<MdOutlineSupervisorAccount />} /></FormButton>
               </FormItem>
               {openAssignPanel && <>
                 <FormItem>
@@ -334,15 +345,6 @@ const DashboardTicketDetailPage: React.FC = () => {
             </FormSection>
           </>}
 
-          {hashedTicketId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && !ticketUsedStatus?.used && <>
-            <h3>チケットを表示</h3>
-            <FormSection>
-              <FormItem>
-                <LinkButton to={`/tickets/${hashedTicketId}`}>チケットを表示</LinkButton>
-              </FormItem>
-            </FormSection>
-          </>}
-
           {ticketUser?.usableUserId && ticket && !ticketUsedStatus?.used && <FormSection>
             <h3>チケット割り当てを解除</h3>
             <FormItem>
@@ -350,7 +352,7 @@ const DashboardTicketDetailPage: React.FC = () => {
             </FormItem>
             <FormItem>
               <LoadingCircleWrapper isLoading={isProgressForUnassign}>
-                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}>チケットの割り当てを解除する</FormButton>
+                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}><IconLabel label="チケットの割り当てを解除する" icon={<MdLinkOff />} /></FormButton>
               </LoadingCircleWrapper>
             </FormItem>
           </FormSection>}
