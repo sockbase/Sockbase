@@ -319,6 +319,7 @@ const DashboardTicketDetailPage: React.FC = () => {
           {ticketUser && !ticketUser.usableUserId && ticketUsedStatus && !ticketUsedStatus?.used && <>
             <h3>チケット割り当て</h3>
             <p>
+              チケットを使用するためにはチケット使用者の割り当てを行う必要があります。<br />
               このチケットを使う人を選択してください。
             </p>
             <FormSection>
