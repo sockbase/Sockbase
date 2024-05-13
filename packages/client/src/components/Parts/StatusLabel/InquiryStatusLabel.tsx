@@ -1,6 +1,8 @@
 import { useMemo } from 'react'
+import { MdCheck, MdCircle, MdPendingActions } from 'react-icons/md'
 import styled from 'styled-components'
 import { type SockbaseInquiryStatus, type SockbaseApplicationStatus } from 'sockbase'
+import IconLabel from '../IconLabel'
 
 interface Props {
   status: SockbaseInquiryStatus
@@ -8,11 +10,11 @@ interface Props {
 const InquiryStatusLabel: React.FC<Props> = (props) => {
   const typeName = useMemo(() => {
     if (props.status === 0) {
-      return 'オープン'
+      return <IconLabel label="オープン" icon={<MdCircle />} />
     } else if (props.status === 1) {
-      return '対応中'
+      return <IconLabel label="対応中" icon={<MdPendingActions />} />
     } else if (props.status === 2) {
-      return 'クローズ'
+      return <IconLabel label="クローズ" icon={<MdCheck />} />
     }
   }, [props.status])
 
