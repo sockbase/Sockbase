@@ -298,7 +298,11 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
             <tbody>
               <tr>
                 <th>サークルカット</th>
-                <td>{circleCutURL && <CircleCutImage src={circleCutURL} />}</td>
+                <td>
+                  {circleCutURL && <a href={circleCutURL} target="_blank" rel="noreferrer">
+                    <CircleCutImage src={circleCutURL} />
+                  </a>}
+                </td>
               </tr>
               <tr>
                 <th>X (Twitter)</th>
