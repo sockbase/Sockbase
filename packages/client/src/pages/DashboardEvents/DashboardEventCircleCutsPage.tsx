@@ -154,6 +154,7 @@ const DashboardEventCircleCutsPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
+        <li>{event?._organization.name}</li>
         <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName}</Link></li>
       </Breadcrumbs>
 
