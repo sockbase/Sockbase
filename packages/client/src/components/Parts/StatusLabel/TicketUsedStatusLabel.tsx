@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
+import { MdCheck, MdPendingActions } from 'react-icons/md'
 import styled from 'styled-components'
+import IconLabel from '../IconLabel'
 
 interface Props {
   status: boolean | undefined
@@ -7,9 +9,9 @@ interface Props {
 const TicketUsedStatusLabel: React.FC<Props> = (props) => {
   const typeName = useMemo(() => {
     if (props.status) {
-      return '使用済み'
+      return <IconLabel label="使用済み" icon={<MdCheck />} />
     } else {
-      return '未使用'
+      return <IconLabel label="未使用" icon={<MdPendingActions />} />
     }
   }, [props.status])
 

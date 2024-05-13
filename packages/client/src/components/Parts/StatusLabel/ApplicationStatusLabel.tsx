@@ -1,24 +1,26 @@
 import { useMemo } from 'react'
+import { MdCheck, MdClose, MdPendingActions } from 'react-icons/md'
 import styled from 'styled-components'
 import { type SockbaseApplicationStatus } from 'sockbase'
+import IconLabel from '../IconLabel'
 
 interface Props {
   status: SockbaseApplicationStatus | undefined
 }
 const ApplicationStatusLabel: React.FC<Props> = (props) => {
-  const typeName = useMemo(() => {
+  const typeLabel = useMemo(() => {
     if (props.status === 0) {
-      return '仮申し込み'
+      return <IconLabel label="仮申し込み" icon={<MdPendingActions />} />
     } else if (props.status === 1) {
-      return 'キャンセル済み'
+      return <IconLabel label="キャンセル済み" icon={<MdClose />} />
     } else if (props.status === 2) {
-      return '申し込み確定'
+      return <IconLabel label="申し込み確定" icon={<MdCheck />} />
     }
   }, [props.status])
 
   return (
     <Container status={props.status ?? 0}>
-      {typeName}
+      {typeLabel}
     </Container>
   )
 }
@@ -36,7 +38,7 @@ const Container = styled.label<{ status: SockbaseApplicationStatus }>`
     } else if (p.status === 1) {
       return 'background-color: var(--danger-color);'
     } else if (p.status === 2) {
-      return 'background-color: var(--info-color);'
+      return 'background-color: var(--success-color);'
     }
   }};
 

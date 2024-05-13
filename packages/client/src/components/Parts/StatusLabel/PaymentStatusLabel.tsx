@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
+import { MdCheck, MdClose, MdOutlinePendingActions, MdUndo } from 'react-icons/md'
 import styled from 'styled-components'
+import IconLabel from '../IconLabel'
 import type { PaymentStatus, SockbasePaymentDocument } from 'sockbase'
 
 interface Props {
@@ -7,38 +9,33 @@ interface Props {
   isLink?: boolean
 }
 const PaymentStatusLabel: React.FC<Props> = (props) => {
-  const statusText = useMemo(() => {
+  const statusTextLabel = useMemo(() => {
+    const paymentMethod = props.payment.paymentMethod === 1
+      ? 'オンライン決済'
+      : props.payment.paymentMethod === 2
+        ? '銀行振込'
+        : '-'
     switch (props.payment.status) {
       case 0:
-        return 'お支払い待ち'
+        return <IconLabel label={`お支払い待ち（${paymentMethod}）`} icon={<MdOutlinePendingActions />} />
 
       case 1:
-        return 'お支払い済み'
+        return <IconLabel label={`お支払い済み（${paymentMethod}）`} icon={<MdCheck />} />
 
       case 2:
-        return '返金済み'
+        return <IconLabel label={`返金済み（${paymentMethod}）`} icon={<MdUndo />} />
 
       case 3:
-        return 'お支払い失敗'
+        return <IconLabel label={`お支払い失敗（${paymentMethod}）`} icon={<MdClose />} />
 
       case 4:
-        return 'キャンセル済み'
+        return <IconLabel label={`キャンセル済み（${paymentMethod}）`} icon={<MdClose />} />
     }
-  }, [props.payment.status])
-
-  const paymentMethodText = useMemo(() => {
-    switch (props.payment.paymentMethod) {
-      case 1:
-        return 'オンライン決済'
-
-      case 2:
-        return '銀行振込'
-    }
-  }, [props.payment.paymentMethod])
+  }, [props.payment])
 
   return (
     <Container status={props.payment.status ?? 0} isLink={props.isLink}>
-      {statusText}（{paymentMethodText}）
+      {statusTextLabel}
     </Container>
   )
 }

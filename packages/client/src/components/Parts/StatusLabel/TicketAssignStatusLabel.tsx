@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
+import { MdCheck, MdWarningAmber } from 'react-icons/md'
 import styled from 'styled-components'
+import IconLabel from '../IconLabel'
 
 interface Props {
   status: boolean | undefined
@@ -7,9 +9,9 @@ interface Props {
 const TicketAssignStatusLabel: React.FC<Props> = (props) => {
   const typeName = useMemo(() => {
     if (props.status) {
-      return '割当済み'
+      return <IconLabel label="割当済み" icon={<MdCheck />} />
     } else {
-      return '未割当'
+      return <IconLabel label="未割当" icon={<MdWarningAmber />} />
     }
   }, [props.status])
 
@@ -31,7 +33,7 @@ const Container = styled.label<{ status: boolean }>`
     if (p.status) {
       return 'background-color: var(--success-color);'
     } else {
-      return 'background-color: var(--pending-color);'
+      return 'background-color: var(--danger-color);'
     }
   }};
 

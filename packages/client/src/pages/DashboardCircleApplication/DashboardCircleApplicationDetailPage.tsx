@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { MdEdit } from 'react-icons/md'
+import { MdBookmarkAdd, MdEdit, MdImage } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import sockbaseShared from 'shared'
 import FormButton from '../../components/Form/Button'
@@ -13,6 +13,7 @@ import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CircleCutImage from '../../components/Parts/CircleCutImage'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
+import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../components/Parts/StatusLabel/PaymentStatusLabel'
@@ -293,7 +294,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
         </>
         <>
-          <h3>サークルカット, 広報情報</h3>
+          <h3>サークルカット, カタログ掲載情報</h3>
           <table>
             <tbody>
               <tr>
@@ -341,8 +342,12 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
 
           {links !== undefined && hashedAppId && <FormSection>
             <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color='default' inlined={true}>サークルカットを差し替える</LinkButton>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color={links ? 'default' : undefined} inlined={true}>広報情報を{links ? '編集' : '入力'}する</LinkButton>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color='default' inlined={true}>
+                <IconLabel label="サークルカットを差し替える" icon={<MdImage />} />
+              </LinkButton>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color={links ? 'default' : undefined} inlined={true}>
+                <IconLabel label={`カタログ掲載情報を${links ? '編集' : '入力'}する`} icon={<MdBookmarkAdd />} />
+              </LinkButton>
             </FormItem>
           </FormSection>}
 
@@ -382,7 +387,9 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
           {links !== undefined && hashedAppId && <FormSection>
             <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>頒布物情報を編集する</LinkButton>
+              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>
+                <IconLabel label="頒布物情報を編集する" icon={<MdEdit />} />
+              </LinkButton>
             </FormItem>
           </FormSection>}
         </>
