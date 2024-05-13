@@ -45,30 +45,54 @@ const DashboardEventCircleCutsPage: React.FC = () => {
     if (!eventId || !apps || !cutURLs || downloadCutHashIds.length <= 0) return
     if (!confirm(`${downloadCutHashIds.length}件のサークルカットをダウンロードします\nよろしいですか？`)) return
 
-    downloadCutHashIds.forEach(hashId => {
-      const app = apps[hashId]
-      const cutURL = cutURLs[hashId]
-      if (!app || !cutURL) return
+    const downloadTasks = downloadCutHashIds
+      .map(hashId => {
+        const app = apps[hashId]
+        const cutURL = cutURLs[hashId]
+        if (!app || !cutURL) return null
 
-      const sanitizedCircleName = app.circle.name.replace(/\\\/:\*\?"<>\|/, '-')
+        const sanitizedCircleName = app.circle.name.replace(/\\\/:\*\?"<>\|/, '-')
+        return {
+          hashId,
+          url: cutURL,
+          name: sanitizedCircleName
+        }
+      })
+      .filter(queue => queue)
 
-      fetch(cutURL)
+    let i = 0
+    let isBusy = false
+
+    const clearToken = setInterval(() => {
+      if (isBusy) return
+
+      const task = downloadTasks[i]
+      if (!task) {
+        clearInterval(clearToken)
+        return
+      }
+
+      isBusy = true
+
+      fetch(task.url)
         .then(async res => {
           const blob = await res.blob()
           const objectURL = window.URL.createObjectURL(blob)
           const link = document.createElement('a')
           document.body.appendChild(link)
           link.href = objectURL
-          link.download = `${eventId}_${hashId}_${sanitizedCircleName}.png`
+          link.download = `${eventId}_${task.hashId}_${task.name}.png`
           link.click()
           link.remove()
-          await (new Promise((resolve) => setTimeout(resolve, 500)))
+          isBusy = false
+          i++
         })
         .catch(err => {
+          clearInterval(clearToken)
           alert('サークルカットのダウンロード中にエラーが発生しました')
           throw err
         })
-    })
+    }, 250)
   }, [eventId, apps, cutURLs, downloadCutHashIds])
 
   useEffect(() => {
