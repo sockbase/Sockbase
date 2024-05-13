@@ -33,18 +33,19 @@ const EventCircleApplications: React.FC<Props> = (props) => {
     Object.entries(props.apps)
       .filter(([_, app]) => !!app.hashId)
       .sort(([_a, a], [_b, b]) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
-      .sort(([_aAppId, a], [_bAppId, b]): number => {
-        if (activeSortSpace) {
-          const aAppHash = props.appHashs.filter(app => app.applicationId === _aAppId)[0]
-          const bAppHash = props.appHashs.filter(app => app.applicationId === _bAppId)[0]
-          if (!aAppHash || !bAppHash || !aAppHash.spaceId || !bAppHash.spaceId) return 0
+      .sort(([aAppId, _a], [bAppId, _b]): number => {
+        if (!activeSortSpace) return 0
 
-          const aSpace = props.spaces.filter(s => s.id === aAppHash.spaceId)[0]
-          const bSpace = props.spaces.filter(s => s.id === bAppHash.spaceId)[0]
-          return (aSpace.spaceGroupOrder * 100 + aSpace.spaceOrder) - (bSpace.spaceGroupOrder * 100 + bSpace.spaceOrder)
-        } else {
-          return 0
-        }
+        const aAppHash = props.appHashs.filter(app => app.applicationId === aAppId)[0]
+        const bAppHash = props.appHashs.filter(app => app.applicationId === bAppId)[0]
+        if (!aAppHash || !bAppHash || !aAppHash.spaceId || !bAppHash.spaceId) return 0
+
+        const aSpace = props.spaces.filter(s => s.id === aAppHash.spaceId)[0]
+        const bSpace = props.spaces.filter(s => s.id === bAppHash.spaceId)[0]
+
+        if (!aSpace || !bSpace) return 0
+
+        return (aSpace.spaceGroupOrder * 100 + aSpace.spaceOrder) - (bSpace.spaceGroupOrder * 100 + bSpace.spaceOrder)
       }), [props.appHashs, props.spaces, activeSortSpace])
 
   const getSpace = useCallback((spaceId: string): SockbaseEventSpace | null => {
