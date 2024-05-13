@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const FormItem = styled.fieldset<{ inlined?: boolean }>`
   ${props => props.inlined && ({
     display: 'flex',
+    flexWrap: 'wrap',
     gap: '10px'
   })}
   margin-bottom: 10px;

@@ -25,6 +25,7 @@ interface IUseApplication {
   getApplicationMetaByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationMeta>
   updateApplicationStatusByIdAsync: (appId: string, status: sockbase.SockbaseApplicationStatus) => Promise<void>
   getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
+  getCircleCutURLByHashedIdNullableAsync: (hashedAppId: string) => Promise<string | null>
   getLinksByApplicationIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationLinksDocument | null>
   getLinksByApplicationIdOptionalAsync: (appId: string) => Promise<sockbase.SockbaseApplicationLinksDocument | null>
   setLinksByApplicationIdAsync: (appId: string, links: sockbase.SockbaseApplicationLinks) => Promise<void>
@@ -253,6 +254,13 @@ const useApplication = (): IUseApplication => {
     return circleCutURL
   }
 
+  const getCircleCutURLByHashedIdNullableAsync = async (hashId: string): Promise<string | null> =>
+    await getCircleCutURLByHashedIdAsync(hashId)
+      .catch(err => {
+        console.error(err)
+        return null
+      })
+
   const getLinksByApplicationIdAsync = async (
     appId: string
   ): Promise<sockbase.SockbaseApplicationLinksDocument | null> => {
@@ -396,6 +404,7 @@ const useApplication = (): IUseApplication => {
     getApplicationMetaByIdAsync,
     updateApplicationStatusByIdAsync,
     getCircleCutURLByHashedIdAsync,
+    getCircleCutURLByHashedIdNullableAsync,
     getLinksByApplicationIdAsync,
     getLinksByApplicationIdOptionalAsync,
     setLinksByApplicationIdAsync,
