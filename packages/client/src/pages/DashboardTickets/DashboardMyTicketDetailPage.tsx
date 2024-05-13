@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import { MdLocalPlay, MdOpenInNew, MdTune } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import { MdLocalPlay } from 'react-icons/md'
 import {
   type SockbaseStoreDocument,
   type SockbaseTicketUserDocument
@@ -14,6 +14,7 @@ import Alert from '../../components/Parts/Alert'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
+import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 import TicketUsedStatusLabel from '../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 import useDayjs from '../../hooks/useDayjs'
@@ -32,7 +33,15 @@ const DashboardMyTicketDetailPage: React.FC = () => {
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
 
-  const onInitialize = (): void => {
+  const pageTitle = useMemo(() => {
+    if (!ticketUser || !store) return undefined
+    const type = store.types
+      .filter(t => t.id === ticketUser.typeId)[0]
+
+    return `${store.storeName} (${type.name})`
+  }, [ticketUser, store])
+
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!hashedTicketId) return
 
@@ -43,10 +52,9 @@ const DashboardMyTicketDetailPage: React.FC = () => {
 
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onInitialize, [hashedTicketId])
+  }, [hashedTicketId])
 
-  const onFetchedTicketUser = (): void => {
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!ticketUser) return
 
@@ -57,16 +65,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
 
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onFetchedTicketUser, [ticketUser])
-
-  const pageTitle = useMemo(() => {
-    if (!ticketUser || !store) return undefined
-    const type = store.types
-      .filter(t => t.id === ticketUser.typeId)[0]
-
-    return `${store.storeName} (${type.name})`
-  }, [ticketUser, store])
+  }, [ticketUser])
 
   return (
     <DashboardBaseLayout title={ticketUser && store ? (pageTitle ?? '') : 'マイチケット情報'}>
@@ -91,7 +90,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
           <>
             {ticketUser.hashId && !ticketUser.used && <FormSection>
               <FormItem>
-                <LinkButton to={`/tickets/${ticketUser.hashId}`}>チケットを表示</LinkButton>
+                <LinkButton to={`/tickets/${ticketUser.hashId}`}><IconLabel label="チケットを表示する" icon={<MdOpenInNew />} /></LinkButton>
               </FormItem>
             </FormSection>}
 
@@ -120,7 +119,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
             </table>
             {ticketUser.userId === ticketUser.usableUserId && <FormSection>
               <FormItem>
-                <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default">チケット管理ページ</LinkButton>
+                <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default"><IconLabel label="チケットを管理する" icon={<MdTune />} /></LinkButton>
               </FormItem>
             </FormSection>}
           </>
