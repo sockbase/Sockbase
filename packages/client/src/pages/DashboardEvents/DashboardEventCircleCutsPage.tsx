@@ -62,6 +62,7 @@ const DashboardEventCircleCutsPage: React.FC = () => {
           link.download = `${eventId}_${hashId}_${sanitizedCircleName}.png`
           link.click()
           link.remove()
+          await (new Promise((resolve) => setTimeout(resolve, 500)))
         })
         .catch(err => {
           alert('サークルカットのダウンロード中にエラーが発生しました')
