@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
 import { MdMail } from 'react-icons/md'
+import { Link, useParams } from 'react-router-dom'
 import {
   type SockbaseInquiryMetaDocument,
   type SockbaseAccount,
@@ -134,11 +134,11 @@ const DashboardInquiryListPage: React.FC = () => {
               </tr>
               <tr>
                 <th>作成日</th>
-                <td>{formatByDate(inquiryMeta.createdAt ?? inquiry.createdAt, 'YYYY年M月D日 H時m分')}</td>
+                <td>{formatByDate(inquiryMeta.createdAt ?? inquiry.createdAt, 'YYYY年 M月 D日 H時m分')}</td>
               </tr>
               <tr>
                 <th>更新日</th>
-                <td>{formatByDate(inquiryMeta.updatedAt ?? inquiry.updatedAt, 'YYYY年M月D日 H時m分')}</td>
+                <td>{formatByDate(inquiryMeta.updatedAt ?? inquiry.updatedAt, 'YYYY年 M月 D日 H時m分')}</td>
               </tr>
             </tbody>
           </table>

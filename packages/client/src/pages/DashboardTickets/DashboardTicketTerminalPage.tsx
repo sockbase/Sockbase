@@ -309,7 +309,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
                 <th>使用日時</th>
                 <td>
                   {ticketUser !== undefined && ticketUser !== null
-                    ? (ticketUser?.usedAt && formatByDate(ticketUser.usedAt, 'YYYY年M月D日 H時mm分')) || '未使用'
+                    ? (ticketUser?.usedAt && formatByDate(ticketUser.usedAt, 'YYYY年 M月 D日 H時mm分')) || '未使用'
                     : <BlinkField />}
                 </td>
               </tr>
@@ -347,7 +347,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
                 <th>申し込み日時</th>
                 <td>
                   {ticketUser !== undefined && ticket !== null
-                    ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年M月D日 H時mm分')
+                    ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年 M月 D日 H時mm分')
                     : <BlinkField />}
                 </td>
               </tr>

@@ -42,12 +42,20 @@ const Introduction: React.FC<Props> = (props) => {
             <td>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
-            <th>カタログ情報確定日</th>
-            <td>{formatByDate(props.event.schedules.fixedApplication - 1, 'YYYY年 M月 D日 H時mm分')}</td>
+            <th>配置情報締切</th>
+            <td>{formatByDate(props.event.schedules.overviewFirstFixedAt - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>配置発表(予定)</th>
-            <td>{formatByDate(props.event.schedules.publishSpaces, 'YYYY年 M月 D日 H時mm分')}</td>
+            <td>{formatByDate(props.event.schedules.publishSpaces, 'YYYY年 M月 D日')}</td>
+          </tr>
+          <tr>
+            <th>カタログ掲載情報締切</th>
+            <td>{formatByDate(props.event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日 H時mm分')}</td>
+          </tr>
+          <tr>
+            <th>頒布物情報更新締切</th>
+            <td>{formatByDate(props.event.schedules.overviewFinalFixedAt - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
             <th>会期開始</th>

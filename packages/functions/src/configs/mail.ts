@@ -37,7 +37,7 @@ const templates = {
       '',
       '[イベント情報]',
       `イベント名: ${event.eventName}`,
-      `日程: ${dayjs(event.schedules.startEvent).tz().format('YYYY年M月D日 H:mm')} 〜 ${dayjs(event.schedules.endEvent).tz().format('H:mm')}`,
+      `会期: ${dayjs(event.schedules.startEvent).tz().format('YYYY年 M月 D日 H時mm分')} 〜 ${dayjs(event.schedules.endEvent).tz().format('H時mm分')}`,
       // '場所: ', // TODO: 場所 あとで追記
       '',
       'お申し込み内容の確認・変更は以下のURLよりご確認いただけます。',
@@ -59,7 +59,7 @@ const templates = {
       '[お支払い情報]',
       `お支払い方法: ${payment.paymentMethod === 1 ? 'オンライン' : '銀行振込'}`,
       `お支払い代金: ${payment.paymentAmount.toLocaleString()}円`,
-      `お支払い期限: ${dayjs(event.schedules.endApplication).tz().format('YYYY年M月D日')}`,
+      `お支払い期限: ${dayjs(event.schedules.endApplication).tz().format('YYYY年 M月 D日')}`,
       `お支払い補助番号: ${payment.bankTransferCode}`,
       '',
       ...payment.paymentMethod === 1
@@ -144,7 +144,7 @@ const templates = {
       '',
       '[チケット情報]',
       `チケットストア名: ${store.storeName}`,
-      `イベント日程: ${dayjs(store.schedules.startEvent).tz().format('YYYY年M月D日 H:mm')} 〜 ${dayjs(store.schedules.endEvent).tz().format('H:mm')}`,
+      `イベント日程: ${dayjs(store.schedules.startEvent).tz().format('YYYY年 M月 D日 H時mm分')} 〜 ${dayjs(store.schedules.endEvent).tz().format('H時mm分')}`,
       `チケット種別: ${type.name}`,
       '',
       '購入したチケットは以下のURLからご確認いただけます。',
@@ -167,7 +167,7 @@ const templates = {
       '[お支払い情報]',
       `お支払い方法: ${payment.paymentMethod === 1 ? 'オンライン' : '銀行振込'}`,
       `お支払い代金: ${payment.paymentAmount.toLocaleString()}円`,
-      `お支払い期限: ${dayjs(store.schedules.endApplication).tz().format('YYYY年M月D日')}`,
+      `お支払い期限: ${dayjs(store.schedules.endApplication).tz().format('YYYY年 M月 D日')}`,
       `お支払い補助番号: ${payment.bankTransferCode}`,
       '',
       ...payment.paymentMethod === 1

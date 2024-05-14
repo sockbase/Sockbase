@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdPhoto } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import {
@@ -52,7 +52,28 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
 
   const [isProgress, setProgress] = useState(false)
 
-  const onInitialize = (): void => {
+  const now = useMemo(() => new Date().getTime(), [])
+
+  const handleSubmit = useCallback(() => {
+    if (!hashedAppId || !circleCutFile) return
+
+    setProgress(true)
+
+    uploadCircleCutFileAsync(hashedAppId, circleCutFile)
+      .then(() => {
+        alert('サークルカットの変更が完了しました')
+        setCurrentCircleCut(circleCutDataWithHook)
+        setCircleCutData(null)
+        setCircleCutFile(null)
+      })
+      .catch(err => {
+        alert('サークルカットの変更に失敗しました')
+        throw err
+      })
+      .finally(() => setProgress(false))
+  }, [hashedAppId, circleCutFile, circleCutDataWithHook])
+
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!hashedAppId) return
 
@@ -71,39 +92,17 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onInitialize, [checkIsAdminByOrganizationId, hashedAppId])
+  }, [checkIsAdminByOrganizationId, hashedAppId])
 
-  const onCircleCutFileChanged = (): void => {
+  useEffect(() => {
     if (!circleCutFile) return
     openCircleCut(circleCutFile)
-  }
-  useEffect(onCircleCutFileChanged, [circleCutFile])
+  }, [circleCutFile])
 
-  const onCircleCutFileRead = (): void => {
+  useEffect(() => {
     if (!circleCutDataWithHook) return
     setCircleCutData(circleCutDataWithHook)
-  }
-  useEffect(onCircleCutFileRead, [circleCutDataWithHook])
-
-  const handleSubmit = (): void => {
-    if (!hashedAppId || !circleCutFile) return
-
-    setProgress(true)
-
-    uploadCircleCutFileAsync(hashedAppId, circleCutFile)
-      .then(() => {
-        alert('サークルカットの変更が完了しました')
-        setCurrentCircleCut(circleCutDataWithHook)
-        setCircleCutData(null)
-        setCircleCutFile(null)
-      })
-      .catch(err => {
-        alert('サークルカットの変更に失敗しました')
-        throw err
-      })
-      .finally(() => setProgress(false))
-  }
+  }, [circleCutDataWithHook])
 
   return (
     <DashboardBaseLayout title="サークルカット変更" requireSystemRole={0}>
@@ -127,19 +126,22 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
 
       <TwoColumnsLayout>
         <>
-          {event && (event.schedules.fixedApplication <= new Date().getTime())
-            ? <Alert type="danger" title='カタログ掲載情報は締切済みです'>
-              オンライン掲載情報の更新は可能です。
-            </Alert>
-            : event && <Alert>
-              カタログ掲載情報の確定日は「<b>{formatByDate(event.schedules.fixedApplication - 1, 'YYYY年M月D日')}</b>」です。<br />
-              確定日以降の情報は掲載されませんのでご注意ください。
-            </Alert>}
+          {event && (
+            event.schedules.catalogInformationFixedAt > now
+              ? <Alert type="danger" title="カタログ掲載情報締切にご注意ください">
+                カタログ掲載情報の確定日は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> です。<br />
+                確定日以降の情報は掲載されませんのでご注意ください。
+              </Alert>
+              : <Alert type="danger" title="カタログ掲載情報は締め切りました">
+                カタログ掲載情報は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> に締め切りました。<br />
+                更新してもカタログには反映されません。
+              </Alert>)}
+
           <ul>
             <li>サークルカットを提出する際は、テンプレートを使用する必要があります。</li>
-            <li>サークルカットの変更は、申し込み後のマイページから行えます。</li>
             <li>公序良俗に反する画像は使用できません。不特定多数の方の閲覧が可能なためご配慮をお願いいたします。</li>
           </ul>
+
           <FormSection>
             <FormItem>
               <FormLabel>サークルカット</FormLabel>

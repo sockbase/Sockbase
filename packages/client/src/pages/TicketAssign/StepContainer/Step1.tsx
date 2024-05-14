@@ -118,7 +118,7 @@ const Step1: React.FC<Props> = (props) => {
           </tr>
           <tr>
             <th>開催日時</th>
-            <td>{formatByDate(props.store.schedules.startEvent, 'YYYY年M月D日 H:mm')} ～ {formatByDate(props.store.schedules.endEvent, 'H:mm')}</td>
+            <td>{formatByDate(props.store.schedules.startEvent, 'YYYY年 M月 D日 H時mm分')} ～ {formatByDate(props.store.schedules.endEvent, 'H時mm分')}</td>
           </tr>
           <tr>
             <th></th>

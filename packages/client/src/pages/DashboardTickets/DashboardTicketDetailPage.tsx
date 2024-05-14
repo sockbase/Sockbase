@@ -300,7 +300,7 @@ const DashboardTicketDetailPage: React.FC = () => {
               </tr>
               <tr>
                 <th>申し込み日時</th>
-                <td>{(ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年M月D日 H時mm分ss秒')) ?? <BlinkField />}</td>
+                <td>{(ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年 M月 D日 H時mm分')) ?? <BlinkField />}</td>
               </tr>
             </tbody>
           </table>

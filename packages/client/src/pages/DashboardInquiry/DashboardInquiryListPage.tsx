@@ -97,7 +97,7 @@ const DashboardInquiryListPage: React.FC = () => {
                   <td><InquiryStatusLabel status={inquiryMetas[i.id]?.status ?? i.status} /></td>
                   <td>{getInquiryType(i.inquiryType).name}</td>
                   <td><Link to={`/dashboard/inquiries/${i.id}`}>{i.id}</Link></td>
-                  <td>{formatByDate(inquiryMetas[i.id]?.updatedAt ?? i.updatedAt, 'YYYY年M月D日 H時m分')}</td>
+                  <td>{formatByDate(inquiryMetas[i.id]?.updatedAt ?? i.updatedAt, 'YYYY年 M月 D日 H時m分')}</td>
                 </tr>)}
             {filteredInquiries?.length === 0 && <tr>
               <td>検索条件に一致するお問い合わせが見つかりませんでした</td>

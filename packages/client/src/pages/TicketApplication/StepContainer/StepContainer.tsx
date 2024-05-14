@@ -118,7 +118,7 @@ const StepContainer: React.FC<Props> = (props) => {
 
       {props.store.schedules.endApplication < new Date().getTime()
         ? <Alert type="danger" title="申し込み受付は終了しました">
-          このチケットストアへの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年M月D日')}</b> をもって終了しました。
+          このチケットストアへの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
         </Alert>
         : <>
           <ul>
