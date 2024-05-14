@@ -66,6 +66,8 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const [isAdmin, setAdmin] = useState<boolean | null>()
   const [applicationDeleted, setApplicationDeleted] = useState(false)
 
+  const now = useMemo(() => new Date().getTime(), [])
+
   const title = useMemo(() => {
     if (!event) return '申し込み情報を読み込み中'
     return `${event.eventName} 申し込み情報`
@@ -208,12 +210,31 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
         申し込み手続きを円滑に行うため<Link to="/dashboard/payments">こちら</Link>からお支払いをお願いいたします。
       </Alert>}
 
-      {!links && event && <Alert type="danger" title="広報情報を入力してください">
-        広報情報は<Link to={`/dashboard/applications/${hashedAppId}/links`}>こちら</Link>から入力できます。<br />
-        カタログ等に掲載する情報は「<b>{formatByDate(event.schedules.fixedApplication - 1, 'YYYY年M月D日')}</b>」時点のものとさせていただきます。
-      </Alert>}
+      {!links && event &&
+        <Alert type="danger" title="カタログ掲載情報を入力してください">
+          カタログ掲載情報は<Link to={`/dashboard/applications/${hashedAppId}/links`}>こちら</Link>から入力できます。<br />
+          カタログに掲載する情報は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点のものとさせていただきます。
+        </Alert>}
 
-      {event && event.schedules.publishSpaces <= new Date().getTime() && space && <Alert type="success" title="スペース配置情報">
+      {links && event && event.schedules.catalogInformationFixedAt > now &&
+        <Alert type="danger" title="カタログ掲載情報締切にご注意ください">
+          カタログ掲載情報の確定日は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> です。<br />
+          確定日以降の情報は掲載されませんのでご注意ください。
+        </Alert>}
+
+      {event && event.schedules.overviewFirstFixedAt > now &&
+        <Alert title="配置情報締切までに頒布物情報を更新してください">
+          <b>{formatByDate(event.schedules.overviewFirstFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報で配置を行います。<br />
+          申し込み時から大きく変更がある場合は必ず更新を行ってください。
+        </Alert>}
+
+      {event && event.schedules.overviewFirstFixedAt <= now && event.schedules.overviewFinalFixedAt > now &&
+        <Alert title="頒布物情報を最新の状態にしてください">
+          <b>{formatByDate(event.schedules.overviewFinalFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をイベント運営で使用いたします。<br />
+          実際に頒布する予定の情報をご入力いただきますようお願いいたします。
+        </Alert>}
+
+      {event && event.schedules.publishSpaces <= now && space && <Alert type="success" title="スペース配置情報">
         あなたのサークル「{app?.circle.name}」は <b>{space.spaceName}</b> に配置されています。
       </Alert>}
 
@@ -242,7 +263,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               </tr>}
               <tr>
                 <th>申し込んだイベント</th>
-                <td>{(event && `${event.eventName} ${formatByDate(event.schedules.startEvent, '(YYYY年M月D日 開催)')}`) || <BlinkField />}</td>
+                <td>{(event && `${event.eventName} ${formatByDate(event.schedules.startEvent, '(YYYY年 M月 D日 開催)')}`) || <BlinkField />}</td>
               </tr>
               <tr>
                 <th>サークル名</th>
@@ -275,7 +296,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
                 <td>{
                   event
                     ? event.schedules.publishSpaces > new Date().getTime()
-                      ? `配置発表は ${formatByDate(event.schedules.publishSpaces, 'YYYY年M月D日 H時mm分')} を予定しています`
+                      ? `配置発表は ${formatByDate(event.schedules.publishSpaces, 'YYYY年 M月 D日')} ごろを予定しています`
                       : space?.spaceName || '配置発表まで今しばらくお待ちください'
                     : <BlinkField />
                 }</td>

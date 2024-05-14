@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { MdWallet } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 import {
   type SockbaseTicketMeta,
   type SockbaseStoreDocument,
@@ -129,7 +129,7 @@ const DashboardTicketListPage: React.FC = () => {
                   <td>{t.hashId && <TicketAssignStatusLabel status={!!getTicketUser(t.hashId)?.usableUserId} />}</td>
                   <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
                   <td>{t.id && <ApplicationStatusLabel status={getTicketApplicationStatus(t.id)} />}</td>
-                  <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年M月D日 H時mm分')}</td>
+                  <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年 M月 D日 H時mm分')}</td>
                 </tr>)
               : <tr>
                 <td colSpan={5}>

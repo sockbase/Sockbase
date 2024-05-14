@@ -128,8 +128,7 @@ service cloud.firestore {
 
       allow create: if request.auth.uid == request.resource.data.userId
         && getApplication(applicationId) != null;
-      allow update: if request.auth.uid == resource.data.userId
-        && request.time.toMillis() < getEvent(getApplication(applicationId).eventId).schedules.fixedApplication;
+      allow update: if request.auth.uid == resource.data.userId;
       allow delete: if isSystemAdmin(request.auth.uid);
     }
 

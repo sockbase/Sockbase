@@ -65,7 +65,7 @@ const Step2: React.FC<Props> = (props) => {
           </tr>
           <tr>
             <th>生年月日</th>
-            <td>{formatByDate(props.fetchedUserData?.birthday ?? props.userData?.birthday, 'YYYY年M月D日')}</td>
+            <td>{formatByDate(props.fetchedUserData?.birthday ?? props.userData?.birthday, 'YYYY年 M月 D日')}</td>
           </tr>
           <tr>
             <th>郵便番号</th>
