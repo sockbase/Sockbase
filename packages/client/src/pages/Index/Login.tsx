@@ -46,7 +46,7 @@ const Login: React.FC<Props> = (props) => {
         </FormItem>
         {props.error &&
           <FormItem>
-            <Alert title={props.error.title}>
+            <Alert title={props.error.title} type="danger">
               {props.error.content}
             </Alert>
           </FormItem>}
