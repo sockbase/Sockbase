@@ -27,7 +27,7 @@ const TicketCard: React.FC<Props> = (props) => {
       <Footer>
         <UsedStatus>
           {props.ticketUser.used
-            ? `${formatByDate(props.ticketUser.usedAt, 'YYYY年M月D日')} 使用済`
+            ? `${formatByDate(props.ticketUser.usedAt, 'YYYY年 M月 D日')} 使用済`
             : '未使用'}
         </UsedStatus>
         <TicketId>

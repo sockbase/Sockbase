@@ -146,7 +146,9 @@ export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
       schedules: {
         startApplication: event.schedules.startApplication,
         endApplication: event.schedules.endApplication,
-        fixedApplication: event.schedules.fixedApplication,
+        overviewFirstFixedAt: event.schedules.overviewFirstFixedAt,
+        catalogInformationFixedAt: event.schedules.catalogInformationFixedAt,
+        overviewFinalFixedAt: event.schedules.overviewFinalFixedAt,
         publishSpaces: event.schedules.publishSpaces,
         startEvent: event.schedules.startEvent,
         endEvent: event.schedules.endEvent

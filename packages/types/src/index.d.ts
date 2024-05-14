@@ -13,8 +13,10 @@ export interface SockbaseEvent {
   schedules: {
     startApplication: number
     endApplication: number
-    fixedApplication: number
+    overviewFirstFixedAt: number
     publishSpaces: number
+    catalogInformationFixedAt: number
+    overviewFinalFixedAt: number
     startEvent: number
     endEvent: number
   }

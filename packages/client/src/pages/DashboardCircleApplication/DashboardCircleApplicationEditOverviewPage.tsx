@@ -46,6 +46,8 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
   const [overview, setOverview] = useState<SockbaseApplicationOverview>()
   const [isProgress, setProgress] = useState(false)
 
+  const now = useMemo(() => new Date().getTime(), [])
+
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!hashedAppId) return
@@ -121,85 +123,82 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title={app?.circle.name} description="頒布物情報編集" icon={<MdEdit />} isLoading={!app} />
 
-      {app && event && overview
-        ? <TwoColumnsLayout>
+      {(!app || !event || !overview) && <Loading text="頒布物概要" />}
+
+      {app && event && overview &&
+        <TwoColumnsLayout>
           <>
-            {event && (event.schedules.fixedApplication < new Date().getTime())
-              ? <>
-                <Alert type="danger" title='カタログ掲載情報は締切済みです'>
-                現在配置準備中です。今しばらくお待ちください。
-                </Alert>
+            {event.schedules.catalogInformationFixedAt > now &&
+              <Alert type="danger" title="カタログ掲載情報締切にご注意ください">
+                カタログ掲載情報の確定日は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> です。<br />
+                確定日以降の情報は掲載されませんのでご注意ください。
+              </Alert>}
 
-                <h3>頒布物概要</h3>
-                <p>
-                  {overview.description}
-                </p>
+            {event.schedules.overviewFirstFixedAt > now &&
+              <Alert title="配置情報締切までに頒布物情報を更新してください">
+                <b>{formatByDate(event.schedules.overviewFirstFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報で配置を行います。<br />
+                申し込み時から大きく変更がある場合は必ず更新を行ってください。
+              </Alert>}
 
-                <h3>総搬入量</h3>
-                <p>
-                  {overview.totalAmount}
-                </p>
-              </>
-              : <>
+            {event.schedules.overviewFirstFixedAt <= now && event.schedules.overviewFinalFixedAt > now &&
+              <Alert title="頒布物情報を最新の状態にしてください">
+                <b>{formatByDate(event.schedules.overviewFinalFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をイベント運営で使用いたします。<br />
+                実際に頒布する予定の情報をご入力いただきますようお願いいたします。
+              </Alert>}
+
+            <FormSection>
+              <FormItem>
+                <FormLabel>頒布物概要</FormLabel>
+                <FormTextarea
+                  placeholder='◯◯◯◯と△△△△のシリアス系合同誌(小説, 漫画)を頒布する予定。その他グッズや既刊あり。'
+                  value={overview.description}
+                  onChange={e => setOverview(s => s && ({ ...s, description: e.target.value }))}
+                  hasError={!overview.description} />
+                <FormHelp hasError={!overview.description}>
+                  スペース配置の参考にしますので、キャラクター名等は正しく入力してください。<br />
+                  合同誌企画がある場合はその旨も入力してください。
+                </FormHelp>
+              </FormItem>
+              <FormItem>
                 <Alert>
-                配置情報の入力締め切り日は「<b>{formatByDate(event.schedules.fixedApplication - 1, 'YYYY年M月D日')}</b>」です。<br />
-                締め切り日以降は編集できませんのでご注意ください。
+                  「頒布物概要」に記載された内容を元に配置します。<br />
+                  サークルカットの内容は考慮されませんのでご注意ください。
                 </Alert>
-                <FormSection>
-                  <FormItem>
-                    <FormLabel>頒布物概要</FormLabel>
-                    <FormTextarea
-                      placeholder='◯◯◯◯と△△△△のシリアス系合同誌(小説, 漫画)を頒布する予定。その他グッズや既刊あり。'
-                      value={overview.description}
-                      onChange={e => setOverview(s => s && ({ ...s, description: e.target.value }))}
-                      hasError={!overview.description} />
-                    <FormHelp hasError={!overview.description}>
-                      スペース配置の参考にしますので、キャラクター名等は正しく入力してください。<br />
-                      合同誌企画がある場合はその旨も入力してください。
-                    </FormHelp>
-                  </FormItem>
-                  <FormItem>
-                    <Alert>
-                      「頒布物概要」に記載された内容を元に配置します。<br />
-                      サークルカットの内容は考慮されませんのでご注意ください。
-                    </Alert>
-                  </FormItem>
-                </FormSection>
-                <FormSection>
-                  <FormItem>
-                    <FormLabel>総搬入量</FormLabel>
-                    <FormTextarea
-                      placeholder='合同誌: 1種1,000冊, 既刊: 5種合計500冊, 色紙: 1枚, グッズ: 3種合計30個'
-                      value={overview.totalAmount}
-                      onChange={e => setOverview(s => s && ({ ...s, totalAmount: e.target.value }))}
-                      hasError={!overview.totalAmount} />
-                    <FormHelp hasError={!overview.totalAmount}>単位まで入力してください。</FormHelp>
-                  </FormItem>
-                  <FormItem>
-                    <Alert>
-                      搬入量が決まっていない場合は、最大の持ち込み予定数を入力してください。
-                    </Alert>
-                  </FormItem>
-                </FormSection>
+              </FormItem>
+            </FormSection>
 
-                {errorCount !== 0 && <Alert type="danger">{errorCount}個の入力項目に不備があります。</Alert>}
+            <FormSection>
+              <FormItem>
+                <FormLabel>総搬入量</FormLabel>
+                <FormTextarea
+                  placeholder='合同誌: 1種1,000冊, 既刊: 5種合計500冊, 色紙: 1枚, グッズ: 3種合計30個'
+                  value={overview.totalAmount}
+                  onChange={e => setOverview(s => s && ({ ...s, totalAmount: e.target.value }))}
+                  hasError={!overview.totalAmount} />
+                <FormHelp hasError={!overview.totalAmount}>単位まで入力してください。</FormHelp>
+              </FormItem>
+              <FormItem>
+                <Alert>
+                  搬入量が決まっていない場合は、最大の持ち込み予定数を入力してください。
+                </Alert>
+              </FormItem>
+            </FormSection>
 
-                <FormSection>
-                  <FormItem>
-                    <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
-                      <FormButton
-                        inlined={true}
-                        disabled={isProgress || errorCount !== 0}
-                        onClick={handleSubmit}>情報を更新する</FormButton>
-                    </LoadingCircleWrapper>
-                  </FormItem>
-                </FormSection>
-              </>}
+            {errorCount !== 0 && <Alert type="danger">{errorCount}個の入力項目に不備があります。</Alert>}
+
+            <FormSection>
+              <FormItem>
+                <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
+                  <FormButton
+                    inlined={true}
+                    disabled={isProgress || errorCount !== 0}
+                    onClick={handleSubmit}>情報を更新する</FormButton>
+                </LoadingCircleWrapper>
+              </FormItem>
+            </FormSection>
           </>
           <></>
-        </TwoColumnsLayout>
-        : <Loading text="頒布物概要" />}
-
+        </TwoColumnsLayout>}
     </DashboardBaseLayout>
   )
 }

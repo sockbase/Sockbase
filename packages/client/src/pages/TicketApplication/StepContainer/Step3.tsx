@@ -58,7 +58,7 @@ const Step3: React.FC<Props> = (props) => {
               </tr>
               <tr>
                 <th>お支払い期限</th>
-                <td>{formatByDate(props.store.schedules.endApplication, 'YYYY年M月D日 H時mm分')}</td>
+                <td>{formatByDate(props.store.schedules.endApplication, 'YYYY年 M月 D日 H時mm分')}</td>
               </tr>
               <tr>
                 <th>お支払い補助番号</th>
@@ -95,7 +95,7 @@ const Step3: React.FC<Props> = (props) => {
             : <>
               <h2>銀行振込でのお支払い</h2>
               <p>
-                <b>{formatByDate(props.store.schedules.endApplication, 'YYYY年M月D日')}</b> までに以下の口座へ所定の金額のお振り込みをお願いいたします。
+                <b>{formatByDate(props.store.schedules.endApplication, 'YYYY年 M月 D日')}</b> までに以下の口座へ所定の金額のお振り込みをお願いいたします。
               </p>
               <Alert>
                 お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「<b>{props.ticketResult?.bankTransferCode}</b>」を入力してください。

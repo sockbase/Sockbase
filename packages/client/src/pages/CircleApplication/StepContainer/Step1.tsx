@@ -408,7 +408,7 @@ const Step1: React.FC<Props> = (props) => {
             </FormItem>
             <FormItem>
               <Alert>
-                成人向け作品を頒布する場合、イベント当日（{formatByDate(props.event.schedules.startEvent, 'YYYY年M月D日')}）時点で18歳以上である必要があります。
+                成人向け作品を頒布する場合、イベント当日（{formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}）時点で18歳以上である必要があります。
               </Alert>
               <Alert>
                 イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
