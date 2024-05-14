@@ -144,7 +144,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
             {event && event.schedules.overviewFirstFixedAt <= now && event.schedules.overviewFinalFixedAt > now &&
               <Alert title="頒布物情報を最新の状態にしてください">
                 <b>{formatByDate(event.schedules.overviewFinalFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をイベント運営で使用いたします。<br />
-                実際に頒布する予定の情報をご入力いただきますようお願いいたします。
+                実際に頒布する作品の情報をご入力いただきますようお願いいたします。
               </Alert>}
 
             <FormSection>
