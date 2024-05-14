@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
+import { MdLocalActivity } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { MdLocalActivity } from 'react-icons/md'
 import {
   type SockbaseStoreType,
   type SockbaseStoreDocument,
@@ -120,7 +120,7 @@ const DashboardMyTicketsPage: React.FC = () => {
                     <td>{i + 1}</td>
                     <th>{getStore(t.storeId)?.storeName}</th>
                     <td>{getType(t.storeId, t.typeId)?.name}</td>
-                    <td>{formatByDate(t.usedAt, 'YYYY年M月D日 H時mm分')}</td>
+                    <td>{formatByDate(t.usedAt, 'YYYY年 M月 D日 H時mm分')}</td>
                     <td><Link to={`/dashboard/mytickets/${t.hashId}`}>詳細</Link></td>
                   </tr>)
                 : <tr>

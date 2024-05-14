@@ -27,10 +27,12 @@ const useFirebaseError = (): IUseFirebaseError => {
       return 'ユーザが見つかりませんでした'
     } else if (errorMessage === 'Missing or insufficient permissions.') {
       return '権限がありません'
+    } else if (errorMessage.includes('firebase-app-check-token-is-invalid')) {
+      return '認証エラーです。キャッシュクリアや再読み込みすると解消する場合があります。'
     } else if (errorMessage.includes('invalid_argument')) {
       return `不正なリクエストです: ${errorMessage}`
     } else {
-      return errorMessage
+      return `不明なエラーです: ${errorMessage}`
     }
   }
 
