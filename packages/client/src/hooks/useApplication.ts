@@ -1,7 +1,9 @@
 import { useCallback } from 'react'
+import saveAs from 'file-saver'
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseFunctions from 'firebase/functions'
 import * as FirebaseStorage from 'firebase/storage'
+import * as XLSX from 'xlsx'
 import {
   applicationConverter,
   applicationHashIdConverter,
@@ -39,6 +41,15 @@ interface IUseApplication {
     links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
     overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>
   ) => string
+  downloadXLSX: (
+    eventId: string,
+    event: sockbase.SockbaseEvent,
+    apps: Record<string, sockbase.SockbaseApplicationDocument>,
+    metas: Record<string, sockbase.SockbaseApplicationMeta>,
+    users: Record<string, sockbase.SockbaseAccount>,
+    links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
+    overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>
+  ) => void
 }
 
 const useApplication = (): IUseApplication => {
@@ -391,6 +402,114 @@ const useApplication = (): IUseApplication => {
     return `${header}\n${entries}\n`
   }
 
+  const downloadXLSX = (
+    eventId: string,
+    event: sockbase.SockbaseEvent,
+    apps: Record<string, sockbase.SockbaseApplicationDocument>,
+    metas: Record<string, sockbase.SockbaseApplicationMeta>,
+    users: Record<string, sockbase.SockbaseAccount>,
+    links: Record<string, sockbase.SockbaseApplicationLinksDocument | null>,
+    overviews: Record<string, sockbase.SockbaseApplicationOverviewDocument | null>
+  ): void => {
+    const workbook = XLSX.utils.book_new()
+
+    const spaceDataSheet = XLSX.utils.aoa_to_sheet([
+      [`${event.eventName} スペースデータ作成`],
+      [''],
+      ['配置データを作成するには、まずスペースデータを作成する必要があります。'],
+      ['作成したスペースデータの「スペースID」を2枚目の「配置データ」シートのA行に入力してください。'],
+      [''],
+      ['＜スペースデータ入力の方法＞'],
+      ['「スペースID」一意の連番を振ってください'],
+      ['「スペース番号」スペース番号として使用する文字列を入力してください'],
+      [''],
+      ['スペースID', 'スペース番号'],
+      [1, 'A-01'],
+      [2, 'A-02'],
+      [3, 'A-03, 04']
+    ])
+
+    const appsArray = Object.entries(apps)
+      .filter(([id, _]) => metas[id].applicationStatus === 2)
+      .map(([id, a], i) => {
+        const unionCircle = Object.values(apps).filter(uc => uc.hashId === a.unionCircleId)[0]
+        const space = event.spaces.filter(s => s.id === a.spaceId)[0]
+        const genre = event.genres.filter(g => g.id === a.circle.genre)[0]
+
+        return [
+          null,
+          { t: 'n', f: `=VLOOKUP($A${12 + i}, スペースデータ!A:B, 2, FALSE)` },
+          a.hashId,
+          a.circle.name,
+          a.circle.yomi,
+          a.circle.penName,
+          genre.name,
+          space.name,
+          a.circle.hasAdult,
+          unionCircle?.circle.name,
+          (overviews[id]?.description ?? a.overview.description)
+            .replaceAll(',', '，')
+            .replaceAll(/[\r\n]+/g, ' '),
+          (overviews[id]?.totalAmount ?? a.overview.totalAmount)
+            .replaceAll(',', '，')
+            .replaceAll(/[\r\n]+/g, ' '),
+          a.remarks,
+          links[id]?.twitterScreenName,
+          links[id]?.pixivUserId,
+          links[id]?.websiteURL,
+          links[id]?.menuURL,
+          a.userId,
+          users[a.userId]?.email
+        ]
+      })
+
+    const applicationDataSheet = XLSX.utils.aoa_to_sheet([
+      [`${event.eventName} 配置データ作成`],
+      [''],
+      ['1枚目の「スペースデータ」シートで作成したスペースデータをもとに、実際の配置データを作成します。'],
+      [''],
+      ['＜配置データの作成方法＞'],
+      ['「スペースID」スペースデータシートで作成したIDを入力してください'],
+      ['・スペースIDを入力すると B列 にスペース番号が表示されます。'],
+      ['・正しいスペース番号が表示されているか必ず確認してください。'],
+      [''],
+      ['', '→B列以降は変更しても反映されません。'],
+      [
+        'スペースID',
+        'スペース番号',
+        '申し込みID',
+        'サークル名',
+        'よみ',
+        'ペンネーム',
+        'ジャンル',
+        'スペース',
+        '成人向け',
+        '合体サークル',
+        '頒布物概要',
+        '総搬入量',
+        '備考',
+        'Twitter',
+        'Pixiv',
+        'Web',
+        'お品書き',
+        'ユーザID',
+        'メールアドレス'
+      ],
+      ...appsArray
+    ])
+
+    XLSX.utils.book_append_sheet(workbook, spaceDataSheet, 'スペースデータ')
+    XLSX.utils.book_append_sheet(workbook, applicationDataSheet, '配置データ')
+
+    const excelUnit8Array = XLSX.write(workbook, { type: 'array' })
+    const excelBlob = new Blob(
+      [excelUnit8Array],
+      { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+
+    const now = new Date().getTime()
+    saveAs(excelBlob, `${eventId}_${now}`)
+  }
+
   return {
     getApplicationIdByHashedIdAsync,
     getApplicationByIdAsync,
@@ -411,7 +530,8 @@ const useApplication = (): IUseApplication => {
     getOverviewByApplicationIdAsync,
     getOverviewByApplicationIdOptionalAsync,
     setOverviewByApplicationIdAsync,
-    exportCSV
+    exportCSV,
+    downloadXLSX
   }
 }
 
