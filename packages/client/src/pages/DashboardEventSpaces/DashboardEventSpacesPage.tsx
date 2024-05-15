@@ -1,16 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
-import { MdAssignmentTurnedIn } from 'react-icons/md'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MdAssignmentTurnedIn, MdDownload } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import { type SockbaseAccount, type SockbaseApplicationLinksDocument, type SockbaseApplicationMeta, type SockbaseApplicationOverviewDocument, type SockbaseApplicationDocument, type SockbaseEvent, type SockbaseSpaceDocument } from 'sockbase'
+import FormButton from '../../components/Form/Button'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import IconLabel from '../../components/Parts/IconLabel'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
+import useSpace from '../../hooks/useSpace'
 import useUserData from '../../hooks/useUserData'
-
-import EventSpacesStepContainer from './StepContainer'
 
 const DashboardEventSpacesPage: React.FC = () => {
   const { eventId } = useParams()
@@ -22,6 +26,7 @@ const DashboardEventSpacesPage: React.FC = () => {
     getOverviewByApplicationIdOptionalAsync
   } = useApplication()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
+  const { downloadSpaceDataXLSX } = useSpace()
 
   const [event, setEvent] = useState<SockbaseEvent>()
   const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
@@ -31,7 +36,17 @@ const DashboardEventSpacesPage: React.FC = () => {
   const [links, setLinks] = useState<Record<string, SockbaseApplicationLinksDocument | null>>()
   const [overviews, setOverviews] = useState<Record<string, SockbaseApplicationOverviewDocument | null>>()
 
-  const onInitialize = (): void => {
+  const pageTitle = useMemo(() => {
+    if (!event) return ''
+    return `${event.eventName} 配置管理`
+  }, [event])
+
+  const handleDownload = useCallback(() => {
+    if (!eventId || !event || !spaces || !apps || !metas || !users || !links || !overviews) return
+    downloadSpaceDataXLSX(eventId, event, apps, metas, users, links, overviews)
+  }, [eventId, event, spaces, apps, metas, users, links, overviews])
+
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!eventId) return
 
@@ -105,13 +120,7 @@ const DashboardEventSpacesPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onInitialize, [eventId])
-
-  const pageTitle = useMemo(() => {
-    if (!event) return ''
-    return `${event.eventName} スペース配置`
-  }, [event])
+  }, [eventId])
 
   return (
     <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
@@ -124,11 +133,25 @@ const DashboardEventSpacesPage: React.FC = () => {
 
       <PageTitle
         title={event?.eventName}
-        description="スペース配置"
+        description="配置管理"
         icon={<MdAssignmentTurnedIn />}
         isLoading={!event} />
 
-      {eventId && event && spaces && apps && metas && users && links && overviews &&
+      <FormSection>
+        <FormItem inlined>
+          <FormButton inlined color="default" onClick={handleDownload}>
+            <IconLabel label="配置シートダウンロード" icon={<MdDownload />} />
+          </FormButton>
+        </FormItem>
+      </FormSection>
+
+      <TwoColumnsLayout>
+        <></>
+        <>
+        </>
+      </TwoColumnsLayout>
+
+      {/* {eventId && event && spaces && apps && metas && users && links && overviews &&
         <EventSpacesStepContainer
           eventId={eventId}
           event={event}
@@ -137,7 +160,7 @@ const DashboardEventSpacesPage: React.FC = () => {
           metas={metas}
           users={users}
           links={links}
-          overviews={overviews} />}
+          overviews={overviews} />} */}
     </DashboardBaseLayout>
   )
 }
