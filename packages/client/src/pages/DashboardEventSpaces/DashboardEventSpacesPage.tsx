@@ -161,7 +161,7 @@ const DashboardEventSpacesPage: React.FC = () => {
           </FormLabel>
           <FormInput
             type="file"
-            accept=""
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             onChange={e => setSpaceDataFile(e.target.files?.[0])} />
         </FormItem>
       </FormSection>
