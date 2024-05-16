@@ -228,6 +228,7 @@ export type SockbaseApplicationOverviewDocument = SockbaseApplicationOverview & 
  * サークル申し込みハッシュ情報
  */
 export interface SockbaseApplicationHashIdDocument {
+  id: string
   userId: string
   applicationId: string
   hashId: string

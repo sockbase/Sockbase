@@ -24,6 +24,7 @@ import LinkButton from '../../components/Parts/LinkButton'
 import Loading from '../../components/Parts/Loading'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
+import useSpace from '../../hooks/useSpace'
 import useUserData from '../../hooks/useUserData'
 import EventApplications from './EventCircleApplications'
 
@@ -34,13 +35,13 @@ const DashboardEventApplicationsPage: React.FC = () => {
     getApplicationMetaByIdAsync,
     getApplicationIdByHashedIdAsync,
     getLinksByApplicationIdOptionalAsync,
-    getOverviewByApplicationIdOptionalAsync,
-    exportCSV
+    getOverviewByApplicationIdOptionalAsync
   } = useApplication()
   const {
     getEventByIdAsync,
     getSpacesByEventIdAsync
   } = useEvent()
+  const { exportCSV } = useSpace()
   const {
     getUserDataByUserIdAndEventIdAsync
   } = useUserData()

@@ -22,13 +22,7 @@ declare module 'firebase/auth' {
   }
 }
 
-export interface RawEventSpace {
-  spaceGroupOrder: number
-  spaceOrder: number
-  spaceName: string
-}
-
-export interface RawAssignEventSpace {
-  applicationHashId: string
-  spaceId: string
+export interface ImportedSpace {
+  spaceId?: string
+  appHashId: string
 }
