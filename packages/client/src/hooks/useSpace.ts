@@ -1,12 +1,18 @@
 import saveAs from 'file-saver'
+import * as FirestoreDB from 'firebase/firestore'
 import * as XLSX from 'xlsx'
+import { applicationHashIdConverter, spaceConverter, spaceHashConverter } from '../libs/converters'
+import useFirebase from './useFirebase'
+import type { ImportedSpace } from '../@types'
 import type {
   SockbaseEvent,
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
   SockbaseAccount,
   SockbaseApplicationLinksDocument,
-  SockbaseApplicationOverviewDocument
+  SockbaseApplicationOverviewDocument,
+  SockbaseSpaceDocument,
+  SockbaseSpaceHash
 } from 'sockbase'
 
 interface IUseSpace {
@@ -26,9 +32,13 @@ interface IUseSpace {
     links: Record<string, SockbaseApplicationLinksDocument | null>,
     overviews: Record<string, SockbaseApplicationOverviewDocument | null>
   ) => void
+  readSpaceDataXLSXAsync: (eventId: string, spaceFile: ArrayBuffer) => Promise<{ eventId: string, spaces: ImportedSpace[] }>
+  updateSpaceDataAsync: (eventId: string, spaces: ImportedSpace[]) => Promise<void>
 }
 
 const useSpace = (): IUseSpace => {
+  const { getFirestore } = useFirebase()
+
   const exportCSV = (
     apps: Record<string, SockbaseApplicationDocument>,
     metas: Record<string, SockbaseApplicationMeta>,
@@ -114,7 +124,7 @@ const useSpace = (): IUseSpace => {
       })
 
     const applicationDataSheet = XLSX.utils.aoa_to_sheet([
-      [`${event.eventName} 配置データ作成`],
+      [eventId, `${event.eventName} 配置データ作成`],
       [''],
       ['', '→B列以降は変更しても反映されません。'],
       [
@@ -151,9 +161,152 @@ const useSpace = (): IUseSpace => {
     saveAs(excelBlob, `${eventId}_${now}`)
   }
 
+  const readSpaceDataXLSXAsync = async (eventId: string, spaceFile: ArrayBuffer): Promise<{ eventId: string, spaces: ImportedSpace[] }> => {
+    const spaceDataFile = XLSX.read(spaceFile)
+    if (!spaceDataFile.SheetNames.includes('配置データ')) {
+      throw new Error('不明なデータが入力されました')
+    }
+
+    const sheetData = spaceDataFile.Sheets['配置データ']
+    const actualEventId = sheetData.A1?.v
+    if (!actualEventId) {
+      throw new Error('イベントIDが入力されていません。配置データを再ダウンロードしデータを作成し直してください。')
+    } else if (eventId !== actualEventId) {
+      throw new Error('異なるイベントの配置データが選択されました。')
+    }
+
+    const spaces: ImportedSpace[] = []
+
+    let row = 5
+    while (sheetData[`B${row}`]) {
+      const space = {
+        spaceId: sheetData[`A${row}`]?.v,
+        appHashId: sheetData[`B${row}`]?.v
+      }
+      spaces.push(space)
+      row++
+    }
+
+    const spaceIds = spaces
+      .filter(s => s.spaceId)
+      .map(s => s.spaceId)
+    const distinctSpaceIds = [...new Set(spaceIds)]
+    if (spaceIds.length !== distinctSpaceIds.length) {
+      throw new Error('スペースIDが重複して入力されています')
+    }
+
+    return { eventId, spaces }
+  }
+
+  const updateSpaceDataAsync = async (eventId: string, spaces: ImportedSpace[]): Promise<void> => {
+    const spaceIds = spaces
+      .filter(s => s.spaceId)
+      .map(s => s.spaceId) as string[]
+    if (spaceIds.length === 0) {
+      throw new Error('配置設定が必要なサークルがありませんでした')
+    }
+
+    const db = getFirestore()
+
+    const appHashesRef = FirestoreDB
+      .collection(db, '_applicationHashIds')
+      .withConverter(applicationHashIdConverter)
+    const appHashesQuery = FirestoreDB.query(
+      appHashesRef,
+      FirestoreDB.where('eventId', '==', eventId))
+    const appHashesSnapshot = await FirestoreDB.getDocs(appHashesQuery)
+    const appHashes = appHashesSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+
+    const spaceHashesRef = FirestoreDB
+      .collection(db, '_spaceHashes')
+      .withConverter(spaceHashConverter)
+    const spaceHashesQuery = FirestoreDB.query(
+      spaceHashesRef,
+      FirestoreDB.where('eventId', '==', eventId))
+    const spaceHashesSnapshot = await FirestoreDB.getDocs(spaceHashesQuery)
+    const spaceHashes = spaceHashesSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+
+    await FirestoreDB
+      .runTransaction(db, async tx => {
+        appHashes.forEach(a => {
+          const appHashIdRef = FirestoreDB
+            .doc(db, `_applicationHashIds/${a.id}`)
+            .withConverter(applicationHashIdConverter)
+          tx.update(appHashIdRef, { spaceId: null })
+        })
+        spaceHashes.forEach(s => {
+          tx.delete(FirestoreDB.doc(db, `spaces/${s.id}`))
+          tx.delete(FirestoreDB.doc(db, `_spaceHashes/${s.id}`))
+        })
+      })
+      .catch(err => { throw err })
+
+    const spacesRef = FirestoreDB
+      .collection(db, 'spaces')
+      .withConverter(spaceConverter)
+
+    const spaceAddResults = await Promise.all(
+      spaceIds.map(async (spaceId, i) => {
+        const spaceDoc: SockbaseSpaceDocument = {
+          id: '',
+          eventId,
+          spaceGroupOrder: 0,
+          spaceOrder: i,
+          spaceName: spaceId
+        }
+        const addResult = await FirestoreDB
+          .addDoc(spacesRef, spaceDoc)
+          .catch(err => { throw err })
+
+        const spaceDocId = addResult.id
+        const spaceHashRef = FirestoreDB.doc(db, `_spaceHashes/${spaceDocId}`)
+        const spaceHashDoc: SockbaseSpaceHash = {
+          eventId
+        }
+        await FirestoreDB
+          .setDoc(spaceHashRef, spaceHashDoc)
+          .catch(err => { throw err })
+
+        return {
+          ...spaceDoc,
+          id: spaceDocId
+        }
+      }))
+
+    await FirestoreDB.runTransaction(db, async tx => {
+
+    })
+
+    const updateBatch = FirestoreDB.writeBatch(db)
+
+    spaces.forEach(s => {
+      const space = spaceAddResults.filter(r => r.spaceName === s.spaceId)[0]
+      if (!space) {
+        throw new Error('スペースデータが見つかりません')
+      }
+
+      const appHashDocRef = FirestoreDB
+        .doc(db, `_applicationHashIds/${s.appHashId}`)
+        .withConverter(applicationHashIdConverter)
+      updateBatch.set(
+        appHashDocRef,
+        { spaceId: space.id },
+        { merge: true })
+    })
+
+    await updateBatch.commit()
+      .catch(err => { throw err })
+  }
+
   return {
     exportCSV,
-    downloadSpaceDataXLSX
+    downloadSpaceDataXLSX,
+    readSpaceDataXLSXAsync,
+    updateSpaceDataAsync
   }
 }
 
