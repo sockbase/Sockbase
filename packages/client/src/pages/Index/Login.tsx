@@ -32,7 +32,8 @@ const Login: React.FC<Props> = (props) => {
           <FormLabel>パスワード</FormLabel>
           <FormInput type="password"
             value={props.password}
-            onChange={e => props.setPassword(e.target.value)} />
+            onChange={e => props.setPassword(e.target.value)}
+            onKeyDown={e => e.code === 'Enter' && props.login()} />
         </FormItem>
       </FormSection>
       <FormSection>
@@ -42,7 +43,12 @@ const Login: React.FC<Props> = (props) => {
             disabled={!props.email || !props.password || props.isProcessing}>ログイン</FormButton>
         </FormItem>
         <FormItem>
-          <LinkButton color="default" to="/reset-password">パスワードを忘れた場合</LinkButton>
+          <LinkButton
+            color="default"
+            to="/reset-password"
+            disabled={props.isProcessing}>
+              パスワードを忘れた場合
+          </LinkButton>
         </FormItem>
         {props.error &&
           <FormItem>
