@@ -127,6 +127,10 @@ const Step1: React.FC<Props> = (props) => {
 
     setApp({
       ...pastApp,
+      circle: {
+        ...pastApp.circle,
+        hasAdult: props.event.permissions.allowAdult && pastApp.circle.hasAdult
+      },
       eventId: props.eventId,
       spaceId: '',
       unionCircleId: '',
