@@ -489,6 +489,22 @@ export type SockbaseInquiryMetaDocument = SockbaseInquiryMeta & {
  */
 export type SockbaseInquiryStatus = 0 | 1 | 2
 
+export interface SockbaseSendMailPayload {
+  subject: string
+  body: string[]
+}
+
+/**
+ * メール送信ペイロード(イベント)
+ */
+export type SockbaseSendMailForEventPayload = SockbaseSendMailPayload & {
+  eventId: string
+  target: SockbaseMailSendTarget
+}
+
+/**
+ * メール送信対象
+ */
 export interface SockbaseMailSendTarget {
   pending: boolean
   confirmed: boolean

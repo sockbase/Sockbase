@@ -23,7 +23,10 @@ import type { SockbaseEventDocument, SockbaseMailSendTarget } from 'sockbase'
 const DashboardEventMailSendPage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>()
   const { getEventByIdAsync } = useEvent()
-  const { previewMailBody } = useMail()
+  const {
+    sendMailForEventAsync,
+    previewMailBody
+  } = useMail()
 
   const [event, setEvent] = useState<SockbaseEventDocument>()
 
@@ -38,12 +41,32 @@ const DashboardEventMailSendPage: React.FC = () => {
 
   const mailBodyPreview = useMemo(() => previewMailBody(mailBody), [mailBody])
 
+  const errorCount = useMemo(() => {
+    const validators = [
+      !!mailSubject,
+      !!mailBody
+    ]
+    return validators.filter(v => !v).length
+  }, [mailSubject, mailBody])
+
   const handleSend = useCallback(() => {
+    if (!eventId || errorCount > 0) return
     if (!confirm('メールを送信します\nよろしいですか？')) return
     setProgress(true)
-    alert('メールを送信しました')
-    setProgress(false)
-  }, [])
+    sendMailForEventAsync(eventId, targetFlag, mailSubject, mailBody)
+      .then(result => {
+        if (!result) {
+          alert('メール送信に失敗しました')
+          return
+        }
+        alert('メール送信に成功しました')
+      })
+      .catch(err => {
+        alert('エラーが発生しました')
+        throw err
+      })
+      .finally(() => setProgress(false))
+  }, [eventId, mailSubject, mailBody])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -115,15 +138,15 @@ const DashboardEventMailSendPage: React.FC = () => {
         <>
           <h3>送信プレビュー</h3>
 
-          <h4>【{event?.eventName}】{mailSubject}</h4>
+          <h4>[{event?.eventName}] {mailSubject}</h4>
           <SendPreview>{mailBodyPreview.join('\n')}</SendPreview>
         </>
       </TwoColumnsLayout>
 
       <FormSection>
-        <FormItem inlined>
+        <FormItem>
           <LoadingCircleWrapper inlined isLoading={isProgress}>
-            <FormButton onClick={handleSend} disabled={isProgress} inlined>
+            <FormButton onClick={handleSend} disabled={errorCount > 0 || isProgress} inlined>
               <IconLabel label="送信" icon={<MdSend />} />
             </FormButton>
           </LoadingCircleWrapper>
