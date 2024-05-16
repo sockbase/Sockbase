@@ -1,6 +1,6 @@
-import { type SockbaseApplicationHashIdDocument, type SockbaseApplicationDocument } from 'sockbase'
+import { type SockbaseApplicationHashIdDocument, type SockbaseApplicationDocument, type SockbaseApplicationMeta } from 'sockbase'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { applicationConverter, applicationHashIdConverter } from '../libs/converters'
+import { applicationConverter, applicationHashIdConverter, applicationMetaConverter } from '../libs/converters'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
@@ -46,8 +46,35 @@ const getApplicaitonHashIdAsync = async (appHashId: string): Promise<SockbaseApp
   return appHash
 }
 
+const getApplicationsByEventIdAsync = async (eventId: string): Promise<SockbaseApplicationDocument[]> => {
+  const appCollection = await firestore
+    .collection('_applications')
+    .withConverter(applicationConverter)
+    .where('eventId', '==', eventId)
+    .get()
+
+  const appDocs = appCollection.docs
+    .map(a => a.data())
+  return appDocs
+}
+
+const getApplicationMetaByAppIdAsync = async (appId: string): Promise<SockbaseApplicationMeta> => {
+  const appMetaDoc = await firestore
+    .doc(`/_applications/${appId}/private/meta`)
+    .withConverter(applicationMetaConverter)
+    .get()
+  const appMeta = appMetaDoc.data()
+  if (!appMeta) {
+    throw new Error('application meta not found')
+  }
+
+  return appMeta
+}
+
 export {
   getApplicationByIdAsync,
   getApplicationByUserIdAndEventIdAsync,
-  getApplicaitonHashIdAsync
+  getApplicaitonHashIdAsync,
+  getApplicationsByEventIdAsync,
+  getApplicationMetaByAppIdAsync
 }

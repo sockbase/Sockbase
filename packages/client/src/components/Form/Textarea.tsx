@@ -27,6 +27,11 @@ const FormTextarea = styled.textarea<{ hasError?: boolean }>`
     border: '2px solid #ff2222 !important',
     boxShadow: '0 2px 5px #ff222288 !important'
   }}
+  
+  &:disabled {
+    background-color: var(--background-disabled-color);
+    color: var(--text-disabled-color);
+  }
 `
 
 export default FormTextarea

@@ -2,11 +2,14 @@ import {
   type SockbaseTicketDocument,
   type SockbaseApplicationDocument,
   type SockbasePaymentDocument,
-  type SockbaseInquiryDocument
+  type SockbaseInquiryDocument,
+  type SockbaseSendMailForEventPayload,
+  type SockbaseApplicationMeta,
+  type SockbaseAccountDocument
 } from 'sockbase'
 import mailConfig from '../configs/mail'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { getApplicaitonHashIdAsync, getApplicationByIdAsync } from '../models/application'
+import { getApplicaitonHashIdAsync, getApplicationByIdAsync, getApplicationMetaByAppIdAsync, getApplicationsByEventIdAsync } from '../models/application'
 import { getEventByIdAsync } from '../models/event'
 import { getStoreByIdAsync } from '../models/store'
 import { getTicketByIdAsync } from '../models/ticket'
@@ -134,11 +137,85 @@ const addQueueAsync = async (email: string, content: { subject: string, body: st
     })
 }
 
+const sendMailManuallyForEventAsync = async (payload: SockbaseSendMailForEventPayload): Promise<boolean> => {
+  const event = await getEventByIdAsync(payload.eventId)
+
+  const apps = await getApplicationsByEventIdAsync(payload.eventId)
+  if (apps.length === 0) {
+    console.log('apps are empty')
+    return false
+  }
+
+  const appMetas = await Promise.all(apps.map(async a => ({
+    id: a.id,
+    data: await getApplicationMetaByAppIdAsync(a.id)
+  })))
+    .then(fetchedMetas => {
+      const mappedMetas = fetchedMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({
+        ...p,
+        [c.id]: c.data
+      }), {})
+      return mappedMetas
+    })
+    .catch(err => { throw err })
+
+  const targetApps = apps
+    .filter(a => (payload.target.pending && appMetas[a.id].applicationStatus === 0) ||
+        (payload.target.canceled && appMetas[a.id].applicationStatus === 1) ||
+        (payload.target.confirmed && appMetas[a.id].applicationStatus === 2))
+  if (targetApps.length === 0) {
+    console.log('targetApps are empty')
+    return false
+  }
+
+  const userIds = [...new Set(targetApps.map(a => a.userId))]
+  const userDatas = await Promise.all(userIds.map(async userId => ({
+    userId,
+    data: await getUserDataAsync(userId)
+  })))
+    .then(fetchedUserDatas => {
+      const mappedUserDatas = fetchedUserDatas.reduce<Record<string, SockbaseAccountDocument>>((p, c) => ({
+        ...p,
+        [c.userId]: c.data
+      }), {})
+      return mappedUserDatas
+    })
+    .catch(err => { throw err })
+
+  firestore.runTransaction(async tx => {
+    targetApps.forEach(app => {
+      const user = userDatas[app.userId]
+
+      const template = mailConfig.templates.sendManuallyForEvent(
+        payload.subject,
+        payload.body,
+        event,
+        app,
+        user)
+
+      const mailDoc = firestore.collection('_mails').doc()
+      tx.create(mailDoc, {
+        to: user.email,
+        message: {
+          subject: template.subject,
+          text: template.body.join('\n')
+        }
+      })
+    })
+  })
+    .catch(err => { throw err })
+
+  console.log(`${targetApps.length} emails sent.`)
+
+  return true
+}
+
 export default {
   sendMailAcceptCircleApplicationAsync,
   sendMailAcceptTicketAsync,
   sendMailUpdateUnionCircleAsync,
   sendMailRequestPaymentAsync,
   sendMailAcceptPaymentAsync,
-  sendMailAcceptInquiryAsync
+  sendMailAcceptInquiryAsync,
+  sendMailManuallyForEventAsync
 }
