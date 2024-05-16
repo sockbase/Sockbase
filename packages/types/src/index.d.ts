@@ -488,3 +488,9 @@ export type SockbaseInquiryMetaDocument = SockbaseInquiryMeta & {
  * done: 2
  */
 export type SockbaseInquiryStatus = 0 | 1 | 2
+
+export interface SockbaseMailSendTarget {
+  pending: boolean
+  confirmed: boolean
+  canceled: boolean
+}
