@@ -1,14 +1,12 @@
 import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseStorage from 'firebase/storage'
-import { type RawAssignEventSpace, type RawEventSpace } from '../@types'
 import {
-  applicationHashIdConverter,
   eventConverter,
   spaceConverter
 } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument, SockbaseSpaceHash } from 'sockbase'
+import type { SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
@@ -17,8 +15,6 @@ interface IUseEvent {
   getSpaceAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceOptionalAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
-  createSpacesAsync: (eventId: string, rawSpaces: RawEventSpace[]) => Promise<SockbaseSpaceDocument[]>
-  assignSpacesAsync: (rawAssignSpaces: RawAssignEventSpace[]) => Promise<void>
   createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
   uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
 }
@@ -108,70 +104,6 @@ const useEvent = (): IUseEvent => {
     return queryDocs
   }
 
-  const createSpacesAsync = async (
-    eventId: string,
-    rawSpaces: RawEventSpace[]
-  ): Promise<SockbaseSpaceDocument[]> => {
-    const db = getFirestore()
-    const spacesRef = FirestoreDB.collection(db, 'spaces').withConverter(
-      spaceConverter
-    )
-
-    const addResults = await Promise.all(
-      rawSpaces.map(async (space) => {
-        const spaceDoc: SockbaseSpaceDocument = {
-          ...space,
-          id: '',
-          eventId
-        }
-
-        const addResult = await FirestoreDB
-          .addDoc(spacesRef, spaceDoc)
-          .catch(err => { throw err })
-
-        const spaceId = addResult.id
-        const spaceHashRef = FirestoreDB.doc(db, `_spaceHashes/${spaceId}`)
-        const spaceHashDoc: SockbaseSpaceHash = {
-          eventId
-        }
-
-        await FirestoreDB
-          .setDoc(spaceHashRef, spaceHashDoc)
-          .catch(err => { throw err })
-
-        return {
-          ...spaceDoc,
-          id: addResult.id
-        }
-      }))
-      .catch(err => { throw err })
-
-    return addResults
-  }
-
-  const assignSpacesAsync = async (
-    rawAssignSpaces: RawAssignEventSpace[]
-  ): Promise<void> => {
-    const db = getFirestore()
-    const batch = FirestoreDB.writeBatch(db)
-
-    rawAssignSpaces.forEach((space) => {
-      const appHashDocRef = FirestoreDB.doc(db, `/_applicationHashIds/${space.applicationHashId}`)
-        .withConverter(applicationHashIdConverter)
-      batch.set(
-        appHashDocRef,
-        {
-          spaceId: space.spaceId
-        },
-        { merge: true }
-      )
-    })
-
-    await batch.commit().catch((err) => {
-      throw err
-    })
-  }
-
   const createEventAsync = async (eventId: string, event: SockbaseEvent): Promise<void> => {
     const db = getFirestore()
     const eventRef = FirestoreDB.doc(db, `/events/${eventId}`)
@@ -193,8 +125,6 @@ const useEvent = (): IUseEvent => {
     getSpaceAsync,
     getSpaceOptionalAsync,
     getSpacesByEventIdAsync,
-    createSpacesAsync,
-    assignSpacesAsync,
     createEventAsync,
     uploadEventEyecatchAsync
   }
