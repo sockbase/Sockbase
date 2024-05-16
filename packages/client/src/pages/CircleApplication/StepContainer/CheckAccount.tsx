@@ -88,7 +88,11 @@ const CheckAccount: React.FC<Props> = (props) => {
             </FormItem>
             <FormItem>
               <FormLabel>パスワード</FormLabel>
-              <FormInput type="password" value={password} onChange={e => setPassword(e.target.value)} />
+              <FormInput
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleLogin()}/>
             </FormItem>
           </FormSection>
           <FormSection>
