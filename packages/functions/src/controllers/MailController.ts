@@ -1,13 +1,18 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import { type Change, firestore } from 'firebase-functions'
+import { type Change, firestore, https } from 'firebase-functions'
 import {
+  type SockbaseSendMailForEventPayload,
   type SockbaseApplicationDocument,
   type SockbaseInquiryDocument,
   type SockbasePaymentDocument,
   type SockbaseTicketDocument
 } from 'sockbase'
-
+import FirebaseAdmin from '../libs/FirebaseAdmin'
+import { eventConverter } from '../libs/converters'
 import MailService from '../services/MailService'
+
+const adminApp = FirebaseAdmin.getFirebaseAdmin()
+const FirestoreDB = adminApp.firestore()
 
 export const acceptApplication = firestore
   .document('/_applications/{applicationId}')
@@ -71,4 +76,25 @@ export const acceptInquiry = firestore
     const inquiry = snapshot.data() as SockbaseInquiryDocument
 
     await MailService.sendMailAcceptInquiryAsync(inquiry)
+  })
+
+export const sendMailManuallyForEvent = https.onCall(
+  async (payload: SockbaseSendMailForEventPayload, context): Promise<boolean> => {
+    if (!context.auth?.token.roles) {
+      throw new https.HttpsError('permission-denied', 'Auth Error')
+    }
+
+    const eventDoc = await FirestoreDB
+      .doc(`events/${payload.eventId}`)
+      .withConverter(eventConverter)
+      .get()
+    const event = eventDoc.data()
+    if (!event) {
+      throw new https.HttpsError('not-found', 'event')
+    } else if (context.auth.token.roles?.[event._organization.id] < 2) {
+      throw new https.HttpsError('permission-denied', 'Auth Error')
+    }
+
+    const result = await MailService.sendMailManuallyForEventAsync(payload)
+    return result
   })

@@ -34,7 +34,6 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
     padding-right: 20px;
   `}
 
-  margin-bottom: 5px;
   padding-left: 44px;
   border: 2px solid var(--outline-color);
   border-radius: 5px;
@@ -52,7 +51,7 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   &::before {
     position: absolute;
     content: '';
-    top: calc(50% - 10px);
+    top: calc(50% - 12px);
     left: 10px;
     width: 16px;
     height: 16px;
@@ -64,7 +63,7 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
     position: absolute;
     content: '';
     transform: rotate(-45deg);
-    top: calc(50% - 4px);
+    top: calc(50% - 6px);
     left: 16px;
     width: 8px;
     height: 4px;
