@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
   MdAssignmentTurnedIn,
+  MdBookOnline,
   MdCalendarViewMonth,
   MdEdit,
   MdEditCalendar,
@@ -181,18 +182,25 @@ const DashboardEventApplicationsPage: React.FC = () => {
         isLoading={!event} />
       <FormSection>
         <FormItem inlined>
-          <LinkButton to={`/dashboard/events/${eventId}/spaces`} color="default" inlined>
-            <IconLabel label="配置管理" icon={<MdAssignmentTurnedIn />} />
-          </LinkButton>
           <AnchorButton href={`/dashboard/events/${eventId}/tanzaku`} color="default" inlined target="_blank">
             <IconLabel label="配置短冊印刷" icon={<MdPrint />} />
           </AnchorButton>
+          <LinkButton to={`/dashboard/events/${eventId}/spaces`} color="default" inlined>
+            <IconLabel label="配置管理" icon={<MdAssignmentTurnedIn />} />
+          </LinkButton>
           <LinkButton to={`/dashboard/events/${eventId}/cuts`} color="default" inlined>
             <IconLabel label="サークルカット一覧" icon={<MdImage />} />
+          </LinkButton>
+          <LinkButton to={`/dashboard/events/${eventId}/create-passes`} color="default" inlined>
+            <IconLabel label="サークル通行証発券" icon={<MdBookOnline />} />
           </LinkButton>
           <LinkButton to={`/dashboard/events/${eventId}/send-mails`} color="default" inlined>
             <IconLabel label="メール送信" icon={<MdMail />} />
           </LinkButton>
+        </FormItem>
+      </FormSection>
+      <FormSection>
+        <FormItem inlined>
           <LinkButton to={`/dashboard/events/${eventId}/info`} color="default" inlined>
             <IconLabel label="メタ情報参照" icon={<MdCalendarViewMonth />} />
           </LinkButton>

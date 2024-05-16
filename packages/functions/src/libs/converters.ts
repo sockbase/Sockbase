@@ -156,6 +156,7 @@ export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
       rules: event.rules,
       spaces: event.spaces,
       genres: event.genres,
+      passConfig: event.passConfig,
       schedules: {
         startApplication: event.schedules.startApplication,
         endApplication: event.schedules.endApplication,
