@@ -11,10 +11,10 @@ const useMail = (): IUseMail => {
 
   const sendMailForEventAsync = async (eventId: string, target: SockbaseMailSendTarget, mailSubject: string, mailBody: string): Promise<boolean> => {
     const functions = getFunctions()
-    const sendMailFunction = FirebaseFunctions.httpsCallable<
-      SockbaseSendMailForEventPayload,
-      boolean
-    >(functions, 'mail-sendMailManuallyForEvent')
+    const sendMailFunction = FirebaseFunctions
+      .httpsCallable<SockbaseSendMailForEventPayload, boolean>(
+      functions,
+      'mail-sendMailManuallyForEvent')
     const sendResult = await sendMailFunction({
       eventId,
       target,

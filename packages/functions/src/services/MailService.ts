@@ -193,8 +193,8 @@ const sendMailManuallyForEventAsync = async (payload: SockbaseSendMailForEventPa
         app,
         user)
 
-      const mailDoc = firestore.collection('_mails').doc()
-      tx.create(mailDoc, {
+      const mailRef = firestore.collection('_mails').doc()
+      tx.create(mailRef, {
         to: user.email,
         message: {
           subject: template.subject,

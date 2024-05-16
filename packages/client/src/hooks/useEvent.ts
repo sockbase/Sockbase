@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
+import * as FirebaseFunctions from 'firebase/functions'
 import * as FirebaseStorage from 'firebase/storage'
 import {
   eventConverter,
@@ -17,10 +18,11 @@ interface IUseEvent {
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
   createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
   uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
+  createPassesAsync: (eventId: string) => Promise<number>
 }
 
 const useEvent = (): IUseEvent => {
-  const { getFirestore, getStorage } = useFirebase()
+  const { getFirestore, getStorage, getFunctions } = useFirebase()
 
   const getEventByIdAsync = async (eventId: string): Promise<SockbaseEventDocument> => {
     const db = getFirestore()
@@ -118,6 +120,16 @@ const useEvent = (): IUseEvent => {
     await FirebaseStorage.uploadBytes(eyecatchRef, eyecatchFile)
   }
 
+  const createPassesAsync = async (eventId: string): Promise<number> => {
+    const functions = getFunctions()
+    const createPassesFunction = FirebaseFunctions
+      .httpsCallable<string, number>(
+      functions,
+      'event-createPasses')
+    const createResult = await createPassesFunction(eventId)
+    return createResult.data
+  }
+
   return {
     getEventByIdAsync,
     getEventsByOrganizationIdAsync,
@@ -126,7 +138,8 @@ const useEvent = (): IUseEvent => {
     getSpaceOptionalAsync,
     getSpacesByEventIdAsync,
     createEventAsync,
-    uploadEventEyecatchAsync
+    uploadEventEyecatchAsync,
+    createPassesAsync
   }
 }
 
