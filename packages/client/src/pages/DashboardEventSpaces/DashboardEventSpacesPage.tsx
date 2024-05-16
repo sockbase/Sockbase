@@ -200,7 +200,7 @@ const DashboardEventSpacesPage: React.FC = () => {
       </p>}
 
       <FormSection>
-        <FormItem inlined>
+        <FormItem>
           <LoadingCircleWrapper isLoading={isProgress} inlined>
             <FormButton
               disabled={!spaceImportResult || isProgress}
