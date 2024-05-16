@@ -2,6 +2,7 @@ import saveAs from 'file-saver'
 import * as FirestoreDB from 'firebase/firestore'
 import * as XLSX from 'xlsx'
 import { applicationHashIdConverter, spaceConverter, spaceHashConverter } from '../libs/converters'
+import useDayjs from './useDayjs'
 import useFirebase from './useFirebase'
 import type { ImportedSpace } from '../@types'
 import type {
@@ -11,8 +12,7 @@ import type {
   SockbaseAccount,
   SockbaseApplicationLinksDocument,
   SockbaseApplicationOverviewDocument,
-  SockbaseSpaceDocument,
-  SockbaseSpaceHash
+  SockbaseSpaceDocument
 } from 'sockbase'
 
 interface IUseSpace {
@@ -27,10 +27,7 @@ interface IUseSpace {
     eventId: string,
     event: SockbaseEvent,
     apps: Record<string, SockbaseApplicationDocument>,
-    metas: Record<string, SockbaseApplicationMeta>,
-    users: Record<string, SockbaseAccount>,
-    links: Record<string, SockbaseApplicationLinksDocument | null>,
-    overviews: Record<string, SockbaseApplicationOverviewDocument | null>
+    metas: Record<string, SockbaseApplicationMeta>
   ) => void
   readSpaceDataXLSXAsync: (eventId: string, spaceFile: ArrayBuffer) => Promise<{ eventId: string, spaces: ImportedSpace[] }>
   updateSpaceDataAsync: (eventId: string, spaces: ImportedSpace[]) => Promise<void>
@@ -38,6 +35,7 @@ interface IUseSpace {
 
 const useSpace = (): IUseSpace => {
   const { getFirestore } = useFirebase()
+  const { formatByDate } = useDayjs()
 
   const exportCSV = (
     apps: Record<string, SockbaseApplicationDocument>,
@@ -83,69 +81,33 @@ const useSpace = (): IUseSpace => {
     eventId: string,
     event: SockbaseEvent,
     apps: Record<string, SockbaseApplicationDocument>,
-    metas: Record<string, SockbaseApplicationMeta>,
-    users: Record<string, SockbaseAccount>,
-    links: Record<string, SockbaseApplicationLinksDocument | null>,
-    overviews: Record<string, SockbaseApplicationOverviewDocument | null>
+    metas: Record<string, SockbaseApplicationMeta>
   ): void => {
+    const now = new Date().getTime()
+
     const workbook = XLSX.utils.book_new()
 
     const appsArray = Object.entries(apps)
       .filter(([id, _]) => metas[id].applicationStatus === 2)
-      .map(([id, a], i) => {
-        const unionCircle = Object.values(apps).filter(uc => uc.hashId === a.unionCircleId)[0]
-        const space = event.spaces.filter(s => s.id === a.spaceId)[0]
-        const genre = event.genres.filter(g => g.id === a.circle.genre)[0]
-
+      .map(([, a]) => {
         return [
           null,
           a.hashId,
           a.circle.name,
-          a.circle.yomi,
-          a.circle.penName,
-          genre.name,
-          space.name,
-          a.circle.hasAdult,
-          unionCircle?.circle.name,
-          (overviews[id]?.description ?? a.overview.description)
-            .replaceAll(',', '，')
-            .replaceAll(/[\r\n]+/g, ' '),
-          (overviews[id]?.totalAmount ?? a.overview.totalAmount)
-            .replaceAll(',', '，')
-            .replaceAll(/[\r\n]+/g, ' '),
-          a.remarks,
-          links[id]?.twitterScreenName,
-          links[id]?.pixivUserId,
-          links[id]?.websiteURL,
-          links[id]?.menuURL,
-          a.userId,
-          users[a.userId]?.email
+          a.circle.penName
         ]
       })
 
     const applicationDataSheet = XLSX.utils.aoa_to_sheet([
       [eventId, `${event.eventName} 配置データ作成`],
+      [formatByDate(now, 'YYYY/MM/DD HH:mm:ss 作成')],
       [''],
-      ['', '→B列以降は変更しても反映されません。'],
+      ['', '→B列以降は確認用です。変更しても反映されません。'],
       [
         'スペース番号',
         '申し込みID',
         'サークル名',
-        'よみ',
-        'ペンネーム',
-        'ジャンル',
-        'スペース',
-        '成人向け',
-        '合体サークル',
-        '頒布物概要',
-        '総搬入量',
-        '備考',
-        'Twitter',
-        'Pixiv',
-        'Web',
-        'お品書き',
-        'ユーザID',
-        'メールアドレス'
+        'ペンネーム'
       ],
       ...appsArray
     ])
@@ -157,8 +119,7 @@ const useSpace = (): IUseSpace => {
       [excelUnit8Array],
       { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
 
-    const now = new Date().getTime()
-    saveAs(excelBlob, `${eventId}_${now}`)
+    saveAs(excelBlob, `${eventId}-${formatByDate(now, 'YYYYMMDD-HHmmss')}`)
   }
 
   const readSpaceDataXLSXAsync = async (eventId: string, spaceFile: ArrayBuffer): Promise<{ eventId: string, spaces: ImportedSpace[] }> => {
@@ -177,7 +138,7 @@ const useSpace = (): IUseSpace => {
 
     const spaces: ImportedSpace[] = []
 
-    let row = 5
+    let row = 6
     while (sheetData[`B${row}`]) {
       const space = {
         spaceId: sheetData[`A${row}`]?.v,
@@ -206,6 +167,8 @@ const useSpace = (): IUseSpace => {
       throw new Error('配置設定が必要なサークルがありませんでした')
     }
 
+    const sortedSpaceIds = spaceIds.sort()
+
     const db = getFirestore()
 
     const appHashesRef = FirestoreDB
@@ -218,6 +181,19 @@ const useSpace = (): IUseSpace => {
     const appHashes = appHashesSnapshot.docs
       .filter(doc => doc.exists())
       .map(doc => doc.data())
+
+    const appHashIdsToAssign = spaces
+      .map(s => s.appHashId)
+    const appHashIdsToUpdate = appHashes
+      .map(a => a.hashId)
+
+    const appHashIdValidationResult = appHashIdsToAssign.reduce<string[]>((p, id) => {
+      if (appHashIdsToUpdate.includes(id)) return p
+      return [...p, id]
+    }, [])
+    if (appHashIdValidationResult.length > 0) {
+      throw new Error(`イベントに存在しない申し込みIDが入力されています。(${appHashIdValidationResult.join(', ')})`)
+    }
 
     const spaceHashesRef = FirestoreDB
       .collection(db, '_spaceHashes')
@@ -250,7 +226,7 @@ const useSpace = (): IUseSpace => {
       .withConverter(spaceConverter)
 
     const spaceAddResults = await Promise.all(
-      spaceIds.map(async (spaceId, i) => {
+      sortedSpaceIds.map(async (spaceId, i) => {
         const spaceDoc: SockbaseSpaceDocument = {
           id: '',
           eventId,
@@ -264,11 +240,8 @@ const useSpace = (): IUseSpace => {
 
         const spaceDocId = addResult.id
         const spaceHashRef = FirestoreDB.doc(db, `_spaceHashes/${spaceDocId}`)
-        const spaceHashDoc: SockbaseSpaceHash = {
-          eventId
-        }
         await FirestoreDB
-          .setDoc(spaceHashRef, spaceHashDoc)
+          .setDoc(spaceHashRef, { eventId })
           .catch(err => { throw err })
 
         return {
@@ -276,10 +249,6 @@ const useSpace = (): IUseSpace => {
           id: spaceDocId
         }
       }))
-
-    await FirestoreDB.runTransaction(db, async tx => {
-
-    })
 
     const updateBatch = FirestoreDB.writeBatch(db)
 

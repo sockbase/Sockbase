@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdAssignmentTurnedIn, MdCheck, MdDownload } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import { type SockbaseAccount, type SockbaseApplicationLinksDocument, type SockbaseApplicationMeta, type SockbaseApplicationOverviewDocument, type SockbaseApplicationDocument, type SockbaseEvent, type SockbaseSpaceDocument } from 'sockbase'
 import FormButton from '../../components/Form/Button'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -13,24 +12,22 @@ import Alert from '../../components/Parts/Alert'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import IconLabel from '../../components/Parts/IconLabel'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 import useApplication from '../../hooks/useApplication'
 import useDayjs from '../../hooks/useDayjs'
 import useEvent from '../../hooks/useEvent'
 import useFile from '../../hooks/useFile'
 import useSpace from '../../hooks/useSpace'
-import useUserData from '../../hooks/useUserData'
 import type { ImportedSpace } from '../../@types'
+import type { SockbaseApplicationMeta, SockbaseApplicationDocument, SockbaseEvent, SockbaseSpaceDocument } from 'sockbase'
 
 const DashboardEventSpacesPage: React.FC = () => {
   const { eventId } = useParams()
   const { getEventByIdAsync, getSpacesByEventIdAsync } = useEvent()
   const {
     getApplicationsByEventIdAsync,
-    getApplicationMetaByIdAsync,
-    getLinksByApplicationIdOptionalAsync,
-    getOverviewByApplicationIdOptionalAsync
+    getApplicationMetaByIdAsync
   } = useApplication()
-  const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const {
     downloadSpaceDataXLSX,
     readSpaceDataXLSXAsync,
@@ -46,14 +43,12 @@ const DashboardEventSpacesPage: React.FC = () => {
   const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
   const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
   const [metas, setMetas] = useState<Record<string, SockbaseApplicationMeta>>()
-  const [users, setUsers] = useState<Record<string, SockbaseAccount>>()
-  const [links, setLinks] = useState<Record<string, SockbaseApplicationLinksDocument | null>>()
-  const [overviews, setOverviews] = useState<Record<string, SockbaseApplicationOverviewDocument | null>>()
 
   const [spaceDataFile, setSpaceDataFile] = useState<File | null>()
   const [loadErrorMessage, setLoadErrorMessage] = useState<string | null>()
   const [updateErrorMessage, setUpdateErrorMessage] = useState<string | null>()
   const [spaceImportResult, setSpaceImportResult] = useState<{ eventId: string, spaces: ImportedSpace[] } | null>()
+  const [isProgress, setProgress] = useState(false)
 
   const pageTitle = useMemo(() => {
     if (!event) return ''
@@ -61,9 +56,9 @@ const DashboardEventSpacesPage: React.FC = () => {
   }, [event])
 
   const handleDownload = useCallback(() => {
-    if (!eventId || !event || !spaces || !apps || !metas || !users || !links || !overviews) return
-    downloadSpaceDataXLSX(eventId, event, apps, metas, users, links, overviews)
-  }, [eventId, event, spaces, apps, metas, users, links, overviews])
+    if (!eventId || !event || !spaces || !apps || !metas) return
+    downloadSpaceDataXLSX(eventId, event, apps, metas)
+  }, [eventId, event, spaces, apps, metas])
 
   const getAppByHashId = useCallback((appHashId: string) => {
     if (!apps) return
@@ -73,6 +68,7 @@ const DashboardEventSpacesPage: React.FC = () => {
   const handleUpdate = useCallback(() => {
     if (!eventId || !spaceImportResult) return
     if (!confirm('配置データを適用します。\nよろしいですか？')) return
+    setProgress(true)
     setUpdateErrorMessage(null)
     updateSpaceDataAsync(eventId, spaceImportResult.spaces)
       .then(() => alert('配置データを適用しました'))
@@ -80,6 +76,7 @@ const DashboardEventSpacesPage: React.FC = () => {
         setUpdateErrorMessage(err.message)
         throw err
       })
+      .finally(() => setProgress(false))
   }, [eventId, spaceImportResult])
 
   useEffect(() => {
@@ -99,8 +96,6 @@ const DashboardEventSpacesPage: React.FC = () => {
       setApps(fetchedApps)
 
       const appIds = Object.keys(fetchedApps)
-      const userIds = Object.values(fetchedApps)
-        .map(a => a.userId)
 
       Promise.all(appIds.map(async id => ({
         id,
@@ -112,45 +107,6 @@ const DashboardEventSpacesPage: React.FC = () => {
             [c.id]: c.data
           }), {})
           setMetas(mappedMetas)
-        })
-        .catch(err => { throw err })
-
-      Promise.all(userIds.map(async id => ({
-        id,
-        data: await getUserDataByUserIdAndEventIdAsync(id, eventId)
-      })))
-        .then(fetchedUserDatas => {
-          const mappedUserDatas = fetchedUserDatas.reduce<Record<string, SockbaseAccount>>((p, c) => ({
-            ...p,
-            [c.id]: c.data
-          }), {})
-          setUsers(mappedUserDatas)
-        })
-        .catch(err => { throw err })
-
-      Promise.all(appIds.map(async id => ({
-        id,
-        data: await getLinksByApplicationIdOptionalAsync(id)
-      })))
-        .then(fetchedLinks => {
-          const mappedLinks = fetchedLinks.reduce<Record<string, SockbaseApplicationLinksDocument | null>>((p, c) => ({
-            ...p,
-            [c.id]: c.data
-          }), {})
-          setLinks(mappedLinks)
-        })
-        .catch(err => { throw err })
-
-      Promise.all(appIds.map(async id => ({
-        id,
-        data: await getOverviewByApplicationIdOptionalAsync(id)
-      })))
-        .then(fetchedOverviews => {
-          const mappedOverviews = fetchedOverviews.reduce<Record<string, SockbaseApplicationOverviewDocument | null>>((p, c) => ({
-            ...p,
-            [c.id]: c.data
-          }), {})
-          setOverviews(mappedOverviews)
         })
         .catch(err => { throw err })
     }
@@ -189,6 +145,14 @@ const DashboardEventSpacesPage: React.FC = () => {
         description="配置管理"
         icon={<MdAssignmentTurnedIn />}
         isLoading={!event} />
+
+      <FormSection>
+        <FormItem inlined>
+          <FormButton inlined color="default" onClick={handleDownload}>
+            <IconLabel label="配置データダウンロード" icon={<MdDownload />} />
+          </FormButton>
+        </FormItem>
+      </FormSection>
 
       <FormSection>
         <FormItem>
@@ -237,21 +201,19 @@ const DashboardEventSpacesPage: React.FC = () => {
 
       <FormSection>
         <FormItem inlined>
-          <FormButton inlined disabled={!spaceImportResult} onClick={handleUpdate}>
-            <IconLabel label="配置設定" icon={<MdCheck />} />
-          </FormButton>
+          <LoadingCircleWrapper isLoading={isProgress} inlined>
+            <FormButton
+              disabled={!spaceImportResult || isProgress}
+              onClick={handleUpdate}
+              inlined>
+              <IconLabel label="配置データを適用する" icon={<MdCheck />} />
+            </FormButton>
+          </LoadingCircleWrapper>
         </FormItem>
       </FormSection>
 
       {updateErrorMessage && <Alert type="danger">{updateErrorMessage}</Alert>}
 
-      <FormSection>
-        <FormItem inlined>
-          <FormButton inlined color="default" onClick={handleDownload}>
-            <IconLabel label="配置データダウンロード" icon={<MdDownload />} />
-          </FormButton>
-        </FormItem>
-      </FormSection>
     </DashboardBaseLayout>
   )
 }
