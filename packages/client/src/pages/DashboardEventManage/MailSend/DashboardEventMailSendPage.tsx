@@ -124,14 +124,16 @@ const DashboardEventMailSendPage: React.FC = () => {
               <FormLabel>件名</FormLabel>
               <FormInput
                 value={mailSubject}
-                onChange={e => setMailSubject(e.target.value)} />
+                onChange={e => setMailSubject(e.target.value)}
+                disabled={isProgress} />
             </FormItem>
             <FormItem>
               <FormLabel>本文</FormLabel>
               <FormTextarea
                 style={{ height: '12em' }}
                 value={mailBody}
-                onChange={e => setMailBody(e.target.value)} />
+                onChange={e => setMailBody(e.target.value)}
+                disabled={isProgress} />
             </FormItem>
           </FormSection>
         </>
