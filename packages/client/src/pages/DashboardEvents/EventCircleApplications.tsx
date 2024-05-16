@@ -42,10 +42,10 @@ const EventCircleApplications: React.FC<Props> = (props) => {
 
         const aSpace = props.spaces.filter(s => s.id === aAppHash.spaceId)[0]
         const bSpace = props.spaces.filter(s => s.id === bAppHash.spaceId)[0]
+        const aOrder = aSpace ? aSpace.spaceGroupOrder * 100 + aSpace.spaceOrder : Number.MAX_SAFE_INTEGER
+        const bOrder = bSpace ? bSpace.spaceGroupOrder * 100 + bSpace.spaceOrder : Number.MAX_SAFE_INTEGER
 
-        if (!aSpace || !bSpace) return 0
-
-        return (aSpace.spaceGroupOrder * 100 + aSpace.spaceOrder) - (bSpace.spaceGroupOrder * 100 + bSpace.spaceOrder)
+        return aOrder - bOrder
       }), [props.appHashs, props.spaces, activeSortSpace])
 
   const getSpace = useCallback((spaceId: string): SockbaseEventSpace | null => {
