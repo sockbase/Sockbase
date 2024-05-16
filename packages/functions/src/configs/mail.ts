@@ -14,13 +14,25 @@ import type {
   SockbaseEventGenre
 } from 'sockbase'
 
-const suffix = [
+const commonSuffix = [
+  'お心当たりのない場合、大変恐れ入りますが下記連絡先までその旨ご連絡いただけますと幸いです。',
+  '',
+  'Sockbase サポート',
+  'Mail/ support@sockbase.net',
+  'Web/ https://sockbase.net'
+]
+
+const autoSuffix = [
   '',
   '-----',
-  'このメールはシステムによって自動送信されています。',
-  'このメールに覚えのない場合は、このメールに返信していただきますようお願いいたします。',
+  'このメールは Sockbase より自動送信されています。',
+  ...commonSuffix
+]
+const manuallySuffix = [
   '',
-  'Sockbase'
+  '-----',
+  'このメールは Sockbase を使用し、イベント主催者から送信されました。',
+  ...commonSuffix
 ]
 
 const templates = {
@@ -46,7 +58,7 @@ const templates = {
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',
       '今後ともどうぞよろしくお願いいたします。',
-      ...suffix
+      ...autoSuffix
     ]
   }),
   requestCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace, email: string) => ({
@@ -91,7 +103,7 @@ const templates = {
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       'ご不明点がありましたら、お気軽にご連絡ください。',
       '今後ともどうぞよろしくお願いいたします。',
-      ...suffix
+      ...autoSuffix
     ]
   }),
   acceptCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace) => ({
@@ -113,7 +125,7 @@ const templates = {
       `ペンネーム: ${app.circle.penName}`,
       `スペース: ${space.name}`,
       `申込みID: ${app.hashId ?? ''}`,
-      ...suffix
+      ...autoSuffix
     ]
   }),
   updateUnionCircle: (event: SockbaseEvent, app: SockbaseApplicationDocument, unionApp: SockbaseApplicationDocument) => ({
@@ -133,7 +145,7 @@ const templates = {
       `申し込みID: ${unionApp.hashId ?? ''}`,
       '',
       '※お心当たりのない方は、マイページのお問い合わせからご連絡ください。',
-      ...suffix
+      ...autoSuffix
     ]
   }),
   acceptTicket: (store: SockbaseStoreDocument, type: SockbaseStoreType, ticket: SockbaseTicketDocument) => ({
@@ -154,7 +166,7 @@ const templates = {
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',
       '今後ともどうぞよろしくお願いいたします。',
-      ...suffix
+      ...autoSuffix
     ]
   }),
   requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketDocument, store: SockbaseStore, type: SockbaseStoreType, email: string) => ({
@@ -201,7 +213,7 @@ const templates = {
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       'ご不明点がありましたら、お気軽にご連絡ください。',
       '今後ともどうぞよろしくお願いいたします。',
-      ...suffix
+      ...autoSuffix
     ]
   }),
   acceptTicketPayment: (payment: SockbasePaymentDocument, store: SockbaseStoreDocument, type: SockbaseStoreType, ticket: SockbaseTicketDocument) => ({
@@ -221,7 +233,7 @@ const templates = {
       `チケットストア名: ${store.storeName}`,
       `チケット種別: ${type.name}`,
       `チケットID: ${ticket.hashId}`,
-      ...suffix
+      ...autoSuffix
     ]
   }),
   acceptInquiry: (inquiry: SockbaseInquiryDocument, user: SockbaseAccountDocument) => ({
@@ -236,7 +248,17 @@ const templates = {
       `お問い合わせ種類: ${convertTypeText(inquiry.inquiryType)}`,
       'お問い合わせ内容',
       inquiry.body.replace('\\n', '\n'),
-      ...suffix
+      ...autoSuffix
+    ]
+  }),
+  sendManuallyForEvent: (subject: string, body: string[], event: SockbaseEvent, app: SockbaseApplicationDocument, user: SockbaseAccountDocument) => ({
+    subject: `[${event.eventName}] ${subject}`,
+    body: [
+      app.circle.name,
+      `${user.name} 様`,
+      '',
+      ...body,
+      ...manuallySuffix
     ]
   })
 }

@@ -16,7 +16,8 @@ import {
   type SockbaseStoreDocument,
   type SockbaseTicketDocument,
   type SockbaseTicketUsedStatus,
-  type SockbaseTicketUserDocument
+  type SockbaseTicketUserDocument,
+  type SockbaseApplicationMeta
 } from 'sockbase'
 
 export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> = {
@@ -128,6 +129,18 @@ export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDoc
       remarks: app.remarks,
       createdAt: app.createdAt ? new Date(app.createdAt.seconds * 1000) : null,
       updatedAt: app.updatedAt ? new Date(app.updatedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const applicationMetaConverter: FirestoreDataConverter<SockbaseApplicationMeta> = {
+  toFirestore: (meta: SockbaseApplicationMeta) => ({
+    applicationStatus: meta.applicationStatus
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationMeta => {
+    const meta = snapshot.data()
+    return {
+      applicationStatus: meta.applicationStatus
     }
   }
 }
