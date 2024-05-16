@@ -179,6 +179,7 @@ export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicat
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationHashIdDocument => {
     const hashDoc = snapshot.data()
     return {
+      id: hashDoc.id,
       userId: hashDoc.userId,
       applicationId: hashDoc.applicationId,
       hashId: hashDoc.hashId,
