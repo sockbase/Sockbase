@@ -57,6 +57,20 @@ const EventInfo: React.FC<Props> = (props) => {
         </tbody>
       </table>
 
+      <h3>サークル通行証情報</h3>
+      <table>
+        <tbody>
+          <tr>
+            <th>チケットストアID</th>
+            <td>{props.event?.passConfig?.storeId || '(空欄)'}</td>
+          </tr>
+          <tr>
+            <th>チケットタイプID</th>
+            <td>{props.event?.passConfig?.typeId || '(空欄)'}</td>
+          </tr>
+        </tbody>
+      </table>
+
       <h3>全体スケジュール</h3>
       <table>
         <tbody>
@@ -126,6 +140,7 @@ const EventInfo: React.FC<Props> = (props) => {
             <th>支払いURL</th>
             <th>商品ID</th>
             <th>2スペース</th>
+            <th>通行証発券枚数</th>
           </tr>
         </thead>
         <tbody>
@@ -138,6 +153,7 @@ const EventInfo: React.FC<Props> = (props) => {
               <td>{s.productInfo?.paymentURL}</td>
               <td>{s.productInfo?.productId}</td>
               <td>{s.isDualSpace ? '2スペース' : '-'}</td>
+              <td>{s.passCount?.toLocaleString() ?? 0}枚</td>
             </tr>)
             : <tr>
               <td colSpan={6}>スペース情報が入力されていません</td>

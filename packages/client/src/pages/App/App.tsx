@@ -21,6 +21,7 @@ import DashboardContactPage from '../DashboardContact/DashboardContactPage'
 import DashboardEventCreatePage from '../DashboardEventManage/EventCreate/DashboardEventCreatePage'
 import DashboardEventInfoPage from '../DashboardEventManage/EventInfo/DashboardEventInfoPage'
 import DashboardEventMailSendPage from '../DashboardEventManage/MailSend/DashboardEventMailSendPage'
+import DashboardEventCreatePassPage from '../DashboardEventManage/PassCreate/DashboardEventCreatePassPage'
 import DashboardEventSpacesPage from '../DashboardEventSpaces/DashboardEventSpacesPage'
 import DashboardEventCircleApplicationPrintTanzakuPage from '../DashboardEvents/DashboardEventCircleApplicationPrintTanzaku'
 import DashboardEventApplicationsPage from '../DashboardEvents/DashboardEventCircleApplicationsPage'
@@ -184,6 +185,10 @@ const router = createBrowserRouter([
                   {
                     path: 'send-mails',
                     element: <DashboardEventMailSendPage />
+                  },
+                  {
+                    path: 'create-passes',
+                    element: <DashboardEventCreatePassPage />
                   }
                 ]
               }
