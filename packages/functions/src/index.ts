@@ -1,6 +1,7 @@
 import * as account from './controllers/AccountController'
 import * as application from './controllers/ApplicationController'
 import * as checkout from './controllers/CheckoutController'
+import * as event from './controllers/EventController'
 import * as hello from './controllers/HelloController'
 import * as inquiry from './controllers/InquiryController'
 import * as mail from './controllers/MailController'
@@ -13,5 +14,6 @@ export {
   hello,
   inquiry,
   mail,
-  store
+  store,
+  event
 }

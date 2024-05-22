@@ -50,6 +50,10 @@ const InformationImport: React.FC<Props> = (props) => {
       startEvent: 0,
       endEvent: 0
     },
+    passConfig: {
+      storeId: '',
+      typeId: ''
+    },
     _organization: {
       id: '',
       name: '',
@@ -69,7 +73,8 @@ const InformationImport: React.FC<Props> = (props) => {
     price: '',
     productId: '',
     paymentURL: '',
-    isDualSpace: false
+    isDualSpace: false,
+    passCount: ''
   }])
 
   const {
@@ -108,7 +113,8 @@ const InformationImport: React.FC<Props> = (props) => {
     price: string,
     paymentURL: string,
     productId: string,
-    isDualSpace: boolean) => {
+    isDualSpace: boolean,
+    passCount: string) => {
     const newSpaces = [...editableSpaces]
     newSpaces[index] = {
       id,
@@ -117,7 +123,8 @@ const InformationImport: React.FC<Props> = (props) => {
       price,
       productId,
       paymentURL,
-      isDualSpace
+      isDualSpace,
+      passCount
     }
     setEditableSpaces(newSpaces)
   }, [editableSpaces])
@@ -141,7 +148,8 @@ const InformationImport: React.FC<Props> = (props) => {
             paymentURL: s.paymentURL,
             productId: s.productId
           }) || null,
-          isDualSpace: s.isDualSpace
+          isDualSpace: s.isDualSpace,
+          passCount: Number(s.passCount)
         }))
       },
       eyecatchFile,
@@ -171,7 +179,11 @@ const InformationImport: React.FC<Props> = (props) => {
         startEvent: ev.schedules.startEvent ?? 0,
         endEvent: ev.schedules.endEvent ?? 0
       },
-      isPublic: !!ev.isPublic
+      isPublic: !!ev.isPublic,
+      passConfig: {
+        storeId: ev.passConfig?.storeId ?? '',
+        typeId: ev.passConfig?.typeId ?? ''
+      }
     }
     setEvent(fetchedEvent)
 
@@ -184,7 +196,8 @@ const InformationImport: React.FC<Props> = (props) => {
           price: s.price.toString(),
           productId: s.productInfo?.productId ?? '',
           paymentURL: s.productInfo?.paymentURL ?? '',
-          isDualSpace: !!s.isDualSpace
+          isDualSpace: !!s.isDualSpace,
+          passCount: s.passCount?.toString() ?? ''
         }))
       : [{
         id: '',
@@ -193,7 +206,8 @@ const InformationImport: React.FC<Props> = (props) => {
         price: '',
         productId: '',
         paymentURL: '',
-        isDualSpace: false
+        isDualSpace: false,
+        passCount: ''
       }]
     setEditableSpaces(fetchedEditableSpaces)
   }, [])
@@ -309,7 +323,8 @@ const InformationImport: React.FC<Props> = (props) => {
       lastSpace.price ||
       lastSpace.paymentURL ||
       lastSpace.productId ||
-      lastSpace.isDualSpace) {
+      lastSpace.isDualSpace ||
+      lastSpace.passCount) {
       const newSpaces = [...editableSpaces, {
         id: '',
         name: '',
@@ -317,7 +332,8 @@ const InformationImport: React.FC<Props> = (props) => {
         price: '',
         paymentURL: '',
         productId: '',
-        isDualSpace: false
+        isDualSpace: false,
+        passCount: ''
       }]
       setEditableSpaces(newSpaces)
       return
@@ -330,7 +346,8 @@ const InformationImport: React.FC<Props> = (props) => {
       inputedSpace?.price ||
       inputedSpace?.paymentURL ||
       inputedSpace?.productId ||
-      inputedSpace?.isDualSpace) return
+      inputedSpace?.isDualSpace ||
+      inputedSpace?.passCount) return
 
     const trimedSpaces = editableSpaces.slice(undefined, -1)
     if (trimedSpaces.length < 1) return
@@ -423,6 +440,21 @@ const InformationImport: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
+      <h3>サークル通行証情報</h3>
+      <FormSection>
+        <FormItem>
+          <FormLabel>チケットストアID</FormLabel>
+          <FormInput
+            value={event.passConfig?.storeId}
+            onChange={e => setEvent(s => ({ ...s, passConfig: s.passConfig && { ...s.passConfig, storeId: e.target.value } }))} />
+        </FormItem>
+        <FormItem>
+          <FormLabel>チケットタイプID</FormLabel>
+          <FormInput
+            value={event.passConfig?.typeId}
+            onChange={e => setEvent(s => ({ ...s, passConfig: s.passConfig && { ...s.passConfig, typeId: e.target.value } }))} />
+        </FormItem>
+      </FormSection>
       <h3>全体スケジュール</h3>
       <FormSection>
         <FormItem>
@@ -512,11 +544,13 @@ const InformationImport: React.FC<Props> = (props) => {
         <thead>
           <tr>
             <th style={{ width: '10%' }}>スペースID</th>
-            <th style={{ width: '20%' }}>名前</th>
-            <th style={{ width: '30%' }}>説明</th>
+            <th style={{ width: '10%' }}>名前</th>
+            <th style={{ width: '25%' }}>説明</th>
             <th>参加費</th>
             <th>支払いURL</th>
             <th>商品ID</th>
+            <th></th>
+            <th>通行証枚数</th>
           </tr>
         </thead>
         <tbody>
@@ -532,7 +566,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.price,
                   s.paymentURL,
                   s.productId,
-                  s.isDualSpace)}/>
+                  s.isDualSpace,
+                  s.passCount)}/>
             </td>
             <td>
               <FormInput
@@ -545,7 +580,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.price,
                   s.paymentURL,
                   s.productId,
-                  s.isDualSpace)}/>
+                  s.isDualSpace,
+                  s.passCount)} />
             </td>
             <td>
               <FormInput
@@ -558,7 +594,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.price,
                   s.paymentURL,
                   s.productId,
-                  s.isDualSpace)}/>
+                  s.isDualSpace,
+                  s.passCount)} />
             </td>
             <td>
               <FormInput
@@ -571,7 +608,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   e.target.value,
                   s.paymentURL,
                   s.productId,
-                  s.isDualSpace)}/>
+                  s.isDualSpace,
+                  s.passCount)} />
             </td>
             <td>
               <FormInput
@@ -584,7 +622,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.price,
                   e.target.value,
                   s.productId,
-                  s.isDualSpace)}/>
+                  s.isDualSpace,
+                  s.passCount)} />
             </td>
             <td>
               <FormInput
@@ -597,7 +636,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.price,
                   s.paymentURL,
                   e.target.value,
-                  s.isDualSpace)}/>
+                  s.isDualSpace,
+                  s.passCount)} />
             </td>
             <td>
               <FormCheckbox
@@ -612,7 +652,22 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.price,
                   s.paymentURL,
                   s.productId,
-                  checked)}/>
+                  checked,
+                  s.passCount)} />
+            </td>
+            <td>
+              <FormInput
+                value={s.passCount}
+                onChange={e => handleEditSpace(
+                  i,
+                  s.id,
+                  s.name,
+                  s.description,
+                  s.price,
+                  s.paymentURL,
+                  s.productId,
+                  s.isDualSpace,
+                  e.target.value)} />
             </td>
           </tr>))}
         </tbody>
@@ -648,6 +703,8 @@ const InformationImport: React.FC<Props> = (props) => {
             label="成人向け頒布を許可する"
             checked={event.permissions.allowAdult}
             onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, allowAdult: checked } })) }/>
+        </FormItem>
+        <FormItem>
           <FormCheckbox
             name="canUseBankTransfer"
             label="参加費の銀行振込を許可する"

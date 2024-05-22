@@ -140,7 +140,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
   return result
 }
 
-const generateTicketHashId = (now: Date): string => {
+export const generateTicketHashId = (now: Date): string => {
   const codeDigit = 32
   const randomId = random.generateRandomCharacters(codeDigit)
 

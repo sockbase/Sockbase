@@ -10,6 +10,10 @@ export interface SockbaseEvent {
   rules: string[]
   spaces: SockbaseEventSpace[]
   genres: SockbaseEventGenre[]
+  passConfig?: {
+    storeId: string
+    typeId: string
+  }
   schedules: {
     startApplication: number
     endApplication: number
@@ -50,6 +54,7 @@ export interface SockbaseEventSpace {
     paymentURL: string
   } | null
   isDualSpace: boolean
+  passCount?: number
 }
 
 /**

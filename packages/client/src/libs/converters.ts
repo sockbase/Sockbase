@@ -109,6 +109,7 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
     spaces: event.spaces,
     genres: event.genres,
     schedules: event.schedules,
+    passConfig: event.passConfig,
     _organization: event._organization,
     permissions: event.permissions,
     isPublic: event.isPublic
@@ -125,6 +126,7 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
         .sort((a, b) => a.price - b.price),
       genres: event.genres,
       schedules: event.schedules,
+      passConfig: event.passConfig,
       _organization: event._organization,
       permissions: event.permissions,
       isPublic: event.isPublic
