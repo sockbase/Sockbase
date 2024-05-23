@@ -147,16 +147,22 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
         <FormSection>
           <FormItem>
             <FormLabel>印刷する短冊</FormLabel>
+          </FormItem>
+          <FormItem>
             <FormCheckbox
               name="atamagami"
               label="頭紙"
               checked={printAtamagami}
               onChange={checked => setPrintAtamagami(checked)} />
+          </FormItem>
+          <FormItem>
             <FormCheckbox
               name="circle"
               label="配置短冊"
               checked={printCircleTanzaku}
               onChange={checked => setPrintCircleTanzaku(checked)} />
+          </FormItem>
+          <FormItem>
             <FormCheckbox
               name="dummy"
               label="準備会スペース"
