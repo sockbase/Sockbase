@@ -221,7 +221,7 @@ const Sidebar: React.FC<Props> = (props) => {
                       (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
                       (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
                     .map(item =>
-                      <StyledMenuItemLink key={item.key} to={item.link}>
+                      <StyledMenuItemLink key={item.key} to={item.link} onClick={() => setOpenMenu(false)}>
                         <StyledMenuItemIcon isSlim={isSlim} isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
                         {!isSlim && <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>}
                       </StyledMenuItemLink>
