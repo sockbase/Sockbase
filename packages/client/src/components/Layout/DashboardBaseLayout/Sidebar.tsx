@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   MdMenu,
   MdClose,
@@ -15,7 +15,9 @@ import {
   MdInbox,
   MdWallet,
   MdBadge,
-  MdSearch
+  MdSearch,
+  MdArrowBackIosNew,
+  MdArrowForwardIos
 } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -158,6 +160,8 @@ const menu: MenuSection[] = [
 ]
 
 interface Props {
+  isSlim: boolean
+  setSlim: (isSlim: boolean) => void
   user: User
   logout: () => void
 }
@@ -168,23 +172,23 @@ const Sidebar: React.FC<Props> = (props) => {
   const [isHideToggleMenu, setHideToggleMenu] = useState(false)
   const [isOpenMenu, setOpenMenu] = useState(false)
 
-  const onChangeWidth: () => void =
-    () => setHideToggleMenu(width >= 840)
-  useEffect(onChangeWidth, [width])
+  const isSlim = useMemo(() => isHideToggleMenu && props.isSlim, [isHideToggleMenu, props.isSlim])
+
+  useEffect(() => setHideToggleMenu(width > 840), [width])
 
   return (
     <StyledSidebarContainer>
-      {!isHideToggleMenu && <StyledSection>
+      {!isHideToggleMenu && <StyledSection isSlim={isSlim}>
         <StyledMenu>
           {
             !isOpenMenu
               ? <StyledMenuItem onClick={() => setOpenMenu(true)}>
-                <StyledMenuItemIcon><MdMenu /></StyledMenuItemIcon>
-                <StyledMenuItemText>メニュー</StyledMenuItemText>
+                <StyledMenuItemIcon isSlim={isSlim}><MdMenu /></StyledMenuItemIcon>
+                {!isSlim && <StyledMenuItemText>メニュー</StyledMenuItemText>}
               </StyledMenuItem>
               : <StyledMenuItem onClick={() => setOpenMenu(false)}>
-                <StyledMenuItemIcon><MdClose /></StyledMenuItemIcon>
-                <StyledMenuItemText>閉じる</StyledMenuItemText>
+                <StyledMenuItemIcon isSlim={isSlim}><MdClose /></StyledMenuItemIcon>
+                {!isSlim && <StyledMenuItemText>閉じる</StyledMenuItemText>}
               </StyledMenuItem>
           }
         </StyledMenu>
@@ -192,15 +196,15 @@ const Sidebar: React.FC<Props> = (props) => {
       {
         (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) &&
         <>
-          <StyledStatePanel>
+          {!isSlim && <StyledStatePanel>
             <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
             <StyledStatePanelContent>{props.user.email}</StyledStatePanelContent>
-          </StyledStatePanel>
-          <StyledSection>
+          </StyledStatePanel>}
+          <StyledSection isSlim={isSlim}>
             <StyledMenu>
               <StyledMenuItem onClick={props.logout}>
-                <StyledMenuItemIcon><MdLogout /></StyledMenuItemIcon>
-                <StyledMenuItemText>ログアウト</StyledMenuItemText>
+                <StyledMenuItemIcon isSlim={isSlim}><MdLogout /></StyledMenuItemIcon>
+                {!isSlim && <StyledMenuItemText>ログアウト</StyledMenuItemText>}
               </StyledMenuItem>
             </StyledMenu>
           </StyledSection>
@@ -208,8 +212,8 @@ const Sidebar: React.FC<Props> = (props) => {
             .filter(m =>
               (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
               (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
-            .map(sec => <StyledSection key={sec.sectionKey}>
-              {sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
+            .map(sec => <StyledSection key={sec.sectionKey} isSlim={isSlim}>
+              {!isSlim && sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
               <StyledMenu>
                 {
                   sec.items
@@ -217,22 +221,36 @@ const Sidebar: React.FC<Props> = (props) => {
                       (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
                       (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
                     .map(item =>
-                      <StyledMenuItemLink key={item.key} to={item.link}>
-                        <StyledMenuItemIcon isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
-                        <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>
+                      <StyledMenuItemLink key={item.key} to={item.link} onClick={() => setOpenMenu(false)}>
+                        <StyledMenuItemIcon isSlim={isSlim} isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
+                        {!isSlim && <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>}
                       </StyledMenuItemLink>
                     )
                 }
               </StyledMenu>
             </StyledSection>)}
+          {isHideToggleMenu && <StyledSection isSlim={isSlim}>
+            <StyledMenu>
+              <StyledMenuItem onClick={() => props.setSlim(!props.isSlim)}>
+                <StyledMenuItemIcon isSlim={isSlim}>
+                  {isSlim ? <MdArrowForwardIos /> : <MdArrowBackIosNew />}
+                </StyledMenuItemIcon>
+                {!isSlim && <StyledMenuItemText>メニュー最小化</StyledMenuItemText>}
+              </StyledMenuItem>
+            </StyledMenu>
+          </StyledSection>}
         </>}
     </StyledSidebarContainer >
   )
 }
 
 const StyledSidebarContainer = styled.nav``
-const StyledSection = styled.section`
-  margin-bottom: 5px;
+const StyledSection = styled.section<{ isSlim: boolean }>`
+  margin-bottom: 10px;
+  ${props => props.isSlim && {
+    marginBottom: '15px'
+  }}
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -270,7 +288,7 @@ const StyledMenuItem = styled.span`
 const StyledMenuItemLink = styled(Link)`
   ${styledMenuItemStyle}
 `
-const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
+const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boolean, isSlim: boolean }>`
   padding: 10px;
   border-radius: 5px 0 0 5px;
   border-right: none;
@@ -293,6 +311,10 @@ const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boo
       : {
         backgroundColor: 'var(--primary-brand-color)'
       }}
+
+  ${prpos => prpos.isSlim && {
+    borderRadius: '5px'
+  }}
 `
 const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
   padding: 10px;

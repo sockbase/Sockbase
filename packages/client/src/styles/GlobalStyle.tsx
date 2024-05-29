@@ -17,6 +17,22 @@ input, select, textarea {
   font-size: 1rem;
 }
 
+::-webkit-scrollbar {
+  & {
+    width: 5px;
+    height: 5px;
+  }
+  &-thumb {
+    background-color: var(--scroll-thumb-color);
+    opacity: 10%;
+
+    &:hover {
+      background-color: var(--scroll-thumb-active-color);
+      opacity: 10%;
+    }
+  }
+}
+
 #root {
   height: 100%;
 }

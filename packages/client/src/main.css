@@ -30,6 +30,8 @@
   --border-color: #e0e0e0;
   --outline-color: #b0b0b0;
   --shadow-color: #e0e0e0;
+  --scroll-thumb-color: #00000040;
+  --scroll-thumb-active-color: #00000080;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,5 +64,7 @@
   --border-color: #808080;
   --outline-color: #606060;
   --shadow-color: #202020;
+  --scroll-thumb-color: #ffffff40;
+  --scroll-thumb-active-color: #ffffff80;
   }
 }
