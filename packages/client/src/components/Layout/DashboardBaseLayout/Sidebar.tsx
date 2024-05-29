@@ -229,7 +229,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 }
               </StyledMenu>
             </StyledSection>)}
-          <StyledSection isSlim={isSlim}>
+          {isHideToggleMenu && <StyledSection isSlim={isSlim}>
             <StyledMenu>
               <StyledMenuItem onClick={() => props.setSlim(!props.isSlim)}>
                 <StyledMenuItemIcon isSlim={isSlim}>
@@ -238,7 +238,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 {!isSlim && <StyledMenuItemText>メニュー最小化</StyledMenuItemText>}
               </StyledMenuItem>
             </StyledMenu>
-          </StyledSection>
+          </StyledSection>}
         </>}
     </StyledSidebarContainer >
   )
