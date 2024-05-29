@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import { useAtom } from 'jotai'
 import { type SockbaseRole } from 'sockbase'
-
 import LogotypeSVG from '../../../assets/logotype.svg'
-
+import isSlimAtom from '../../../atoms/isSlimAtom'
 import useFirebase from '../../../hooks/useFirebase'
 import useRole from '../../../hooks/useRole'
 import HeadHelper from '../../../libs/Helmet'
@@ -24,6 +24,7 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
   const navigate = useNavigate()
 
   const [sentVerifyMail, setSentVerifyMail] = useState(false)
+  const [isSlim, setSlim] = useAtom(isSlimAtom)
 
   const logout = useCallback(() => {
     firebase.logout()
@@ -64,7 +65,7 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
             <Logotype src={LogotypeSVG} alt="Sockbase Logotype" />
           </Link>
         </StyledHeader>
-        <StyledContainer>
+        <StyledContainer isSlim={isSlim}>
           {!firebase.user.emailVerified && <StyledWrapAlert>
             <Alert>
               メールアドレスの確認が必要です
@@ -75,7 +76,11 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
             </Alert>
           </StyledWrapAlert>}
           <StyledSidebar>
-            <Sidebar logout={logout} user={firebase.user} />
+            <Sidebar
+              logout={logout}
+              user={firebase.user}
+              isSlim={isSlim}
+              setSlim={setSlim} />
           </StyledSidebar>
           <StyledWrapMain>
             <StyledMain>{props.children}</StyledMain>
@@ -100,13 +105,20 @@ const StyledHeader = styled.header`
   padding: 10px;
   background-color: var(--primary-brand-color);
 `
-const StyledContainer = styled.section`
+const StyledContainer = styled.section<{ isSlim: boolean }>`
   display: grid;
   height: 100%;
   overflow-y: hidden;
   grid-template-rows: auto 1fr;
-  grid-template-columns: 25% 1fr;
 
+  ${props => props.isSlim
+    ? {
+      gridTemplateColumns: 'auto 1fr'
+    }
+    : {
+      gridTemplateColumns: '25% 1fr'
+    }}
+    
   @media screen and (max-width: 840px) {
     display: block;
     overflow-y: auto;
