@@ -152,6 +152,29 @@ const DashboardTicketTerminalPage: React.FC = () => {
       .catch(err => { throw err })
   }, [ticketHashId])
 
+  const keyDownEvent = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSearch()
+      return
+    } else if (event.key === 'Escape') {
+      setTicketHashId('')
+      setTicketUser(undefined)
+      return
+    } else if (event.key === 'Backspace') {
+      const idLength = ticketHashId.length
+      const newTicketHashId = ticketHashId.slice(0, idLength - 1)
+      setTicketHashId(newTicketHashId)
+      return
+    } else if (event.key.length > 1) {
+      return
+    }
+
+    if (ticketUser === null) {
+      setTicketUser(undefined)
+    }
+    setTicketHashId(s => `${s}${event.key}`)
+  }, [ticketUser, ticketHashId])
+
   useEffect(() => {
     if (ticketHashId) return
 
@@ -217,6 +240,11 @@ const DashboardTicketTerminalPage: React.FC = () => {
     resetData()
   }, [qrData])
 
+  useEffect(() => {
+    document.addEventListener('keydown', keyDownEvent)
+    return () => document.removeEventListener('keydown', keyDownEvent)
+  }, [keyDownEvent])
+
   return (
     <DashboardBaseLayout title="チケット照会ターミナル" requireCommonRole={1}>
       <Breadcrumbs>
@@ -226,6 +254,9 @@ const DashboardTicketTerminalPage: React.FC = () => {
 
       <TwoColumnsLayout>
         <>
+          <p>
+            QRリーダーを使用してチケットのQRコードを読み取ってください。
+          </p>
           <FormSection>
             <FormItem>
               <FormCheckbox
@@ -249,7 +280,8 @@ const DashboardTicketTerminalPage: React.FC = () => {
               <FormInput
                 value={ticketHashId}
                 onChange={e => setTicketHashId(e.target.value)}
-                placeholder="チケットID" />
+                placeholder="チケットID"
+                disabled/>
             </FormItem>
             <FormItem>
               <FormButton onClick={handleSearch} disabled={!ticketHashId} color="default">
