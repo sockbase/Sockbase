@@ -154,6 +154,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
 
   const keyDownEvent = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Enter') {
+      setTicketHashId('')
       handleSearch()
       return
     } else if (event.key === 'Escape') {
