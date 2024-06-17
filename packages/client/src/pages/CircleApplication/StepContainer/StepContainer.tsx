@@ -54,116 +54,101 @@ const StepContainer: React.FC<Props> = (props) => {
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
 
-  const submitApplication: () => Promise<void> =
-    async () => {
-      if (!app || !links || !leaderUserData || !circleCutFile) return
+  const submitApplication = async (): Promise<void> => {
+    if (!app || !links || !leaderUserData || !circleCutFile) return
 
-      setSubmitProgressPercent(10)
+    setSubmitProgressPercent(10)
 
-      if (!user) {
-        const newUser = await createUser(leaderUserData.email, leaderUserData.password)
-        await updateUserDataAsync(newUser.uid, leaderUserData)
-      }
-
-      setSubmitProgressPercent(30)
-
-      const payload: SockbaseApplicationPayload = {
-        app,
-        links
-      }
-      await submitApplicationAsync(payload)
-        .then(async createdAppResult => {
-          setSubmitProgressPercent(80)
-          setAppResult(createdAppResult)
-
-          await uploadCircleCutFileAsync(createdAppResult.hashId, circleCutFile)
-            .then(async () => {
-              setSubmitProgressPercent(100)
-              await (new Promise((resolve) => setTimeout(resolve, 2000)))
-            })
-        })
-        .catch(err => { throw err })
-    }
-
-  const fetchUserData: () => void =
-    () => {
-      const fetchUserDataAsync: () => Promise<void> =
-        async () => {
-          const userData = await getMyUserDataAsync()
-          setUserData(userData)
-        }
-      fetchUserDataAsync().catch(err => {
-        throw err
+    if (!user) {
+      const newUser = await createUser(leaderUserData.email, leaderUserData.password)
+      await updateUserDataAsync(newUser.uid, leaderUserData)
+    } else if (userData && !userData.gender) {
+      await updateUserDataAsync(user.uid, {
+        ...userData,
+        gender: leaderUserData?.gender
       })
     }
-  useEffect(fetchUserData, [getMyUserDataAsync])
 
-  const onChangeStep: () => void =
-    () => window.scrollTo(0, 0)
-  useEffect(onChangeStep, [step])
+    setSubmitProgressPercent(30)
 
-  const onInitialize: () => void =
-    () => {
-      if (props.isLoggedIn === undefined) return
-      if (userData === undefined) return
-
-      setStepComponents([
-        <CheckAccount key="checkAccount"
-          user={user}
-          eyecatchURL={props.eyecatchURL}
-          login={async (email, password) => {
-            await loginByEmail(email, password)
-          }}
-          eventId={props.eventId}
-          pastApps={props.pastApps}
-          logout={() => logout()}
-          nextStep={() => setStep(1)} />,
-        <Introduction key="introduction"
-          event={props.event}
-          prevStep={() => setStep(0)}
-          nextStep={() => setStep(2)} />,
-        <Step1 key="step1"
-          eventId={props.eventId}
-          event={props.event}
-          app={app}
-          links={links}
-          leaderUserData={leaderUserData}
-          circleCutFile={circleCutFile}
-          isLoggedIn={props.isLoggedIn}
-          pastApps={props.pastApps}
-          pastAppLinks={props.pastAppLinks}
-          pastEvents={props.pastEvents}
-          prevStep={() => setStep(1)}
-          nextStep={(app, links, leaderUserData, circleCutData, circleCutFile) => {
-            setApp(app)
-            setLinks(links)
-            setLeaderUserData(leaderUserData)
-            setCircleCutData(circleCutData)
-            setCircleCutFile(circleCutFile)
-            setStep(3)
-          }} />,
-        <Step2 key="step2"
-          event={props.event}
-          app={app}
-          links={links}
-          leaderUserData={leaderUserData}
-          circleCutData={circleCutData}
-          userData={userData}
-          submitProgressPercent={submitProgressPercent}
-          submitApplication={submitApplication}
-          nextStep={() => setStep(4)}
-          prevStep={() => setStep(2)} />,
-        <Step3 key="step3"
-          appResult={appResult}
-          app={app}
-          event={props.event}
-          email={userData?.email ?? leaderUserData?.email}
-          nextStep={() => setStep(5)} />,
-        <Step4 key="step4"
-          appResult={appResult} />
-      ])
+    const payload: SockbaseApplicationPayload = {
+      app,
+      links
     }
-  useEffect(onInitialize, [
+    await submitApplicationAsync(payload)
+      .then(async createdAppResult => {
+        setSubmitProgressPercent(80)
+        setAppResult(createdAppResult)
+
+        await uploadCircleCutFileAsync(createdAppResult.hashId, circleCutFile)
+          .then(async () => {
+            setSubmitProgressPercent(100)
+            await (new Promise((resolve) => setTimeout(resolve, 2000)))
+          })
+      })
+      .catch(err => { throw err })
+  }
+
+  useEffect(() => {
+    if (props.isLoggedIn === undefined) return
+    if (userData === undefined) return
+
+    setStepComponents([
+      <CheckAccount key="checkAccount"
+        user={user}
+        eyecatchURL={props.eyecatchURL}
+        login={async (email, password) => {
+          await loginByEmail(email, password)
+        }}
+        eventId={props.eventId}
+        pastApps={props.pastApps}
+        logout={() => logout()}
+        nextStep={() => setStep(1)} />,
+      <Introduction key="introduction"
+        event={props.event}
+        prevStep={() => setStep(0)}
+        nextStep={() => setStep(2)} />,
+      <Step1 key="step1"
+        eventId={props.eventId}
+        event={props.event}
+        app={app}
+        links={links}
+        leaderUserData={leaderUserData}
+        circleCutFile={circleCutFile}
+        userData={userData}
+        pastApps={props.pastApps}
+        pastAppLinks={props.pastAppLinks}
+        pastEvents={props.pastEvents}
+        prevStep={() => setStep(1)}
+        nextStep={(app, links, leaderUserData, circleCutData, circleCutFile) => {
+          setApp(app)
+          setLinks(links)
+          setLeaderUserData(leaderUserData)
+          setCircleCutData(circleCutData)
+          setCircleCutFile(circleCutFile)
+          setStep(3)
+        }} />,
+      <Step2 key="step2"
+        event={props.event}
+        app={app}
+        links={links}
+        leaderUserData={leaderUserData}
+        circleCutData={circleCutData}
+        userData={userData}
+        submitProgressPercent={submitProgressPercent}
+        submitApplication={submitApplication}
+        nextStep={() => setStep(4)}
+        prevStep={() => setStep(2)} />,
+      <Step3 key="step3"
+        appResult={appResult}
+        app={app}
+        event={props.event}
+        email={userData?.email ?? leaderUserData?.email}
+        nextStep={() => setStep(5)} />,
+      <Step4 key="step4"
+        appResult={appResult} />
+    ])
+  }, [
     props,
     user,
     app,
@@ -173,6 +158,17 @@ const StepContainer: React.FC<Props> = (props) => {
     userData,
     appResult,
     submitProgressPercent])
+
+  useEffect(() => {
+    const fetchUserDataAsync = async (): Promise<void> => {
+      const userData = await getMyUserDataAsync()
+      setUserData(userData)
+    }
+    fetchUserDataAsync()
+      .catch(err => { throw err })
+  }, [getMyUserDataAsync])
+
+  useEffect(() => window.scrollTo(0, 0), [step])
 
   return (
     <>

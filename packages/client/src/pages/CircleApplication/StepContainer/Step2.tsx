@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import sockbaseShared from 'shared'
 import {
   type SockbaseApplication,
@@ -39,6 +39,17 @@ const Step2: React.FC<Props> = (props) => {
 
   const [isProgress, setProgress] = useState(false)
   const [error, setError] = useState<Error | null>()
+
+  const displayGender = useMemo(() => {
+    const genderCode = props.userData?.gender ?? props.leaderUserData?.gender
+    if (genderCode === 1) {
+      return '男性'
+    } else if (genderCode === 2) {
+      return '女性'
+    } else {
+      return ''
+    }
+  }, [props.userData, props.leaderUserData])
 
   const onChangeSpaceSelect: () => void =
     () => {
@@ -176,6 +187,10 @@ const Step2: React.FC<Props> = (props) => {
               <tr>
                 <th>氏名</th>
                 <td>{props.userData?.name ?? props.leaderUserData.name}</td>
+              </tr>
+              <tr>
+                <th>性別</th>
+                <td>{displayGender}</td>
               </tr>
               <tr>
                 <th>生年月日</th>

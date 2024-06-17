@@ -21,8 +21,33 @@ import type {
   SockbaseTicketHashIdDocument,
   SockbaseTicketMeta,
   SockbaseTicketUsedStatus,
-  SockbaseTicketUserDocument
+  SockbaseTicketUserDocument,
+  SockbaseAccount
 } from 'sockbase'
+
+export const accountConverter: FirestoreDataConverter<SockbaseAccount> = {
+  toFirestore: (userData: SockbaseAccount): DocumentData => ({
+    name: userData.name,
+    email: userData.email,
+    birthday: userData.birthday,
+    postalCode: userData.postalCode,
+    address: userData.address,
+    telephone: userData.telephone,
+    gender: userData.gender
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseAccount => {
+    const data = snapshot.data()
+    return {
+      name: data.name,
+      email: data.email,
+      birthday: new Date(data.birthday).getTime(),
+      postalCode: data.postalCode,
+      address: data.address,
+      telephone: data.telephone,
+      gender: data.gender
+    }
+  }
+}
 
 export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
   toFirestore: (app: SockbaseApplicationHashIdDocument): DocumentData => ({

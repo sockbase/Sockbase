@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { type User } from 'firebase/auth'
 import {
   type SockbaseAccountSecure,
   type SockbaseAccount,
@@ -18,14 +19,14 @@ const stepProgresses = ['入力', '確認', '完了']
 
 interface Props {
   ticketHashId: string
-  isLoggedIn: boolean
+  user: User | null | undefined
   store: SockbaseStoreDocument
   ticketUser: SockbaseTicketUserDocument
   userData: SockbaseAccount | null
 }
 const StepContainer: React.FC<Props> = (props) => {
   const { assignTicketUserAsync } = useStore()
-  const { createUser, loginByEmail, logout, user } = useFirebase()
+  const { createUser, loginByEmail, logout } = useFirebase()
   const { updateUserDataAsync } = useUserData()
 
   const [step, setStep] = useState(0)
@@ -34,22 +35,25 @@ const StepContainer: React.FC<Props> = (props) => {
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
   const submitAssignTicket = useCallback(async (): Promise<void> => {
-    if (!userData || user === undefined) return
+    if (!userData) return
 
-    if (user) {
-      await assignTicketUserAsync(user.uid, props.ticketHashId)
-      return
+    if (!props.user) {
+      const newUser = await createUser(userData.email, userData.password)
+      await updateUserDataAsync(newUser.uid, userData)
+      await assignTicketUserAsync(newUser.uid, props.ticketHashId)
+    } else if (props.userData && !props.userData.gender) {
+      await updateUserDataAsync(props.user.uid, {
+        ...props.userData,
+        gender: userData?.gender
+      })
+      await assignTicketUserAsync(props.user.uid, props.ticketHashId)
     }
-
-    const newUser = await createUser(userData.email, userData.password)
-    await updateUserDataAsync(newUser.uid, userData)
-    await assignTicketUserAsync(newUser.uid, props.ticketHashId)
-  }, [userData, user])
+  }, [userData, props.user])
 
   const onInitialize = (): void => {
     setStepComponents([
       <CheckAccount key="checkAccount"
-        user={user}
+        user={props.user}
         login={async (email, password) => {
           await loginByEmail(email, password)
         }}
@@ -57,9 +61,9 @@ const StepContainer: React.FC<Props> = (props) => {
         nextStep={() => setStep(1)}
       />,
       <Step1 key="step1"
-        user={user}
         store={props.store}
         ticketUser={props.ticketUser}
+        fetchedUserData={props.userData}
         userData={userData}
         prevStep={() => setStep(0)}
         nextStep={(u) => {
@@ -69,8 +73,8 @@ const StepContainer: React.FC<Props> = (props) => {
       <Step2 key="step2"
         store={props.store}
         ticketUser={props.ticketUser}
-        loggedInUserData={props.userData}
-        inputedUserData={userData}
+        fetchedUserData={props.userData}
+        userData={userData}
         submitAssignTicket={submitAssignTicket}
         nextStep={() => setStep(3)}
         prevStep={() => setStep(1)} />,
@@ -80,7 +84,7 @@ const StepContainer: React.FC<Props> = (props) => {
         ticketUser={props.ticketUser} />
     ])
   }
-  useEffect(onInitialize, [props.isLoggedIn, props.store, props.ticketUser, props.userData, user, userData])
+  useEffect(onInitialize, [props.store, props.ticketUser, props.userData, props.user, userData])
 
   const onChangeStep: () => void =
     () => window.scrollTo(0, 0)

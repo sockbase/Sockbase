@@ -8,7 +8,8 @@ import {
   type SockbaseApplicationLinks,
   type SockbaseApplicationDocument,
   type SockbaseApplicationLinksDocument,
-  type SockbaseEventDocument
+  type SockbaseEventDocument,
+  type SockbaseAccount
 } from 'sockbase'
 import FormButton from '../../../components/Form/Button'
 import FormCheckbox from '../../../components/Form/Checkbox'
@@ -65,9 +66,9 @@ interface Props {
   pastApps: SockbaseApplicationDocument[] | undefined
   pastAppLinks: Record<string, SockbaseApplicationLinksDocument | null> | undefined
   pastEvents: Record<string, SockbaseEventDocument> | undefined
+  userData: SockbaseAccount | null | undefined
   prevStep: () => void
   nextStep: (app: SockbaseApplication, links: SockbaseApplicationLinks, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
-  isLoggedIn: boolean
 }
 const Step1: React.FC<Props> = (props) => {
   const validator = useValidate()
@@ -88,17 +89,20 @@ const Step1: React.FC<Props> = (props) => {
   }), [props.eventId])
 
   const [app, setApp] = useState<SockbaseApplication>(initialApp)
-  const [leaderUserData, setLeaderUserData] = useState({
+  const [leaderUserData, setLeaderUserData] = useState<SockbaseAccountSecure>({
     name: '',
     birthday: 0,
     postalCode: '',
     address: '',
     telephone: '',
     email: '',
+    gender: undefined,
     password: '',
     rePassword: ''
   })
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
+  const [displayGender, setDisplayGender] = useState('')
+
   const [links, setLinks] = useState<SockbaseApplicationLinks>(initialAppLinksBase)
 
   const [pastAppId, setPastAppId] = useState<string>()
@@ -108,8 +112,6 @@ const Step1: React.FC<Props> = (props) => {
 
   const [spaceIds, setSpaceIds] = useState<string[]>()
   const [paymentMethodIds, setPaymentMethodIds] = useState<string[]>()
-  const [isAllValid, setAllValid] = useState(false)
-  const [invalidFieldCount, setInvalidFieldCount] = useState(0)
 
   const handleApplyPastApp = useCallback(() => {
     setApplyPastApp(false)
@@ -129,13 +131,14 @@ const Step1: React.FC<Props> = (props) => {
       ...pastApp,
       circle: {
         ...pastApp.circle,
+        genre: '',
         hasAdult: props.event.permissions.allowAdult && pastApp.circle.hasAdult
       },
       eventId: props.eventId,
       spaceId: '',
       unionCircleId: '',
       petitCode: '',
-      paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || ''
+      paymentMethod: ''
     })
 
     const pastLinks = props.pastAppLinks[pastApp.id]
@@ -162,7 +165,8 @@ const Step1: React.FC<Props> = (props) => {
 
     if (props.leaderUserData) {
       setLeaderUserData(props.leaderUserData)
-      setDisplayBirthday(s => formatByDate(props.leaderUserData?.birthday, 'YYYY-MM-DD'))
+      setDisplayBirthday(formatByDate(props.leaderUserData?.birthday, 'YYYY-MM-DD'))
+      setDisplayGender(props.leaderUserData.gender?.toString() ?? '')
     }
 
     if (props.circleCutFile) {
@@ -187,9 +191,8 @@ const Step1: React.FC<Props> = (props) => {
   const [selectedSpace, setSelectedSpace] = useState<SockbaseEventSpace | undefined>()
   useEffect(() => setSelectedSpace(props.event.spaces.filter(i => i.id === app.spaceId)[0]), [app.spaceId])
 
-  useEffect(() => {
-    if (!spaceIds || !paymentMethodIds) return
-
+  const errorCount = useMemo(() => {
+    if (!spaceIds || !paymentMethodIds) return 1
     const validators = [
       validator.isIn(app.spaceId, spaceIds),
       !validator.isNull(circleCutFile),
@@ -210,14 +213,18 @@ const Step1: React.FC<Props> = (props) => {
       !links.websiteURL || validator.isURL(links.websiteURL),
       !links.menuURL || validator.isURL(links.menuURL)
     ]
-    const invalidCount = validators
-      .filter(i => !i)
-      .length
-    const hasValidationError = validators
-      .reduce((p, c) => p.add(c), new Set<boolean>())
-      .has(false)
 
-    if (!props.isLoggedIn) {
+    let errorCount = validators.filter(v => !v).length
+
+    if (props.userData) {
+      const additionalUserDataValidators = [
+        validator.isIn(leaderUserData.gender?.toString() ?? '', ['1', '2'])
+      ]
+      const additionalUserDataErrorCount = additionalUserDataValidators
+        .filter(v => !v)
+        .length
+      errorCount += additionalUserDataErrorCount
+    } else {
       const accountValidators = [
         !validator.isEmpty(leaderUserData.name),
         // validator.isDate(leaderUserData.birthday),
@@ -227,20 +234,12 @@ const Step1: React.FC<Props> = (props) => {
         !validator.isEmpty(leaderUserData.rePassword),
         validator.equals(leaderUserData.password, leaderUserData.rePassword)
       ]
-      const accountInvalidFieldCount = accountValidators
-        .filter(i => !i)
-        .length
-      const hasAccountValidationError = accountValidators
-        .reduce((p, c) => p.add(c), new Set<boolean>())
-        .has(false)
 
-      setInvalidFieldCount(invalidCount + accountInvalidFieldCount)
-      setAllValid(!hasValidationError && !hasAccountValidationError)
-      return
+      const accountErrorCount = accountValidators.filter(v => !v).length
+      errorCount += accountErrorCount
     }
 
-    setInvalidFieldCount(invalidCount)
-    setAllValid(!hasValidationError)
+    return errorCount
   }, [spaceIds, app, links, leaderUserData, circleCutFile, circleCutData, props.event])
 
   useEffect(() => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() })), [displayBirthday])
@@ -252,12 +251,12 @@ const Step1: React.FC<Props> = (props) => {
 
   const handleSubmit = useCallback(() => {
     setError(undefined)
-    if (!isAllValid || !circleCutData || !circleCutFile) {
+    if (errorCount > 0 || !circleCutData || !circleCutFile) {
       setError('入力内容に不備があります')
       return
     }
     props.nextStep(app, links, leaderUserData, circleCutData, circleCutFile)
-  }, [app, links, leaderUserData, isAllValid, circleCutData, circleCutFile])
+  }, [errorCount, app, links, leaderUserData, errorCount, circleCutData, circleCutFile])
 
   const handleFilledPostalCode = useCallback((postalCode: string) => {
     const sanitizedPostalCode = postalCode.replaceAll('-', '')
@@ -272,6 +271,17 @@ const Step1: React.FC<Props> = (props) => {
         throw err
       })
   }, [])
+
+  useEffect(() => {
+    setLeaderUserData(s => s && ({
+      ...s,
+      gender: displayGender === '1'
+        ? 1
+        : displayGender === '2'
+          ? 2
+          : undefined
+    }))
+  }, [displayGender])
 
   return (
     <>
@@ -540,96 +550,112 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      {!props.isLoggedIn
-        ? <>
-          <h2>申し込み責任者情報</h2>
-          <FormSection>
-            <FormItem>
-              <FormLabel>氏名</FormLabel>
-              <FormInput
-                placeholder='速部 すみれ'
-                value={leaderUserData.name}
-                onChange={e => setLeaderUserData(s => ({ ...s, name: e.target.value }))} />
-            </FormItem>
-            <FormItem>
-              <FormLabel>生年月日</FormLabel>
-              <FormInput type="date"
-                value={displayBirthday}
-                onChange={e => setDisplayBirthday(e.target.value)} />
-            </FormItem>
-          </FormSection>
-          <FormSection>
-            <FormItem>
-              <FormLabel>郵便番号</FormLabel>
-              <FormInput
-                placeholder='0000000'
-                value={leaderUserData.postalCode}
-                onChange={e => {
-                  if (e.target.value.length > 7) return
-                  handleFilledPostalCode(e.target.value)
-                  setLeaderUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
-                }}
-                hasError={!validator.isEmpty(leaderUserData.postalCode) && !validator.isPostalCode(leaderUserData.postalCode)} />
-              <FormHelp>
-                ハイフンは入力不要です
-              </FormHelp>
-            </FormItem>
-            <FormItem>
-              <FormLabel>住所</FormLabel>
-              <FormInput
-                placeholder='東京都千代田区外神田9-9-9'
-                value={leaderUserData.address}
-                onChange={e => setLeaderUserData(s => ({ ...s, address: e.target.value }))} />
-            </FormItem>
-            <FormItem>
-              <Alert>住所は都道府県からはじめ、番地・部屋番号まで記入してください。</Alert>
-            </FormItem>
-            <FormItem>
-              <FormLabel>電話番号</FormLabel>
-              <FormInput
-                placeholder='07001234567'
-                value={leaderUserData.telephone}
-                onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value.trim() }))} />
-            </FormItem>
-          </FormSection>
+      {(!props.userData?.gender && <>
+        <h2>申し込み責任者情報</h2>
+        <FormSection>
+          <FormItem>
+            <FormLabel>氏名</FormLabel>
+            <FormInput
+              placeholder='速部 すみれ'
+              value={props.userData?.name || leaderUserData.name}
+              onChange={e => setLeaderUserData(s => ({ ...s, name: e.target.value }))}
+              disabled={!!props.userData} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>生年月日</FormLabel>
+            <FormInput type="date"
+              value={displayBirthday}
+              onChange={e => setDisplayBirthday(e.target.value)}
+              disabled={!!props.userData} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>性別</FormLabel>
+            <FormSelect
+              value={displayGender}
+              onChange={e => setDisplayGender(e.target.value)}
+              hasError={!!props.userData && !displayGender}>
+              <option value="">選択してください</option>
+              <option value="1">男性</option>
+              <option value="2">女性</option>
+            </FormSelect>
+          </FormItem>
+        </FormSection>
+        <FormSection>
+          <FormItem>
+            <FormLabel>郵便番号</FormLabel>
+            <FormInput
+              placeholder='0000000'
+              value={props.userData?.postalCode || leaderUserData.postalCode}
+              onChange={e => {
+                if (e.target.value.length > 7) return
+                handleFilledPostalCode(e.target.value)
+                setLeaderUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
+              }}
+              hasError={!validator.isEmpty(leaderUserData.postalCode) && !validator.isPostalCode(leaderUserData.postalCode)}
+              disabled={!!props.userData} />
+            <FormHelp>
+              ハイフンは入力不要です
+            </FormHelp>
+          </FormItem>
+          <FormItem>
+            <FormLabel>住所</FormLabel>
+            <FormInput
+              placeholder='東京都千代田区外神田9-9-9'
+              value={props.userData?.address || leaderUserData.address}
+              onChange={e => setLeaderUserData(s => ({ ...s, address: e.target.value }))}
+              disabled={!!props.userData} />
+          </FormItem>
+          <FormItem>
+            <Alert>住所は都道府県からはじめ、番地・部屋番号まで記入してください。</Alert>
+          </FormItem>
+          <FormItem>
+            <FormLabel>電話番号</FormLabel>
+            <FormInput
+              placeholder='07001234567'
+              value={props.userData?.telephone || leaderUserData.telephone}
+              onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value.trim() }))}
+              disabled={!!props.userData} />
+          </FormItem>
+        </FormSection>
+      </>) ?? <></>}
 
-          <h2>Sockbaseログイン情報</h2>
-          <p>
+      {(!props.userData && <>
+        <h2>Sockbaseログイン情報</h2>
+        <p>
             申し込み情報の確認等に使用するアカウントを作成します。
-          </p>
-          <FormSection>
-            <FormItem>
-              <FormLabel>メールアドレス</FormLabel>
-              <FormInput type="email"
-                placeholder='sumire@sockbase.net'
-                value={leaderUserData.email}
-                onChange={e => setLeaderUserData(s => ({ ...s, email: e.target.value }))}
-                hasError={!validator.isEmpty(leaderUserData.email) && !validator.isEmail(leaderUserData.email)} />
-            </FormItem>
-            <FormItem>
-              <FormLabel>パスワード</FormLabel>
-              <FormInput type="password"
-                placeholder='●●●●●●●●●●●●'
-                value={leaderUserData.password}
-                onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))}
-                hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)} />
-              <FormHelp hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)}>
+        </p>
+        <FormSection>
+          <FormItem>
+            <FormLabel>メールアドレス</FormLabel>
+            <FormInput type="email"
+              placeholder='sumire@sockbase.net'
+              value={leaderUserData.email}
+              onChange={e => setLeaderUserData(s => ({ ...s, email: e.target.value }))}
+              hasError={!validator.isEmpty(leaderUserData.email) && !validator.isEmail(leaderUserData.email)} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>パスワード</FormLabel>
+            <FormInput type="password"
+              placeholder='●●●●●●●●●●●●'
+              value={leaderUserData.password}
+              onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))}
+              hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)} />
+            <FormHelp hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)}>
                 アルファベット大文字を含め、英数12文字以上で設定してください。
-              </FormHelp>
-            </FormItem>
-            <FormItem>
-              <FormLabel>パスワード(確認)</FormLabel>
-              <FormInput type="password"
-                placeholder='●●●●●●●●●●●●'
-                value={leaderUserData.rePassword}
-                onChange={e => setLeaderUserData(s => ({ ...s, rePassword: e.target.value }))}
-                hasError={!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword} />
-              {!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword &&
+            </FormHelp>
+          </FormItem>
+          <FormItem>
+            <FormLabel>パスワード(確認)</FormLabel>
+            <FormInput type="password"
+              placeholder='●●●●●●●●●●●●'
+              value={leaderUserData.rePassword}
+              onChange={e => setLeaderUserData(s => ({ ...s, rePassword: e.target.value }))}
+              hasError={!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword} />
+            {!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword &&
                 <FormHelp hasError>パスワードの入力が間違っています</FormHelp>}
-            </FormItem>
-          </FormSection>
-        </>
-        : <></>}
+          </FormItem>
+        </FormSection>
+      </>) ?? <></>}
 
       <h2>サークル参加費お支払い方法</h2>
       {
@@ -663,7 +689,8 @@ const Step1: React.FC<Props> = (props) => {
                     value: i.id
                   }))}
                 value={app.paymentMethod}
-                onChange={paymentMethod => setApp(s => ({ ...s, paymentMethod }))} />
+                onChange={paymentMethod => setApp(s => ({ ...s, paymentMethod }))}
+                hasError={isApplyPastApp && !app.paymentMethod}/>
             </FormItem>
             {app.paymentMethod === 'bankTransfer' && <FormItem>
               <Alert>
@@ -707,13 +734,13 @@ const Step1: React.FC<Props> = (props) => {
         {error && <FormItem>
           <Alert type="danger">{error}</Alert>
         </FormItem>}
-        {invalidFieldCount > 0 && <FormItem>
+        {errorCount > 0 && <FormItem>
           <Alert type="danger">
-            {invalidFieldCount}個の入力項目に不備があります。
+            {errorCount}個の入力項目に不備があります。
           </Alert>
         </FormItem>}
         <FormButton
-          disabled={!isAgreed || !isAllValid}
+          disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
           入力内容確認画面へ進む
         </FormButton>

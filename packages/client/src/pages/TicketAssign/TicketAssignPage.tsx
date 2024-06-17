@@ -75,7 +75,12 @@ const TicketAssignPage: React.FC = () => {
         <Loading text="チケット情報" />}
       {ticketHashId && isLoggedIn !== undefined &&
         ticketUser && !ticketUser.usableUserId && store && userData !== undefined &&
-        <StepContainer isLoggedIn={isLoggedIn} ticketHashId={ticketHashId} ticketUser={ticketUser} store={store} userData={userData} />}
+        <StepContainer
+          user={user}
+          ticketHashId={ticketHashId}
+          ticketUser={ticketUser}
+          store={store}
+          userData={userData} />}
 
       {ticketHashId && ticketUser?.usableUserId &&
         <>

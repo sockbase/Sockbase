@@ -40,6 +40,17 @@ const Step2: React.FC<Props> = (props) => {
       .filter(p => p.id === props.ticketInfo?.paymentMethod)[0].description
   }, [props.ticketInfo])
 
+  const displayGender = useMemo(() => {
+    const genderCode = props.fetchedUserData?.gender ?? props.userData?.gender
+    if (genderCode === 1) {
+      return '男性'
+    } else if (genderCode === 2) {
+      return '女性'
+    } else {
+      return ''
+    }
+  }, [props.fetchedUserData, props.userData])
+
   const handleSubmit = (): void => {
     setProgressing(true)
 
@@ -66,6 +77,10 @@ const Step2: React.FC<Props> = (props) => {
           <tr>
             <th>生年月日</th>
             <td>{formatByDate(props.fetchedUserData?.birthday ?? props.userData?.birthday, 'YYYY年 M月 D日')}</td>
+          </tr>
+          <tr>
+            <th>性別</th>
+            <td>{displayGender}</td>
           </tr>
           <tr>
             <th>郵便番号</th>

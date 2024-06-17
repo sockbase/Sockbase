@@ -8,16 +8,17 @@ import FormHelp from '../../../components/Form/Help'
 import FormInput from '../../../components/Form/Input'
 import FormLabel from '../../../components/Form/Label'
 import FormRadio from '../../../components/Form/Radio'
+import FormSelect from '../../../components/Form/Select'
 import Alert from '../../../components/Parts/Alert'
 import useDayjs from '../../../hooks/useDayjs'
 import usePostalCode from '../../../hooks/usePostalCode'
 import useValidate from '../../../hooks/useValidate'
-import type { SockbaseStoreType, SockbaseStoreDocument, SockbaseTicket, SockbaseAccountSecure } from 'sockbase'
+import type { SockbaseStoreType, SockbaseStoreDocument, SockbaseTicket, SockbaseAccountSecure, SockbaseAccount } from 'sockbase'
 
 interface Props {
   store: SockbaseStoreDocument
-  isLoggedIn: boolean
   ticketInfo: SockbaseTicket | undefined
+  fetchedUserData: SockbaseAccount | null
   userData: SockbaseAccountSecure | undefined
   prevStep: () => void
   nextStep: (ticketInfo: SockbaseTicket, userData: SockbaseAccountSecure) => void
@@ -44,21 +45,11 @@ const Step1: React.FC<Props> = (props) => {
     address: '',
     telephone: '',
     password: '',
-    rePassword: ''
+    rePassword: '',
+    gender: undefined
   })
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
-
-  useEffect(() => {
-    if (!props.ticketInfo || !props.userData) return
-    setTicketInfo(props.ticketInfo)
-    setUserData(props.userData)
-    setDisplayBirthday(s => formatByDate(props.userData?.birthday, 'YYYY-MM-DD'))
-  }, [props.ticketInfo, props.userData])
-
-  useEffect(() => {
-    if (!displayBirthday) return
-    setUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
-  }, [displayBirthday])
+  const [displayGender, setDisplayGender] = useState('')
 
   const selectedType = useMemo((): SockbaseStoreType | null => {
     if (!ticketInfo.typeId) return null
@@ -73,7 +64,16 @@ const Step1: React.FC<Props> = (props) => {
       !selectedType?.productInfo || !validator.isEmpty(ticketInfo.paymentMethod)
     ]
 
-    if (!props.isLoggedIn) {
+    let errorCount = validators.filter(v => !v).length
+    if (props.fetchedUserData) {
+      const additionalUserDataValidators = [
+        validator.isIn(userData.gender?.toString() ?? '', ['1', '2'])
+      ]
+      const additionalUserDataErrorCount = additionalUserDataValidators
+        .filter(v => !v)
+        .length
+      errorCount += additionalUserDataErrorCount
+    } else {
       const userDataValidators = [
         !validator.isEmpty(userData.name),
         validator.isPostalCode(userData.postalCode),
@@ -83,17 +83,11 @@ const Step1: React.FC<Props> = (props) => {
         validator.isStrongPassword(userData.password),
         userData.password === userData.rePassword
       ]
-
-      return validators
-        .concat(userDataValidators)
-        .filter(v => !v)
-        .length
+      errorCount += userDataValidators.filter(v => !v).length
     }
 
-    return validators
-      .filter(v => !v)
-      .length
-  }, [ticketInfo, userData, props.isLoggedIn, props.store])
+    return errorCount
+  }, [ticketInfo, userData, props.fetchedUserData, props.store])
 
   const handleSubmit = useCallback(() => {
     if (!isAgreed || errorCount > 0) return
@@ -111,6 +105,30 @@ const Step1: React.FC<Props> = (props) => {
       })))
       .catch(err => { throw err })
   }, [])
+
+  useEffect(() => {
+    if (!props.ticketInfo || !props.userData) return
+    setTicketInfo(props.ticketInfo)
+    setUserData(props.userData)
+    setDisplayBirthday(formatByDate(props.userData?.birthday, 'YYYY-MM-DD'))
+    setDisplayGender(s => props.userData?.gender?.toString() ?? '')
+  }, [props.ticketInfo, props.userData])
+
+  useEffect(() => {
+    if (!displayBirthday) return
+    setUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
+  }, [displayBirthday])
+
+  useEffect(() => {
+    setUserData(s => s && ({
+      ...s,
+      gender: displayGender === '1'
+        ? 1
+        : displayGender === '2'
+          ? 2
+          : undefined
+    }))
+  }, [displayGender])
 
   return (
     <>
@@ -183,92 +201,106 @@ const Step1: React.FC<Props> = (props) => {
       </>}
 
       <h2>申し込み責任者情報</h2>
-      {!props.isLoggedIn
-        ? <>
-          <FormSection>
-            <FormItem>
-              <FormLabel>氏名</FormLabel>
-              <FormInput
-                placeholder='速部 すみれ'
-                value={userData.name}
-                onChange={e => setUserData(s => ({ ...s, name: e.target.value }))} />
-            </FormItem>
-            <FormItem>
-              <FormLabel>生年月日</FormLabel>
-              <FormInput type="date"
-                value={displayBirthday}
-                onChange={e => setDisplayBirthday(e.target.value)} />
-            </FormItem>
-          </FormSection>
-          <FormSection>
-            <FormItem>
-              <FormLabel>郵便番号</FormLabel>
-              <FormInput
-                placeholder='0000000'
-                value={userData.postalCode}
-                onChange={e => {
-                  if (e.target.value.length > 7) return
-                  handleFilledPostalCode(e.target.value)
-                  setUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
-                }}
-                hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)} />
-              <FormHelp>ハイフンは入力不要です</FormHelp>
-            </FormItem>
-            <FormItem>
-              <FormLabel>住所</FormLabel>
-              <FormInput
-                placeholder='東京都千代田区外神田9-9-9'
-                value={userData.address}
-                onChange={e => setUserData(s => ({ ...s, address: e.target.value }))} />
-            </FormItem>
-            <FormItem>
-              <FormLabel>電話番号</FormLabel>
-              <FormInput
-                placeholder='07001234567'
-                value={userData.telephone}
-                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))} />
-            </FormItem>
-          </FormSection>
+      {(!props.fetchedUserData?.gender && <>
+        <FormSection>
+          <FormItem>
+            <FormLabel>氏名</FormLabel>
+            <FormInput
+              placeholder='速部 すみれ'
+              value={props.fetchedUserData?.name || userData.name}
+              onChange={e => setUserData(s => ({ ...s, name: e.target.value }))}
+              disabled={!!props.fetchedUserData} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>性別</FormLabel>
+            <FormSelect
+              value={displayGender}
+              onChange={e => setDisplayGender(e.target.value)}
+              hasError={!!props.fetchedUserData && !displayGender}>
+              <option value="">選択してください</option>
+              <option value="1">男性</option>
+              <option value="2">女性</option>
+            </FormSelect>
+          </FormItem>
+          <FormItem>
+            <FormLabel>生年月日</FormLabel>
+            <FormInput type="date"
+              value={displayBirthday}
+              onChange={e => setDisplayBirthday(e.target.value)}
+              disabled={!!props.fetchedUserData} />
+          </FormItem>
+        </FormSection>
+        <FormSection>
+          <FormItem>
+            <FormLabel>郵便番号</FormLabel>
+            <FormInput
+              placeholder='0000000'
+              value={props.fetchedUserData?.postalCode || userData.postalCode}
+              onChange={e => {
+                if (e.target.value.length > 7) return
+                handleFilledPostalCode(e.target.value)
+                setUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
+              }}
+              disabled={!!props.fetchedUserData}
+              hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)} />
+            <FormHelp>ハイフンは入力不要です</FormHelp>
+          </FormItem>
+          <FormItem>
+            <FormLabel>住所</FormLabel>
+            <FormInput
+              placeholder='東京都千代田区外神田9-9-9'
+              value={props.fetchedUserData?.address || userData.address}
+              onChange={e => setUserData(s => ({ ...s, address: e.target.value }))}
+              disabled={!!props.fetchedUserData} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>電話番号</FormLabel>
+            <FormInput
+              placeholder='07001234567'
+              value={props.fetchedUserData?.telephone || userData.telephone}
+              onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))}
+              disabled={!!props.fetchedUserData} />
+          </FormItem>
+        </FormSection>
+      </>) ?? <></>}
 
-          <h2>Sockbaseログイン情報</h2>
-          <p>
+      {(!props.fetchedUserData && <>
+        <h2>Sockbaseログイン情報</h2>
+        <p>
             申し込み情報の確認等に使用するアカウントを作成します。
-          </p>
-          <FormSection>
-            <FormItem>
-              <FormLabel>メールアドレス</FormLabel>
-              <FormInput type="email"
-                placeholder='sumire@sockbase.net'
-                value={userData.email}
-                onChange={e => setUserData(s => ({ ...s, email: e.target.value }))}
-                hasError={!validator.isEmpty(userData.email) && !validator.isEmail(userData.email)} />
-            </FormItem>
-            <FormItem>
-              <FormLabel>パスワード</FormLabel>
-              <FormInput type="password"
-                placeholder='●●●●●●●●●●●●'
-                value={userData.password}
-                onChange={e => setUserData(s => ({ ...s, password: e.target.value }))}
-                hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)} />
-              <FormHelp hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)}>
+        </p>
+        <FormSection>
+          <FormItem>
+            <FormLabel>メールアドレス</FormLabel>
+            <FormInput type="email"
+              placeholder='sumire@sockbase.net'
+              value={userData.email}
+              onChange={e => setUserData(s => ({ ...s, email: e.target.value }))}
+              hasError={!validator.isEmpty(userData.email) && !validator.isEmail(userData.email)} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>パスワード</FormLabel>
+            <FormInput type="password"
+              placeholder='●●●●●●●●●●●●'
+              value={userData.password}
+              onChange={e => setUserData(s => ({ ...s, password: e.target.value }))}
+              hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)} />
+            <FormHelp hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)}>
                 アルファベット大文字を含め、英数12文字以上で設定してください。
-              </FormHelp>
-            </FormItem>
-            <FormItem>
-              <FormLabel>パスワード(確認)</FormLabel>
-              <FormInput type="password"
-                placeholder='●●●●●●●●●●●●'
-                value={userData.rePassword}
-                onChange={e => setUserData(s => ({ ...s, rePassword: e.target.value }))}
-                hasError={!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword} />
-              {!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword &&
+            </FormHelp>
+          </FormItem>
+          <FormItem>
+            <FormLabel>パスワード(確認)</FormLabel>
+            <FormInput type="password"
+              placeholder='●●●●●●●●●●●●'
+              value={userData.rePassword}
+              onChange={e => setUserData(s => ({ ...s, rePassword: e.target.value }))}
+              hasError={!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword} />
+            {!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword &&
                 <FormHelp hasError>パスワードの入力が間違っています</FormHelp>}
-            </FormItem>
-          </FormSection>
-        </>
-        : <p>
-          現在ログイン中のユーザ情報を引き継ぎます。
-        </p>}
+          </FormItem>
+        </FormSection>
+      </>) ?? <></>}
 
       <h2>注意事項</h2>
 
