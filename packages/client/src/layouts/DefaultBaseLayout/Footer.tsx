@@ -1,7 +1,5 @@
-
 import styled from 'styled-components'
-
-import LogotypeSVG from '../../../assets/logotype.svg'
+import LogotypeSVG from '../../assets/logotype.svg'
 
 const Footer: React.FC = () => {
   return (
