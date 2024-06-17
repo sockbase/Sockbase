@@ -15,7 +15,7 @@ import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardB
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import type { SockbaseApplicationDocument, SockbaseEventDocument } from 'sockbase'
 
-const DashboardEventCircleCutsPage: React.FC = () => {
+const DashboardEventCircleCutDownloadPage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>()
 
   const { getEventByIdAsync } = useEvent()
@@ -232,7 +232,7 @@ const DashboardEventCircleCutsPage: React.FC = () => {
   )
 }
 
-export default DashboardEventCircleCutsPage
+export default DashboardEventCircleCutDownloadPage
 
 const CircleCutImage = styled.img`
   max-width: 100%;

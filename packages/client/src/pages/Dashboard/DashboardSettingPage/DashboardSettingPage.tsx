@@ -22,7 +22,7 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 import type { SockbaseAccount } from 'sockbase'
 
-const DashboardSettingsPage: React.FC = () => {
+const DashboardSettingPage: React.FC = () => {
   const { user, sendPasswordResetURLAsync } = useFirebase()
   const { getMyUserDataAsync, updateUserDataAsync } = useUserData()
   const validator = useValidate()
@@ -240,4 +240,4 @@ const DashboardSettingsPage: React.FC = () => {
   )
 }
 
-export default DashboardSettingsPage
+export default DashboardSettingPage

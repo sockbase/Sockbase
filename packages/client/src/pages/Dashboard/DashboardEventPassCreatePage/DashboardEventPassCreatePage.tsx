@@ -16,7 +16,7 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
 
-const DashboardEventCreatePassPage: React.FC = () => {
+const DashboardEventPassCreatePage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>()
   const {
     getEventByIdAsync,
@@ -163,4 +163,4 @@ const DashboardEventCreatePassPage: React.FC = () => {
   )
 }
 
-export default DashboardEventCreatePassPage
+export default DashboardEventPassCreatePage

@@ -9,7 +9,7 @@ import useUserData from '../../../hooks/useUserData'
 import DefaultBaseLayout from '../../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import StepContainerComponent from './StepContainer/StepContainer'
 
-const TicketApplicationPage: React.FC = () => {
+const TicketApplyPage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
 
   const { user, isLoggedIn } = useFirebase()
@@ -66,4 +66,4 @@ const TicketApplicationPage: React.FC = () => {
   )
 }
 
-export default TicketApplicationPage
+export default TicketApplyPage

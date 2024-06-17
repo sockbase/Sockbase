@@ -18,7 +18,7 @@ import useUserData from '../../../hooks/useUserData'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import DashboardPrintLayout from '../../../layouts/DashboardPrintLayout/DashboardPrintLayout'
 
-const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
+const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>()
   const { getEventByIdAsync } = useEvent()
   const {
@@ -206,7 +206,7 @@ const DashboardEventCircleApplicationPrintTanzaku: React.FC = () => {
   )
 }
 
-export default DashboardEventCircleApplicationPrintTanzaku
+export default DashboardEventApplicationPrintTanzakuPage
 
 const ControlContainer = styled.div`
   padding: 20px;

@@ -12,7 +12,7 @@ import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardB
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
-const DashboardStoreInfoPage: React.FC = () => {
+const DashboardStoreMetaViewPage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
   const { getStoreByIdAsync } = useStore()
 
@@ -67,4 +67,4 @@ const DashboardStoreInfoPage: React.FC = () => {
   )
 }
 
-export default DashboardStoreInfoPage
+export default DashboardStoreMetaViewPage

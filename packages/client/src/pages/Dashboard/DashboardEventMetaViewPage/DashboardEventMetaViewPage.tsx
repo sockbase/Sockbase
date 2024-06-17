@@ -13,7 +13,7 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 import type { SockbaseEvent } from 'sockbase'
 
-const DashboardEventInfoPage: React.FC = () => {
+const DashboardEventMetaViewPage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>()
   const { getEventByIdAsync } = useEvent()
 
@@ -71,4 +71,4 @@ const DashboardEventInfoPage: React.FC = () => {
   )
 }
 
-export default DashboardEventInfoPage
+export default DashboardEventMetaViewPage
