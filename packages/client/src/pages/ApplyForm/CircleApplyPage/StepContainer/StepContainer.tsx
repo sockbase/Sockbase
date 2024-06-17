@@ -1,195 +1,217 @@
-import { useEffect, useState } from 'react'
-import {
-  type SockbaseApplicationAddedResult,
-  type SockbaseAccount,
-  type SockbaseAccountSecure,
-  type SockbaseApplication,
-  type SockbaseEvent,
-  type SockbaseApplicationPayload,
-  type SockbaseApplicationLinks,
-  type SockbaseApplicationDocument,
-  type SockbaseApplicationLinksDocument,
-  type SockbaseEventDocument
-} from 'sockbase'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { type User } from 'firebase/auth'
+import sockbaseShared from 'shared'
 import Alert from '../../../../components/Parts/Alert'
 import StepProgress from '../../../../components/Parts/StepProgress'
-import useApplication from '../../../../hooks/useApplication'
 import useDayjs from '../../../../hooks/useDayjs'
-import useFirebase from '../../../../hooks/useFirebase'
-import useUserData from '../../../../hooks/useUserData'
 import CheckAccount from './CheckAccount'
+import Complete from './Complete'
+import Confirm from './Confirm'
+import Input from './Input'
 import Introduction from './Introduction'
-import Step1 from './Step1'
-import Step2 from './Step2'
-import Step3 from './Step3'
-import Step4 from './Step4'
+import Payment from './Payment'
+import type {
+  SockbaseAccount,
+  SockbaseAccountSecure,
+  SockbaseApplication,
+  SockbaseApplicationAddedResult,
+  SockbaseApplicationDocument,
+  SockbaseApplicationLinks,
+  SockbaseApplicationPayload,
+  SockbaseEventDocument
+} from 'sockbase'
 
 const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
 
 interface Props {
-  eventId: string
-  event: SockbaseEvent
-  eyecatchURL: string | null
-  isLoggedIn: boolean
-  pastApps: SockbaseApplicationDocument[] | undefined
-  pastAppLinks: Record<string, SockbaseApplicationLinksDocument | null> | undefined
-  pastEvents: Record<string, SockbaseEventDocument> | undefined
+  user: User | null | undefined
+  userData: SockbaseAccount | null | undefined
+  event: SockbaseEventDocument | null | undefined
+  eyecatchURL: string | null | undefined
+  pastApps: SockbaseApplicationDocument[] | null | undefined
+  pastAppLinks: Record<string, SockbaseApplicationLinks | null> | null | undefined
+  pastEvents: Record<string, SockbaseEventDocument> | null | undefined
+  handleLoginAsync: (email: string, password: string) => Promise<void>
+  handleLogoutAsync: () => Promise<void>
+  createUserAsync: (email: string, password: string) => Promise<User>
+  updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
+  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationAddedResult>
+  updateCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
 }
 const StepContainer: React.FC<Props> = (props) => {
-  const { user, createUser, loginByEmail, logout } = useFirebase()
-  const { updateUserDataAsync, getMyUserDataAsync } = useUserData()
-  const { submitApplicationAsync, uploadCircleCutFileAsync } = useApplication()
   const { formatByDate } = useDayjs()
 
   const [step, setStep] = useState(0)
-  const [circleCutData, setCircleCutData] = useState<string>()
-  const [circleCutFile, setCircleCutFile] = useState<File>()
+
   const [app, setApp] = useState<SockbaseApplication>()
   const [links, setLinks] = useState<SockbaseApplicationLinks>()
-  const [leaderUserData, setLeaderUserData] = useState<SockbaseAccountSecure>()
-  const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
-
-  const [userData, setUserData] = useState<SockbaseAccount | null>()
-  const [appResult, setAppResult] = useState<SockbaseApplicationAddedResult>()
+  const [userData, setUserData] = useState<SockbaseAccountSecure>()
+  const [circleCutData, setCircleCutData] = useState<string>()
+  const [circleCutFile, setCircleCutFile] = useState<File>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
+  const [appAddedResult, setAppAddedResult] = useState<SockbaseApplicationAddedResult>()
 
-  const submitApplication = async (): Promise<void> => {
-    if (!app || !links || !leaderUserData || !circleCutFile) return
+  const selectedGenre = useMemo(() => {
+    if (!props.event || !app) return
+    return props.event.genres.filter(g => g.id === app.circle.genre)[0]
+  }, [props.event, app])
+
+  const selectedSpace = useMemo(() => {
+    if (!props.event || !app) return
+    return props.event.spaces.filter(s => s.id === app.spaceId)[0]
+  }, [props.event, app])
+
+  const selectedPaymentMethod = useMemo(() => {
+    if (!app) return
+    return sockbaseShared.constants.payment.methods
+      .filter(m => m.id === app?.paymentMethod)[0]
+  }, [app])
+
+  const submitAsync = useCallback(async () => {
+    if (!app || !links || !userData || !circleCutFile) return
 
     setSubmitProgressPercent(10)
 
-    if (!user) {
-      const newUser = await createUser(leaderUserData.email, leaderUserData.password)
-      await updateUserDataAsync(newUser.uid, leaderUserData)
-    } else if (userData && !userData.gender) {
-      await updateUserDataAsync(user.uid, {
-        ...userData,
-        gender: leaderUserData?.gender
+    if (!props.user) {
+      const newUser = await props.createUserAsync(userData.email, userData.password)
+      await props.updateUserDataAsync(newUser.uid, userData)
+    } else if (props.userData && !props.userData?.gender) {
+      await props.updateUserDataAsync(props.user.uid, {
+        ...props.userData,
+        gender: userData.gender
       })
     }
 
     setSubmitProgressPercent(30)
 
-    const payload: SockbaseApplicationPayload = {
-      app,
-      links
-    }
-    await submitApplicationAsync(payload)
-      .then(async createdAppResult => {
+    await props.submitApplicationAsync({ app, links })
+      .then(async result => {
         setSubmitProgressPercent(80)
-        setAppResult(createdAppResult)
+        setAppAddedResult(result)
 
-        await uploadCircleCutFileAsync(createdAppResult.hashId, circleCutFile)
+        await props.updateCircleCutFileAsync(result.hashId, circleCutFile)
           .then(async () => {
             setSubmitProgressPercent(100)
             await (new Promise((resolve) => setTimeout(resolve, 2000)))
           })
+          .catch(err => { throw err })
       })
       .catch(err => { throw err })
-  }
+  }, [app, links, userData, circleCutFile])
 
-  useEffect(() => {
-    if (props.isLoggedIn === undefined) return
-    if (userData === undefined) return
-
-    setStepComponents([
-      <CheckAccount key="checkAccount"
-        user={user}
-        eyecatchURL={props.eyecatchURL}
-        login={async (email, password) => {
-          await loginByEmail(email, password)
-        }}
-        eventId={props.eventId}
+  const steps = useMemo(() => {
+    if (!props.event) return
+    return ([
+      <CheckAccount
+        key="checkAccount"
+        event={props.event}
         pastApps={props.pastApps}
-        logout={() => logout()}
+        eyecatchURL={props.eyecatchURL}
+        user={props.user}
+        loginAsync={props.handleLoginAsync}
+        logoutAsync={props.handleLogoutAsync}
         nextStep={() => setStep(1)} />,
-      <Introduction key="introduction"
+      <Introduction
+        key="introduction"
         event={props.event}
         prevStep={() => setStep(0)}
         nextStep={() => setStep(2)} />,
-      <Step1 key="step1"
-        eventId={props.eventId}
+      <Input
+        key="input"
         event={props.event}
         app={app}
         links={links}
-        leaderUserData={leaderUserData}
-        circleCutFile={circleCutFile}
         userData={userData}
+        circleCutFile={circleCutFile}
         pastApps={props.pastApps}
         pastAppLinks={props.pastAppLinks}
         pastEvents={props.pastEvents}
+        fetchedUserData={props.userData}
         prevStep={() => setStep(1)}
-        nextStep={(app, links, leaderUserData, circleCutData, circleCutFile) => {
-          setApp(app)
-          setLinks(links)
-          setLeaderUserData(leaderUserData)
-          setCircleCutData(circleCutData)
-          setCircleCutFile(circleCutFile)
+        nextStep={(a, l, u, cd, cf) => {
+          setApp(a)
+          setLinks(l)
+          setUserData(u)
+          setCircleCutData(cd)
+          setCircleCutFile(cf)
           setStep(3)
-        }} />,
-      <Step2 key="step2"
+        }}/>,
+      <Confirm
+        key="confirm"
         event={props.event}
         app={app}
-        links={links}
-        leaderUserData={leaderUserData}
         circleCutData={circleCutData}
+        links={links}
         userData={userData}
+        fetchedUserData={props.userData}
+        selectedSpace={selectedSpace}
+        selectedGenre={selectedGenre}
+        selectedPaymentMethod={selectedPaymentMethod}
         submitProgressPercent={submitProgressPercent}
-        submitApplication={submitApplication}
         nextStep={() => setStep(4)}
-        prevStep={() => setStep(2)} />,
-      <Step3 key="step3"
-        appResult={appResult}
-        app={app}
+        prevStep={() => setStep(2)}
+        submitAsync={submitAsync} />,
+      <Payment
+        key="payment"
+        user={props.user}
         event={props.event}
-        email={userData?.email ?? leaderUserData?.email}
+        app={app}
+        appAddedResult={appAddedResult}
+        selectedSpace={selectedSpace}
         nextStep={() => setStep(5)} />,
-      <Step4 key="step4"
-        appResult={appResult} />
+      <Complete
+        key="complete"
+        event={props.event}
+        appAddedResult={appAddedResult} />
     ])
   }, [
-    props,
-    user,
+    props.event,
+    props.user,
+    props.userData,
+    props.pastApps,
+    props.pastAppLinks,
+    props.pastEvents,
     app,
     links,
-    leaderUserData,
-    circleCutData,
     userData,
-    appResult,
-    submitProgressPercent])
-
-  useEffect(() => {
-    const fetchUserDataAsync = async (): Promise<void> => {
-      const userData = await getMyUserDataAsync()
-      setUserData(userData)
-    }
-    fetchUserDataAsync()
-      .catch(err => { throw err })
-  }, [getMyUserDataAsync])
+    circleCutFile,
+    circleCutData,
+    selectedSpace,
+    selectedGenre,
+    selectedPaymentMethod,
+    submitAsync,
+    submitProgressPercent,
+    appAddedResult
+  ])
 
   useEffect(() => window.scrollTo(0, 0), [step])
 
+  const now = new Date().getTime()
+
   return (
     <>
-      <h1>{props.event.eventName} サークル参加申し込み受付</h1>
+      {props.event === null && <Alert title="イベントが見つかりません" type="danger">
+        指定されたIDのイベントを見つけることができませんでした。<br />
+        URLが正しく入力されていることを確認してください。
+      </Alert>}
+      {props.event && <>
+        <h1>{props.event.eventName} サークル参加申し込み受付</h1>
 
-      {props.event.schedules.endApplication < new Date().getTime()
-        ? <Alert type="danger" title="参加受付は終了しました">
+        {props.event.schedules.endApplication < now && <Alert type="danger" title="参加受付は終了しました">
           このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
-        </Alert>
-        : <>
-          {props.event.descriptions.map((i, k) => <p key={k}>{i}</p>)}
+        </Alert>}
 
-          <StepProgress steps={
-            stepProgresses.map((i, k) => ({
-              text: i,
-              isActive: k === step - 1
-            }))
-          } />
+        {props.event.descriptions.map((d, k) => <p key={k}>{d}</p>)}
 
-          {stepComponents?.[step] ?? ''}
-        </>}
+        <StepProgress
+          steps={stepProgresses.map((s, k) => ({
+            text: s,
+            isActive: k === step - 1
+          }))} />
+
+        {steps?.[step]}
+      </>}
     </>
   )
 }
