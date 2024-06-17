@@ -7,7 +7,7 @@ import useFirebase from '../../../hooks/useFirebase'
 import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import DefaultBaseLayout from '../../../layouts/DefaultBaseLayout/DefaultBaseLayout'
-import StepContainerComponent from './StepContainer/StepContainer'
+import StepContainer from './StepContainer/StepContainer'
 
 const TicketApplyPage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
@@ -59,7 +59,7 @@ const TicketApplyPage: React.FC = () => {
               {user?.email && <Alert>
                 {user.email} としてログイン中です
               </Alert>}
-              <StepContainerComponent user={user} store={store} isLoggedIn={isLoggedIn} userData={userData} />
+              <StepContainer user={user} store={store} isLoggedIn={isLoggedIn} userData={userData} />
             </>
             : <></>}
     </DefaultBaseLayout >

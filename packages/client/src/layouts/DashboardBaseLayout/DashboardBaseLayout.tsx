@@ -19,27 +19,32 @@ interface Props {
   requireCommonRole?: SockbaseRole
 }
 const DashboardBaseLayout: React.FC<Props> = (props) => {
-  const firebase = useFirebase()
+  const {
+    user,
+    logoutAsync,
+    sendVerifyMailAsync
+  } = useFirebase()
   const { systemRole, commonRole } = useRole()
   const navigate = useNavigate()
 
   const [sentVerifyMail, setSentVerifyMail] = useState(false)
   const [isSlim, setSlim] = useAtom(isSlimAtom)
 
-  const logout = useCallback(() => {
-    firebase.logout()
-    navigate('/')
+  const handleLogout = useCallback(() => {
+    logoutAsync()
+      .then(() => navigate('/'))
+      .catch(err => { throw err })
   }, [])
 
-  const sendVerifyMail = useCallback(() => {
-    firebase.sendVerifyMail()
+  const handleSendVerifyMail = useCallback(() => {
+    sendVerifyMailAsync()
       .then(() => alert('送信が完了しました。'))
       .catch(err => {
         alert('エラーが発生しました。')
         throw err
       })
     setSentVerifyMail(true)
-  }, [firebase.sendVerifyMail])
+  }, [])
 
   const isValidRole = useMemo((): boolean => {
     if (systemRole === undefined && commonRole === undefined) return false
@@ -58,7 +63,7 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
   return (
     <StyledLayout>
       <RequiredLogin />
-      {firebase.isLoggedIn && firebase.user && isValidRole && <>
+      {user && isValidRole && <>
         <HeadHelper title={props.title} />
         <StyledHeader>
           <Link to="/dashboard">
@@ -66,19 +71,19 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
           </Link>
         </StyledHeader>
         <StyledContainer isSlim={isSlim}>
-          {!firebase.user.emailVerified && <StyledWrapAlert>
+          {!user.emailVerified && <StyledWrapAlert>
             <Alert>
               メールアドレスの確認が必要です
               <Button
-                onClick={sendVerifyMail}
+                onClick={handleSendVerifyMail}
                 inlined={true}
                 disabled={sentVerifyMail}>確認メール送信</Button>
             </Alert>
           </StyledWrapAlert>}
           <StyledSidebar>
             <Sidebar
-              logout={logout}
-              user={firebase.user}
+              logout={handleLogout}
+              user={user}
               isSlim={isSlim}
               setSlim={setSlim} />
           </StyledSidebar>

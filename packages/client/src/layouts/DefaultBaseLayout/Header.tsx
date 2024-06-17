@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -6,13 +6,19 @@ import LogotypeSVG from '../../../assets/logotype.svg'
 import useFirebase from '../../hooks/useFirebase'
 
 const Header: React.FC = () => {
-  const { user, logout } = useFirebase()
+  const { user, logoutAsync } = useFirebase()
+
+  const handleLogout = useCallback(() => {
+    logoutAsync()
+      .catch(err => { throw err })
+  }, [])
+
   const loggedInState = useMemo(() => {
     if (user === undefined) {
       return '認証中'
     } else if (user) {
       return (
-        <span onClick={logout}>
+        <span onClick={handleLogout}>
           {user.email} としてログイン中
         </span>
       )

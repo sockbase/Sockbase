@@ -50,6 +50,9 @@ import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/Dashbo
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
 import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from '../IndexPage/IndexPage'
+import NewCircleApplyPage from '../NewApplyForm/CircleApplyPage/CircleApplyPage'
+import NewTicketApplyPage from '../NewApplyForm/TicketApplyPage/TicketApplyPage'
+import NewTicketAssignPage from '../NewApplyForm/TicketAssignPage/TicketAssignPage'
 import PasswordResetPage from '../PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from '../Static/PrivacyPolicyPage'
 import TermsOfServicePage from '../Static/TermsOfServicePage'
@@ -93,7 +96,16 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':eventId',
-            element: <CircleApplyPage />
+            children: [
+              {
+                index: true,
+                element: <CircleApplyPage />
+              },
+              {
+                path: 'new',
+                element: <NewCircleApplyPage />
+              }
+            ]
           }
         ]
       },
@@ -102,13 +114,31 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':storeId',
-            element: <TicketApplyPage />
+            children: [
+              {
+                index: true,
+                element: <TicketApplyPage />
+              },
+              {
+                path: 'new',
+                element: <NewTicketApplyPage />
+              }
+            ]
           }
         ]
       },
       {
         path: 'assign-tickets',
-        element: <TicketAssignPage />
+        children: [
+          {
+            index: true,
+            element: <TicketAssignPage />
+          },
+          {
+            path: 'new',
+            element: <NewTicketAssignPage />
+          }
+        ]
       },
       {
         path: 'tickets',
