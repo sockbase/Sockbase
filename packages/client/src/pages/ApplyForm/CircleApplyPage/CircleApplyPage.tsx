@@ -6,7 +6,7 @@ import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
 import useFirebase from '../../../hooks/useFirebase'
 import DefaultBaseLayout from '../../../layouts/DefaultBaseLayout/DefaultBaseLayout'
-import StepContainerComponent from './StepContainer/StepContainer'
+import StepContainer from './StepContainer/StepContainer'
 import type {
   SockbaseApplicationLinksDocument,
   SockbaseApplicationDocument,
@@ -114,7 +114,7 @@ const CircleApplyPage: React.FC = () => {
                 {user.email} としてログイン中です
               </Alert>}
 
-              <StepContainerComponent
+              <StepContainer
                 eventId={params.eventId}
                 event={event}
                 isLoggedIn={isLoggedIn}

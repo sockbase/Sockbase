@@ -3,6 +3,7 @@ import validator from 'validator'
 interface IUseValidate {
   isIn: (value: string, entries: string[]) => boolean
   isEmpty: (value: string) => boolean
+  isNotEmpty: (value: string) => boolean
   isMatchRegex: (value: string, regex: RegExp) => boolean
   isNull: <T>(value: T) => boolean
   isOnlyHiragana: (value: string) => boolean
@@ -22,6 +23,8 @@ const useValidate = (): IUseValidate => {
     validator.isIn(value, entries)
 
   const isEmpty = (value: string): boolean => value.trim() === ''
+
+  const isNotEmpty = (value: string): boolean => !isEmpty(value)
 
   const isMatchRegex: (value: string, regex: RegExp) => boolean = (
     value,
@@ -65,6 +68,7 @@ const useValidate = (): IUseValidate => {
   return {
     isIn,
     isEmpty,
+    isNotEmpty,
     isMatchRegex,
     isNull,
     isOnlyHiragana,

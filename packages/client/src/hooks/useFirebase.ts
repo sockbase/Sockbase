@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { type FirebaseError } from 'firebase/app'
 import {
   type Auth,
   type User,
@@ -38,11 +37,11 @@ interface IUseFirebase {
   user: User | null | undefined
   roles: Record<string, number> | null | undefined
   getAuth: () => Auth
-  loginByEmail: (email: string, password: string) => Promise<UserCredential>
-  logout: () => void
-  createUser: (email: string, password: string) => Promise<User>
+  loginByEmailAsync: (email: string, password: string) => Promise<UserCredential>
+  logoutAsync: () => Promise<void>
+  createUserAsync: (email: string, password: string) => Promise<User>
   sendPasswordResetURLAsync: (email: string) => Promise<void>
-  sendVerifyMail: () => Promise<void>
+  sendVerifyMailAsync: () => Promise<void>
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
   getFunctions: () => Functions
@@ -68,57 +67,46 @@ const useFirebase = (): IUseFirebase => {
     return _auth
   }
 
-  const loginByEmail =
+  const loginByEmailAsync =
     async (email: string, password: string): Promise<UserCredential> => {
       const auth = getAuth()
-      const credential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      ).catch((err: FirebaseError) => {
-        throw err
-      })
+      const credential = await signInWithEmailAndPassword(auth, email, password)
+        .catch(err => { throw err })
       return credential
     }
 
-  const logout =
-    (): void => {
+  const logoutAsync =
+    async (): Promise<void> => {
       const auth = getAuth()
-      signOut(auth)
+      await signOut(auth)
         .then(() => {
           setUser(null)
           setLoggedIn(false)
           setRoles(null)
         })
-        .catch((err: FirebaseError) => {
-          throw err
-        })
+        .catch(err => { throw err })
     }
 
-  const createUser =
+  const createUserAsync =
     async (email: string, password: string): Promise<User> => {
       const auth = getAuth()
       return await createUserWithEmailAndPassword(auth, email, password)
         .then((cred) => cred.user)
-        .catch((err) => {
-          throw err
-        })
+        .catch(err => { throw err })
     }
 
   const sendPasswordResetURLAsync =
     async (email: string): Promise<void> => {
       const auth = getAuth()
-      await sendPasswordResetEmail(auth, email).catch((err: FirebaseError) => {
-        throw err
-      })
+      await sendPasswordResetEmail(auth, email)
+        .catch(err => { throw err })
     }
 
-  const sendVerifyMail =
+  const sendVerifyMailAsync =
     useCallback(async (): Promise<void> => {
       if (!user) return
-      sendEmailVerification(user).catch((err) => {
-        throw err
-      })
+      sendEmailVerification(user)
+        .catch(err => { throw err })
     }, [user])
 
   const getFirestore = (): Firestore => getFirebaseFirestore()
@@ -154,9 +142,7 @@ const useFirebase = (): IUseFirebase => {
           }
           setRoles(result.claims.roles)
         })
-        .catch((err) => {
-          throw err
-        })
+        .catch(err => { throw err })
     })
     return unSubscribe
   }, [])
@@ -166,11 +152,11 @@ const useFirebase = (): IUseFirebase => {
     user,
     roles,
     getAuth,
-    loginByEmail,
-    logout,
-    createUser,
+    loginByEmailAsync,
+    logoutAsync,
+    createUserAsync,
     sendPasswordResetURLAsync,
-    sendVerifyMail,
+    sendVerifyMailAsync,
     getFirestore,
     getStorage,
     getFunctions,

@@ -18,7 +18,7 @@ export interface User {
 const IndexPage: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const firebase = useFirebase()
+  const { user, loginByEmailAsync } = useFirebase()
   const { localize: localizeFirebaseError } = useFirebaseError()
 
   const [email, setEmail] = useState('')
@@ -32,7 +32,7 @@ const IndexPage: React.FC = () => {
     setProcessing(true)
     setError(null)
 
-    firebase.loginByEmail(email, password)
+    loginByEmailAsync(email, password)
       .then(() => navigate(fromPathName || '/dashboard', { replace: true }))
       .catch((e: Error) => {
         const message = localizeFirebaseError(e.message)
@@ -52,11 +52,11 @@ const IndexPage: React.FC = () => {
         このページにアクセスするにはログインが必要です。
       </Alert>}
 
-      {firebase.user === undefined
+      {user === undefined
         ? <Loading text='認証情報' />
-        : firebase.user !== null
+        : user !== null
           ? <p>
-            {firebase.user.email} としてログイン中です
+            {user.email} としてログイン中です
           </p>
           : <Login
             email={email}
@@ -68,9 +68,9 @@ const IndexPage: React.FC = () => {
             error={error} />
       }
 
-      {firebase.user !== null && <FormSection>
+      {user !== null && <FormSection>
         <FormItem>
-          <LinkButton to="/dashboard" disabled={!firebase.user}>マイページに進む</LinkButton>
+          <LinkButton to="/dashboard" disabled={!user}>マイページに進む</LinkButton>
         </FormItem>
       </FormSection>}
 
