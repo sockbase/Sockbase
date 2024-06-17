@@ -1,13 +1,12 @@
 import FormButton from '../../../../components/Form/Button'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
-
 import Alert from '../../../../components/Parts/Alert'
 import useDayjs from '../../../../hooks/useDayjs'
-import type { SockbaseEvent } from 'sockbase'
+import type { SockbaseEventDocument } from 'sockbase'
 
 interface Props {
-  event: SockbaseEvent
+  event: SockbaseEventDocument
   nextStep: () => void
   prevStep: () => void
 }
@@ -18,7 +17,11 @@ const Introduction: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton color="default" onClick={props.prevStep}>アカウント確認画面へ戻る</FormButton>
+          <FormButton
+            color="default"
+            onClick={props.prevStep}>
+            アカウント確認画面へ戻る
+          </FormButton>
         </FormItem>
       </FormSection>
 
@@ -182,7 +185,10 @@ const Introduction: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={() => props.nextStep()}>申し込みへ進む</FormButton>
+          <FormButton
+            onClick={() => props.nextStep()}>
+            申し込みへ進む
+          </FormButton>
         </FormItem>
       </FormSection>
     </>

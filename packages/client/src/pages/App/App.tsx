@@ -50,7 +50,6 @@ import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/Dashbo
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
 import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from '../IndexPage/IndexPage'
-import NewCircleApplyPage from '../NewApplyForm/CircleApplyPage/CircleApplyPage'
 import NewTicketApplyPage from '../NewApplyForm/TicketApplyPage/TicketApplyPage'
 import NewTicketAssignPage from '../NewApplyForm/TicketAssignPage/TicketAssignPage'
 import PasswordResetPage from '../PasswordResetPage/PasswordResetPage'
@@ -96,16 +95,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':eventId',
-            children: [
-              {
-                index: true,
-                element: <CircleApplyPage />
-              },
-              {
-                path: 'new',
-                element: <NewCircleApplyPage />
-              }
-            ]
+            element: <CircleApplyPage />
           }
         ]
       },

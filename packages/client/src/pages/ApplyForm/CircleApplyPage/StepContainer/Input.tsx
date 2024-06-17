@@ -1,16 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import sockbaseShared from 'shared'
-import {
-  type SockbaseEventSpace,
-  type SockbaseApplication,
-  type SockbaseAccountSecure,
-  type SockbaseEvent,
-  type SockbaseApplicationLinks,
-  type SockbaseApplicationDocument,
-  type SockbaseApplicationLinksDocument,
-  type SockbaseEventDocument,
-  type SockbaseAccount
-} from 'sockbase'
 import FormButton from '../../../../components/Form/Button'
 import FormCheckbox from '../../../../components/Form/Checkbox'
 import FormItem from '../../../../components/Form/FormItem'
@@ -27,8 +16,15 @@ import useDayjs from '../../../../hooks/useDayjs'
 import useFile from '../../../../hooks/useFile'
 import usePostalCode from '../../../../hooks/usePostalCode'
 import useValidate from '../../../../hooks/useValidate'
-
-const initialAppBase: SockbaseApplication = {
+import type {
+  SockbaseAccount,
+  SockbaseAccountSecure,
+  SockbaseApplication,
+  SockbaseApplicationDocument,
+  SockbaseApplicationLinks,
+  SockbaseEventDocument
+} from 'sockbase'
+const initialAppBase = {
   eventId: '',
   spaceId: '',
   circle: {
@@ -36,7 +32,7 @@ const initialAppBase: SockbaseApplication = {
     yomi: '',
     penName: '',
     penNameYomi: '',
-    hasAdult: null,
+    hasAdult: '',
     genre: ''
   },
   overview: {
@@ -56,72 +52,175 @@ const initialAppLinksBase: SockbaseApplicationLinks = {
   menuURL: ''
 }
 
+const initialUserDataBase = {
+  name: '',
+  birthday: '1990-01-01',
+  postalCode: '',
+  address: '',
+  telephone: '',
+  email: '',
+  gender: '',
+  password: '',
+  rePassword: ''
+}
+
 interface Props {
-  eventId: string
-  event: SockbaseEvent
+  event: SockbaseEventDocument
   app: SockbaseApplication | undefined
   links: SockbaseApplicationLinks | undefined
-  leaderUserData: SockbaseAccountSecure | undefined
+  userData: SockbaseAccountSecure | undefined
   circleCutFile: File | null | undefined
-  pastApps: SockbaseApplicationDocument[] | undefined
-  pastAppLinks: Record<string, SockbaseApplicationLinksDocument | null> | undefined
-  pastEvents: Record<string, SockbaseEventDocument> | undefined
-  userData: SockbaseAccount | null | undefined
+  pastApps: SockbaseApplicationDocument[] | null | undefined
+  pastAppLinks: Record<string, SockbaseApplicationLinks | null> | null | undefined
+  pastEvents: Record<string, SockbaseEventDocument> | null | undefined
+  fetchedUserData: SockbaseAccount | null | undefined
   prevStep: () => void
-  nextStep: (app: SockbaseApplication, links: SockbaseApplicationLinks, leaderUserData: SockbaseAccountSecure, circleCutData: string, circleCutFile: File) => void
+  nextStep: (
+    app: SockbaseApplication,
+    links: SockbaseApplicationLinks,
+    userData: SockbaseAccountSecure,
+    circleCutData: string,
+    circleCutFile: File
+  ) => void
 }
-const Step1: React.FC<Props> = (props) => {
+
+const Input: React.FC<Props> = (props) => {
   const validator = useValidate()
+  const { formatByDate } = useDayjs()
   const { getAddressByPostalCode } = usePostalCode()
   const {
     data: circleCutDataWithHook,
     openAsDataURL: openCircleCut
   } = useFile()
-  const { formatByDate } = useDayjs()
-
-  const [circleCutFile, setCircleCutFile] = useState<File | null>()
-  const [circleCutData, setCircleCutData] = useState<string>()
 
   const initialApp = useMemo(() => ({
     ...initialAppBase,
-    eventId: props.eventId,
+    eventId: props.event.id,
     paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || ''
-  }), [props.eventId])
+  }), [props.event])
 
-  const [app, setApp] = useState<SockbaseApplication>(initialApp)
-  const [leaderUserData, setLeaderUserData] = useState<SockbaseAccountSecure>({
-    name: '',
-    birthday: 0,
-    postalCode: '',
-    address: '',
-    telephone: '',
-    email: '',
-    gender: undefined,
-    password: '',
-    rePassword: ''
-  })
-  const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
-  const [displayGender, setDisplayGender] = useState('')
-
-  const [links, setLinks] = useState<SockbaseApplicationLinks>(initialAppLinksBase)
-
-  const [pastAppId, setPastAppId] = useState<string>()
-  const [isApplyPastApp, setApplyPastApp] = useState(false)
+  const [app, setApp] = useState(initialApp)
+  const [links, setLinks] = useState(initialAppLinksBase)
+  const [userData, setUserData] = useState(initialUserDataBase)
+  const [circleCutFile, setCircleCutFile] = useState<File | null>()
+  const [circleCutData, setCircleCutData] = useState<string>()
 
   const [isAgreed, setAgreed] = useState(false)
 
-  const [spaceIds, setSpaceIds] = useState<string[]>()
-  const [paymentMethodIds, setPaymentMethodIds] = useState<string[]>()
+  const [pastAppId, setPastAppId] = useState<string>()
+  const [isAppliedPastApp, setAppliedPastApp] = useState(false)
+
+  const spaceIds = useMemo(() => props.event.spaces.map(s => s.id), [props.event])
+  const genreIds = useMemo(() => props.event.genres.map(g => g.id), [props.event])
+  const paymentMethodIds = useMemo(() => sockbaseShared.constants.payment.methods
+    .filter(p => p.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
+    .map(p => p.id), [props.event])
+
+  const fetchedUserData = useMemo(() => {
+    if (!props.fetchedUserData) return
+    return {
+      ...props.fetchedUserData,
+      birthday: formatByDate(props.fetchedUserData?.birthday, 'YYYY-MM-DD')
+    }
+  }, [props.fetchedUserData])
+
+  const selectedSpace = useMemo(() => {
+    const space = props.event.spaces.filter(s => s.id === app.spaceId)[0]
+    return space
+  }, [props.event, app.spaceId])
+
+  const errorCount = useMemo(() => {
+    const validators = [
+      validator.isIn(app.spaceId, spaceIds),
+      !validator.isNull(circleCutFile),
+      circleCutData && validator.isNotEmpty(circleCutData),
+      validator.isNotEmpty(app.circle.name),
+      validator.isOnlyHiragana(app.circle.yomi),
+      validator.isNotEmpty(app.circle.penName),
+      validator.isOnlyHiragana(app.circle.penNameYomi),
+      props.event.permissions.allowAdult || !app.circle.hasAdult,
+      validator.isIn(app.circle.genre, genreIds),
+      validator.isNotEmpty(app.overview.description),
+      validator.isNotEmpty(app.overview.totalAmount),
+      validator.isIn(app.paymentMethod, paymentMethodIds),
+      !app.unionCircleId || validator.isApplicationHashId(app.unionCircleId),
+      !links.twitterScreenName || validator.isTwitterScreenName(links.twitterScreenName),
+      !links.pixivUserId || validator.isOnlyNumber(links.pixivUserId),
+      !links.websiteURL || validator.isURL(links.websiteURL),
+      !links.menuURL || validator.isURL(links.menuURL),
+      isAgreed
+    ]
+
+    let errorCount = validators.filter(v => !v).length
+
+    if (fetchedUserData) {
+      const additionalUserDataValidators = [
+        fetchedUserData.gender || validator.isIn(userData.gender, ['1', '2'])
+      ]
+      errorCount += additionalUserDataValidators.filter(v => !v).length
+    } else {
+      const userDataValidators = [
+        validator.isNotEmpty(userData.name),
+        validator.isPostalCode(userData.postalCode),
+        validator.isEmail(userData.email),
+        validator.isStrongPassword(userData.password),
+        validator.isNotEmpty(userData.rePassword),
+        validator.isIn(userData.gender, ['1', '2']),
+        validator.equals(userData.password, userData.rePassword)
+      ]
+      errorCount += userDataValidators.filter(v => !v).length
+    }
+
+    return errorCount
+  }, [
+    props.event,
+    spaceIds,
+    genreIds,
+    paymentMethodIds,
+    app,
+    userData,
+    links,
+    circleCutFile,
+    circleCutData,
+    isAgreed
+  ])
+
+  const handleFilledPostalCode = useCallback((postalCode: string) => {
+    const sanitizedPostalCode = postalCode.replaceAll('-', '')
+    if (sanitizedPostalCode.length !== 7) return
+    getAddressByPostalCode(sanitizedPostalCode)
+      .then(fetchedAddress => setUserData(s => ({ ...s, address: fetchedAddress })))
+      .catch(err => { throw err })
+  }, [])
+
+  const handleSubmit = useCallback(() => {
+    if (errorCount > 0) return
+    if (!circleCutData || !circleCutFile) return
+    const sanitizedApp: SockbaseApplication = {
+      ...app,
+      circle: {
+        ...app.circle,
+        hasAdult: props.event.permissions.allowAdult && app.circle.hasAdult === 'yes'
+      }
+    }
+    const sanitizedLinks: SockbaseApplicationLinks = {
+      ...links
+    }
+    const sanitizedUserData: SockbaseAccountSecure = {
+      ...userData,
+      birthday: new Date(userData.birthday).getTime(),
+      gender: userData.gender === '1'
+        ? 1
+        : userData.gender === '2'
+          ? 2
+          : undefined
+    }
+    props.nextStep(sanitizedApp, sanitizedLinks, sanitizedUserData, circleCutData, circleCutFile)
+  }, [errorCount, props.event, app, links, userData, circleCutData, circleCutFile])
 
   const handleApplyPastApp = useCallback(() => {
-    setApplyPastApp(false)
+    if (!pastAppId) return
     if (!props.pastApps || !props.pastAppLinks || !props.pastEvents) return
-
-    if (!pastAppId) {
-      if (!confirm('この操作を行うと入力した情報がリセットされます。\nリセットしてもよろしいですか？')) { setApp(initialApp) }
-      setLinks(initialAppLinksBase)
-      return
-    }
 
     const pastApp = props.pastApps?.filter(a => a.id === pastAppId)[0]
     if (!pastApp) return
@@ -132,9 +231,13 @@ const Step1: React.FC<Props> = (props) => {
       circle: {
         ...pastApp.circle,
         genre: '',
-        hasAdult: props.event.permissions.allowAdult && pastApp.circle.hasAdult
+        hasAdult: props.event.permissions.allowAdult
+          ? pastApp.circle.hasAdult
+            ? 'yes'
+            : 'no'
+          : ''
       },
-      eventId: props.eventId,
+      eventId: props.event.id,
       spaceId: '',
       unionCircleId: '',
       petitCode: '',
@@ -146,15 +249,17 @@ const Step1: React.FC<Props> = (props) => {
       setLinks(pastLinks)
     }
 
-    setApplyPastApp(true)
+    setAppliedPastApp(true)
   }, [pastAppId, props.pastApps, props.pastAppLinks, props.pastEvents])
-
-  const [error, setError] = useState<string | undefined>()
 
   useEffect(() => {
     if (props.app) {
       setApp({
         ...props.app,
+        circle: {
+          ...props.app.circle,
+          hasAdult: props.app.circle.hasAdult ? 'yes' : 'no'
+        },
         paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || ''
       })
     }
@@ -163,131 +268,38 @@ const Step1: React.FC<Props> = (props) => {
       setLinks(props.links)
     }
 
-    if (props.leaderUserData) {
-      setLeaderUserData(props.leaderUserData)
-      setDisplayBirthday(formatByDate(props.leaderUserData?.birthday, 'YYYY-MM-DD'))
-      setDisplayGender(props.leaderUserData.gender?.toString() ?? '')
+    if (props.userData) {
+      setUserData({
+        ...props.userData,
+        birthday: formatByDate(props.userData.birthday, 'YYYY-MM-DD'),
+        gender: props.userData.gender?.toString() ?? ''
+      })
     }
 
     if (props.circleCutFile) {
       setCircleCutFile(props.circleCutFile)
     }
-
-    if (props.event.spaces) {
-      setSpaceIds(props.event.spaces.map(i => i.id))
-    }
-
-    setPaymentMethodIds(
-      sockbaseShared.constants.payment.methods
-        .filter(i => i.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
-        .map(i => i.id))
-  }, [props.app, props.links, props.leaderUserData, props.circleCutFile, props.event])
+  }, [props.app, props.links, props.event, props.userData, props.circleCutFile])
 
   useEffect(() => {
     if (!circleCutFile) return
     openCircleCut(circleCutFile)
   }, [circleCutFile])
 
-  const [selectedSpace, setSelectedSpace] = useState<SockbaseEventSpace | undefined>()
-  useEffect(() => setSelectedSpace(props.event.spaces.filter(i => i.id === app.spaceId)[0]), [app.spaceId])
-
-  const errorCount = useMemo(() => {
-    if (!spaceIds || !paymentMethodIds) return 1
-    const validators = [
-      validator.isIn(app.spaceId, spaceIds),
-      !validator.isNull(circleCutFile),
-      !!circleCutData && !validator.isEmpty(circleCutData),
-      !validator.isEmpty(app.circle.name),
-      validator.isOnlyHiragana(app.circle.yomi),
-      !validator.isEmpty(app.circle.penName),
-      validator.isOnlyHiragana(app.circle.penNameYomi),
-      !props.event.permissions.allowAdult || !validator.isNull(app.circle.hasAdult),
-      validator.isIn(app.circle.genre, props.event.genres.map(g => g.id)),
-      !validator.isEmpty(app.overview.description),
-      !validator.isEmpty(app.overview.totalAmount),
-      props.event.permissions.canUseBankTransfer || app.paymentMethod === 'online',
-      validator.isIn(app.paymentMethod, paymentMethodIds),
-      (!app.unionCircleId || validator.isApplicationHashId(app.unionCircleId)),
-      !links.twitterScreenName || validator.isTwitterScreenName(links.twitterScreenName),
-      !links.pixivUserId || validator.isOnlyNumber(links.pixivUserId),
-      !links.websiteURL || validator.isURL(links.websiteURL),
-      !links.menuURL || validator.isURL(links.menuURL)
-    ]
-
-    let errorCount = validators.filter(v => !v).length
-
-    if (props.userData) {
-      const additionalUserDataValidators = [
-        validator.isIn(leaderUserData.gender?.toString() ?? '', ['1', '2'])
-      ]
-      const additionalUserDataErrorCount = additionalUserDataValidators
-        .filter(v => !v)
-        .length
-      errorCount += additionalUserDataErrorCount
-    } else {
-      const accountValidators = [
-        !validator.isEmpty(leaderUserData.name),
-        // validator.isDate(leaderUserData.birthday),
-        validator.isPostalCode(leaderUserData.postalCode),
-        validator.isEmail(leaderUserData.email),
-        validator.isStrongPassword(leaderUserData.password),
-        !validator.isEmpty(leaderUserData.rePassword),
-        validator.equals(leaderUserData.password, leaderUserData.rePassword)
-      ]
-
-      const accountErrorCount = accountValidators.filter(v => !v).length
-      errorCount += accountErrorCount
-    }
-
-    return errorCount
-  }, [spaceIds, app, links, leaderUserData, circleCutFile, circleCutData, props.event])
-
-  useEffect(() => setLeaderUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() })), [displayBirthday])
-
   useEffect(() => {
     if (!circleCutDataWithHook) return
     setCircleCutData(circleCutDataWithHook)
   }, [circleCutDataWithHook])
 
-  const handleSubmit = useCallback(() => {
-    setError(undefined)
-    if (errorCount > 0 || !circleCutData || !circleCutFile) {
-      setError('入力内容に不備があります')
-      return
-    }
-    props.nextStep(app, links, leaderUserData, circleCutData, circleCutFile)
-  }, [errorCount, app, links, leaderUserData, errorCount, circleCutData, circleCutFile])
-
-  const handleFilledPostalCode = useCallback((postalCode: string) => {
-    const sanitizedPostalCode = postalCode.replaceAll('-', '')
-
-    if (sanitizedPostalCode.length !== 7) return
-    getAddressByPostalCode(sanitizedPostalCode)
-      .then(address => setLeaderUserData(s => ({
-        ...s,
-        address
-      })))
-      .catch(err => {
-        throw err
-      })
-  }, [])
-
-  useEffect(() => {
-    setLeaderUserData(s => s && ({
-      ...s,
-      gender: displayGender === '1'
-        ? 1
-        : displayGender === '2'
-          ? 2
-          : undefined
-    }))
-  }, [displayGender])
-
   return (
     <>
       <FormSection>
         <FormItem>
-          <FormButton color="default" onClick={props.prevStep}>申し込み説明画面へ戻る</FormButton>
+          <FormButton
+            color="default"
+            onClick={props.prevStep}>
+              申し込み説明画面へ戻る
+          </FormButton>
         </FormItem>
       </FormSection>
 
@@ -308,7 +320,9 @@ const Step1: React.FC<Props> = (props) => {
             <FormButton
               onClick={handleApplyPastApp}
               disabled={pastAppId === undefined}
-              inlined>引用する</FormButton>
+              inlined>
+                引用する
+            </FormButton>
           </FormItem>
         </FormSection>
       </>}
@@ -325,9 +339,9 @@ const Step1: React.FC<Props> = (props) => {
                 value: i.id
               }))
             }
-            onChange={(spaceId) => setApp(s => ({ ...s, spaceId }))}
+            onChange={spaceId => setApp(s => ({ ...s, spaceId }))}
             value={app.spaceId}
-            hasError={isApplyPastApp && !app.spaceId} />
+            hasError={isAppliedPastApp && !app.spaceId} />
         </FormItem>
       </FormSection>
 
@@ -344,7 +358,7 @@ const Step1: React.FC<Props> = (props) => {
             type="file"
             accept="image/png"
             onChange={e => setCircleCutFile(e.target.files?.[0])}
-            hasError={isApplyPastApp && !circleCutData}/>
+            hasError={isAppliedPastApp && !circleCutData}/>
         </FormItem>
         <FormItem>
           {circleCutData && <CircleCutImage src={circleCutData} />}
@@ -396,40 +410,30 @@ const Step1: React.FC<Props> = (props) => {
 
       <h2>頒布物情報</h2>
       <FormSection>
-        {
-          props.event.permissions.allowAdult && <>
-            <FormItem>
-              <FormLabel>成人向け頒布物の有無</FormLabel>
-              <FormSelect
-                value={app.circle.hasAdult === null
-                  ? 'none'
-                  : app.circle.hasAdult
-                    ? 'yes'
-                    : 'no'}
-                onChange={e => setApp(s => ({
-                  ...s,
-                  circle: {
-                    ...s.circle,
-                    hasAdult: e.target.value === 'none'
-                      ? null
-                      : e.target.value === 'yes'
-                  }
-                }))}>
-                <option value="none">選択してください</option>
-                <option value="no">無: 成人向け頒布物はありません</option>
-                <option value="yes">有: 成人向け頒布物があります</option>
-              </FormSelect>
-            </FormItem>
-            <FormItem>
-              <Alert>
+        {props.event.permissions.allowAdult && <>
+          <FormItem>
+            <FormLabel>成人向け頒布物の有無</FormLabel>
+            <FormSelect
+              value={app.circle.hasAdult === null
+                ? ''
+                : app.circle.hasAdult
+                  ? 'yes'
+                  : 'no'}
+              onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, hasAdult: e.target.value } }))}>
+              <option value="">選択してください</option>
+              <option value="no">無: 成人向け頒布物はありません</option>
+              <option value="yes">有: 成人向け頒布物があります</option>
+            </FormSelect>
+          </FormItem>
+          <FormItem>
+            <Alert>
                 成人向け作品を頒布する場合、イベント当日（{formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}）時点で18歳以上である必要があります。
-              </Alert>
-              <Alert>
+            </Alert>
+            <Alert>
                 イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
-              </Alert>
-            </FormItem>
-          </>
-        }
+            </Alert>
+          </FormItem>
+        </>}
       </FormSection>
       <FormSection>
         <FormItem>
@@ -437,11 +441,11 @@ const Step1: React.FC<Props> = (props) => {
           <FormSelect
             value={app.circle.genre}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}
-            hasError={isApplyPastApp && !app.circle.genre}>
+            hasError={isAppliedPastApp && !app.circle.genre}>
             <option value="">選択してください</option>
             {props.event.genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
           </FormSelect>
-          <FormHelp hasError={isApplyPastApp && !app.circle.genre}>
+          <FormHelp hasError={isAppliedPastApp && !app.circle.genre}>
             頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
           </FormHelp>
         </FormItem>
@@ -550,30 +554,30 @@ const Step1: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      {(!props.userData?.gender && <>
+      {(!fetchedUserData?.gender && <>
         <h2>申し込み責任者情報</h2>
         <FormSection>
           <FormItem>
             <FormLabel>氏名</FormLabel>
             <FormInput
               placeholder='速部 すみれ'
-              value={props.userData?.name || leaderUserData.name}
-              onChange={e => setLeaderUserData(s => ({ ...s, name: e.target.value }))}
-              disabled={!!props.userData} />
+              value={fetchedUserData?.name || userData.name}
+              onChange={e => setUserData(s => ({ ...s, name: e.target.value }))}
+              disabled={!!fetchedUserData} />
           </FormItem>
           <FormItem>
             <FormLabel>生年月日</FormLabel>
             <FormInput type="date"
-              value={displayBirthday}
-              onChange={e => setDisplayBirthday(e.target.value)}
-              disabled={!!props.userData} />
+              value={fetchedUserData?.birthday || userData.birthday}
+              onChange={e => setUserData(s => ({ ...s, birthday: e.target.value }))}
+              disabled={!!fetchedUserData} />
           </FormItem>
           <FormItem>
             <FormLabel>性別</FormLabel>
             <FormSelect
-              value={displayGender}
-              onChange={e => setDisplayGender(e.target.value)}
-              hasError={!!props.userData && !displayGender}>
+              value={fetchedUserData?.gender || userData.gender}
+              onChange={e => setUserData(s => ({ ...s, gender: e.target.value }))}
+              hasError={!!fetchedUserData && !userData.gender}>
               <option value="">選択してください</option>
               <option value="1">男性</option>
               <option value="2">女性</option>
@@ -585,13 +589,13 @@ const Step1: React.FC<Props> = (props) => {
             <FormLabel>郵便番号</FormLabel>
             <FormInput
               placeholder='0000000'
-              value={props.userData?.postalCode || leaderUserData.postalCode}
+              value={fetchedUserData?.postalCode || userData.postalCode}
               onChange={e => {
                 if (e.target.value.length > 7) return
                 handleFilledPostalCode(e.target.value)
-                setLeaderUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
+                setUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
               }}
-              hasError={!validator.isEmpty(leaderUserData.postalCode) && !validator.isPostalCode(leaderUserData.postalCode)}
+              hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)}
               disabled={!!props.userData} />
             <FormHelp>
               ハイフンは入力不要です
@@ -601,8 +605,8 @@ const Step1: React.FC<Props> = (props) => {
             <FormLabel>住所</FormLabel>
             <FormInput
               placeholder='東京都千代田区外神田9-9-9'
-              value={props.userData?.address || leaderUserData.address}
-              onChange={e => setLeaderUserData(s => ({ ...s, address: e.target.value }))}
+              value={fetchedUserData?.address || userData.address}
+              onChange={e => setUserData(s => ({ ...s, address: e.target.value }))}
               disabled={!!props.userData} />
           </FormItem>
           <FormItem>
@@ -612,14 +616,14 @@ const Step1: React.FC<Props> = (props) => {
             <FormLabel>電話番号</FormLabel>
             <FormInput
               placeholder='07001234567'
-              value={props.userData?.telephone || leaderUserData.telephone}
-              onChange={e => setLeaderUserData(s => ({ ...s, telephone: e.target.value.trim() }))}
+              value={fetchedUserData?.telephone || userData.telephone}
+              onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))}
               disabled={!!props.userData} />
           </FormItem>
         </FormSection>
       </>) ?? <></>}
 
-      {(!props.userData && <>
+      {(!fetchedUserData && <>
         <h2>Sockbaseログイン情報</h2>
         <p>
             申し込み情報の確認等に使用するアカウントを作成します。
@@ -629,18 +633,18 @@ const Step1: React.FC<Props> = (props) => {
             <FormLabel>メールアドレス</FormLabel>
             <FormInput type="email"
               placeholder='sumire@sockbase.net'
-              value={leaderUserData.email}
-              onChange={e => setLeaderUserData(s => ({ ...s, email: e.target.value }))}
-              hasError={!validator.isEmpty(leaderUserData.email) && !validator.isEmail(leaderUserData.email)} />
+              value={userData.email}
+              onChange={e => setUserData(s => ({ ...s, email: e.target.value }))}
+              hasError={!validator.isEmpty(userData.email) && !validator.isEmail(userData.email)} />
           </FormItem>
           <FormItem>
             <FormLabel>パスワード</FormLabel>
             <FormInput type="password"
               placeholder='●●●●●●●●●●●●'
-              value={leaderUserData.password}
-              onChange={e => setLeaderUserData(s => ({ ...s, password: e.target.value }))}
-              hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)} />
-            <FormHelp hasError={!validator.isEmpty(leaderUserData.password) && !validator.isStrongPassword(leaderUserData.password)}>
+              value={userData.password}
+              onChange={e => setUserData(s => ({ ...s, password: e.target.value }))}
+              hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)} />
+            <FormHelp hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)}>
                 アルファベット大文字を含め、英数12文字以上で設定してください。
             </FormHelp>
           </FormItem>
@@ -648,58 +652,56 @@ const Step1: React.FC<Props> = (props) => {
             <FormLabel>パスワード(確認)</FormLabel>
             <FormInput type="password"
               placeholder='●●●●●●●●●●●●'
-              value={leaderUserData.rePassword}
-              onChange={e => setLeaderUserData(s => ({ ...s, rePassword: e.target.value }))}
-              hasError={!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword} />
-            {!validator.isEmpty(leaderUserData.rePassword) && leaderUserData.password !== leaderUserData.rePassword &&
+              value={userData.rePassword}
+              onChange={e => setUserData(s => ({ ...s, rePassword: e.target.value }))}
+              hasError={!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword} />
+            {!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword &&
                 <FormHelp hasError>パスワードの入力が間違っています</FormHelp>}
           </FormItem>
         </FormSection>
       </>) ?? <></>}
 
       <h2>サークル参加費お支払い方法</h2>
-      {
-        selectedSpace
-          ? <FormSection>
-            <FormItem>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>申込むスペース</th>
-                    <td>{selectedSpace.name}</td>
-                  </tr>
-                  <tr>
-                    <th>スペース詳細情報</th>
-                    <td>{selectedSpace.description}</td>
-                  </tr>
-                  <tr>
-                    <th>お支払い額</th>
-                    <td>{selectedSpace.price.toLocaleString()}円</td>
-                  </tr>
-                </tbody>
-              </table>
-            </FormItem>
-            <FormItem>
-              <FormRadio
-                name="paymentMethod"
-                values={sockbaseShared.constants.payment.methods
-                  .filter(i => i.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
-                  .map(i => ({
-                    text: i.description,
-                    value: i.id
-                  }))}
-                value={app.paymentMethod}
-                onChange={paymentMethod => setApp(s => ({ ...s, paymentMethod }))}
-                hasError={isApplyPastApp && !app.paymentMethod}/>
-            </FormItem>
-            {app.paymentMethod === 'bankTransfer' && <FormItem>
-              <Alert>
+      {selectedSpace
+        ? <FormSection>
+          <FormItem>
+            <table>
+              <tbody>
+                <tr>
+                  <th>申込むスペース</th>
+                  <td>{selectedSpace.name}</td>
+                </tr>
+                <tr>
+                  <th>スペース詳細情報</th>
+                  <td>{selectedSpace.description}</td>
+                </tr>
+                <tr>
+                  <th>お支払い額</th>
+                  <td>{selectedSpace.price.toLocaleString()}円</td>
+                </tr>
+              </tbody>
+            </table>
+          </FormItem>
+          <FormItem>
+            <FormRadio
+              name="paymentMethod"
+              values={sockbaseShared.constants.payment.methods
+                .filter(i => i.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
+                .map(i => ({
+                  text: i.description,
+                  value: i.id
+                }))}
+              value={app.paymentMethod}
+              onChange={paymentMethod => setApp(s => ({ ...s, paymentMethod }))}
+              hasError={isAppliedPastApp && !app.paymentMethod}/>
+          </FormItem>
+          {app.paymentMethod === 'bankTransfer' && <FormItem>
+            <Alert>
                 銀行振込の場合、申し込み完了までお時間をいただくことがございます。
-              </Alert>
-            </FormItem>}
-          </FormSection>
-          : <Alert>申し込みたいスペース数を選択してください</Alert>
-      }
+            </Alert>
+          </FormItem>}
+        </FormSection>
+        : <Alert>申し込みたいスペース数を選択してください</Alert>}
 
       <h2>通信欄</h2>
       <p>申し込みにあたり運営チームへの要望等がありましたら入力してください。</p>
@@ -726,27 +728,23 @@ const Step1: React.FC<Props> = (props) => {
           <FormCheckbox
             name="isAggreed"
             label="同意します"
-            onChange={(agreement) => setAgreed(agreement)}
+            onChange={checked => setAgreed(checked)}
             checked={isAgreed} />
         </FormItem>
       </FormSection>
+
+      {errorCount > 0 && <Alert type="danger">
+        {errorCount}個の入力項目に不備があります。
+      </Alert>}
       <FormSection>
-        {error && <FormItem>
-          <Alert type="danger">{error}</Alert>
-        </FormItem>}
-        {errorCount > 0 && <FormItem>
-          <Alert type="danger">
-            {errorCount}個の入力項目に不備があります。
-          </Alert>
-        </FormItem>}
         <FormButton
           disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
-          入力内容確認画面へ進む
+            入力内容確認画面へ進む
         </FormButton>
       </FormSection>
     </>
   )
 }
 
-export default Step1
+export default Input
