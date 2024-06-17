@@ -14,7 +14,7 @@ import type {
   SockbaseEventDocument
 } from 'sockbase'
 
-const CircleApplicationPage: React.FC = () => {
+const CircleApplyPage: React.FC = () => {
   const params = useParams<{ eventId: string }>()
   const { getEventByIdAsync, getEventEyecatchAsync } = useEvent()
   const { getApplicationsByUserIdAsync, getLinksByApplicationIdOptionalAsync } = useApplication()
@@ -128,4 +128,4 @@ const CircleApplicationPage: React.FC = () => {
   )
 }
 
-export default CircleApplicationPage
+export default CircleApplyPage

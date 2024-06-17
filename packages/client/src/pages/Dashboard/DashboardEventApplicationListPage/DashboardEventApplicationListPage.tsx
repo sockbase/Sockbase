@@ -37,7 +37,7 @@ import useUserData from '../../../hooks/useUserData'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 
-const DashboardEventApplicationsPage: React.FC = () => {
+const DashboardEventApplicationListPage: React.FC = () => {
   const { eventId } = useParams()
   const {
     getApplicationsByEventIdAsync,
@@ -226,4 +226,4 @@ const DashboardEventApplicationsPage: React.FC = () => {
   )
 }
 
-export default DashboardEventApplicationsPage
+export default DashboardEventApplicationListPage

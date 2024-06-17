@@ -6,7 +6,7 @@ import useFirebase from '../../../hooks/useFirebase'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 
-const DashboardLicensePage: React.FC = () => {
+const DashboardLicenseViewPage: React.FC = () => {
   const { user, roles } = useFirebase()
 
   return (
@@ -55,4 +55,4 @@ const DashboardLicensePage: React.FC = () => {
   )
 }
 
-export default DashboardLicensePage
+export default DashboardLicenseViewPage

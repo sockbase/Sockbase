@@ -21,7 +21,7 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import type { ImportedSpace } from '../../../@types'
 import type { SockbaseApplicationMeta, SockbaseApplicationDocument, SockbaseEvent, SockbaseSpaceDocument } from 'sockbase'
 
-const DashboardEventSpacesPage: React.FC = () => {
+const DashboardEventSpaceManagePage: React.FC = () => {
   const { eventId } = useParams()
   const { getEventByIdAsync, getSpacesByEventIdAsync } = useEvent()
   const {
@@ -218,4 +218,4 @@ const DashboardEventSpacesPage: React.FC = () => {
   )
 }
 
-export default DashboardEventSpacesPage
+export default DashboardEventSpaceManagePage
