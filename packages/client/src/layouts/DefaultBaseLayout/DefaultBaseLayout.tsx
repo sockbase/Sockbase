@@ -1,9 +1,6 @@
 
 import styled from 'styled-components'
-
-import HeadHelper from '../../../libs/Helmet'
-
-// import Header from './Header'
+import HeadHelper from '../../libs/Helmet'
 import Footer from './Footer'
 
 interface Props {
@@ -14,7 +11,6 @@ const DefaultBaseLayout: React.FC<Props> = (props) => {
   return (
     <Layout>
       <HeadHelper title={props.title} />
-      {/* <Header /> */}
       <Container>
         <Wrapper>
           {props.children}

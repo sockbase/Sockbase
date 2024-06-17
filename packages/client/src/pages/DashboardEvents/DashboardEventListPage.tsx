@@ -2,11 +2,11 @@ import { MdEditCalendar } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import LinkButton from '../../components/Parts/LinkButton'
 import useRole from '../../hooks/useRole'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
 import EventList from './EventList'
 
 const DashboardEventListPage: React.FC = () => {

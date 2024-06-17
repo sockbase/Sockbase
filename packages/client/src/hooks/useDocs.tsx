@@ -12,17 +12,17 @@ interface IUseDocs {
 const useDocs = (docId: string): IUseDocs => {
   const [content, setContent] = useState<FrontMatterResult<{ title: string }>>()
 
-  const fetchDocsByIdAsync = async (): Promise<void> => {
-    const res = await fetch(`/_docs/${docId}.md`)
-    const text = await res.text()
+  const fetchDocsByIdAsync =
+    async (): Promise<void> => {
+      const res = await fetch(`/_docs/${docId}.md`)
+      const text = await res.text()
 
-    const fetchedContent = fm<{ title: string }>(text)
-    setContent(fetchedContent)
-  }
+      const fetchedContent = fm<{ title: string }>(text)
+      setContent(fetchedContent)
+    }
 
-  const DocProvider: React.FC = useCallback(() => {
-    return <ReactMarkdown>{content?.body ?? ''}</ReactMarkdown>
-  }, [content])
+  const DocProvider: React.FC =
+    useCallback(() => <ReactMarkdown>{content?.body ?? ''}</ReactMarkdown>, [content])
 
   return {
     fetchDocsByIdAsync,

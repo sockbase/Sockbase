@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { type SockbaseAccount, type SockbaseStoreDocument } from 'sockbase'
-import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import Alert from '../../components/Parts/Alert'
 import Loading from '../../components/Parts/Loading'
 import useFirebase from '../../hooks/useFirebase'
 import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
+import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import StepContainerComponent from './StepContainer/StepContainer'
 
 const TicketApplicationPage: React.FC = () => {

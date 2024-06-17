@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
-import useRole from '../../../hooks/useRole'
-import HeadHelper from '../../../libs/Helmet'
-import RequiredLogin from '../../../libs/RequiredLogin'
+import useRole from '../../hooks/useRole'
+import HeadHelper from '../../libs/Helmet'
+import RequiredLogin from '../../libs/RequiredLogin'
 import type { SockbaseRole } from 'sockbase'
 
 interface Props {

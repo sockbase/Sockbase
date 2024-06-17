@@ -7,9 +7,6 @@ import {
 } from 'sockbase'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import Alert from '../../components/Parts/Alert'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
@@ -20,6 +17,9 @@ import TicketUsedStatusLabel from '../../components/Parts/StatusLabel/TicketUsed
 import useDayjs from '../../hooks/useDayjs'
 import useFirebase from '../../hooks/useFirebase'
 import useStore from '../../hooks/useStore'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardMyTicketDetailPage: React.FC = () => {
   const { hashedTicketId } = useParams<{ hashedTicketId: string }>()

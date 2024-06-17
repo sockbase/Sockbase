@@ -9,20 +9,21 @@ interface IUseMail {
 const useMail = (): IUseMail => {
   const { getFunctions } = useFirebase()
 
-  const sendMailForEventAsync = async (eventId: string, target: SockbaseMailSendTarget, mailSubject: string, mailBody: string): Promise<boolean> => {
-    const functions = getFunctions()
-    const sendMailFunction = FirebaseFunctions
-      .httpsCallable<SockbaseSendMailForEventPayload, boolean>(
-      functions,
-      'mail-sendMailManuallyForEvent')
-    const sendResult = await sendMailFunction({
-      eventId,
-      target,
-      subject: mailSubject,
-      body: mailBody.split('\n')
-    })
-    return sendResult.data
-  }
+  const sendMailForEventAsync =
+    async (eventId: string, target: SockbaseMailSendTarget, mailSubject: string, mailBody: string): Promise<boolean> => {
+      const functions = getFunctions()
+      const sendMailFunction = FirebaseFunctions
+        .httpsCallable<SockbaseSendMailForEventPayload, boolean>(
+        functions,
+        'mail-sendMailManuallyForEvent')
+      const sendResult = await sendMailFunction({
+        eventId,
+        target,
+        subject: mailSubject,
+        body: mailBody.split('\n')
+      })
+      return sendResult.data
+    }
 
   const previewMailBody = (mailBody: string): string[] => {
     return [

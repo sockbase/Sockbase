@@ -13,8 +13,6 @@ import {
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import FormSelect from '../../components/Form/Select'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import AnchorButton from '../../components/Parts/AnchorButton'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
@@ -28,6 +26,8 @@ import TicketUsedStatusLabel from '../../components/Parts/StatusLabel/TicketUsed
 import useDayjs from '../../hooks/useDayjs'
 import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
 
 const DashboardStoreDetailPage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()

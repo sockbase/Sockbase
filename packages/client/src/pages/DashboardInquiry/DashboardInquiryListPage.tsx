@@ -5,13 +5,13 @@ import { type SockbaseInquiryDocument, type SockbaseInquiryMetaDocument } from '
 import FormCheckbox from '../../components/Form/Checkbox'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
 import InquiryStatusLabel from '../../components/Parts/StatusLabel/InquiryStatusLabel'
 import useDayjs from '../../hooks/useDayjs'
 import useInquiry from '../../hooks/useInquiry'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
 
 const DashboardInquiryListPage: React.FC = () => {
   const { getInquiries, getInquiryType, getInquiryMetaByInquiryIdAsync } = useInquiry()
