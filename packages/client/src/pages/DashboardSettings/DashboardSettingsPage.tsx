@@ -6,6 +6,7 @@ import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import FormInput from '../../components/Form/Input'
 import FormLabel from '../../components/Form/Label'
+import FormSelect from '../../components/Form/Select'
 import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
@@ -34,26 +35,9 @@ const DashboardSettingsPage: React.FC = () => {
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [error, setError] = useState<Error | null>()
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
+  const [displayGender, setDisplayGender] = useState('')
 
-  const onInitialize: () => void =
-    () => {
-      const fetchUserDataAsync: () => Promise<void> =
-        async () => {
-          const fetchedUserData = await getMyUserDataAsync()
-          if (!fetchedUserData) return
-          setUserData(fetchedUserData)
-          setDisplayBirthday(formatByDate(fetchedUserData.birthday, 'YYYY-MM-DD'))
-        }
-      fetchUserDataAsync()
-        .catch(err => { throw err })
-    }
-  useEffect(onInitialize, [getMyUserDataAsync])
-
-  const onUpdateBirthday: () => void =
-    () => setUserData(s => s && ({ ...s, birthday: new Date(displayBirthday).getTime() }))
-  useEffect(onUpdateBirthday, [displayBirthday])
-
-  const errorCount = useMemo((): number | null => {
+  const errorCount = useMemo(() => {
     if (!userData || !displayBirthday) return null
 
     const validators = [
@@ -62,11 +46,12 @@ const DashboardSettingsPage: React.FC = () => {
       validator.isDate(displayBirthday),
       validator.isPostalCode(userData.postalCode),
       !validator.isEmpty(userData.address),
-      !validator.isEmpty(userData.telephone)
+      !validator.isEmpty(userData.telephone),
+      !validator.isEmpty(displayGender)
     ]
 
     return validators.filter(v => !v).length
-  }, [userData, displayBirthday])
+  }, [userData, displayBirthday, displayGender])
 
   const handleUpdate = useCallback(() => {
     if (!user || !userData || errorCount !== 0) return
@@ -111,6 +96,33 @@ const DashboardSettingsPage: React.FC = () => {
       })
   }
 
+  useEffect(() => {
+    const fetchUserDataAsync = async (): Promise<void> => {
+      const fetchedUserData = await getMyUserDataAsync()
+      if (!fetchedUserData) return
+      setUserData(fetchedUserData)
+      setDisplayBirthday(formatByDate(fetchedUserData.birthday, 'YYYY-MM-DD'))
+      setDisplayGender(fetchedUserData.gender?.toString() ?? '')
+    }
+    fetchUserDataAsync()
+      .catch(err => { throw err })
+  }, [getMyUserDataAsync])
+
+  useEffect(() => {
+    setUserData(s => s && ({ ...s, birthday: new Date(displayBirthday).getTime() }))
+  }, [displayBirthday])
+
+  useEffect(() => {
+    setUserData(s => s && ({
+      ...s,
+      gender: displayGender === '1'
+        ? 1
+        : displayGender === '2'
+          ? 2
+          : undefined
+    }))
+  }, [displayGender])
+
   return (
     <DashboardBaseLayout title="マイページ設定">
       <Breadcrumbs>
@@ -142,12 +154,22 @@ const DashboardSettingsPage: React.FC = () => {
                   hasError={validator.isEmpty(userData.name)} />
               </FormItem>
               <FormItem>
-                <FormLabel>誕生日</FormLabel>
+                <FormLabel>生年月日</FormLabel>
                 <FormInput
                   type="date"
                   value={displayBirthday}
                   onChange={e => setDisplayBirthday(e.target.value)}
                   hasError={!validator.isDate(displayBirthday)} />
+              </FormItem>
+              <FormItem>
+                <FormLabel>性別</FormLabel>
+                <FormSelect
+                  value={displayGender}
+                  onChange={e => setDisplayGender(e.target.value)}>
+                  <option value="">選択してください</option>
+                  <option value="1">男性</option>
+                  <option value="2">女性</option>
+                </FormSelect>
               </FormItem>
               <FormItem>
                 <FormLabel>郵便番号</FormLabel>

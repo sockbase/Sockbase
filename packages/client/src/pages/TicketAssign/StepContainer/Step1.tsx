@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { type User } from 'firebase/auth'
-import { type SockbaseTicketUserDocument, type SockbaseStoreDocument, type SockbaseAccountSecure } from 'sockbase'
 import FormButton from '../../../components/Form/Button'
 import FormCheckbox from '../../../components/Form/Checkbox'
 import FormItem from '../../../components/Form/FormItem'
@@ -8,16 +6,23 @@ import FormSection from '../../../components/Form/FormSection'
 import FormHelp from '../../../components/Form/Help'
 import FormInput from '../../../components/Form/Input'
 import FormLabel from '../../../components/Form/Label'
+import FormSelect from '../../../components/Form/Select'
 import Alert from '../../../components/Parts/Alert'
 import useDayjs from '../../../hooks/useDayjs'
 import usePostalCode from '../../../hooks/usePostalCode'
 import useValidate from '../../../hooks/useValidate'
+import type {
+  SockbaseTicketUserDocument,
+  SockbaseStoreDocument,
+  SockbaseAccountSecure,
+  SockbaseAccount
+} from 'sockbase'
 
 interface Props {
   store: SockbaseStoreDocument
   ticketUser: SockbaseTicketUserDocument
   userData: SockbaseAccountSecure | undefined
-  user: User | null | undefined
+  fetchedUserData: SockbaseAccount | null
   prevStep: () => void
   nextStep: (userData: SockbaseAccountSecure) => void
 }
@@ -31,6 +36,7 @@ const Step1: React.FC<Props> = (props) => {
     name: '',
     email: '',
     birthday: new Date('1990-01-01').getTime(),
+    gender: undefined,
     postalCode: '',
     address: '',
     telephone: '',
@@ -38,19 +44,43 @@ const Step1: React.FC<Props> = (props) => {
     rePassword: ''
   })
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
+  const [displayGender, setDisplayGender] = useState('')
 
-  const onInitialize = (): void => {
-    if (!props.userData) return
-    setUserData(props.userData)
-    setDisplayBirthday(s => formatByDate(props.userData?.birthday, 'YYYY-MM-DD'))
-  }
-  useEffect(onInitialize, [props.userData])
+  const typeName = useMemo(() => {
+    if (!props.store || !props.ticketUser) return ''
 
-  const onChangeBirthday = (): void => {
-    if (!displayBirthday) return
-    setUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
-  }
-  useEffect(onChangeBirthday, [displayBirthday])
+    const type = props.store.types
+      .filter(t => t.id === props.ticketUser.typeId)[0]
+    return type.name
+  }, [props.store, props.ticketUser])
+
+  const errorCount = useMemo(() => {
+    let errorCount = 0
+    if (props.fetchedUserData) {
+      const additionalUserDataValidators = [
+        validator.isIn(userData.gender?.toString() ?? '', ['1', '2'])
+      ]
+      const additionalUserDataErrorCount = additionalUserDataValidators
+        .filter(v => !v)
+        .length
+      errorCount += additionalUserDataErrorCount
+    } else {
+      const userDataValidators = [
+        !validator.isEmpty(userData.name),
+        validator.isPostalCode(userData.postalCode),
+        !validator.isEmpty(userData.address),
+        !validator.isEmpty(userData.telephone),
+        validator.isEmail(userData.email),
+        validator.isStrongPassword(userData.password),
+        userData.password === userData.rePassword
+      ]
+
+      errorCount += userDataValidators
+        .filter(v => !v)
+        .length
+    }
+    return errorCount
+  }, [userData, props.fetchedUserData])
 
   const handleFilledPostalCode = (postalCode: string): void => {
     const sanitizedPostalCode = postalCode.replaceAll('-', '')
@@ -71,31 +101,28 @@ const Step1: React.FC<Props> = (props) => {
     props.nextStep(userData)
   }
 
-  const typeName = useMemo(() => {
-    if (!props.store || !props.ticketUser) return ''
+  useEffect(() => {
+    if (!props.userData) return
+    setUserData(props.userData)
+    setDisplayBirthday(formatByDate(props.userData?.birthday, 'YYYY-MM-DD'))
+    setDisplayGender(props.userData.gender?.toString() ?? '')
+  }, [props.userData])
 
-    const type = props.store.types
-      .filter(t => t.id === props.ticketUser.typeId)[0]
-    return type.name
-  }, [props.store, props.ticketUser])
+  useEffect(() => {
+    if (!displayBirthday) return
+    setUserData(s => ({ ...s, birthday: new Date(displayBirthday).getTime() }))
+  }, [displayBirthday])
 
-  const errorCount = useMemo((): number => {
-    if (props.user) return 0
-
-    const userDataValidators = [
-      !validator.isEmpty(userData.name),
-      validator.isPostalCode(userData.postalCode),
-      !validator.isEmpty(userData.address),
-      !validator.isEmpty(userData.telephone),
-      validator.isEmail(userData.email),
-      validator.isStrongPassword(userData.password),
-      userData.password === userData.rePassword
-    ]
-
-    return userDataValidators
-      .filter(v => !v)
-      .length
-  }, [userData, props.user])
+  useEffect(() => {
+    setUserData(s => s && ({
+      ...s,
+      gender: displayGender === '1'
+        ? 1
+        : displayGender === '2'
+          ? 2
+          : undefined
+    }))
+  }, [displayGender])
 
   return (
     <>
@@ -131,56 +158,74 @@ const Step1: React.FC<Props> = (props) => {
 
       <h2>使用者情報</h2>
 
-      {!props.user
-        ? <>
-          <FormSection>
-            <FormItem>
-              <FormLabel>氏名</FormLabel>
-              <FormInput
-                placeholder='速部 すみれ'
-                value={userData.name}
-                onChange={e => setUserData(s => ({ ...s, name: e.target.value }))} />
-            </FormItem>
-            <FormItem>
-              <FormLabel>生年月日</FormLabel>
-              <FormInput type="date"
-                value={displayBirthday}
-                onChange={e => setDisplayBirthday(e.target.value)} />
-            </FormItem>
-          </FormSection>
-          <FormSection>
-            <FormItem>
-              <FormLabel>郵便番号</FormLabel>
-              <FormInput
-                placeholder='0000000'
-                value={userData.postalCode}
-                onChange={e => {
-                  if (e.target.value.length > 7) return
-                  handleFilledPostalCode(e.target.value)
-                  setUserData(s => ({ ...s, postalCode: e.target.value }))
-                }}
-                hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)} />
-              <FormHelp>
+      {(!props.fetchedUserData?.gender && <>
+        <FormSection>
+          <FormItem>
+            <FormLabel>氏名</FormLabel>
+            <FormInput
+              placeholder='速部 すみれ'
+              value={props.fetchedUserData?.name || userData.name}
+              onChange={e => setUserData(s => ({ ...s, name: e.target.value }))}
+              disabled={!!props.fetchedUserData} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>生年月日</FormLabel>
+            <FormInput type="date"
+              value={displayBirthday}
+              onChange={e => setDisplayBirthday(e.target.value)}
+              disabled={!!props.fetchedUserData} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>性別</FormLabel>
+            <FormSelect
+              value={displayGender}
+              onChange={e => setDisplayGender(e.target.value)}
+              hasError={!!props.fetchedUserData && !displayGender}>
+              <option value="">選択してください</option>
+              <option value="1">男性</option>
+              <option value="2">女性</option>
+            </FormSelect>
+          </FormItem>
+        </FormSection>
+        <FormSection>
+          <FormItem>
+            <FormLabel>郵便番号</FormLabel>
+            <FormInput
+              placeholder='0000000'
+              value={props.fetchedUserData?.postalCode || userData.postalCode}
+              onChange={e => {
+                if (e.target.value.length > 7) return
+                handleFilledPostalCode(e.target.value)
+                setUserData(s => ({ ...s, postalCode: e.target.value }))
+              }}
+              hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)}
+              disabled={!!props.fetchedUserData} />
+            <FormHelp>
                 ハイフンは入力不要です
-              </FormHelp>
-            </FormItem>
-            <FormItem>
-              <FormLabel>住所</FormLabel>
-              <FormInput
-                placeholder='東京都千代田区外神田9-9-9'
-                value={userData.address}
-                onChange={e => setUserData(s => ({ ...s, address: e.target.value }))} />
-            </FormItem>
-            <FormItem>
-              <FormLabel>電話番号</FormLabel>
-              <FormInput
-                placeholder='07001234567'
-                value={userData.telephone}
-                onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))} />
-            </FormItem>
-          </FormSection>
+            </FormHelp>
+          </FormItem>
+          <FormItem>
+            <FormLabel>住所</FormLabel>
+            <FormInput
+              placeholder='東京都千代田区外神田9-9-9'
+              value={props.fetchedUserData?.address || userData.address}
+              onChange={e => setUserData(s => ({ ...s, address: e.target.value }))}
+              disabled={!!props.fetchedUserData} />
+          </FormItem>
+          <FormItem>
+            <FormLabel>電話番号</FormLabel>
+            <FormInput
+              placeholder='07001234567'
+              value={props.fetchedUserData?.telephone || userData.telephone}
+              onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))}
+              disabled={!!props.fetchedUserData} />
+          </FormItem>
+        </FormSection>
+      </>)}
 
-          <h2>Sockbaseログイン情報</h2>
+      <h2>Sockbaseログイン情報</h2>
+      {!props.fetchedUserData
+        ? <>
           <p>
             申し込み情報の確認等に使用するアカウントを作成します。
           </p>
@@ -224,7 +269,7 @@ const Step1: React.FC<Props> = (props) => {
             <tbody>
               <tr>
                 <th>メールアドレス</th>
-                <td>{props.user?.email}</td>
+                <td>{props.fetchedUserData?.email}</td>
               </tr>
             </tbody>
           </table>

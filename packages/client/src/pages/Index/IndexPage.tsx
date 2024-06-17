@@ -75,6 +75,10 @@ const IndexPage: React.FC = () => {
       </FormSection>}
 
       {!fromPathName && <>
+        <Alert title="2024年 6月 17日 に プライバシーポリシー を更新しました。">
+          <Link to="/privacy-policy">こちら</Link>からご確認ください。
+        </Alert>
+
         <h2>Sockbaseとは？</h2>
         <p>
           <a href="https://nectarition.jp">ねくたりしょん</a>が提供するイベント申し込み情報管理サービスです。

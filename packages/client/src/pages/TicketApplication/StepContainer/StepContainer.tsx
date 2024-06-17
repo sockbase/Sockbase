@@ -52,9 +52,14 @@ const StepContainer: React.FC<Props> = (props) => {
 
     setSubmitProgressPercent(10)
 
-    if (!props.isLoggedIn) {
+    if (!props.user) {
       const newUser = await createUser(userData.email, userData.password)
       await updateUserDataAsync(newUser.uid, userData)
+    } else if (props.userData && !props.userData.gender) {
+      await updateUserDataAsync(props.user.uid, {
+        ...props.userData,
+        gender: userData?.gender
+      })
     }
 
     setSubmitProgressPercent(30)
@@ -82,8 +87,8 @@ const StepContainer: React.FC<Props> = (props) => {
         store={props.store} />,
       <Step1 key="step1"
         store={props.store}
-        isLoggedIn={props.isLoggedIn}
         ticketInfo={ticketInfo}
+        fetchedUserData={props.userData}
         userData={userData}
         nextStep={(t: SockbaseTicket, u: SockbaseAccountSecure) => {
           setTicketInfo(t)
@@ -110,7 +115,14 @@ const StepContainer: React.FC<Props> = (props) => {
       <Step4 key="step4" store={props.store} ticketResult={ticketResult} />
     ])
   }
-  useEffect(onInitialize, [props.user, props.store, props.userData, ticketInfo, userData, ticketResult, submitProgressPercent])
+  useEffect(onInitialize, [
+    props.user,
+    props.store,
+    props.userData,
+    ticketInfo,
+    userData,
+    ticketResult,
+    submitProgressPercent])
 
   return (
     <>
