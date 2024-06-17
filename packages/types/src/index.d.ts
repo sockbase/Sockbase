@@ -385,7 +385,15 @@ export interface SockbaseAccount {
   postalCode: string
   address: string
   telephone: string
+  gender?: SockbaseGender
 }
+
+/**
+ * 性別
+ * 1: 男性
+ * 2: 女性
+ */
+export type SockbaseGender = 1 | 2
 
 /**
  * アカウント機密情報
