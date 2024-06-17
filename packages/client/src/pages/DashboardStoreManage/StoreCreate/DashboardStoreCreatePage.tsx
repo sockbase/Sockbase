@@ -1,8 +1,8 @@
 import { MdStore } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import DashboardBaseLayout from '../../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import StoreCreateStepContainer from './StepContainer/StepContainer'
 
 const DashboardStoreCreatePage: React.FC = () => {

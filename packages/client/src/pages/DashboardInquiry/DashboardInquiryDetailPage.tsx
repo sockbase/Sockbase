@@ -10,9 +10,6 @@ import {
 import FormButton from '../../components/Form/Button'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
@@ -20,6 +17,9 @@ import InquiryStatusLabel from '../../components/Parts/StatusLabel/InquiryStatus
 import useDayjs from '../../hooks/useDayjs'
 import useInquiry from '../../hooks/useInquiry'
 import useUserData from '../../hooks/useUserData'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardInquiryListPage: React.FC = () => {
   const { inquiryId } = useParams()

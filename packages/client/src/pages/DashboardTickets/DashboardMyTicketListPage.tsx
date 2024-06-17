@@ -7,14 +7,14 @@ import {
   type SockbaseStoreDocument,
   type SockbaseTicketUserDocument
 } from 'sockbase'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Alert from '../../components/Parts/Alert'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
 import TicketCard from '../../components/Parts/TicketCard'
 import useDayjs from '../../hooks/useDayjs'
 import useStore from '../../hooks/useStore'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
 
 const DashboardMyTicketsPage: React.FC = () => {
   const { getUsableTicketsAsync, getStoreByIdAsync } = useStore()

@@ -5,12 +5,12 @@ import { type SockbaseStore } from 'sockbase'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import FormTextarea from '../../../components/Form/Textarea'
-import DashboardBaseLayout from '../../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../../components/Layout/DashboardBaseLayout/PageTitle'
-import TwoColumnsLayout from '../../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import StoreInfo from '../../../components/Parts/StoreInfo'
 import useStore from '../../../hooks/useStore'
+import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardStoreInfoPage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()

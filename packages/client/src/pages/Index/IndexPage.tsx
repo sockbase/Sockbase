@@ -2,12 +2,12 @@ import { useCallback, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
-import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import Alert from '../../components/Parts/Alert'
 import LinkButton from '../../components/Parts/LinkButton'
 import Loading from '../../components/Parts/Loading'
 import useFirebase from '../../hooks/useFirebase'
 import useFirebaseError from '../../hooks/useFirebaseError'
+import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import Login from './Login'
 
 export interface User {

@@ -16,11 +16,11 @@ import {
 import styled from 'styled-components'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import AnchorButton from '../../components/Parts/AnchorButton'
 import TopCard from '../../components/Parts/TopCard'
 import useRole from '../../hooks/useRole'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
 
 const DashboardTopPage: React.FC = () => {
   const { systemRole, commonRole } = useRole()

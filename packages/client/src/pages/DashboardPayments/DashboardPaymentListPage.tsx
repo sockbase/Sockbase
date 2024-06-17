@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import { MdPayments } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
 import useApplication from '../../hooks/useApplication'
@@ -10,6 +8,8 @@ import useEvent from '../../hooks/useEvent'
 import useFirebase from '../../hooks/useFirebase'
 import usePayment from '../../hooks/usePayment'
 import useStore from '../../hooks/useStore'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
 import PaymentList from './PaymentList'
 import type {
   SockbaseApplicationDocument,

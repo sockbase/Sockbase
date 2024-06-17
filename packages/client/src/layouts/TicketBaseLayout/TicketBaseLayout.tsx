@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 import { type SockbaseTicketUserDocument, type SockbaseStore } from 'sockbase'
-import HeadHelper from '../../../libs/Helmet'
-import RequiredLogin from '../../../libs/RequiredLogin'
+import HeadHelper from '../../libs/Helmet'
+import RequiredLogin from '../../libs/RequiredLogin'
 
 interface Props {
   children: React.ReactNode

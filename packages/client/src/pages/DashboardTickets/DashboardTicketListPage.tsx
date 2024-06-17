@@ -9,8 +9,6 @@ import {
   type SockbaseApplicationStatus,
   type SockbaseTicketUserDocument
 } from 'sockbase'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import Alert from '../../components/Parts/Alert'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import Loading from '../../components/Parts/Loading'
@@ -19,6 +17,8 @@ import StoreTypeLabel from '../../components/Parts/StatusLabel/StoreTypeLabel'
 import TicketAssignStatusLabel from '../../components/Parts/StatusLabel/TicketAssignStatusLabel'
 import useDayjs from '../../hooks/useDayjs'
 import useStore from '../../hooks/useStore'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
 
 const DashboardTicketListPage: React.FC = () => {
   const {

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import BlinkField from '../../Parts/BlinkField'
+import BlinkField from '../../components/Parts/BlinkField'
 
 interface Props {
   icon: React.ReactNode

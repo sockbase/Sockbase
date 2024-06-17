@@ -5,13 +5,13 @@ import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import FormInput from '../../components/Form/Input'
 import FormLabel from '../../components/Form/Label'
-import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import Alert from '../../components/Parts/Alert'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import LinkButton from '../../components/Parts/LinkButton'
 import useFirebase from '../../hooks/useFirebase'
 import useFirebaseError from '../../hooks/useFirebaseError'
 import useValidate from '../../hooks/useValidate'
+import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 
 const PasswordResetPage: React.FC = () => {
   const validator = useValidate()

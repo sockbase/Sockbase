@@ -22,8 +22,6 @@ import {
 } from 'sockbase'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
 import AnchorButton from '../../components/Parts/AnchorButton'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
@@ -35,6 +33,8 @@ import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import useSpace from '../../hooks/useSpace'
 import useUserData from '../../hooks/useUserData'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
 import EventApplications from './EventCircleApplications'
 
 const DashboardEventApplicationsPage: React.FC = () => {

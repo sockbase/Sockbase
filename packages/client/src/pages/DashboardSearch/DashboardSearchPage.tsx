@@ -7,12 +7,12 @@ import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import FormInput from '../../components/Form/Input'
 import FormLabel from '../../components/Form/Label'
-import DashboardBaseLayout from '../../components/Layout/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../components/Layout/DashboardBaseLayout/PageTitle'
-import TwoColumnsLayout from '../../components/Layout/TwoColumnsLayout/TwoColumnsLayout'
 import Alert from '../../components/Parts/Alert'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import useApplication from '../../hooks/useApplication'
+import DashboardBaseLayout from '../../layouts/DashboardBaseLayout/DashboardBaseLayout'
+import PageTitle from '../../layouts/DashboardBaseLayout/PageTitle'
+import TwoColumnsLayout from '../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardSearchPage: React.FC = () => {
   const { getApplicationIdByHashedIdAsync } = useApplication()

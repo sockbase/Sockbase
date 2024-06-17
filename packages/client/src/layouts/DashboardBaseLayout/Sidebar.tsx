@@ -22,8 +22,8 @@ import {
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import sockbaseShared from 'shared'
-import useRole from '../../../hooks/useRole'
-import useWindowDimension from '../../../hooks/useWindowDimension'
+import useRole from '../../hooks/useRole'
+import useWindowDimension from '../../hooks/useWindowDimension'
 import type { User } from 'firebase/auth'
 import type { SockbaseRole } from 'sockbase'
 

@@ -55,7 +55,8 @@ const useFirebase = (): IUseFirebase => {
   const [user, setUser] = useState<User | null | undefined>()
   const [roles, setRoles] = useState<Record<string, SockbaseRole> | null>()
 
-  const getAuth = (): Auth => {
+  const getAuth =
+  (): Auth => {
     if (auth) {
       return auth
     }
@@ -67,56 +68,58 @@ const useFirebase = (): IUseFirebase => {
     return _auth
   }
 
-  const loginByEmail = async (
-    email: string,
-    password: string
-  ): Promise<UserCredential> => {
-    const auth = getAuth()
-    const credential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    ).catch((err: FirebaseError) => {
-      throw err
-    })
-    return credential
-  }
-
-  const logout = (): void => {
-    const auth = getAuth()
-    signOut(auth)
-      .then(() => {
-        setUser(null)
-        setLoggedIn(false)
-        setRoles(null)
-      })
-      .catch((err: FirebaseError) => {
+  const loginByEmail =
+    async (email: string, password: string): Promise<UserCredential> => {
+      const auth = getAuth()
+      const credential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      ).catch((err: FirebaseError) => {
         throw err
       })
-  }
+      return credential
+    }
 
-  const createUser = async (email: string, password: string): Promise<User> => {
-    const auth = getAuth()
-    return await createUserWithEmailAndPassword(auth, email, password)
-      .then((cred) => cred.user)
-      .catch((err) => {
+  const logout =
+    (): void => {
+      const auth = getAuth()
+      signOut(auth)
+        .then(() => {
+          setUser(null)
+          setLoggedIn(false)
+          setRoles(null)
+        })
+        .catch((err: FirebaseError) => {
+          throw err
+        })
+    }
+
+  const createUser =
+    async (email: string, password: string): Promise<User> => {
+      const auth = getAuth()
+      return await createUserWithEmailAndPassword(auth, email, password)
+        .then((cred) => cred.user)
+        .catch((err) => {
+          throw err
+        })
+    }
+
+  const sendPasswordResetURLAsync =
+    async (email: string): Promise<void> => {
+      const auth = getAuth()
+      await sendPasswordResetEmail(auth, email).catch((err: FirebaseError) => {
         throw err
       })
-  }
+    }
 
-  const sendPasswordResetURLAsync = async (email: string): Promise<void> => {
-    const auth = getAuth()
-    await sendPasswordResetEmail(auth, email).catch((err: FirebaseError) => {
-      throw err
-    })
-  }
-
-  const sendVerifyMail = useCallback(async (): Promise<void> => {
-    if (!user) return
-    sendEmailVerification(user).catch((err) => {
-      throw err
-    })
-  }, [user])
+  const sendVerifyMail =
+    useCallback(async (): Promise<void> => {
+      if (!user) return
+      sendEmailVerification(user).catch((err) => {
+        throw err
+      })
+    }, [user])
 
   const getFirestore = (): Firestore => getFirebaseFirestore()
 
@@ -129,7 +132,7 @@ const useFirebase = (): IUseFirebase => {
 
   const getDatabase = (): Database => getFirebaseDatabase()
 
-  const onAuthenticationUpdated = (): Unsubscribe => {
+  useEffect((): Unsubscribe => {
     const auth = getAuth()
     const unSubscribe = onIdTokenChanged(auth, (user) => {
       setUser(user)
@@ -156,8 +159,7 @@ const useFirebase = (): IUseFirebase => {
         })
     })
     return unSubscribe
-  }
-  useEffect(onAuthenticationUpdated, [])
+  }, [])
 
   return {
     isLoggedIn,

@@ -24,111 +24,115 @@ interface IUseEvent {
 const useEvent = (): IUseEvent => {
   const { getFirestore, getStorage, getFunctions } = useFirebase()
 
-  const getEventByIdAsync = async (eventId: string): Promise<SockbaseEventDocument> => {
-    const db = getFirestore()
-    const eventRef = FirestoreDB.doc(db, 'events', eventId)
-      .withConverter(eventConverter)
+  const getEventByIdAsync =
+    async (eventId: string): Promise<SockbaseEventDocument> => {
+      const db = getFirestore()
+      const eventRef = FirestoreDB.doc(db, 'events', eventId)
+        .withConverter(eventConverter)
 
-    const eventDoc = await FirestoreDB.getDoc(eventRef)
-    if (!eventDoc.exists()) {
-      throw new Error('event not found')
+      const eventDoc = await FirestoreDB.getDoc(eventRef)
+      if (!eventDoc.exists()) {
+        throw new Error('event not found')
+      }
+
+      return eventDoc.data()
     }
 
-    return eventDoc.data()
-  }
+  const getEventsByOrganizationIdAsync =
+    useCallback(async (organizationId: string): Promise<SockbaseEventDocument[]> => {
+      const db = getFirestore()
+      const eventsRef = FirestoreDB.collection(db, 'events')
+        .withConverter(eventConverter)
+      const eventsQuery = FirestoreDB.query(
+        eventsRef,
+        FirestoreDB.where('_organization.id', '==', organizationId))
+      const eventsSnapshot = await FirestoreDB.getDocs(eventsQuery)
+      const queryDocs = eventsSnapshot.docs
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
+      return queryDocs
+    }, [])
 
-  const getEventsByOrganizationIdAsync = useCallback(async (organizationId: string): Promise<SockbaseEventDocument[]> => {
-    const db = getFirestore()
-    const eventsRef = FirestoreDB.collection(db, 'events')
-      .withConverter(eventConverter)
-    const eventsQuery = FirestoreDB.query(
-      eventsRef,
-      FirestoreDB.where('_organization.id', '==', organizationId))
-    const eventsSnapshot = await FirestoreDB.getDocs(eventsQuery)
-    const queryDocs = eventsSnapshot.docs
-      .filter(doc => doc.exists())
-      .map(doc => doc.data())
-    return queryDocs
-  }, [])
-
-  const getEventEyecatchAsync = async (eventId: string): Promise<string | null> => {
-    const storage = getStorage()
-    const eyecatchRef = FirebaseStorage.ref(
-      storage,
-      `/events/${eventId}/eyecatch.jpg`
-    )
-    const eyecatchURL = await FirebaseStorage.getDownloadURL(eyecatchRef).catch(
-      () => null
-    )
-    return eyecatchURL
-  }
-
-  const getSpaceAsync = async (
-    spaceId: string
-  ): Promise<SockbaseSpaceDocument> => {
-    const db = getFirestore()
-    const spaceRef = FirestoreDB.doc(db, `spaces/${spaceId}`).withConverter(
-      spaceConverter
-    )
-    const spaceDoc = await FirestoreDB.getDoc(spaceRef)
-    const space = spaceDoc.data()
-    if (!space) {
-      throw new Error('space not found')
+  const getEventEyecatchAsync =
+    async (eventId: string): Promise<string | null> => {
+      const storage = getStorage()
+      const eyecatchRef = FirebaseStorage.ref(
+        storage,
+        `/events/${eventId}/eyecatch.jpg`
+      )
+      const eyecatchURL = await FirebaseStorage.getDownloadURL(eyecatchRef).catch(
+        () => null
+      )
+      return eyecatchURL
     }
-    return space
-  }
 
-  const getSpaceOptionalAsync = async (
-    spaceId: string
-  ): Promise<SockbaseSpaceDocument | null> => {
-    return await getSpaceAsync(spaceId).catch(() => null)
-  }
+  const getSpaceAsync =
+    async (spaceId: string): Promise<SockbaseSpaceDocument> => {
+      const db = getFirestore()
+      const spaceRef = FirestoreDB.doc(db, `spaces/${spaceId}`).withConverter(
+        spaceConverter
+      )
+      const spaceDoc = await FirestoreDB.getDoc(spaceRef)
+      const space = spaceDoc.data()
+      if (!space) {
+        throw new Error('space not found')
+      }
+      return space
+    }
 
-  const getSpacesByEventIdAsync = async (eventId: string): Promise<SockbaseSpaceDocument[]> => {
-    const db = getFirestore()
+  const getSpaceOptionalAsync =
+    async (spaceId: string): Promise<SockbaseSpaceDocument | null> =>
+      await getSpaceAsync(spaceId).catch(() => null)
 
-    const spaceHashesRef = FirestoreDB.collection(db, '_spaceHashes')
-      .withConverter(spaceConverter)
-    const spaceHashesQuery = FirestoreDB
-      .query(spaceHashesRef, FirestoreDB.where('eventId', '==', eventId))
+  const getSpacesByEventIdAsync =
+    async (eventId: string): Promise<SockbaseSpaceDocument[]> => {
+      const db = getFirestore()
 
-    const spaceHashesSnapshot = await FirestoreDB.getDocs(spaceHashesQuery)
-      .catch(err => { throw err })
+      const spaceHashesRef = FirestoreDB.collection(db, '_spaceHashes')
+        .withConverter(spaceConverter)
+      const spaceHashesQuery = FirestoreDB
+        .query(spaceHashesRef, FirestoreDB.where('eventId', '==', eventId))
 
-    const queryDocs = await Promise.all(spaceHashesSnapshot.docs
-      .filter(doc => doc.exists())
-      .map(doc => doc.data())
-      .map(async spaceHash => await getSpaceAsync(spaceHash.id)))
-      .then(fetchedSpaces => fetchedSpaces
-        .sort((a, b) => a.spaceOrder - b.spaceOrder)
-        .sort((a, b) => a.spaceGroupOrder - b.spaceGroupOrder))
+      const spaceHashesSnapshot = await FirestoreDB.getDocs(spaceHashesQuery)
+        .catch(err => { throw err })
 
-    return queryDocs
-  }
+      const queryDocs = await Promise.all(spaceHashesSnapshot.docs
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
+        .map(async spaceHash => await getSpaceAsync(spaceHash.id)))
+        .then(fetchedSpaces => fetchedSpaces
+          .sort((a, b) => a.spaceOrder - b.spaceOrder)
+          .sort((a, b) => a.spaceGroupOrder - b.spaceGroupOrder))
 
-  const createEventAsync = async (eventId: string, event: SockbaseEvent): Promise<void> => {
-    const db = getFirestore()
-    const eventRef = FirestoreDB.doc(db, `/events/${eventId}`)
-      .withConverter(eventConverter)
-    await FirestoreDB.setDoc(eventRef, event)
-      .catch(err => { throw err })
-  }
+      return queryDocs
+    }
 
-  const uploadEventEyecatchAsync = async (eventId: string, eyecatchFile: File): Promise<void> => {
-    const storage = getStorage()
-    const eyecatchRef = FirebaseStorage.ref(storage, `events/${eventId}/eyecatch.jpg`)
-    await FirebaseStorage.uploadBytes(eyecatchRef, eyecatchFile)
-  }
+  const createEventAsync =
+    async (eventId: string, event: SockbaseEvent): Promise<void> => {
+      const db = getFirestore()
+      const eventRef = FirestoreDB.doc(db, `/events/${eventId}`)
+        .withConverter(eventConverter)
+      await FirestoreDB.setDoc(eventRef, event)
+        .catch(err => { throw err })
+    }
 
-  const createPassesAsync = async (eventId: string): Promise<number> => {
-    const functions = getFunctions()
-    const createPassesFunction = FirebaseFunctions
-      .httpsCallable<string, number>(
-      functions,
-      'event-createPasses')
-    const createResult = await createPassesFunction(eventId)
-    return createResult.data
-  }
+  const uploadEventEyecatchAsync =
+    async (eventId: string, eyecatchFile: File): Promise<void> => {
+      const storage = getStorage()
+      const eyecatchRef = FirebaseStorage.ref(storage, `events/${eventId}/eyecatch.jpg`)
+      await FirebaseStorage.uploadBytes(eyecatchRef, eyecatchFile)
+    }
+
+  const createPassesAsync =
+    async (eventId: string): Promise<number> => {
+      const functions = getFunctions()
+      const createPassesFunction = FirebaseFunctions
+        .httpsCallable<string, number>(
+        functions,
+        'event-createPasses')
+      const createResult = await createPassesFunction(eventId)
+      return createResult.data
+    }
 
   return {
     getEventByIdAsync,

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import StaticDocumentProvider from '../../components/Providers/StaticDocumentProvider/StaticDocumentProvider'
+import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 
 const PrivacyPolicyPage: React.FC =
   () => {
