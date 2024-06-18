@@ -49,7 +49,6 @@ import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/Dashbo
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
 import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from '../IndexPage/IndexPage'
-import NewTicketAssignPage from '../NewApplyForm/TicketAssignPage/TicketAssignPage'
 import PasswordResetPage from '../PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from '../Static/PrivacyPolicyPage'
 import TermsOfServicePage from '../Static/TermsOfServicePage'
@@ -109,16 +108,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'assign-tickets',
-        children: [
-          {
-            index: true,
-            element: <TicketAssignPage />
-          },
-          {
-            path: 'new',
-            element: <NewTicketAssignPage />
-          }
-        ]
+        element: <TicketAssignPage />
       },
       {
         path: 'tickets',

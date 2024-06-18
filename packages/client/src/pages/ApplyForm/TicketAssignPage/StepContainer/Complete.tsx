@@ -1,29 +1,21 @@
-import { useMemo } from 'react'
-import { type SockbaseTicketUserDocument, type SockbaseStoreDocument } from 'sockbase'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
 import LinkButton from '../../../../components/Parts/LinkButton'
+import type { SockbaseStoreDocument, SockbaseStoreType } from 'sockbase'
 
 interface Props {
   ticketHashId: string
   store: SockbaseStoreDocument
-  ticketUser: SockbaseTicketUserDocument
+  selectedType: SockbaseStoreType
 }
-const Step3: React.FC<Props> = (props) => {
-  const typeName = useMemo(() => {
-    if (!props.store || !props.ticketUser) return ''
-
-    const type = props.store.types
-      .filter(t => t.id === props.ticketUser.typeId)[0]
-    return type.name
-  }, [props.store, props.ticketUser])
-
+const Complete: React.FC<Props> = (props) => {
   return (
     <>
       <h1>チケットを受け取りました</h1>
+
       <p>
-        {props.store.storeName}({typeName}) を受け取りました。
+        {props.store.storeName} ({props.selectedType.name}) を受け取りました。
       </p>
 
       <h2>使用方法</h2>
@@ -40,14 +32,23 @@ const Step3: React.FC<Props> = (props) => {
       <h2>関連リンク</h2>
       <FormSection>
         <FormItem>
-          <LinkButton to={`/dashboard/mytickets/${props.ticketHashId}`}>チケット情報を確認する</LinkButton>
+          <LinkButton
+            to={`/dashboard/mytickets/${props.ticketHashId}`}>
+            チケット情報を確認する
+          </LinkButton>
         </FormItem>
         <FormItem>
-          <AnchorButton href={`/tickets/${props.ticketHashId}`} target="_blank" rel="noreferrer" color="default">チケット画面を開く</AnchorButton>
+          <AnchorButton
+            href={`/tickets/${props.ticketHashId}`}
+            target="_blank"
+            rel="noreferrer"
+            color="default">
+            チケット画面を開く
+          </AnchorButton>
         </FormItem>
       </FormSection>
     </>
   )
 }
 
-export default Step3
+export default Complete

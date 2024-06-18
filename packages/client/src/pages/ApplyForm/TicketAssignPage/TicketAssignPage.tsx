@@ -1,42 +1,55 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { type SockbaseAccount, type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
 import Alert from '../../../components/Parts/Alert'
-import LinkButton from '../../../components/Parts/LinkButton'
-import Loading from '../../../components/Parts/Loading'
 import useFirebase from '../../../hooks/useFirebase'
 import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import DefaultBaseLayout from '../../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import StepContainer from './StepContainer/StepContainer'
+import type { SockbaseStoreDocument, SockbaseAccount, SockbaseTicketUserDocument } from 'sockbase'
 
 const TicketAssignPage: React.FC = () => {
   const [searchParams] = useSearchParams({ thi: '' })
-  const { isLoggedIn, user } = useFirebase()
-  const { getTicketUserByHashIdOptionalAsync, getStoreByIdAsync } = useStore()
-  const { getMyUserDataAsync } = useUserData()
+  const {
+    user,
+    loginByEmailAsync,
+    logoutAsync,
+    createUserAsync
+  } = useFirebase()
+  const {
+    getTicketUserByHashIdOptionalAsync,
+    getStoreByIdAsync,
+    assignTicketUserAsync
+  } = useStore()
+  const {
+    getMyUserDataAsync,
+    updateUserDataAsync
+  } = useUserData()
 
-  const [ticketHashId, setTicketHashId] = useState<string>()
+  const ticketHashId = useMemo(() => searchParams.get('thi') ?? undefined, [searchParams])
+
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
+
   const [userData, setUserData] = useState<SockbaseAccount | null>()
 
-  const onInitialize = (): void => {
-    const paramTicketHashId = searchParams.get('thi')
-    if (!paramTicketHashId) return
+  const handleLoginAsync = useCallback(async (email: string, password: string) => {
+    await loginByEmailAsync(email, password)
+      .catch(err => { throw err })
+  }, [])
 
-    setTicketHashId(paramTicketHashId)
-  }
-  useEffect(onInitialize, [searchParams])
+  const handleLogoutAsync = useCallback(async () => {
+    logoutAsync()
+      .catch(err => { throw err })
+  }, [])
 
-  const onChangeHashId = (): void => {
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!ticketHashId) return
 
       const fetchedTicketUser = await getTicketUserByHashIdOptionalAsync(ticketHashId)
       setTicketUser(fetchedTicketUser)
+
       if (!fetchedTicketUser) return
 
       getStoreByIdAsync(fetchedTicketUser.storeId)
@@ -47,11 +60,9 @@ const TicketAssignPage: React.FC = () => {
         .then(fetchedUserData => setUserData(fetchedUserData))
         .catch(err => { throw err })
     }
-
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onChangeHashId, [ticketHashId, getMyUserDataAsync])
+  }, [ticketHashId, getMyUserDataAsync])
 
   useEffect(() => {
     const handleBeforeUnloadEvent = (event: BeforeUnloadEvent): void => {
@@ -61,43 +72,23 @@ const TicketAssignPage: React.FC = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
   }, [])
 
-  const pageTitle = useMemo(
-    () => store ? `${store.storeName} 受け取りページ` : '読み込み中',
-    [store])
-
   return (
-    <DefaultBaseLayout title={pageTitle}>
-      {userData?.email && <Alert>
-        {userData.email} としてログイン中です
+    <DefaultBaseLayout title="チケット受け取りページ">
+      {(ticketUser === null || !ticketHashId) && <Alert type="danger" title="チケット情報が見つかりません">
+        チケット情報を取得できませんでした。<br />
+        URLをもう一度お確かめください。
       </Alert>}
-      {ticketHashId &&
-        (ticketUser === undefined || !store || userData === undefined) &&
-        <Loading text="チケット情報" />}
-      {ticketHashId && isLoggedIn !== undefined &&
-        ticketUser && !ticketUser.usableUserId && store && userData !== undefined &&
-        <StepContainer
-          user={user}
-          ticketHashId={ticketHashId}
-          ticketUser={ticketUser}
-          store={store}
-          userData={userData} />}
-
-      {ticketHashId && ticketUser?.usableUserId &&
-        <>
-          <Alert type="danger" title="受け取り済みのチケットです">
-            このチケットは既に受け取り済みです。
-          </Alert>
-          {user?.uid === ticketUser.usableUserId && <FormSection>
-            <FormItem>
-              <LinkButton to={`/tickets/${ticketHashId}`}>チケットを開く</LinkButton>
-            </FormItem>
-          </FormSection>}
-        </>
-      }
-      {(!ticketHashId || ticketUser === null) &&
-        <Alert type="danger" title="チケット情報が見つかりませんでした">
-          URLが間違っています。
-        </Alert>}
+      {store && ticketHashId && ticketUser && <StepContainer
+        store={store}
+        ticketHashId={ticketHashId}
+        ticketUser={ticketUser}
+        user={user}
+        userData={userData}
+        loginAsync={handleLoginAsync}
+        logoutAsync={handleLogoutAsync}
+        createUserAsync={createUserAsync}
+        updateUserDataAsync={updateUserDataAsync}
+        assignTicketUserAsync={assignTicketUserAsync} />}
     </DefaultBaseLayout>
   )
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import useFirebase from '../../../hooks/useFirebase'
 import useStore from '../../../hooks/useStore'
@@ -21,6 +21,11 @@ const TicketApplyPage: React.FC = () => {
   const [store, setStore] = useState<SockbaseStoreDocument | null>()
 
   const [userData, setUserData] = useState<SockbaseAccount | null>()
+
+  const pageTitle = useMemo(() => {
+    if (!store) return
+    return `${store.storeName} サークル申し込みページ`
+  }, [event])
 
   const handleLoginAsync = useCallback(async (email: string, password: string) => {
     await loginByEmailAsync(email, password)
@@ -58,7 +63,7 @@ const TicketApplyPage: React.FC = () => {
   }, [])
 
   return (
-    <DefaultBaseLayout title="チケット申し込みページ">
+    <DefaultBaseLayout title={pageTitle}>
       <StepContainer
         store={store}
         user={user}

@@ -5,10 +5,8 @@ import FormSection from '../../../../components/Form/FormSection'
 import LoginForm from '../../../../components/LoginForm'
 import Alert from '../../../../components/Parts/Alert'
 import type { User } from 'firebase/auth'
-import type { SockbaseStoreDocument } from 'sockbase'
 
 interface Props {
-  store: SockbaseStoreDocument | undefined
   user: User | null | undefined
   loginAsync: (email: string, password: string) => Promise<void>
   logoutAsync: () => Promise<void>
