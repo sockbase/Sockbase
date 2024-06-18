@@ -1,107 +1,119 @@
-import { useCallback, useEffect, useState } from 'react'
-import { type User } from 'firebase/auth'
-import {
-  type SockbaseAccountSecure,
-  type SockbaseAccount,
-  type SockbaseStoreDocument,
-  type SockbaseTicketUserDocument
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import FormItem from '../../../../components/Form/FormItem'
+import FormSection from '../../../../components/Form/FormSection'
+import Alert from '../../../../components/Parts/Alert'
+import LinkButton from '../../../../components/Parts/LinkButton'
+import CheckAccount from '../../TicketApplyPage/StepContainer/CheckAccount'
+import Complete from './Complete'
+import Confirm from './Confirm'
+import Input from './Input'
+import type { User } from 'firebase/auth'
+import type {
+  SockbaseAccount,
+  SockbaseAccountSecure,
+  SockbaseStoreDocument,
+  SockbaseTicketUserDocument
 } from 'sockbase'
-import StepProgress from '../../../../components/Parts/StepProgress'
-import useFirebase from '../../../../hooks/useFirebase'
-import useStore from '../../../../hooks/useStore'
-import useUserData from '../../../../hooks/useUserData'
-import CheckAccount from './CheckAccount'
-import Step1 from './Step1'
-import Step2 from './Step2'
-import Step3 from './Step3'
-
-const stepProgresses = ['入力', '確認', '完了']
 
 interface Props {
-  ticketHashId: string
-  user: User | null | undefined
   store: SockbaseStoreDocument
+  ticketHashId: string
   ticketUser: SockbaseTicketUserDocument
-  userData: SockbaseAccount | null
+  user: User | null | undefined
+  userData: SockbaseAccount | null | undefined
+  loginAsync: (email: string, password: string) => Promise<void>
+  logoutAsync: () => Promise<void>
+  createUserAsync: (email: string, password: string) => Promise<User>
+  updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
+  assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
 }
 const StepContainer: React.FC<Props> = (props) => {
-  const { assignTicketUserAsync } = useStore()
-  const { createUser, loginByEmail, logout } = useFirebase()
-  const { updateUserDataAsync } = useUserData()
-
   const [step, setStep] = useState(0)
-  const [stepComponents, setStepComponents] = useState<React.ReactNode[]>()
 
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
-  const submitAssignTicket = useCallback(async (): Promise<void> => {
+  const selectedType = useMemo(() => {
+    return props.store.types
+      .filter(t => t.id === props.ticketUser.typeId)[0]
+  }, [props.store, props.ticketUser])
+
+  const handleSubmitAsync = useCallback(async () => {
     if (!userData) return
 
     if (!props.user) {
-      const newUser = await createUser(userData.email, userData.password)
-      await updateUserDataAsync(newUser.uid, userData)
-      await assignTicketUserAsync(newUser.uid, props.ticketHashId)
-    } else if (props.userData && !props.userData.gender) {
-      await updateUserDataAsync(props.user.uid, {
+      if (!userData) {
+        throw new Error('userData not provided')
+      }
+      const newUser = await props.createUserAsync(userData.email, userData.password)
+      await props.updateUserDataAsync(newUser.uid, userData)
+      await props.assignTicketUserAsync(newUser.uid, props.ticketHashId)
+      return
+    }
+
+    if (props.userData && !props.userData?.gender) {
+      await props.updateUserDataAsync(props.user.uid, {
         ...props.userData,
         gender: userData?.gender
       })
-      await assignTicketUserAsync(props.user.uid, props.ticketHashId)
     }
-  }, [userData, props.user])
+    await props.assignTicketUserAsync(props.user.uid, props.ticketHashId)
+  }, [props.user, props.userData, props.ticketHashId, userData])
 
-  const onInitialize = (): void => {
-    setStepComponents([
-      <CheckAccount key="checkAccount"
+  useEffect(() => window.scrollTo(0, 0), [step])
+
+  const steps = useMemo(() => {
+    return ([
+      <CheckAccount
+        key="checkAccount"
         user={props.user}
-        login={async (email, password) => {
-          await loginByEmail(email, password)
-        }}
-        logout={() => logout()}
-        nextStep={() => setStep(1)}
-      />,
-      <Step1 key="step1"
+        loginAsync={props.loginAsync}
+        logoutAsync={props.logoutAsync}
+        nextStep={() => setStep(1)} />,
+      <Input
+        key="input"
         store={props.store}
-        ticketUser={props.ticketUser}
+        selectedType={selectedType}
         fetchedUserData={props.userData}
         userData={userData}
         prevStep={() => setStep(0)}
-        nextStep={(u) => {
+        nextStep={u => {
           setUserData(u)
           setStep(2)
         }} />,
-      <Step2 key="step2"
+      <Confirm
+        key="confirm"
         store={props.store}
-        ticketUser={props.ticketUser}
+        selectedType={selectedType}
         fetchedUserData={props.userData}
         userData={userData}
-        submitAssignTicket={submitAssignTicket}
-        nextStep={() => setStep(3)}
-        prevStep={() => setStep(1)} />,
-      <Step3 key="step3"
+        submitAsync={handleSubmitAsync}
+        prevStep={() => setStep(1)}
+        nextStep={() => setStep(3)} />,
+      <Complete
+        key="complete"
         ticketHashId={props.ticketHashId}
         store={props.store}
-        ticketUser={props.ticketUser} />
+        selectedType={selectedType} />
     ])
-  }
-  useEffect(onInitialize, [props.store, props.ticketUser, props.userData, props.user, userData])
-
-  const onChangeStep: () => void =
-    () => window.scrollTo(0, 0)
-  useEffect(onChangeStep, [step])
+  }, [props.user, props.store, props.userData, selectedType, userData])
 
   return (
     <>
-      <h1>{props.store.storeName} 受け取りページ</h1>
+      {props.ticketUser.usableUserId && <>
+        <Alert type="danger" title="受け取り済みのチケットです">
+          このチケットは既に受け取り済みです。
+        </Alert>
+        {props.user?.uid === props.ticketUser.usableUserId && <FormSection>
+          <FormItem>
+            <LinkButton to={`/tickets/${props.ticketHashId}`}>チケットを開く</LinkButton>
+          </FormItem>
+        </FormSection>}
+      </>}
 
-      <StepProgress steps={
-        stepProgresses.map((i, k) => ({
-          text: i,
-          isActive: k === step - 1
-        }))
-      } />
-
-      {stepComponents?.[step] ?? ''}
+      {!props.ticketUser.usableUserId && <>
+        <h1>{props.store.storeName} チケット受け取りページ</h1>
+        {steps?.[step]}
+      </>}
     </>
   )
 }

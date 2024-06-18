@@ -21,7 +21,7 @@ const UserDataView: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h2>申し込み責任者情報</h2>
+      <h2>申し込み者情報</h2>
       <table>
         <tbody>
           <tr>

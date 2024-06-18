@@ -81,7 +81,6 @@ const StepContainer: React.FC<Props> = (props) => {
     return ([
       <CheckAccount
         key="checkAccount"
-        store={props.store}
         user={props.user}
         loginAsync={props.loginAsync}
         logoutAsync={props.logoutAsync}
@@ -149,8 +148,8 @@ const StepContainer: React.FC<Props> = (props) => {
       {props.store && <>
         <h1>{props.store.storeName} 申し込み受付</h1>
         {props.store.schedules.endApplication < now
-          ? <Alert type="danger" title="参加受付は終了しました">
-          このイベントのサークル参加申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
+          ? <Alert type="danger" title="受付を終了しました">
+            このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
           </Alert>
           : <>
             {props.store.descriptions.map((d, k) => <p key={k}>{d}</p>)}

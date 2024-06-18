@@ -7,6 +7,7 @@ import CircleCutImage from '../../../../components/Parts/CircleCutImage'
 import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrapper'
 import ProgressBar from '../../../../components/Parts/ProgressBar'
 import UserDataView from '../../../../components/UserDataView'
+import useFirebaseError from '../../../../hooks/useFirebaseError'
 import type {
   SockbaseEventDocument,
   SockbaseApplication,
@@ -33,16 +34,18 @@ interface Props {
   nextStep: () => void
 }
 const Confirm: React.FC<Props> = (props) => {
+  const { localize } = useFirebaseError()
+
   const [isProgress, setProgress] = useState(false)
-  const [error, setError] = useState<Error | null>()
+  const [errorMessage, setErrorMessage] = useState<string | null>()
 
   const handleSubmit = useCallback(() => {
     setProgress(true)
-    setError(null)
+    setErrorMessage(null)
     props.submitAsync()
       .then(() => props.nextStep())
       .catch(err => {
-        setError(err)
+        setErrorMessage(localize(err.message))
         setProgress(false)
         throw err
       })
@@ -184,8 +187,8 @@ const Confirm: React.FC<Props> = (props) => {
         修正する場合は「修正」ボタンを押してください。
       </p>
 
-      {error && <Alert type="danger" title="エラーが発生しました">
-        {error.message}
+      {errorMessage && <Alert type="danger" title="エラーが発生しました">
+        {errorMessage}
       </Alert>}
 
       <FormSection>
