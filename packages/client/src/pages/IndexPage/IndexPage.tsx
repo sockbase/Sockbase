@@ -75,7 +75,7 @@ const IndexPage: React.FC = () => {
       </FormSection>}
 
       {!fromPathName && <>
-        <Alert title="2024年 6月 17日 に プライバシーポリシー を更新しました。">
+        <Alert title="2024年 6月 18日 に プライバシーポリシー を更新しました。">
           <Link to="/privacy-policy">こちら</Link>からご確認ください。
         </Alert>
 
