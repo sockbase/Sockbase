@@ -15,10 +15,9 @@ const useDayjs: () => IUseDayjs = () => {
 
   dayjs.tz.setDefault('Asia/Tokyo')
 
-  const formatByDate = (
-    date: string | number | Date | dayjs.Dayjs | null | undefined,
-    format: string
-  ): string => dayjs(date).tz().format(format)
+  const formatByDate =
+    (date: string | number | Date | dayjs.Dayjs | null | undefined, format: string): string =>
+      dayjs(date).tz().format(format)
 
   return {
     formatByDate

@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
-import DefaultBaseLayout from '../../components/Layout/DefaultBaseLayout/DefaultBaseLayout'
 import LinkButton from '../../components/Parts/LinkButton'
+import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 
 const NotFoundPage: React.FC = () => {
   return (
