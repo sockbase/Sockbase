@@ -1,15 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdStore } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import {
-  type SockbaseTicketDocument,
-  type SockbaseStoreDocument,
-  type SockbaseStoreType,
-  type SockbaseAccount,
-  type SockbaseTicketUsedStatus,
-  type SockbaseTicketMeta,
-  type SockbaseTicketUserDocument
-} from 'sockbase'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import FormSelect from '../../../components/Form/Select'
@@ -28,8 +19,17 @@ import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
+import type {
+  SockbaseTicketDocument,
+  SockbaseStoreDocument,
+  SockbaseStoreType,
+  SockbaseAccount,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketMeta,
+  SockbaseTicketUserDocument
+} from 'sockbase'
 
-const DashboardStoreDetailPage: React.FC = () => {
+const DashboardStoreTicketListPage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
 
   const { formatByDate } = useDayjs()
@@ -57,7 +57,56 @@ const DashboardStoreDetailPage: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState(-1)
   const [selectedAssign, setSelectedAssign] = useState('')
 
-  const onInitialize = (): void => {
+  const pageTitle = useMemo(() => {
+    if (!store) return '読み込み中'
+    return `${store.storeName} チケット一覧`
+  }, [store])
+
+  const getType = useCallback((typeId: string): SockbaseStoreType | undefined => {
+    if (!store) return
+    const type = store.types
+      .filter(t => t.id === typeId)[0]
+    return type
+  }, [store])
+
+  const getUsableUser = useCallback((ticketId: string): SockbaseAccount | null | undefined => {
+    if (!tickets || !ticketUsers || !usableUsers) return
+
+    const ticket = tickets.filter(t => t.id === ticketId)[0]
+    if (!ticket.hashId) return
+
+    const ticketUser = ticketUsers[ticket.hashId]
+    if (!ticketUser?.usableUserId) return
+
+    const usableUser = usableUsers[ticketUser.usableUserId]
+    return usableUser
+  }, [ticketUsers, usableUsers])
+
+  const usedTicketCount = useMemo(() => {
+    if (!usedStatuses) return 0
+    return Object.values(usedStatuses)
+      .filter(s => s.used)
+      .length
+  }, [usedStatuses])
+
+  const totalTicketCount = useMemo(() => {
+    if (!tickets || !ticketMetas) return 0
+    return tickets
+      .filter(t => t.id && ticketMetas[t.id].applicationStatus !== 1)
+      .length
+  }, [tickets, ticketMetas])
+
+  const filteredTickets = useMemo(() => {
+    if (!tickets) return null
+    return tickets
+      .filter(t => !selectedType || t.typeId === selectedType)
+      .filter(t => selectedStatus === -1 || (t.id && ticketMetas?.[t.id].applicationStatus === selectedStatus))
+      .filter(t => !selectedAssign ||
+        (selectedAssign === 'yes' && t.hashId && ticketUsers?.[t.hashId].usableUserId) ||
+        (selectedAssign === 'no' && t.hashId && !ticketUsers?.[t.hashId].usableUserId))
+  }, [tickets, ticketMetas, ticketUsers, selectedType, selectedStatus, selectedAssign])
+
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!storeId) return
 
@@ -71,10 +120,9 @@ const DashboardStoreDetailPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onInitialize, [storeId])
+  }, [storeId])
 
-  const onFetchedTickets = (): void => {
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!tickets || !storeId) return
 
@@ -140,10 +188,9 @@ const DashboardStoreDetailPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onFetchedTickets, [tickets, storeId])
+  }, [tickets, storeId])
 
-  const onFetchedTicketUsers = (): void => {
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!storeId || !ticketUsers) return
 
@@ -168,65 +215,13 @@ const DashboardStoreDetailPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onFetchedTicketUsers, [storeId, ticketUsers])
+  }, [storeId, ticketUsers])
 
-  const pageTitle = useMemo(() => {
-    if (!store) return '読み込み中'
-    return `${store.storeName} チケット一覧`
-  }, [store])
-
-  const getType = useCallback((typeId: string): SockbaseStoreType | undefined => {
-    if (!store) return
-    const type = store.types
-      .filter(t => t.id === typeId)[0]
-    return type
-  }, [store])
-
-  const getUsableUser = useCallback((ticketId: string): SockbaseAccount | null | undefined => {
-    if (!tickets || !ticketUsers || !usableUsers) return
-
-    const ticket = tickets.filter(t => t.id === ticketId)[0]
-    if (!ticket.hashId) return
-
-    const ticketUser = ticketUsers[ticket.hashId]
-    if (!ticketUser?.usableUserId) return
-
-    const usableUser = usableUsers[ticketUser.usableUserId]
-    return usableUser
-  }, [ticketUsers, usableUsers])
-
-  const usedTicketCount = useMemo(() => {
-    if (!usedStatuses) return 0
-    return Object.values(usedStatuses)
-      .filter(s => s.used)
-      .length
-  }, [usedStatuses])
-
-  const totalTicketCount = useMemo(() => {
-    if (!tickets || !ticketMetas) return 0
-    return tickets
-      .filter(t => t.id && ticketMetas[t.id].applicationStatus !== 1)
-      .length
-  }, [tickets, ticketMetas])
-
-  const filteredTickets = useMemo(() => {
-    if (!tickets) return null
-    return tickets
-      .filter(t => !selectedType || t.typeId === selectedType)
-      .filter(t => selectedStatus === -1 || (t.id && ticketMetas?.[t.id].applicationStatus === selectedStatus))
-      .filter(t => !selectedAssign ||
-        (selectedAssign === 'yes' && t.hashId && ticketUsers?.[t.hashId].usableUserId) ||
-        (selectedAssign === 'no' && t.hashId && !ticketUsers?.[t.hashId].usableUserId))
-  }, [tickets, ticketMetas, ticketUsers, selectedType, selectedStatus, selectedAssign])
-
-  const onFetchedAllData = (): void => {
+  useEffect(() => {
     if (!filteredTickets || !ticketUsers || !usableUsers) return
-
     const csv = exportCSV(filteredTickets, ticketUsers, usableUsers)
     setTicketCSV(csv)
-  }
-  useEffect(onFetchedAllData, [filteredTickets, ticketUsers, usableUsers])
+  }, [filteredTickets, ticketUsers, usableUsers])
 
   return (
     <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
@@ -309,7 +304,7 @@ const DashboardStoreDetailPage: React.FC = () => {
               ? filteredTickets
                 .sort((a, b) => (b.updatedAt?.getTime() ?? b.createdAt?.getTime() ?? 9) - (a.updatedAt?.getTime() ?? a.createdAt?.getTime() ?? 0))
                 .map((t, i) => <tr key={t.id}>
-                  <td>{filteredTickets.length - i}</td>
+                  <td>{i + 1}</td>
                   <td>{t?.id && <ApplicationStatusLabel status={ticketMetas?.[t.id].applicationStatus} />}</td>
                   <td>{(t?.hashId && <TicketAssignStatusLabel status={!!ticketUsers?.[t.hashId]?.usableUserId}/>) ?? <BlinkField />}</td>
                   <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
@@ -337,4 +332,4 @@ const DashboardStoreDetailPage: React.FC = () => {
   )
 }
 
-export default DashboardStoreDetailPage
+export default DashboardStoreTicketListPage

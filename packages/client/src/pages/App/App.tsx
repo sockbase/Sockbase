@@ -39,10 +39,10 @@ import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/Dash
 import DashboardSearchPage from '../Dashboard/DashboardSearchPage/DashboardSearchPage'
 import DashboardSettingPage from '../Dashboard/DashboardSettingPage/DashboardSettingPage'
 import DashboardStoreCreatePage from '../Dashboard/DashboardStoreCreatePage/DashboardStoreCreatePage'
-import DashboardStoreDetailPage from '../Dashboard/DashboardStoreDetailPage/DashboardStoreDetailPage'
 import DashboardStoreListPage from '../Dashboard/DashboardStoreListPage/DashboardStoreListPage'
 import DashboardStoreMetaViewPage from '../Dashboard/DashboardStoreMetaViewPage/DashboardStoreMetaViewPage'
 import DashboardStoreTicketCreatePage from '../Dashboard/DashboardStoreTicketCreatePage/DashboardStoreTicketCreatePage'
+import DashboardStoreTicketListPage from '../Dashboard/DashboardStoreTicketListPage/DashboardStoreTicketListPage'
 import DashboardStreamTerminalPage from '../Dashboard/DashboardStreamTerminalPage/DashboardStreamTerminalPage'
 import DashboardTicketDetailPage from '../Dashboard/DashboardTicketDetailPage/DashboardTicketDetailPage'
 import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/DashboardTicketListPage'
@@ -257,7 +257,7 @@ const router = createBrowserRouter([
                 children: [
                   {
                     index: true,
-                    element: <DashboardStoreDetailPage />
+                    element: <DashboardStoreTicketListPage />
                   },
                   {
                     path: 'create',
