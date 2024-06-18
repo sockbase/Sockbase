@@ -213,8 +213,8 @@ const Confirm: React.FC<Props> = (props) => {
       {isProgress && <>
         <ProgressBar percent={props.submitProgressPercent}/>
         <Alert>
-            送信処理に時間がかかる場合がございます。<br />
-            進捗率が100%になるまでそのままでお待ちください。
+          送信処理に時間がかかる場合がございます。<br />
+          進捗率が100%になるまでそのままでお待ちください。
         </Alert>
       </>}
     </>
