@@ -18,6 +18,18 @@ const Tanzaku: React.FC<Props> = (props) => {
     return Math.floor(span / (365 * 24 * 60 * 60 * 1000))
   }, [props.event, props.userData])
 
+  const gender = useMemo(() => {
+    const genderCode = props.userData?.gender
+    if (genderCode === undefined) {
+      return ''
+    } else if (genderCode === 1) {
+      return '男'
+    } else if (genderCode === 2) {
+      return '女'
+    }
+    return genderCode
+  }, [props.userData])
+
   const space = useMemo((): SockbaseEventSpace | null => {
     return props.event.spaces.filter(s => s.id === props.app?.spaceId)[0]
   }, [props.event, props.app])
@@ -96,8 +108,12 @@ const Tanzaku: React.FC<Props> = (props) => {
         </TotalAmount>
         <Age>
           <Header>開催時年齢</Header>
-          {props.userData && eventAge}
+          {eventAge}
         </Age>
+        <Gender>
+          <Header>性別</Header>
+          {gender}
+        </Gender>
         <SpecialRemarks>
           <Header>メモ</Header>
         </SpecialRemarks>
@@ -205,6 +221,7 @@ const UnionCircleIndicator = styled.div<{ active: boolean }>`
 `
 const UnionCircleName = styled.div`
   padding: 2px;
+  overflow: hidden;
 `
 const PetitMeta = styled.div`
   grid-column: 1;
@@ -249,7 +266,7 @@ const AppIdQR = styled(ReactQRCode)`
 const CircleArea = styled.div`
   display: grid;
   grid-template-rows: auto auto auto auto 2fr 2fr 1fr;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr 1fr;
   border-left: 1px dotted #000000;
 `
 const EventName = styled.div`
@@ -295,6 +312,10 @@ const Age = styled.div`
   grid-column: 1;
   border-right: 1px dotted #000000;
 `
-const SpecialRemarks = styled.div`
+const Gender = styled.div`
   grid-column: 2;
+  border-right: 1px dotted #000000;
+`
+const SpecialRemarks = styled.div`
+  grid-column: 3;
 `

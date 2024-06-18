@@ -10,16 +10,6 @@ import {
   MdPrint
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import {
-  type SockbaseSpaceDocument,
-  type SockbaseApplicationDocument,
-  type SockbaseApplicationHashIdDocument,
-  type SockbaseApplicationMeta,
-  type SockbaseEvent,
-  type SockbaseApplicationLinksDocument,
-  type SockbaseApplicationOverviewDocument,
-  type SockbaseAccount
-} from 'sockbase'
 import EventCircleApplications from '../../../components/Events/EventCircleApplications'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
@@ -29,13 +19,22 @@ import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
 import IconLabel from '../../../components/Parts/IconLabel'
 import LinkButton from '../../../components/Parts/LinkButton'
-import Loading from '../../../components/Parts/Loading'
 import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
 import useSpace from '../../../hooks/useSpace'
 import useUserData from '../../../hooks/useUserData'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
+import type {
+  SockbaseSpaceDocument,
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationMeta,
+  SockbaseEvent,
+  SockbaseApplicationLinksDocument,
+  SockbaseApplicationOverviewDocument,
+  SockbaseAccount
+} from 'sockbase'
 
 const DashboardEventApplicationListPage: React.FC = () => {
   const { eventId } = useParams()
@@ -60,108 +59,107 @@ const DashboardEventApplicationListPage: React.FC = () => {
   const [appHashs, setAppHashs] = useState<SockbaseApplicationHashIdDocument[]>()
   const [metas, setMetas] = useState<Record<string, SockbaseApplicationMeta>>()
   const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
+  const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount>>()
+
   const [appsCSV, setAppsCSV] = useState<string>()
 
-  const onInitialize: () => void =
-    () => {
-      const fetchAppsAsync: () => Promise<void> =
-        async () => {
-          if (!eventId) return
+  useEffect(() => {
+    const fetchAsync = async (): Promise<void> => {
+      if (!eventId) return
 
-          getEventByIdAsync(eventId)
-            .then(fetchedEvent => setEvent(fetchedEvent))
-            .catch(err => { throw err })
+      getEventByIdAsync(eventId)
+        .then(fetchedEvent => setEvent(fetchedEvent))
+        .catch(err => { throw err })
 
-          getSpacesByEventIdAsync(eventId)
-            .then(fetchedSpaces => setSpaces(fetchedSpaces))
-            .catch(err => { throw err })
+      getSpacesByEventIdAsync(eventId)
+        .then(fetchedSpaces => setSpaces(fetchedSpaces))
+        .catch(err => { throw err })
 
-          const fetchedApps = await getApplicationsByEventIdAsync(eventId)
-          setApps(fetchedApps)
+      const fetchedApps = await getApplicationsByEventIdAsync(eventId)
+      setApps(fetchedApps)
 
-          const appIds = Object.keys(fetchedApps)
-          const appHashIds = Object.values(fetchedApps)
-            .map(a => a.hashId)
-          const userIds = Object.values(fetchedApps)
-            .map(a => a.userId)
+      const appIds = Object.keys(fetchedApps)
+      const appHashIds = Object.values(fetchedApps)
+        .map(a => a.hashId)
+      const userIds = Object.values(fetchedApps)
+        .map(a => a.userId)
 
-          const fetchedMetas = await Promise.all(appIds.map(async (appId) => ({
-            appId,
-            data: await getApplicationMetaByIdAsync(appId)
-          })))
-            .then(fetchedMetas => {
-              const objectMappedMetas = fetchedMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({
-                ...p,
-                [c.appId]: c.data
-              }), {})
-              return objectMappedMetas
-            })
-            .catch(err => { throw err })
-          setMetas(fetchedMetas)
-
-          Promise.all(appHashIds.map(async (hashId) => {
-            if (!hashId) return
-            return await getApplicationIdByHashedIdAsync(hashId)
-          }))
-            .then(fetchedHashs => {
-              const filteredHashs = fetchedHashs
-                .reduce<SockbaseApplicationHashIdDocument[]>((p, c) => {
-                if (c === undefined) return p
-                return [...p, c]
-              }, [])
-              setAppHashs(filteredHashs)
-            })
-            .catch(err => { throw err })
-
-          const fetchedMappedLinks = await Promise.all(appIds.map(async appId => ({
-            appId,
-            data: await getLinksByApplicationIdOptionalAsync(appId)
-          })))
-            .then(fetchedLinks => {
-              const objectMappedLinks = fetchedLinks.reduce<Record<string, SockbaseApplicationLinksDocument | null>>((p, c) => ({
-                ...p,
-                [c.appId]: c.data
-              }), {})
-              return objectMappedLinks
-            })
-            .catch(err => { throw err })
-
-          const fetchedMappedOverviews = await Promise.all(appIds.map(async appId => ({
-            appId,
-            data: await getOverviewByApplicationIdOptionalAsync(appId)
-          })))
-            .then(fetchedOverviews => {
-              const objectMappedOverviews = fetchedOverviews.reduce<Record<string, SockbaseApplicationOverviewDocument | null>>((p, c) => ({
-                ...p,
-                [c.appId]: c.data
-              }), {})
-              return objectMappedOverviews
-            })
-            .catch(err => { throw err })
-
-          const fetchedUserDatas = await Promise.all(userIds.map(async userId => ({
-            userId,
-            data: await getUserDataByUserIdAndEventIdAsync(userId, eventId)
-          })))
-            .then(fetchedUserDatas => {
-              const objectMappedUserDatas = fetchedUserDatas.reduce<Record<string, SockbaseAccount>>((p, c) => ({
-                ...p,
-                [c.userId]: c.data
-              }), {})
-              return objectMappedUserDatas
-            })
-            .catch(err => { throw err })
-
-          const appsCSV = exportCSV(fetchedApps, fetchedMetas, fetchedUserDatas, fetchedMappedLinks, fetchedMappedOverviews)
-          setAppsCSV(appsCSV)
-        }
-
-      fetchAppsAsync()
-        .catch(err => {
-          throw err
+      const fetchedMetas = await Promise.all(appIds.map(async (appId) => ({
+        appId,
+        data: await getApplicationMetaByIdAsync(appId)
+      })))
+        .then(fetchedMetas => {
+          const objectMappedMetas = fetchedMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({
+            ...p,
+            [c.appId]: c.data
+          }), {})
+          return objectMappedMetas
         })
+        .catch(err => { throw err })
+      setMetas(fetchedMetas)
+
+      Promise.all(appHashIds.map(async (hashId) => {
+        if (!hashId) return
+        return await getApplicationIdByHashedIdAsync(hashId)
+      }))
+        .then(fetchedHashs => {
+          const filteredHashs = fetchedHashs
+            .reduce<SockbaseApplicationHashIdDocument[]>((p, c) => {
+            if (c === undefined) return p
+            return [...p, c]
+          }, [])
+          setAppHashs(filteredHashs)
+        })
+        .catch(err => { throw err })
+
+      const fetchedMappedLinks = await Promise.all(appIds.map(async appId => ({
+        appId,
+        data: await getLinksByApplicationIdOptionalAsync(appId)
+      })))
+        .then(fetchedLinks => {
+          const objectMappedLinks = fetchedLinks.reduce<Record<string, SockbaseApplicationLinksDocument | null>>((p, c) => ({
+            ...p,
+            [c.appId]: c.data
+          }), {})
+          return objectMappedLinks
+        })
+        .catch(err => { throw err })
+
+      const fetchedMappedOverviews = await Promise.all(appIds.map(async appId => ({
+        appId,
+        data: await getOverviewByApplicationIdOptionalAsync(appId)
+      })))
+        .then(fetchedOverviews => {
+          const objectMappedOverviews = fetchedOverviews.reduce<Record<string, SockbaseApplicationOverviewDocument | null>>((p, c) => ({
+            ...p,
+            [c.appId]: c.data
+          }), {})
+          return objectMappedOverviews
+        })
+        .catch(err => { throw err })
+
+      const fetchedUserDatas = await Promise.all(userIds.map(async userId => ({
+        userId,
+        data: await getUserDataByUserIdAndEventIdAsync(userId, eventId)
+      })))
+        .then(fetchedUserDatas => {
+          const objectMappedUserDatas = fetchedUserDatas.reduce<Record<string, SockbaseAccount>>((p, c) => ({
+            ...p,
+            [c.userId]: c.data
+          }), {})
+          return objectMappedUserDatas
+        })
+        .catch(err => { throw err })
+
+      setUserDatas(fetchedUserDatas)
+
+      const appsCSV = exportCSV(fetchedApps, fetchedMetas, fetchedUserDatas, fetchedMappedLinks, fetchedMappedOverviews)
+      setAppsCSV(appsCSV)
     }
-  useEffect(onInitialize, [eventId])
+
+    fetchAsync()
+      .catch(err => { throw err })
+  }, [eventId])
 
   const title = useMemo(() => {
     if (!event) return '申し込み一覧を読み込み中'
@@ -210,18 +208,17 @@ const DashboardEventApplicationListPage: React.FC = () => {
         </FormItem>
       </FormSection>
 
-      {appsCSV && <p>
+      {(appsCSV && <p>
         配置データCSVをコピー <CopyToClipboard content={appsCSV} />
-      </p>}
+      </p>) ?? <BlinkField />}
 
-      {event && apps && metas && appHashs && spaces
-        ? <EventCircleApplications
-          event={event}
-          apps={apps}
-          metas={metas}
-          appHashs={appHashs}
-          spaces={spaces} />
-        : <Loading text="申し込み一覧" />}
+      {apps && <EventCircleApplications
+        event={event}
+        apps={apps}
+        metas={metas}
+        appHashs={appHashs}
+        spaces={spaces}
+        userDatas={userDatas} />}
     </DashboardBaseLayout>
   )
 }
