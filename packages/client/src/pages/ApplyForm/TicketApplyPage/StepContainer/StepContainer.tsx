@@ -1,149 +1,167 @@
-import { useEffect, useState } from 'react'
-import { type User } from 'firebase/auth'
-import {
-  type SockbaseTicket,
-  type SockbaseStoreDocument,
-  type SockbaseAccountSecure,
-  type SockbaseAccount,
-  type SockbaseTicketAddedResult
-} from 'sockbase'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import sockbaseShared from 'shared'
 import Alert from '../../../../components/Parts/Alert'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
-import useFirebase from '../../../../hooks/useFirebase'
-import useStore from '../../../../hooks/useStore'
-import useUserData from '../../../../hooks/useUserData'
 import CheckAccount from './CheckAccount'
+import Complete from './Complete'
+import Confirm from './Confirm'
+import Input from './Input'
 import Introduction from './Introduction'
-import Step1 from './Step1'
-import Step2 from './Step2'
-import Step3 from './Step3'
-import Step4 from './Step4'
+import Payment from './Payment'
+import type { User } from 'firebase/auth'
+import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket, SockbaseTicketAddedResult } from 'sockbase'
 
 const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
 
 interface Props {
+  store: SockbaseStoreDocument | null | undefined
   user: User | null | undefined
-  store: SockbaseStoreDocument
-  userData: SockbaseAccount | null
-  isLoggedIn: boolean
+  userData: SockbaseAccount | null | undefined
+  loginAsync: (email: string, password: string) => Promise<void>
+  logoutAsync: () => Promise<void>
+  createUserAsync: (email: string, password: string) => Promise<User>
+  updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
+  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
 }
 const StepContainer: React.FC<Props> = (props) => {
-  const { createTicketAsync } = useStore()
-  const { createUser, loginByEmail, logout } = useFirebase()
-  const { updateUserDataAsync } = useUserData()
   const { formatByDate } = useDayjs()
 
   const [step, setStep] = useState(0)
-  const [stepComponents, setStepComponents] = useState<JSX.Element[]>()
 
-  const [ticketInfo, setTicketInfo] = useState<SockbaseTicket>()
+  const [ticket, setTicket] = useState<SockbaseTicket>()
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
-  const [ticketResult, setTicketResult] = useState<SockbaseTicketAddedResult>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
+  const [addedResult, setAddedResult] = useState<SockbaseTicketAddedResult>()
 
-  const onChangeStep: () => void =
-    () => window.scrollTo(0, 0)
-  useEffect(onChangeStep, [step])
+  const selectedType = useMemo(() => {
+    if (!props.store || !ticket) return
+    return props.store.types.filter(t => t.id === ticket.typeId)[0]
+  }, [props.store, ticket])
 
-  const handleSubmit = async (): Promise<void> => {
-    if (!ticketInfo || !userData) return
+  const selectedPaymentMethod = useMemo(() => {
+    if (!ticket) return
+    return sockbaseShared.constants.payment.methods
+      .filter(m => m.id === ticket.paymentMethod)[0]
+  }, [ticket])
+
+  const handleSubmitAsync = useCallback(async () => {
+    if (!ticket) return
 
     setSubmitProgressPercent(10)
 
     if (!props.user) {
-      const newUser = await createUser(userData.email, userData.password)
-      await updateUserDataAsync(newUser.uid, userData)
-    } else if (props.userData && !props.userData.gender) {
-      await updateUserDataAsync(props.user.uid, {
+      if (!userData) {
+        throw new Error('userData not provided')
+      }
+      const newUser = await props.createUserAsync(userData.email, userData.password)
+      await props.updateUserDataAsync(newUser.uid, userData)
+    } else if (props.userData && !props.userData?.gender) {
+      await props.updateUserDataAsync(props.user.uid, {
         ...props.userData,
         gender: userData?.gender
       })
     }
 
-    setSubmitProgressPercent(30)
+    setSubmitProgressPercent(50)
 
-    await createTicketAsync(ticketInfo)
-      .then(async (result) => {
-        setTicketResult(result)
+    await props.createTicketAsync(ticket)
+      .then(async result => {
+        setAddedResult(result)
         setSubmitProgressPercent(100)
         await (new Promise((resolve) => setTimeout(resolve, 2000)))
       })
-  }
+  }, [props.user, props.userData, ticket, userData])
 
-  const onInitialize = (): void => {
-    setStepComponents([
-      <CheckAccount key="checkAccount"
-        user={props.user}
-        login={async (email, password) => {
-          await loginByEmail(email, password)
-        }}
-        logout={() => logout()}
-        nextStep={() => setStep(1)} />,
-      <Introduction key="introduction"
-        prevStep={() => setStep(0)}
-        nextStep={() => setStep(2)}
-        store={props.store} />,
-      <Step1 key="step1"
+  useEffect(() => window.scrollTo(0, 0), [step])
+
+  const steps = useMemo(() => {
+    if (!props.store) return
+    return ([
+      <CheckAccount
+        key="checkAccount"
         store={props.store}
-        ticketInfo={ticketInfo}
-        fetchedUserData={props.userData}
+        user={props.user}
+        loginAsync={props.loginAsync}
+        logoutAsync={props.logoutAsync}
+        nextStep={() => setStep(1)} />,
+      <Introduction
+        key="introduction"
+        store={props.store}
+        prevStep={() => setStep(0)}
+        nextStep={() => setStep(2)} />,
+      <Input
+        key="input"
+        store={props.store}
+        ticket={ticket}
         userData={userData}
-        nextStep={(t: SockbaseTicket, u: SockbaseAccountSecure) => {
-          setTicketInfo(t)
+        fetchedUserData={props.userData}
+        prevStep={() => setStep(1)}
+        nextStep={(t, u) => {
+          setTicket(t)
           setUserData(u)
           setStep(3)
-        }}
-        prevStep={() => setStep(1)} />,
-      <Step2 key="step2"
-        store={props.store}
-        ticketInfo={ticketInfo}
-        userData={userData}
+        }}/>,
+      <Confirm
+        key="confirm"
         fetchedUserData={props.userData}
-        isLoggedIn={props.isLoggedIn}
+        userData={userData}
+        selectedType={selectedType}
+        selectedPaymentMethod={selectedPaymentMethod}
         submitProgressPercent={submitProgressPercent}
-        submitTicket={async () => await handleSubmit()}
-        nextStep={() => setStep(4)}
-        prevStep={() => setStep(2)} />,
-      <Step3 key="step3"
+        submitAsync={handleSubmitAsync}
+        prevStep={() => setStep(2)}
+        nextStep={() => setStep(4)} />,
+      <Payment
+        key="payment"
+        user={props.user}
+        ticket={ticket}
         store={props.store}
-        ticketInfo={ticketInfo}
-        ticketResult={ticketResult}
-        email={props.userData?.email ?? userData?.email}
+        addedResult={addedResult}
+        selectedType={selectedType}
+        selectedPaymentMethod={selectedPaymentMethod}
         nextStep={() => setStep(5)} />,
-      <Step4 key="step4" store={props.store} ticketResult={ticketResult} />
+      <Complete
+        key="complete"
+        addedResult={addedResult} />
     ])
-  }
-  useEffect(onInitialize, [
-    props.user,
+  }, [
     props.store,
+    props.user,
     props.userData,
-    ticketInfo,
+    ticket,
     userData,
-    ticketResult,
-    submitProgressPercent])
+    selectedType,
+    selectedPaymentMethod,
+    submitProgressPercent,
+    addedResult
+  ])
+
+  const now = new Date().getTime()
 
   return (
     <>
-      <h1>{props.store.storeName} 申し込み受付</h1>
-
-      {props.store.schedules.endApplication < new Date().getTime()
-        ? <Alert type="danger" title="申し込み受付は終了しました">
-          このチケットストアへの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
-        </Alert>
-        : <>
-          <ul>
-            {props.store.descriptions.map((d, k) => <li key={k}>{d}</li>)}
-          </ul>
-          <StepProgress steps={
-            stepProgresses.map((i, k) => ({
-              text: i,
-              isActive: k === step - 1
-            }))
-          } />
-          {stepComponents?.[step] ?? ''}
-        </>}
+      {props.store === null && <Alert title="チケットストアが見つかりません" type="danger">
+        指定されたIDのチケットストアを見つけることができませんでした。<br />
+        URLが正しく入力されていることを確認してください。
+      </Alert>}
+      {props.store && <>
+        <h1>{props.store.storeName} 申し込み受付</h1>
+        {props.store.schedules.endApplication < now
+          ? <Alert type="danger" title="参加受付は終了しました">
+          このイベントのサークル参加申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
+          </Alert>
+          : <>
+            {props.store.descriptions.map((d, k) => <p key={k}>{d}</p>)}
+            <StepProgress
+              steps={stepProgresses.map((s, k) => ({
+                text: s,
+                isActive: k === step - 1
+              }))} />
+            {steps?.[step]}
+          </>}
+      </>}
     </>
   )
 }

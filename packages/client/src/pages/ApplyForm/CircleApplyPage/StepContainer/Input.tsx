@@ -12,9 +12,9 @@ import FormSelect from '../../../../components/Form/Select'
 import FormTextarea from '../../../../components/Form/Textarea'
 import Alert from '../../../../components/Parts/Alert'
 import CircleCutImage from '../../../../components/Parts/CircleCutImage'
+import UserDataForm from '../../../../components/UserDataForm'
 import useDayjs from '../../../../hooks/useDayjs'
 import useFile from '../../../../hooks/useFile'
-import usePostalCode from '../../../../hooks/usePostalCode'
 import useValidate from '../../../../hooks/useValidate'
 import type {
   SockbaseAccount,
@@ -24,6 +24,7 @@ import type {
   SockbaseApplicationLinks,
   SockbaseEventDocument
 } from 'sockbase'
+
 const initialAppBase = {
   eventId: '',
   spaceId: '',
@@ -52,18 +53,6 @@ const initialAppLinksBase: SockbaseApplicationLinks = {
   menuURL: ''
 }
 
-const initialUserDataBase = {
-  name: '',
-  birthday: '1990-01-01',
-  postalCode: '',
-  address: '',
-  telephone: '',
-  email: '',
-  gender: '',
-  password: '',
-  rePassword: ''
-}
-
 interface Props {
   event: SockbaseEventDocument
   app: SockbaseApplication | undefined
@@ -78,7 +67,7 @@ interface Props {
   nextStep: (
     app: SockbaseApplication,
     links: SockbaseApplicationLinks,
-    userData: SockbaseAccountSecure,
+    userData: SockbaseAccountSecure | undefined,
     circleCutData: string,
     circleCutFile: File
   ) => void
@@ -87,7 +76,6 @@ interface Props {
 const Input: React.FC<Props> = (props) => {
   const validator = useValidate()
   const { formatByDate } = useDayjs()
-  const { getAddressByPostalCode } = usePostalCode()
   const {
     data: circleCutDataWithHook,
     openAsDataURL: openCircleCut
@@ -101,7 +89,7 @@ const Input: React.FC<Props> = (props) => {
 
   const [app, setApp] = useState(initialApp)
   const [links, setLinks] = useState(initialAppLinksBase)
-  const [userData, setUserData] = useState(initialUserDataBase)
+  const [userData, setUserData] = useState<SockbaseAccountSecure>()
   const [circleCutFile, setCircleCutFile] = useState<File | null>()
   const [circleCutData, setCircleCutData] = useState<string>()
 
@@ -115,14 +103,6 @@ const Input: React.FC<Props> = (props) => {
   const paymentMethodIds = useMemo(() => sockbaseShared.constants.payment.methods
     .filter(p => p.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
     .map(p => p.id), [props.event])
-
-  const fetchedUserData = useMemo(() => {
-    if (!props.fetchedUserData) return
-    return {
-      ...props.fetchedUserData,
-      birthday: formatByDate(props.fetchedUserData?.birthday, 'YYYY-MM-DD')
-    }
-  }, [props.fetchedUserData])
 
   const selectedSpace = useMemo(() => {
     const space = props.event.spaces.filter(s => s.id === app.spaceId)[0]
@@ -153,19 +133,20 @@ const Input: React.FC<Props> = (props) => {
 
     let errorCount = validators.filter(v => !v).length
 
-    if (fetchedUserData) {
+    if (props.fetchedUserData) {
       const additionalUserDataValidators = [
-        fetchedUserData.gender || validator.isIn(userData.gender, ['1', '2'])
+        props.fetchedUserData.gender || validator.isIn(userData?.gender?.toString() ?? '', ['1', '2'])
       ]
       errorCount += additionalUserDataValidators.filter(v => !v).length
     } else {
+      if (!userData) return 1
       const userDataValidators = [
         validator.isNotEmpty(userData.name),
         validator.isPostalCode(userData.postalCode),
         validator.isEmail(userData.email),
         validator.isStrongPassword(userData.password),
         validator.isNotEmpty(userData.rePassword),
-        validator.isIn(userData.gender, ['1', '2']),
+        validator.isIn(userData.gender?.toString() ?? '', ['1', '2']),
         validator.equals(userData.password, userData.rePassword)
       ]
       errorCount += userDataValidators.filter(v => !v).length
@@ -174,6 +155,7 @@ const Input: React.FC<Props> = (props) => {
     return errorCount
   }, [
     props.event,
+    props.fetchedUserData,
     spaceIds,
     genreIds,
     paymentMethodIds,
@@ -184,14 +166,6 @@ const Input: React.FC<Props> = (props) => {
     circleCutData,
     isAgreed
   ])
-
-  const handleFilledPostalCode = useCallback((postalCode: string) => {
-    const sanitizedPostalCode = postalCode.replaceAll('-', '')
-    if (sanitizedPostalCode.length !== 7) return
-    getAddressByPostalCode(sanitizedPostalCode)
-      .then(fetchedAddress => setUserData(s => ({ ...s, address: fetchedAddress })))
-      .catch(err => { throw err })
-  }, [])
 
   const handleSubmit = useCallback(() => {
     if (errorCount > 0) return
@@ -206,16 +180,7 @@ const Input: React.FC<Props> = (props) => {
     const sanitizedLinks: SockbaseApplicationLinks = {
       ...links
     }
-    const sanitizedUserData: SockbaseAccountSecure = {
-      ...userData,
-      birthday: new Date(userData.birthday).getTime(),
-      gender: userData.gender === '1'
-        ? 1
-        : userData.gender === '2'
-          ? 2
-          : undefined
-    }
-    props.nextStep(sanitizedApp, sanitizedLinks, sanitizedUserData, circleCutData, circleCutFile)
+    props.nextStep(sanitizedApp, sanitizedLinks, userData, circleCutData, circleCutFile)
   }, [errorCount, props.event, app, links, userData, circleCutData, circleCutFile])
 
   const handleApplyPastApp = useCallback(() => {
@@ -260,7 +225,7 @@ const Input: React.FC<Props> = (props) => {
           ...props.app.circle,
           hasAdult: props.app.circle.hasAdult ? 'yes' : 'no'
         },
-        paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || ''
+        paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || props.app.paymentMethod
       })
     }
 
@@ -269,11 +234,7 @@ const Input: React.FC<Props> = (props) => {
     }
 
     if (props.userData) {
-      setUserData({
-        ...props.userData,
-        birthday: formatByDate(props.userData.birthday, 'YYYY-MM-DD'),
-        gender: props.userData.gender?.toString() ?? ''
-      })
+      setUserData(props.userData)
     }
 
     if (props.circleCutFile) {
@@ -358,7 +319,7 @@ const Input: React.FC<Props> = (props) => {
             type="file"
             accept="image/png"
             onChange={e => setCircleCutFile(e.target.files?.[0])}
-            hasError={isAppliedPastApp && !circleCutData}/>
+            hasError={isAppliedPastApp && !circleCutData} />
         </FormItem>
         <FormItem>
           {circleCutData && <CircleCutImage src={circleCutData} />}
@@ -414,11 +375,7 @@ const Input: React.FC<Props> = (props) => {
           <FormItem>
             <FormLabel>成人向け頒布物の有無</FormLabel>
             <FormSelect
-              value={app.circle.hasAdult === null
-                ? ''
-                : app.circle.hasAdult
-                  ? 'yes'
-                  : 'no'}
+              value={app.circle.hasAdult}
               onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, hasAdult: e.target.value } }))}>
               <option value="">選択してください</option>
               <option value="no">無: 成人向け頒布物はありません</option>
@@ -427,10 +384,8 @@ const Input: React.FC<Props> = (props) => {
           </FormItem>
           <FormItem>
             <Alert>
-                成人向け作品を頒布する場合、イベント当日（{formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}）時点で18歳以上である必要があります。
-            </Alert>
-            <Alert>
-                イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
+              成人向け作品を頒布する場合、イベント当日（{formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}）時点で18歳以上である必要があります。<br />
+              イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
             </Alert>
           </FormItem>
         </>}
@@ -554,112 +509,10 @@ const Input: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      {(!fetchedUserData?.gender && <>
-        <h2>申し込み責任者情報</h2>
-        <FormSection>
-          <FormItem>
-            <FormLabel>氏名</FormLabel>
-            <FormInput
-              placeholder='速部 すみれ'
-              value={fetchedUserData?.name || userData.name}
-              onChange={e => setUserData(s => ({ ...s, name: e.target.value }))}
-              disabled={!!fetchedUserData} />
-          </FormItem>
-          <FormItem>
-            <FormLabel>生年月日</FormLabel>
-            <FormInput type="date"
-              value={fetchedUserData?.birthday || userData.birthday}
-              onChange={e => setUserData(s => ({ ...s, birthday: e.target.value }))}
-              disabled={!!fetchedUserData} />
-          </FormItem>
-          <FormItem>
-            <FormLabel>性別</FormLabel>
-            <FormSelect
-              value={fetchedUserData?.gender || userData.gender}
-              onChange={e => setUserData(s => ({ ...s, gender: e.target.value }))}
-              hasError={!!fetchedUserData && !userData.gender}>
-              <option value="">選択してください</option>
-              <option value="1">男性</option>
-              <option value="2">女性</option>
-            </FormSelect>
-          </FormItem>
-        </FormSection>
-        <FormSection>
-          <FormItem>
-            <FormLabel>郵便番号</FormLabel>
-            <FormInput
-              placeholder='0000000'
-              value={fetchedUserData?.postalCode || userData.postalCode}
-              onChange={e => {
-                if (e.target.value.length > 7) return
-                handleFilledPostalCode(e.target.value)
-                setUserData(s => ({ ...s, postalCode: e.target.value.trim() }))
-              }}
-              hasError={!validator.isEmpty(userData.postalCode) && !validator.isPostalCode(userData.postalCode)}
-              disabled={!!props.userData} />
-            <FormHelp>
-              ハイフンは入力不要です
-            </FormHelp>
-          </FormItem>
-          <FormItem>
-            <FormLabel>住所</FormLabel>
-            <FormInput
-              placeholder='東京都千代田区外神田9-9-9'
-              value={fetchedUserData?.address || userData.address}
-              onChange={e => setUserData(s => ({ ...s, address: e.target.value }))}
-              disabled={!!props.userData} />
-          </FormItem>
-          <FormItem>
-            <Alert>住所は都道府県からはじめ、番地・部屋番号まで記入してください。</Alert>
-          </FormItem>
-          <FormItem>
-            <FormLabel>電話番号</FormLabel>
-            <FormInput
-              placeholder='07001234567'
-              value={fetchedUserData?.telephone || userData.telephone}
-              onChange={e => setUserData(s => ({ ...s, telephone: e.target.value.trim() }))}
-              disabled={!!props.userData} />
-          </FormItem>
-        </FormSection>
-      </>) ?? <></>}
-
-      {(!fetchedUserData && <>
-        <h2>Sockbaseログイン情報</h2>
-        <p>
-            申し込み情報の確認等に使用するアカウントを作成します。
-        </p>
-        <FormSection>
-          <FormItem>
-            <FormLabel>メールアドレス</FormLabel>
-            <FormInput type="email"
-              placeholder='sumire@sockbase.net'
-              value={userData.email}
-              onChange={e => setUserData(s => ({ ...s, email: e.target.value }))}
-              hasError={!validator.isEmpty(userData.email) && !validator.isEmail(userData.email)} />
-          </FormItem>
-          <FormItem>
-            <FormLabel>パスワード</FormLabel>
-            <FormInput type="password"
-              placeholder='●●●●●●●●●●●●'
-              value={userData.password}
-              onChange={e => setUserData(s => ({ ...s, password: e.target.value }))}
-              hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)} />
-            <FormHelp hasError={!validator.isEmpty(userData.password) && !validator.isStrongPassword(userData.password)}>
-                アルファベット大文字を含め、英数12文字以上で設定してください。
-            </FormHelp>
-          </FormItem>
-          <FormItem>
-            <FormLabel>パスワード(確認)</FormLabel>
-            <FormInput type="password"
-              placeholder='●●●●●●●●●●●●'
-              value={userData.rePassword}
-              onChange={e => setUserData(s => ({ ...s, rePassword: e.target.value }))}
-              hasError={!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword} />
-            {!validator.isEmpty(userData.rePassword) && userData.password !== userData.rePassword &&
-                <FormHelp hasError>パスワードの入力が間違っています</FormHelp>}
-          </FormItem>
-        </FormSection>
-      </>) ?? <></>}
+      <UserDataForm
+        fetchedUserData={props.fetchedUserData}
+        userData={props.userData}
+        setUserData={u => setUserData(u)} />
 
       <h2>サークル参加費お支払い方法</h2>
       {selectedSpace

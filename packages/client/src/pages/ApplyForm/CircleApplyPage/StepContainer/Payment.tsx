@@ -19,19 +19,18 @@ interface Props {
   user: User | null | undefined
   event: SockbaseEventDocument | undefined
   app: SockbaseApplication | undefined
-  appAddedResult: SockbaseApplicationAddedResult | undefined
+  addedResult: SockbaseApplicationAddedResult | undefined
   selectedSpace: SockbaseEventSpace | undefined
   nextStep: () => void
 }
 const Payment: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
-
   const [checkedPayment, setCheckedPayment] = useState(false)
 
   return (
     <>
       <Alert type="success" title="申し込み情報の送信が完了しました">
-        申し込みIDは「<b>{props.appAddedResult?.hashId}</b> <CopyToClipboard content={props.appAddedResult?.hashId ?? ''} />」です。
+        申し込みIDは「<b>{props.addedResult?.hashId}</b> <CopyToClipboard content={props.addedResult?.hashId ?? ''} />」です。
       </Alert>
 
       <p>
@@ -61,7 +60,7 @@ const Payment: React.FC<Props> = (props) => {
             </tr>
             <tr>
               <th>お支払い補助番号</th>
-              <td>{props.appAddedResult?.bankTransferCode}</td>
+              <td>{props.addedResult?.bankTransferCode}</td>
             </tr>
           </tbody>
         </table>
@@ -97,7 +96,7 @@ const Payment: React.FC<Props> = (props) => {
               {formatByDate((props.event?.schedules.endApplication ?? 0) - 1, 'YYYY/MM/DD')} までに以下の口座へ所定の金額のお振込みをお願いいたします。
             </p>
             <Alert>
-              お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「{props.appAddedResult?.bankTransferCode}」を入力してください。
+              お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「{props.addedResult?.bankTransferCode}」を入力してください。
             </Alert>
             <table>
               <tbody>

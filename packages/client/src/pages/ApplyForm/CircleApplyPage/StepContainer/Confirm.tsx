@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import FormButton from '../../../../components/Form/Button'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
@@ -6,7 +6,7 @@ import Alert from '../../../../components/Parts/Alert'
 import CircleCutImage from '../../../../components/Parts/CircleCutImage'
 import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrapper'
 import ProgressBar from '../../../../components/Parts/ProgressBar'
-import useDayjs from '../../../../hooks/useDayjs'
+import UserDataView from '../../../../components/UserDataView'
 import type {
   SockbaseEventDocument,
   SockbaseApplication,
@@ -33,20 +33,8 @@ interface Props {
   nextStep: () => void
 }
 const Confirm: React.FC<Props> = (props) => {
-  const { formatByDate } = useDayjs()
-
   const [isProgress, setProgress] = useState(false)
   const [error, setError] = useState<Error | null>()
-
-  const displayGender = useMemo(() => {
-    const genderCode = props.fetchedUserData?.gender ?? props.userData?.gender
-    if (!genderCode) return
-    if (genderCode === 1) {
-      return '男性'
-    } else if (genderCode === 2) {
-      return '女性'
-    }
-  }, [props.fetchedUserData, props.userData])
 
   const handleSubmit = useCallback(() => {
     setProgress(true)
@@ -155,49 +143,9 @@ const Confirm: React.FC<Props> = (props) => {
         </tbody>
       </table>
 
-      <h2>申し込み責任者情報</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th>氏名</th>
-            <td>{props.fetchedUserData?.name ?? props.userData?.name}</td>
-          </tr>
-          <tr>
-            <th>性別</th>
-            <td>{displayGender}</td>
-          </tr>
-          <tr>
-            <th>生年月日</th>
-            <td>{formatByDate(props.fetchedUserData?.birthday ?? props.userData?.birthday ?? 0, 'YYYY/MM/DD')}</td>
-          </tr>
-          <tr>
-            <th>郵便番号</th>
-            <td>{props.fetchedUserData?.postalCode ?? props.userData?.postalCode}</td>
-          </tr>
-          <tr>
-            <th>住所</th>
-            <td>{props.fetchedUserData?.address ?? props.userData?.address}</td>
-          </tr>
-          <tr>
-            <th>電話番号</th>
-            <td>{props.fetchedUserData?.telephone ?? props.userData?.telephone}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h2>Sockbaseログイン情報</h2>
-      <table>
-        <tbody>
-          <tr>
-            <th>メールアドレス</th>
-            <td>{props.fetchedUserData?.email ?? props.userData?.email}</td>
-          </tr>
-          <tr>
-            <th>パスワード</th>
-            <td>セキュリティ保護のため非表示</td>
-          </tr>
-        </tbody>
-      </table>
+      <UserDataView
+        fetchedUserData={props.fetchedUserData}
+        userData={props.userData} />
 
       <h2>通信欄</h2>
       <p>

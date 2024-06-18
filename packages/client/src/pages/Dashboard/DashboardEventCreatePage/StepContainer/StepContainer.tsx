@@ -17,8 +17,6 @@ const StepContainer: React.FC = () => {
   const [eyecatchData, setEyecatchData] = useState<string | null>()
 
   const handleCreateAsync = useCallback(async (): Promise<void> => {
-    console.log(event)
-
     if (!eventId || !event) {
       throw new Error('event data is empty')
     }
