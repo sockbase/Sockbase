@@ -142,7 +142,7 @@ export interface SockbaseApplication {
     yomi: string
     penName: string
     penNameYomi: string
-    hasAdult: boolean | null
+    hasAdult: boolean
     genre: string
   }
   overview: SockbaseApplicationOverview
