@@ -6,7 +6,7 @@ import type { SockbaseApplicationAddedResult, SockbaseEventDocument } from 'sock
 
 interface Props {
   event: SockbaseEventDocument | undefined
-  appAddedResult: SockbaseApplicationAddedResult | undefined
+  addedResult: SockbaseApplicationAddedResult | undefined
 }
 const Complete: React.FC<Props> = (props) => {
   return (
@@ -26,12 +26,12 @@ const Complete: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <LinkButton color="default" to={`/dashboard/applications/${props.appAddedResult?.hashId}`}>
+          <LinkButton color="default" to={`/dashboard/applications/${props.addedResult?.hashId}`}>
             マイページを開く
           </LinkButton>
         </FormItem>
         <FormItem>
-          <AnchorButton href={props.event?.eventWebURL} target="_blank">
+          <AnchorButton href={props.event?.eventWebURL}>
             イベントサイトへ戻る
           </AnchorButton>
         </FormItem>

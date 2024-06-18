@@ -31,8 +31,8 @@ interface Props {
   pastApps: SockbaseApplicationDocument[] | null | undefined
   pastAppLinks: Record<string, SockbaseApplicationLinks | null> | null | undefined
   pastEvents: Record<string, SockbaseEventDocument> | null | undefined
-  handleLoginAsync: (email: string, password: string) => Promise<void>
-  handleLogoutAsync: () => Promise<void>
+  loginAsync: (email: string, password: string) => Promise<void>
+  logoutAsync: () => Promise<void>
   createUserAsync: (email: string, password: string) => Promise<User>
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
   submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationAddedResult>
@@ -50,7 +50,7 @@ const StepContainer: React.FC<Props> = (props) => {
   const [circleCutFile, setCircleCutFile] = useState<File>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
-  const [appAddedResult, setAppAddedResult] = useState<SockbaseApplicationAddedResult>()
+  const [addedResult, setAddedResult] = useState<SockbaseApplicationAddedResult>()
 
   const selectedGenre = useMemo(() => {
     if (!props.event || !app) return
@@ -68,18 +68,21 @@ const StepContainer: React.FC<Props> = (props) => {
       .filter(m => m.id === app?.paymentMethod)[0]
   }, [app])
 
-  const submitAsync = useCallback(async () => {
-    if (!app || !links || !userData || !circleCutFile) return
+  const handleSubmitAsync = useCallback(async () => {
+    if (!app || !links || !circleCutFile) return
 
     setSubmitProgressPercent(10)
 
     if (!props.user) {
+      if (!userData) {
+        throw new Error('userData not provided')
+      }
       const newUser = await props.createUserAsync(userData.email, userData.password)
       await props.updateUserDataAsync(newUser.uid, userData)
     } else if (props.userData && !props.userData?.gender) {
       await props.updateUserDataAsync(props.user.uid, {
         ...props.userData,
-        gender: userData.gender
+        gender: userData?.gender
       })
     }
 
@@ -88,7 +91,7 @@ const StepContainer: React.FC<Props> = (props) => {
     await props.submitApplicationAsync({ app, links })
       .then(async result => {
         setSubmitProgressPercent(80)
-        setAppAddedResult(result)
+        setAddedResult(result)
 
         await props.updateCircleCutFileAsync(result.hashId, circleCutFile)
           .then(async () => {
@@ -100,6 +103,8 @@ const StepContainer: React.FC<Props> = (props) => {
       .catch(err => { throw err })
   }, [app, links, userData, circleCutFile])
 
+  useEffect(() => window.scrollTo(0, 0), [step])
+
   const steps = useMemo(() => {
     if (!props.event) return
     return ([
@@ -109,8 +114,8 @@ const StepContainer: React.FC<Props> = (props) => {
         pastApps={props.pastApps}
         eyecatchURL={props.eyecatchURL}
         user={props.user}
-        loginAsync={props.handleLoginAsync}
-        logoutAsync={props.handleLogoutAsync}
+        loginAsync={props.loginAsync}
+        logoutAsync={props.logoutAsync}
         nextStep={() => setStep(1)} />,
       <Introduction
         key="introduction"
@@ -151,19 +156,19 @@ const StepContainer: React.FC<Props> = (props) => {
         submitProgressPercent={submitProgressPercent}
         nextStep={() => setStep(4)}
         prevStep={() => setStep(2)}
-        submitAsync={submitAsync} />,
+        submitAsync={handleSubmitAsync} />,
       <Payment
         key="payment"
         user={props.user}
         event={props.event}
         app={app}
-        appAddedResult={appAddedResult}
+        addedResult={addedResult}
         selectedSpace={selectedSpace}
         nextStep={() => setStep(5)} />,
       <Complete
         key="complete"
         event={props.event}
-        appAddedResult={appAddedResult} />
+        addedResult={addedResult} />
     ])
   }, [
     props.event,
@@ -180,12 +185,10 @@ const StepContainer: React.FC<Props> = (props) => {
     selectedSpace,
     selectedGenre,
     selectedPaymentMethod,
-    submitAsync,
+    handleSubmitAsync,
     submitProgressPercent,
-    appAddedResult
+    addedResult
   ])
-
-  useEffect(() => window.scrollTo(0, 0), [step])
 
   const now = new Date().getTime()
 
@@ -197,20 +200,19 @@ const StepContainer: React.FC<Props> = (props) => {
       </Alert>}
       {props.event && <>
         <h1>{props.event.eventName} サークル参加申し込み受付</h1>
-
-        {props.event.schedules.endApplication < now && <Alert type="danger" title="参加受付は終了しました">
+        {props.event.schedules.endApplication < now
+          ? <Alert type="danger" title="参加受付は終了しました">
           このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
-        </Alert>}
-
-        {props.event.descriptions.map((d, k) => <p key={k}>{d}</p>)}
-
-        <StepProgress
-          steps={stepProgresses.map((s, k) => ({
-            text: s,
-            isActive: k === step - 1
-          }))} />
-
-        {steps?.[step]}
+          </Alert>
+          : <>
+            {props.event.descriptions.map((d, k) => <p key={k}>{d}</p>)}
+            <StepProgress
+              steps={stepProgresses.map((s, k) => ({
+                text: s,
+                isActive: k === step - 1
+              }))} />
+            {steps?.[step]}
+          </>}
       </>}
     </>
   )

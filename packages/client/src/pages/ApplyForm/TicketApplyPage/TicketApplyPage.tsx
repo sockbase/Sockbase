@@ -1,39 +1,53 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { type SockbaseAccount, type SockbaseStoreDocument } from 'sockbase'
-import Alert from '../../../components/Parts/Alert'
-import Loading from '../../../components/Parts/Loading'
 import useFirebase from '../../../hooks/useFirebase'
 import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import DefaultBaseLayout from '../../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import StepContainer from './StepContainer/StepContainer'
+import type { SockbaseAccount, SockbaseStoreDocument } from 'sockbase'
 
 const TicketApplyPage: React.FC = () => {
   const { storeId } = useParams<{ storeId: string }>()
-
-  const { user, isLoggedIn } = useFirebase()
-  const { getMyUserDataAsync } = useUserData()
-  const { getStoreByIdOptionalAsync } = useStore()
+  const {
+    user,
+    loginByEmailAsync,
+    logoutAsync,
+    createUserAsync
+  } = useFirebase()
+  const { getStoreByIdOptionalAsync, createTicketAsync } = useStore()
+  const { updateUserDataAsync, getMyUserDataAsync } = useUserData()
 
   const [store, setStore] = useState<SockbaseStoreDocument | null>()
+
   const [userData, setUserData] = useState<SockbaseAccount | null>()
 
-  const onInitialize = (): void => {
+  const handleLoginAsync = useCallback(async (email: string, password: string) => {
+    await loginByEmailAsync(email, password)
+      .catch(err => { throw err })
+  }, [])
+
+  const handleLogoutAsync = useCallback(async () => {
+    logoutAsync()
+      .catch(err => { throw err })
+  }, [])
+
+  useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!storeId) return
-
-      const fetchedStore = await getStoreByIdOptionalAsync(storeId)
-      setStore(fetchedStore)
-
-      const fetchedUserData = await getMyUserDataAsync()
-      setUserData(fetchedUserData)
+      getStoreByIdOptionalAsync(storeId)
+        .then(fetchedStore => setStore(fetchedStore))
+        .catch(err => {
+          setStore(null)
+          throw err
+        })
+      getMyUserDataAsync()
+        .then(fetchedUserData => setUserData(fetchedUserData))
+        .catch(err => { throw err })
     }
-
     fetchAsync()
       .catch(err => { throw err })
-  }
-  useEffect(onInitialize, [getMyUserDataAsync])
+  }, [storeId, getMyUserDataAsync])
 
   useEffect(() => {
     const handleBeforeUnloadEvent = (event: BeforeUnloadEvent): void => {
@@ -43,26 +57,18 @@ const TicketApplyPage: React.FC = () => {
     return () => window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
   }, [])
 
-  const pageTitle = useMemo(() => (store && `${store.storeName} チケット申し込みフォーム`) || '', [store])
-
   return (
-    <DefaultBaseLayout title={pageTitle}>
-      {store === undefined
-        ? <Loading text="チケットストア情報" />
-        : store === null
-          ? <Alert type="danger" title="チケットストアが見つかりません">
-            指定されたIDのチケットストアを見つけることができませんでした。<br />
-            URLが正しく入力されていることを確認してください。
-          </Alert>
-          : store && isLoggedIn !== undefined && userData !== undefined
-            ? <>
-              {user?.email && <Alert>
-                {user.email} としてログイン中です
-              </Alert>}
-              <StepContainer user={user} store={store} isLoggedIn={isLoggedIn} userData={userData} />
-            </>
-            : <></>}
-    </DefaultBaseLayout >
+    <DefaultBaseLayout title="チケット申し込みページ">
+      <StepContainer
+        store={store}
+        user={user}
+        loginAsync={handleLoginAsync}
+        logoutAsync={handleLogoutAsync}
+        userData={userData}
+        createUserAsync={createUserAsync}
+        updateUserDataAsync={updateUserDataAsync}
+        createTicketAsync={createTicketAsync} />
+    </DefaultBaseLayout>
   )
 }
 

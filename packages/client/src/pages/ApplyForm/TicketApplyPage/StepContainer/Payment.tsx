@@ -1,6 +1,4 @@
-import { useMemo, useState } from 'react'
-import sockbaseShared from 'shared'
-import { type SockbaseStoreType, type SockbaseStoreDocument, type SockbaseTicket, type SockbaseTicketAddedResult } from 'sockbase'
+import { useState } from 'react'
 import FormButton from '../../../../components/Form/Button'
 import FormCheckbox from '../../../../components/Form/Checkbox'
 import FormItem from '../../../../components/Form/FormItem'
@@ -8,53 +6,44 @@ import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
 import useDayjs from '../../../../hooks/useDayjs'
+import type { User } from 'firebase/auth'
+import type { SockbaseStore, SockbaseStoreType, SockbaseTicket, SockbaseTicketAddedResult } from 'sockbase'
 
 interface Props {
-  store: SockbaseStoreDocument
-  ticketInfo: SockbaseTicket | undefined
-  ticketResult: SockbaseTicketAddedResult | undefined
-  email: string | undefined
+  user: User | null | undefined
+  ticket: SockbaseTicket | undefined
+  store: SockbaseStore
+  addedResult: SockbaseTicketAddedResult | undefined
+  selectedType: SockbaseStoreType | undefined
+  selectedPaymentMethod: { id: string, description: string } | undefined
   nextStep: () => void
 }
-const Step3: React.FC<Props> = (props) => {
+const Payment: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
-
   const [checkedPayment, setCheckedPayment] = useState(false)
-
-  const selectedType = useMemo((): SockbaseStoreType | null => {
-    if (!props.store || !props.ticketInfo) return null
-    return props.store.types
-      .filter(t => t.id === props.ticketInfo?.typeId)[0]
-  }, [props.store, props.ticketInfo])
-
-  const selectedPaymentMethod = useMemo((): string => {
-    if (!props.ticketInfo?.paymentMethod) return ''
-    return sockbaseShared.constants.payment.methods
-      .filter(p => p.id === props.ticketInfo?.paymentMethod)[0].description
-  }, [props.ticketInfo])
 
   return (
     <>
       <Alert type="success" title="申し込み情報の送信が完了しました">
-        申し込みIDは「{props.ticketResult?.hashId}」です。
+      申し込みIDは「{props.addedResult?.hashId}」です。
       </Alert>
       <p>
         お申し込みいただきましてありがとうございました。<br />
         申込内容の控えを入力していただいたメールアドレスに送信しましたのでご確認ください。
       </p>
 
-      {selectedType?.productInfo
+      {props.selectedType?.productInfo
         ? <>
           <h1>参加費のお支払い</h1>
           <table>
             <tbody>
               <tr>
                 <th>お支払い方法</th>
-                <td>{selectedPaymentMethod}</td>
+                <td>{props.selectedPaymentMethod?.description}</td>
               </tr>
               <tr>
                 <th>お支払い代金</th>
-                <td>{selectedType?.price.toLocaleString()}円</td>
+                <td>{props.selectedType?.price.toLocaleString()}円</td>
               </tr>
               <tr>
                 <th>お支払い期限</th>
@@ -62,7 +51,7 @@ const Step3: React.FC<Props> = (props) => {
               </tr>
               <tr>
                 <th>お支払い補助番号</th>
-                <td>{props.ticketResult?.bankTransferCode}</td>
+                <td>{props.addedResult?.bankTransferCode}</td>
               </tr>
             </tbody>
           </table>
@@ -73,7 +62,7 @@ const Step3: React.FC<Props> = (props) => {
             銀行振込の場合、振り込みの確認が完了するまで1週間ほどお時間をいただきます。予めご了承ください。
           </p>
 
-          {props.ticketInfo?.paymentMethod === 'online'
+          {props.ticket?.paymentMethod === 'online'
             ? <>
               <h2>オンライン決済でのお支払い</h2>
               <Alert>
@@ -86,7 +75,7 @@ const Step3: React.FC<Props> = (props) => {
               <FormSection>
                 <FormItem>
                   <AnchorButton
-                    href={`${selectedType?.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(props.email ?? '')}`}
+                    href={`${props.selectedType?.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(props.user?.email ?? '')}`}
                     target="_blank"
                     onClick={() => setCheckedPayment(true)}>決済画面を開く</AnchorButton>
                 </FormItem>
@@ -98,7 +87,7 @@ const Step3: React.FC<Props> = (props) => {
                 <b>{formatByDate(props.store.schedules.endApplication, 'YYYY年 M月 D日')}</b> までに以下の口座へ所定の金額のお振り込みをお願いいたします。
               </p>
               <Alert>
-                お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「<b>{props.ticketResult?.bankTransferCode}</b>」を入力してください。
+                お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「<b>{props.addedResult?.bankTransferCode}</b>」を入力してください。
               </Alert>
 
               <table>
@@ -145,12 +134,15 @@ const Step3: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <FormButton color="default" onClick={() => props.nextStep()} disabled={!!selectedType?.productInfo && !checkedPayment}>次へ進む</FormButton>
+          <FormButton
+            onClick={props.nextStep}
+            disabled={!!props.selectedType?.productInfo && !checkedPayment}>
+            次へ進む
+          </FormButton>
         </FormItem>
       </FormSection>
-
     </>
   )
 }
 
-export default Step3
+export default Payment

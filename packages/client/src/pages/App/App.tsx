@@ -15,7 +15,6 @@ import '../../main.css'
 import CircleApplyPage from '../ApplyForm/CircleApplyPage/CircleApplyPage'
 import TicketApplyPage from '../ApplyForm/TicketApplyPage/TicketApplyPage'
 import TicketAssignPage from '../ApplyForm/TicketAssignPage/TicketAssignPage'
-import TicketViewPage from '../ApplyForm/TicketViewPage/TicketViewPage'
 import DashboardCircleApplicationDetailPage from '../Dashboard/DashboardCircleApplicationDetailPage/DashboardCircleApplicationDetailPage'
 import DashboardCircleApplicationEditLinksPage from '../Dashboard/DashboardCircleApplicationEditLinksPage/DashboardCircleApplicationEditLinksPage'
 import DashboardCircleApplicationEditOverviewPage from '../Dashboard/DashboardCircleApplicationEditOverviewPage/DashboardCircleApplicationEditOverviewPage'
@@ -50,11 +49,11 @@ import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/Dashbo
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
 import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from '../IndexPage/IndexPage'
-import NewTicketApplyPage from '../NewApplyForm/TicketApplyPage/TicketApplyPage'
 import NewTicketAssignPage from '../NewApplyForm/TicketAssignPage/TicketAssignPage'
 import PasswordResetPage from '../PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from '../Static/PrivacyPolicyPage'
 import TermsOfServicePage from '../Static/TermsOfServicePage'
+import TicketViewPage from '../TicketViewPage/TicketViewPage'
 import NotFoundPage from './NotFoundPage'
 
 getFirebaseApp()
@@ -104,16 +103,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':storeId',
-            children: [
-              {
-                index: true,
-                element: <TicketApplyPage />
-              },
-              {
-                path: 'new',
-                element: <NewTicketApplyPage />
-              }
-            ]
+            element: <TicketApplyPage />
           }
         ]
       },

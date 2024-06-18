@@ -25,6 +25,8 @@ const Introduction: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
+      <h1>申し込みの前に</h1>
+
       <p>
         このページでは「{props.event.eventName}」へのサークル参加申し込みを受け付けます。<br />
         申し込み手続きを進める前に以下の内容を確認してください。
@@ -186,7 +188,7 @@ const Introduction: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormButton
-            onClick={() => props.nextStep()}>
+            onClick={props.nextStep}>
             申し込みへ進む
           </FormButton>
         </FormItem>

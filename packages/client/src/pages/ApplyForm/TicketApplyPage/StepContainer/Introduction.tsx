@@ -1,11 +1,11 @@
-import { type SockbaseStore } from 'sockbase'
+import { type SockbaseStoreDocument } from 'sockbase'
 import FormButton from '../../../../components/Form/Button'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import useDayjs from '../../../../hooks/useDayjs'
 
 interface Props {
-  store: SockbaseStore
+  store: SockbaseStoreDocument
   prevStep: () => void
   nextStep: () => void
 }
@@ -16,14 +16,19 @@ const Introduction: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton color="default" onClick={props.prevStep}>アカウント確認画面へ戻る</FormButton>
+          <FormButton
+            color="default"
+            onClick={props.prevStep}>
+          アカウント確認画面へ戻る
+          </FormButton>
         </FormItem>
       </FormSection>
 
       <h1>申し込みの前に</h1>
 
       <p>
-        このページでは「{props.store.storeName}」のチケット申し込みを受け付けます。
+        このページでは「{props.store.storeName}」へのサークル参加申し込みを受け付けます。<br />
+        申し込み手続きを進める前に以下の内容を確認してください。
       </p>
 
       <h2>当日までの流れ</h2>
@@ -105,15 +110,13 @@ const Introduction: React.FC<Props> = (props) => {
           </tr>
         </thead>
         <tbody>
-          {
-            props.store.types
-              .filter(t => !t.private)
-              .map(t => <tr key={t.id}>
-                <th>{t.name}</th>
-                <td>{t.price.toLocaleString()}円</td>
-                <td>{t.description}</td>
-              </tr>)
-          }
+          {props.store.types
+            .filter(t => !t.private)
+            .map(t => <tr key={t.id}>
+              <th>{t.name}</th>
+              <td>{t.price.toLocaleString()}円</td>
+              <td>{t.description}</td>
+            </tr>)}
         </tbody>
       </table>
 
@@ -143,10 +146,11 @@ const Introduction: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={() => props.nextStep()}>申し込みへ進む</FormButton>
+          <FormButton onClick={props.nextStep}>
+            申し込みへ進む
+          </FormButton>
         </FormItem>
       </FormSection>
-
     </>
   )
 }

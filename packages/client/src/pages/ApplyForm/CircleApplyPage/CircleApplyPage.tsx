@@ -103,6 +103,14 @@ const NewCircleApplyPage: React.FC = () => {
       .catch(err => { throw err })
   }, [user, eventId])
 
+  useEffect(() => {
+    const handleBeforeUnloadEvent = (event: BeforeUnloadEvent): void => {
+      event.preventDefault()
+    }
+    window.addEventListener('beforeunload', handleBeforeUnloadEvent)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnloadEvent)
+  }, [])
+
   return (
     <DefaultBaseLayout title={pageTitle}>
       <StepContainer
@@ -113,8 +121,8 @@ const NewCircleApplyPage: React.FC = () => {
         pastApps={pastApps}
         pastAppLinks={pastAppLinks}
         pastEvents={pastEvents}
-        handleLoginAsync={handleLoginAsync}
-        handleLogoutAsync={handleLogoutAsync}
+        loginAsync={handleLoginAsync}
+        logoutAsync={handleLogoutAsync}
         createUserAsync={createUserAsync}
         updateUserDataAsync={updateUserDataAsync}
         submitApplicationAsync={submitApplicationAsync}

@@ -1,13 +1,12 @@
-import { type SockbaseTicketAddedResult, type SockbaseStoreDocument } from 'sockbase'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
+import type { SockbaseTicketAddedResult } from 'sockbase'
 
 interface Props {
-  store: SockbaseStoreDocument
-  ticketResult: SockbaseTicketAddedResult | undefined
+  addedResult: SockbaseTicketAddedResult | undefined
 }
-const Step4: React.FC<Props> = (props) => {
+const Complete: React.FC<Props> = (props) => {
   return (
     <>
       <h1>お申し込みが完了しました</h1>
@@ -40,11 +39,16 @@ const Step4: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <AnchorButton href={`/dashboard/tickets/${props.ticketResult?.hashId}`} target="_blank" rel="noreferrer">チケット情報ページを開く</AnchorButton>
+          <AnchorButton
+            href={`/dashboard/tickets/${props.addedResult?.hashId}`}
+            target="_blank"
+            rel="noreferrer">
+              チケット情報ページを開く
+          </AnchorButton>
         </FormItem>
       </FormSection>
     </>
   )
 }
 
-export default Step4
+export default Complete
