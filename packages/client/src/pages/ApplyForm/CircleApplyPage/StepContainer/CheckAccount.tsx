@@ -1,7 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { type SockbaseApplicationDocument, type SockbaseEventDocument } from 'sockbase'
 import dummyEyecatchImage from '../../../../assets/dummy-eyecatch.jpg'
 import FormButton from '../../../../components/Form/Button'
 import FormItem from '../../../../components/Form/FormItem'
@@ -9,6 +8,7 @@ import FormSection from '../../../../components/Form/FormSection'
 import LoginForm from '../../../../components/LoginForm'
 import Alert from '../../../../components/Parts/Alert'
 import type { User } from 'firebase/auth'
+import type { SockbaseApplicationDocument, SockbaseEventDocument } from 'sockbase'
 
 interface Props {
   pastApps: SockbaseApplicationDocument[] | null | undefined

@@ -1,8 +1,8 @@
-import { type SockbaseStoreDocument } from 'sockbase'
 import FormButton from '../../../../components/Form/Button'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import useDayjs from '../../../../hooks/useDayjs'
+import type { SockbaseStoreDocument } from 'sockbase'
 
 interface Props {
   store: SockbaseStoreDocument
