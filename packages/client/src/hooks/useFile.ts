@@ -13,28 +13,32 @@ const useFile = (): IUseFile => {
   const [arrayBufferResult, setArrayBuffer] = useState<ArrayBuffer>()
   const [error, setError] = useState<DOMException | null>()
 
-  const openAsText = (file: Blob): void => {
-    const reader = new FileReader()
-    reader.onerror = () => setError(reader.error)
-    reader.onload = () => setData((reader.result as string) || '')
+  const openAsText =
+    (file: Blob): void => {
+      const reader = new FileReader()
+      reader.onerror = () => setError(reader.error)
+      reader.onload = () => setData((reader.result as string) || '')
 
-    reader.readAsText(file)
-  }
+      reader.readAsText(file)
+    }
 
-  const openAsDataURL = (file: Blob): void => {
-    const reader = new FileReader()
-    reader.onerror = () => setError(reader.error)
-    reader.onload = () => setData((reader.result as string) || '')
+  const openAsDataURL =
+    (file: Blob): void => {
+      const reader = new FileReader()
+      reader.onerror = () => setError(reader.error)
+      reader.onload = () => setData((reader.result as string) || '')
 
-    reader.readAsDataURL(file)
-  }
-  const openAsArrayBuffer = (file: Blob): void => {
-    const reader = new FileReader()
-    reader.onerror = () => setError(reader.error)
-    reader.onload = () => setArrayBuffer(reader.result as ArrayBuffer)
+      reader.readAsDataURL(file)
+    }
 
-    reader.readAsArrayBuffer(file)
-  }
+  const openAsArrayBuffer =
+    (file: Blob): void => {
+      const reader = new FileReader()
+      reader.onerror = () => setError(reader.error)
+      reader.onload = () => setArrayBuffer(reader.result as ArrayBuffer)
+
+      reader.readAsArrayBuffer(file)
+    }
 
   return {
     data,

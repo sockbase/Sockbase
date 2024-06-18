@@ -11,49 +11,49 @@ import {
 } from '../../libs/FirebaseApp'
 import GlobalStyle from '../../styles/GlobalStyle'
 import ResetStyle from '../../styles/ResetStyle'
-import EventApplicationPage from '../CircleApplication/CircleApplicationPage'
-import DashboardCircleApplicationDetailPage from '../DashboardCircleApplication/DashboardCircleApplicationDetailPage'
-import DashboardCircleApplicationEditLinksPage from '../DashboardCircleApplication/DashboardCircleApplicationEditLinksPage'
-import DashboardCircleApplicationEditOverviewPage from '../DashboardCircleApplication/DashboardCircleApplicationEditOverviewPage'
-import DashboardCircleApplicationListPage from '../DashboardCircleApplication/DashboardCircleApplicationListPage'
-import DashboardCircleApplicationUpdateCutPage from '../DashboardCircleApplication/DashboardCircleApplicationUpdateCutPage'
-import DashboardContactPage from '../DashboardContact/DashboardContactPage'
-import DashboardEventCreatePage from '../DashboardEventManage/EventCreate/DashboardEventCreatePage'
-import DashboardEventInfoPage from '../DashboardEventManage/EventInfo/DashboardEventInfoPage'
-import DashboardEventMailSendPage from '../DashboardEventManage/MailSend/DashboardEventMailSendPage'
-import DashboardEventCreatePassPage from '../DashboardEventManage/PassCreate/DashboardEventCreatePassPage'
-import DashboardEventSpacesPage from '../DashboardEventSpaces/DashboardEventSpacesPage'
-import DashboardEventCircleApplicationPrintTanzakuPage from '../DashboardEvents/DashboardEventCircleApplicationPrintTanzaku'
-import DashboardEventApplicationsPage from '../DashboardEvents/DashboardEventCircleApplicationsPage'
-import DashboardEventCircleCutsPage from '../DashboardEvents/DashboardEventCircleCutsPage'
-import DashboardEventListPage from '../DashboardEvents/DashboardEventListPage'
-import DashboardInquiryDetailPage from '../DashboardInquiry/DashboardInquiryDetailPage'
-import DashboardInquiryListPage from '../DashboardInquiry/DashboardInquiryListPage'
-import DashboardLicensePage from '../DashboardLicense/DashboardLicensePage'
-import DashboardPaymentListPage from '../DashboardPayments/DashboardPaymentListPage'
-import DashboardSearchPage from '../DashboardSearch/DashboardSearchPage'
-import DashboardSettingsPage from '../DashboardSettings/DashboardSettingsPage'
-import DashboardStoreCreatePage from '../DashboardStoreManage/StoreCreate/DashboardStoreCreatePage'
-import DashboardStoreInfoPage from '../DashboardStoreManage/StoreInfo/DashboardStoreInfoPage'
-import DashboardStoreDetailPage from '../DashboardStores/DashboardStoreDetailPage'
-import DashboardStoreListPage from '../DashboardStores/DashboardStoreListPage'
-import DashboardTicketCreatePage from '../DashboardStores/DashboardStoreTicketCreatePage'
-import DashboardStreamTerminalPage from '../DashboardStreamTerminalPage/DashboardStreamTerminalPage'
-import DashboardMyTicketDetailPage from '../DashboardTickets/DashboardMyTicketDetailPage'
-import DashboardMyTicketListPage from '../DashboardTickets/DashboardMyTicketListPage'
-import DashboardTicketDetailPage from '../DashboardTickets/DashboardTicketDetailPage'
-import DashboardTicketListPage from '../DashboardTickets/DashboardTicketListPage'
-import DashboardTicketTerminalPage from '../DashboardTickets/DashboardTicketTerminalPage'
-import DashboardTopPage from '../DashboardTop/DashboardTopPage'
-import IndexPage from '../Index/IndexPage'
-import PasswordResetPage from '../PasswordReset/PasswordResetPage'
+import '../../main.css'
+import CircleApplyPage from '../ApplyForm/CircleApplyPage/CircleApplyPage'
+import TicketApplyPage from '../ApplyForm/TicketApplyPage/TicketApplyPage'
+import TicketAssignPage from '../ApplyForm/TicketAssignPage/TicketAssignPage'
+import DashboardCircleApplicationDetailPage from '../Dashboard/DashboardCircleApplicationDetailPage/DashboardCircleApplicationDetailPage'
+import DashboardCircleApplicationEditLinksPage from '../Dashboard/DashboardCircleApplicationEditLinksPage/DashboardCircleApplicationEditLinksPage'
+import DashboardCircleApplicationEditOverviewPage from '../Dashboard/DashboardCircleApplicationEditOverviewPage/DashboardCircleApplicationEditOverviewPage'
+import DashboardCircleApplicationListPage from '../Dashboard/DashboardCircleApplicationListPage/DashboardCircleApplicationListPage'
+import DashboardCircleApplicationUpdateCutPage from '../Dashboard/DashboardCircleApplicationUpdateCutPage/DashboardCircleApplicationUpdateCutPage'
+import DashboardContactPage from '../Dashboard/DashboardContactPage/DashboardContactPage'
+import DashboardEventApplicationListPage from '../Dashboard/DashboardEventApplicationListPage/DashboardEventApplicationListPage'
+import DashboardEventApplicationPrintTanzakuPage from '../Dashboard/DashboardEventApplicationPrintTanzakuPage/DashboardEventApplicationPrintTanzakuPage'
+import DashboardEventCircleCutDownloadPage from '../Dashboard/DashboardEventCircleCutDownloadPage/DashboardEventCircleCutDownloadPage'
+import DashboardEventCreatePage from '../Dashboard/DashboardEventCreatePage/DashboardEventCreatePage'
+import DashboardEventListPage from '../Dashboard/DashboardEventListPage/DashboardEventListPage'
+import DashboardEventMailSendPage from '../Dashboard/DashboardEventMailSendPage/DashboardEventMailSendPage'
+import DashboardEventMetaViewPage from '../Dashboard/DashboardEventMetaViewPage/DashboardEventMetaViewPage'
+import DashboardEventPassCreatePage from '../Dashboard/DashboardEventPassCreatePage/DashboardEventPassCreatePage'
+import DashboardEventSpaceManagePage from '../Dashboard/DashboardEventSpaceManagePage/DashboardEventSpaceManagePage'
+import DashboardInquiryDetailPage from '../Dashboard/DashboardInquiryDetailPage/DashboardInquiryDetailPage'
+import DashboardInquiryListPage from '../Dashboard/DashboardInquiryListPage/DashboardInquiryListPage'
+import DashboardLicenseViewPage from '../Dashboard/DashboardLicenseViewPage/DashboardLicenseViewPage'
+import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
+import DashboardMyTicketListPage from '../Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
+import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
+import DashboardSearchPage from '../Dashboard/DashboardSearchPage/DashboardSearchPage'
+import DashboardSettingPage from '../Dashboard/DashboardSettingPage/DashboardSettingPage'
+import DashboardStoreCreatePage from '../Dashboard/DashboardStoreCreatePage/DashboardStoreCreatePage'
+import DashboardStoreListPage from '../Dashboard/DashboardStoreListPage/DashboardStoreListPage'
+import DashboardStoreMetaViewPage from '../Dashboard/DashboardStoreMetaViewPage/DashboardStoreMetaViewPage'
+import DashboardStoreTicketCreatePage from '../Dashboard/DashboardStoreTicketCreatePage/DashboardStoreTicketCreatePage'
+import DashboardStoreTicketListPage from '../Dashboard/DashboardStoreTicketListPage/DashboardStoreTicketListPage'
+import DashboardStreamTerminalPage from '../Dashboard/DashboardStreamTerminalPage/DashboardStreamTerminalPage'
+import DashboardTicketDetailPage from '../Dashboard/DashboardTicketDetailPage/DashboardTicketDetailPage'
+import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/DashboardTicketListPage'
+import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
+import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
+import IndexPage from '../IndexPage/IndexPage'
+import PasswordResetPage from '../PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from '../Static/PrivacyPolicyPage'
 import TermsOfServicePage from '../Static/TermsOfServicePage'
-import TicketApplicationPage from '../TicketApplication/TicketApplicationPage'
-import TicketAssignPage from '../TicketAssign/TicketAssignPage'
-import TicketViewPage from '../TicketView/TicketViewPage'
+import TicketViewPage from '../TicketViewPage/TicketViewPage'
 import NotFoundPage from './NotFoundPage'
-import '../../main.css'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -93,7 +93,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':eventId',
-            element: <EventApplicationPage />
+            element: <CircleApplyPage />
           }
         ]
       },
@@ -102,7 +102,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':storeId',
-            element: <TicketApplicationPage />
+            element: <TicketApplyPage />
           }
         ]
       },
@@ -135,7 +135,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardSettingsPage />
+                element: <DashboardSettingPage />
               }
             ]
           },
@@ -164,23 +164,23 @@ const router = createBrowserRouter([
                 children: [
                   {
                     index: true,
-                    element: <DashboardEventApplicationsPage />
+                    element: <DashboardEventApplicationListPage />
                   },
                   {
                     path: 'spaces',
-                    element: <DashboardEventSpacesPage />
+                    element: <DashboardEventSpaceManagePage />
                   },
                   {
                     path: 'info',
-                    element: <DashboardEventInfoPage />
+                    element: <DashboardEventMetaViewPage />
                   },
                   {
                     path: 'tanzaku',
-                    element: <DashboardEventCircleApplicationPrintTanzakuPage />
+                    element: <DashboardEventApplicationPrintTanzakuPage />
                   },
                   {
                     path: 'cuts',
-                    element: <DashboardEventCircleCutsPage />
+                    element: <DashboardEventCircleCutDownloadPage />
                   },
                   {
                     path: 'send-mails',
@@ -188,7 +188,7 @@ const router = createBrowserRouter([
                   },
                   {
                     path: 'create-passes',
-                    element: <DashboardEventCreatePassPage />
+                    element: <DashboardEventPassCreatePage />
                   }
                 ]
               }
@@ -257,15 +257,15 @@ const router = createBrowserRouter([
                 children: [
                   {
                     index: true,
-                    element: <DashboardStoreDetailPage />
+                    element: <DashboardStoreTicketListPage />
                   },
                   {
                     path: 'create',
-                    element: <DashboardTicketCreatePage />
+                    element: <DashboardStoreTicketCreatePage />
                   },
                   {
                     path: 'info',
-                    element: <DashboardStoreInfoPage />
+                    element: <DashboardStoreMetaViewPage />
                   }
                 ]
               }
@@ -303,7 +303,7 @@ const router = createBrowserRouter([
           },
           {
             path: 'license',
-            element: <DashboardLicensePage />
+            element: <DashboardLicenseViewPage />
           },
           {
             path: 'search',
