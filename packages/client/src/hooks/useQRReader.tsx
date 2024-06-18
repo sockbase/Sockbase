@@ -10,16 +10,17 @@ interface IUseQRReader {
 const useQRReader = (): IUseQRReader => {
   const [data, setData] = useState<string>()
 
-  const handleResult = useCallback((result: any) => {
-    if (!result) return
-    if (result.text === data) return
-    setData(result.text)
-  }, [])
+  const handleResult =
+    useCallback((result: any) => {
+      if (!result) return
+      if (result.text === data) return
+      setData(result.text)
+    }, [])
 
   const resetData = useCallback(() => setData(undefined), [])
 
-  const QRReaderComponent: React.FC = useCallback(
-    () => (
+  const QRReaderComponent: React.FC =
+    useCallback(() => (
       <>
         <QrReader
           constraints={{ facingMode: 'environment' }}
@@ -37,9 +38,7 @@ const useQRReader = (): IUseQRReader => {
           }
         />
       </>
-    ),
-    [QrReader]
-  )
+    ), [QrReader])
 
   return {
     data,
