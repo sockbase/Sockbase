@@ -12,6 +12,7 @@ import {
 import GlobalStyle from '../../styles/GlobalStyle'
 import ResetStyle from '../../styles/ResetStyle'
 import '../../main.css'
+import ActionPage from '../ActionPage/ActionPage'
 import CircleApplyPage from '../ApplyForm/CircleApplyPage/CircleApplyPage'
 import TicketApplyPage from '../ApplyForm/TicketApplyPage/TicketApplyPage'
 import TicketAssignPage from '../ApplyForm/TicketAssignPage/TicketAssignPage'
@@ -49,7 +50,6 @@ import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/Dashbo
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
 import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from '../IndexPage/IndexPage'
-import PasswordChangePage from '../PasswordChangePage/PasswordChangePage'
 import PasswordResetPage from '../PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from '../Static/PrivacyPolicyPage'
 import TermsOfServicePage from '../Static/TermsOfServicePage'
@@ -90,8 +90,8 @@ const router = createBrowserRouter([
         element: <PasswordResetPage />
       },
       {
-        path: 'change-password',
-        element: <PasswordChangePage />
+        path: 'action',
+        element: <ActionPage />
       },
       {
         path: 'events',
