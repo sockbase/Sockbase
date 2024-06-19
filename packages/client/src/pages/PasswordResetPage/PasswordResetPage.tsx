@@ -7,7 +7,6 @@ import FormInput from '../../components/Form/Input'
 import FormLabel from '../../components/Form/Label'
 import Alert from '../../components/Parts/Alert'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import LinkButton from '../../components/Parts/LinkButton'
 import useFirebase from '../../hooks/useFirebase'
 import useFirebaseError from '../../hooks/useFirebaseError'
 import useValidate from '../../hooks/useValidate'
@@ -81,17 +80,10 @@ const PasswordResetPage: React.FC = () => {
         </FormItem>
       </FormSection>
 
-      {isSuccess && <>
-        <Alert type="success" title="リセットURLを送付しました">
-          入力したメールアドレス宛にリセットURLを送付しました。<br />
-          メールボックスをご確認ください。
-        </Alert>
-        <FormSection>
-          <FormItem>
-            <LinkButton to="/">ログイン画面へ進む</LinkButton>
-          </FormItem>
-        </FormSection>
-      </>}
+      {isSuccess && <Alert type="success" title="リセットURLを送付しました">
+        入力したメールアドレス宛にリセットURLを送付しました。<br />
+        メールボックスをご確認ください。
+      </Alert>}
 
       {errorMessage && <Alert type="danger" title="エラーが発生しました">
         {errorMessage}
