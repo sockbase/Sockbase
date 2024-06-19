@@ -49,6 +49,7 @@ import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/Dashbo
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
 import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from '../IndexPage/IndexPage'
+import PasswordChangePage from '../PasswordChangePage/PasswordChangePage'
 import PasswordResetPage from '../PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from '../Static/PrivacyPolicyPage'
 import TermsOfServicePage from '../Static/TermsOfServicePage'
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
       {
         path: 'reset-password',
         element: <PasswordResetPage />
+      },
+      {
+        path: 'change-password',
+        element: <PasswordChangePage />
       },
       {
         path: 'events',
