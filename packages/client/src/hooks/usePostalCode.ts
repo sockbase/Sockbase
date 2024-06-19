@@ -1,4 +1,4 @@
-import { type PostalCodeResult } from '../@types'
+import type { PostalCodeResult } from '../@types'
 
 interface IUsePostalCode {
   getAddressByPostalCode: (postalCode: string) => Promise<string>

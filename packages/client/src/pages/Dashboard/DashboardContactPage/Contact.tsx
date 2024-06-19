@@ -79,7 +79,7 @@ const Contact: React.FC = () => {
 
     const selectedInquiry = inquiryHelper.inquiryTypes.filter(t => t.type === type)[0]
     return selectedInquiry
-  }, [type])
+  }, [type, submitInquiry])
 
   return (
     <>
