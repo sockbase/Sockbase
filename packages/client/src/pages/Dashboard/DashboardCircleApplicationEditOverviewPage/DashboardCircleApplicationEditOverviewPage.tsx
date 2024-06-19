@@ -101,7 +101,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
         alert(`エラーが発生しました ${err.message}`)
       })
       .finally(() => setProgress(false))
-  }, [appId, overview, errorCount])
+  }, [appId, overview, errorCount, setOverviewByApplicationIdAsync])
 
   return (
     <DashboardBaseLayout title="頒布物情報編集" requireSystemRole={0}>

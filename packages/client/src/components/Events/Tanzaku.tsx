@@ -14,6 +14,7 @@ interface Props {
 }
 const Tanzaku: React.FC<Props> = (props) => {
   const eventAge = useMemo(() => {
+    if (!props.userData) return
     const span = props.event.schedules.startEvent - (props.userData?.birthday ?? 0)
     return Math.floor(span / (365 * 24 * 60 * 60 * 1000))
   }, [props.event, props.userData])

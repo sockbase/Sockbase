@@ -76,7 +76,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
         alert(`エラーが発生しました ${err.message}`)
       })
       .finally(() => setProgress(false))
-  }, [appId, errorCount, links])
+  }, [appId, errorCount, links, setLinksByApplicationIdAsync])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
