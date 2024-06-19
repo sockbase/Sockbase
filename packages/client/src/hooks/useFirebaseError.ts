@@ -32,6 +32,8 @@ const useFirebaseError = (): IUseFirebaseError => {
         return '認証エラーです。キャッシュクリアや再読み込みすると解消する場合があります。'
       } else if (errorMessage.includes('invalid_argument')) {
         return `不正なリクエストです: ${errorMessage}`
+      } else if (errorMessage.includes('invalid-action-code')) {
+        return 'トークンが無効です。'
       } else {
         return `不明なエラーです: ${errorMessage}`
       }
