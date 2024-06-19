@@ -175,6 +175,8 @@ const Button = styled(FormButton)`
   padding: 5px 10px;
   border: 1px solid #000000;
   color: #000000;
+  font: inherit;
+  font-weight: bold;
   outline: none;
   background-color: transparent;
 

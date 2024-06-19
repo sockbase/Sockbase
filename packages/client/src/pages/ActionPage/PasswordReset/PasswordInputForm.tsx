@@ -1,11 +1,11 @@
 import { useCallback, useMemo, useState } from 'react'
-import FormButton from '../../components/Form/Button'
-import FormItem from '../../components/Form/FormItem'
-import FormSection from '../../components/Form/FormSection'
-import FormHelp from '../../components/Form/Help'
-import FormInput from '../../components/Form/Input'
-import FormLabel from '../../components/Form/Label'
-import useValidate from '../../hooks/useValidate'
+import FormButton from '../../../components/Form/Button'
+import FormItem from '../../../components/Form/FormItem'
+import FormSection from '../../../components/Form/FormSection'
+import FormHelp from '../../../components/Form/Help'
+import FormInput from '../../../components/Form/Input'
+import FormLabel from '../../../components/Form/Label'
+import useValidate from '../../../hooks/useValidate'
 
 interface Props {
   submitAsync: (password: string) => Promise<void>
