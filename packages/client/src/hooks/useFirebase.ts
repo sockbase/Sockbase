@@ -13,7 +13,8 @@ import {
   onIdTokenChanged,
   sendEmailVerification,
   verifyPasswordResetCode,
-  confirmPasswordReset
+  confirmPasswordReset,
+  applyActionCode
 } from 'firebase/auth'
 import {
   type Database,
@@ -46,6 +47,7 @@ interface IUseFirebase {
   sendVerifyMailAsync: () => Promise<void>
   verifyPasswordResetCodeAsync: (code: string) => Promise<void>
   confirmPasswordResetAsync: (code: string, password: string) => Promise<void>
+  applyActionCodeAsync: (code: string) => Promise<void>
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
   getFunctions: () => Functions
@@ -116,13 +118,16 @@ const useFirebase = (): IUseFirebase => {
   const verifyPasswordResetCodeAsync = async (code: string): Promise<void> => {
     const auth = getAuth()
     await verifyPasswordResetCode(auth, code)
-      .catch(err => { throw err })
   }
 
   const confirmPasswordResetAsync = async (code: string, password: string): Promise<void> => {
     const auth = getAuth()
-    confirmPasswordReset(auth, code, password)
-      .catch(err => { throw err })
+    await confirmPasswordReset(auth, code, password)
+  }
+
+  const applyActionCodeAsync = async (code: string): Promise<void> => {
+    const auth = getAuth()
+    await applyActionCode(auth, code)
   }
 
   const getFirestore = (): Firestore => getFirebaseFirestore()
@@ -175,6 +180,7 @@ const useFirebase = (): IUseFirebase => {
     sendVerifyMailAsync,
     verifyPasswordResetCodeAsync,
     confirmPasswordResetAsync,
+    applyActionCodeAsync,
     getFirestore,
     getStorage,
     getFunctions,
