@@ -38,13 +38,15 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
 
   const handleSendVerifyMail = useCallback(() => {
     sendVerifyMailAsync()
-      .then(() => alert('送信が完了しました。'))
+      .then(() => {
+        alert('送信が完了しました。')
+        setSentVerifyMail(true)
+      })
       .catch(err => {
         alert('エラーが発生しました。')
         throw err
       })
-    setSentVerifyMail(true)
-  }, [])
+  }, [sendVerifyMailAsync])
 
   const isValidRole = useMemo((): boolean => {
     if (systemRole === undefined && commonRole === undefined) return false
