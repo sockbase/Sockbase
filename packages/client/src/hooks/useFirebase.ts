@@ -106,6 +106,7 @@ const useFirebase = (): IUseFirebase => {
     useCallback(async (): Promise<void> => {
       if (!user) return
       sendEmailVerification(user)
+        .then(() => console.log('ok'))
         .catch(err => { throw err })
     }, [user])
 
