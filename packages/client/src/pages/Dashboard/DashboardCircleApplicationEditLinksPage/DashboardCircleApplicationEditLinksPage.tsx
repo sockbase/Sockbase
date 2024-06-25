@@ -155,7 +155,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
                   value={links.twitterScreenName ?? ''}
                   onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value }))} />
                 <FormHelp hasError={!!links.twitterScreenName && !validator.isTwitterScreenName(links.twitterScreenName)}>
-                  @を除いて入力してください
+                  @ を除いて入力してください
                 </FormHelp>
               </FormItem>
               <FormItem>
@@ -165,32 +165,32 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
                   value={links.pixivUserId ?? ''}
                   onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value }))} />
                 <FormHelp hasError={!!links.pixivUserId && !validator.isOnlyNumber(links.pixivUserId)}>
-                  ID部分のみを入力してください
+                  ID 部分のみを入力してください
                 </FormHelp>
               </FormItem>
               <FormItem>
-                <FormLabel>Webサイト</FormLabel>
+                <FormLabel>Web サイト</FormLabel>
                 <FormInput
                   placeholder='https://sumire.sockbase.net'
                   value={links.websiteURL ?? ''}
                   onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value }))} />
                 <FormHelp hasError={!!links.websiteURL && !validator.isURL(links.websiteURL)}>
-                  http://から始めてください
+                  http:// から始めてください
                 </FormHelp>
               </FormItem>
               <FormItem>
-                <FormLabel>お品書きURL</FormLabel>
+                <FormLabel>お品書き URL</FormLabel>
                 <FormInput
                   placeholder='https://oshina.sockbase.net'
                   value={links.menuURL ?? ''}
                   onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value }))} />
                 <FormHelp hasError={!!links.menuURL && !validator.isURL(links.menuURL)}>
-                  http://から始めてください
+                  http:// から始めてください
                 </FormHelp>
               </FormItem>
             </FormSection>
 
-            {errorCount !== 0 && <Alert type="danger">{errorCount}個の入力項目に不備があります。</Alert>}
+            {errorCount !== 0 && <Alert type="danger">{errorCount} 個の入力項目に不備があります。</Alert>}
 
             <FormSection>
               <FormItem>

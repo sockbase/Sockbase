@@ -295,7 +295,7 @@ const DashboardTicketDetailPage: React.FC = () => {
           <table>
             <tbody>
               <tr>
-                <th>チケットID</th>
+                <th>チケット ID</th>
                 <td>{hashedTicketId} <CopyToClipboard content={hashedTicketId ?? ''} /></td>
               </tr>
               <tr>
@@ -333,7 +333,7 @@ const DashboardTicketDetailPage: React.FC = () => {
               </FormItem>
               {openAssignPanel && <>
                 <FormItem>
-                  チケットを渡したい方へ以下のURLを送付してください。
+                  チケットを渡したい方へ以下の URL を送付してください。
                 </FormItem>
                 <FormItem>
                   <FormTextarea disabled>{assignURL}</FormTextarea>

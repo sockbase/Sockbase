@@ -70,7 +70,7 @@ const Confirm: React.FC<Props> = (props) => {
             <td>{props.app?.circle.name}</td>
           </tr>
           <tr>
-            <th>サークル名(よみ)</th>
+            <th>サークル名 (よみ)</th>
             <td>{props.app?.circle.yomi}</td>
           </tr>
           <tr>
@@ -78,7 +78,7 @@ const Confirm: React.FC<Props> = (props) => {
             <td>{props.app?.circle.penName}</td>
           </tr>
           <tr>
-            <th>ペンネーム(よみ)</th>
+            <th>ペンネーム (よみ)</th>
             <td>{props.app?.circle.penNameYomi}</td>
           </tr>
         </tbody>
@@ -114,7 +114,7 @@ const Confirm: React.FC<Props> = (props) => {
       <table>
         <tbody>
           <tr>
-            <th>合体希望サークル 合体申し込みID</th>
+            <th>合体希望サークル 合体申し込み ID</th>
             <td>{props.app?.unionCircleId || '(空欄)'}</td>
           </tr>
           <tr>
@@ -136,11 +136,11 @@ const Confirm: React.FC<Props> = (props) => {
             <td>{(props.links?.pixivUserId && `users/${props.links?.pixivUserId}`) || '(空欄)'}</td>
           </tr>
           <tr>
-            <th>Webサイト</th>
+            <th>Web サイト</th>
             <td>{props.links?.websiteURL || '(空欄)'}</td>
           </tr>
           <tr>
-            <th>お品書きURL</th>
+            <th>お品書き URL</th>
             <td>{props.links?.menuURL || '(空欄)'}</td>
           </tr>
         </tbody>
@@ -181,7 +181,7 @@ const Confirm: React.FC<Props> = (props) => {
 
       <h1>申し込み情報送信</h1>
       <p>
-        上記の内容で正しければ「決済に進む(申し込み情報送信)」ボタンを押してください。
+        上記の内容で正しければ「決済に進む (申し込み情報送信)」ボタンを押してください。
       </p>
       <p>
         修正する場合は「修正」ボタンを押してください。
@@ -204,7 +204,7 @@ const Confirm: React.FC<Props> = (props) => {
             <FormButton
               onClick={handleSubmit}
               disabled={isProgress}>
-                決済に進む(申し込み情報送信)
+                決済に進む (申し込み情報送信)
             </FormButton>
           </LoadingCircleWrapper>
         </FormItem>
@@ -214,7 +214,7 @@ const Confirm: React.FC<Props> = (props) => {
         <ProgressBar percent={props.submitProgressPercent}/>
         <Alert>
           送信処理に時間がかかる場合がございます。<br />
-          進捗率が100%になるまでそのままでお待ちください。
+          進捗率が 100% になるまでそのままでお待ちください。
         </Alert>
       </>}
     </>

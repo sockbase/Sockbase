@@ -351,7 +351,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
                 </td>
               </tr>
               <tr>
-                <th>お品書きURL</th>
+                <th>お品書き URL</th>
                 <td>
                   {links !== undefined
                     ? links?.menuURL || '(未入力)'
@@ -415,7 +415,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </FormSection>}
         </>
         <>
-          <h3>隣接配置(合体)希望</h3>
+          <h3>隣接配置 (合体) 希望</h3>
           <table>
             <tbody>
               <tr>

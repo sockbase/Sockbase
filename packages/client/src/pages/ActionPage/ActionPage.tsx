@@ -32,7 +32,7 @@ const ActionPage: React.FC = () => {
     const paramActionMode = searchParams.get('mode')
     const paramOOBCode = searchParams.get('oobCode')
     if (!paramOOBCode || !paramActionMode) {
-      setErrorMessage('URLが間違っています。')
+      setErrorMessage('URL が間違っています。')
       return
     }
     setActionMode(paramActionMode)

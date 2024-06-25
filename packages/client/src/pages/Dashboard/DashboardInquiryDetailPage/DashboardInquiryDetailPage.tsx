@@ -121,7 +121,7 @@ const DashboardInquiryListPage: React.FC = () => {
                 <td><InquiryStatusLabel status={inquiryMeta.status} /></td>
               </tr>
               <tr>
-                <th>ユーザID</th>
+                <th>ユーザ ID</th>
                 <td>{inquiry.userId}</td>
               </tr>
               <tr>

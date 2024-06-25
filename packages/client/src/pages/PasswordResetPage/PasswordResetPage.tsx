@@ -71,16 +71,16 @@ const PasswordResetPage: React.FC = () => {
       </FormSection>
 
       {!!errorCount && <Alert type="danger">
-        {errorCount}件の入力項目に不備があります。
+        {errorCount} 件の入力項目に不備があります。
       </Alert>}
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={handleSubmit} disabled={isProgress || !!errorCount}>パスワードリセットURLを送付</FormButton>
+          <FormButton onClick={handleSubmit} disabled={isProgress || !!errorCount}>パスワードリセット URL を送付</FormButton>
         </FormItem>
       </FormSection>
 
-      {isSuccess && <Alert type="success" title="リセットURLを送付しました">
+      {isSuccess && <Alert type="success" title="リセット URL を送付しました">
         入力したメールアドレス宛にリセットURLを送付しました。<br />
         メールボックスをご確認ください。
       </Alert>}

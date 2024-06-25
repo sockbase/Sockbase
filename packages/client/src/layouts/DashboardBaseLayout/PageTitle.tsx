@@ -15,7 +15,8 @@ const PageTitle: React.FC<Props> = (props) => {
       <StyledTitle>
         {!props.isLoading
           ? props.title
-          : <BlinkField />}</StyledTitle>
+          : <BlinkField />}
+      </StyledTitle>
       <StyledDescription>{props.description}</StyledDescription>
     </StyledPageTitleContainer>
   )

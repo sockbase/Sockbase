@@ -256,20 +256,20 @@ const DashboardTicketTerminalPage: React.FC = () => {
       <TwoColumnsLayout>
         <>
           <p>
-            QRリーダーを使用してチケットのQRコードを読み取ってください。
+            QR リーダーを使用してチケットの QR コードを読み取ってください。
           </p>
           <FormSection>
             <FormItem>
               <FormCheckbox
                 name="isActiveQRReader"
-                label="QRリーダーを開く"
+                label="QR リーダーを開く"
                 checked={isActiveQRReader}
                 onChange={(c) => setActiveQRReader(c)} />
             </FormItem>
             {isActiveQRReader && <FormItem>
               <FormCheckbox
                 name="isHoldQRReader"
-                label="読み取り後にQRリーダを保持する"
+                label="読み取り後に QR リーダを保持する"
                 checked={isHoldQRReader}
                 onChange={(c) => setHoldQRReader(c)} />
             </FormItem>}
@@ -277,11 +277,11 @@ const DashboardTicketTerminalPage: React.FC = () => {
 
           <FormSection>
             <FormItem>
-              <FormLabel>チケットID</FormLabel>
+              <FormLabel>チケット ID</FormLabel>
               <FormInput
                 value={ticketHashId}
                 onChange={e => setTicketHashId(e.target.value)}
-                placeholder="チケットID"
+                placeholder="チケット ID"
                 disabled/>
             </FormItem>
             <FormItem>
@@ -291,7 +291,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
             </FormItem>
           </FormSection>
           {ticketUser === null && <Alert type="danger" title="チケット情報が見つかりませんでした">
-            正しいチケットIDを入力してください。
+            正しいチケット ID を入力してください。
           </Alert>}
 
           {isActiveQRReader && <ReaderWrap>

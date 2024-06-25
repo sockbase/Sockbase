@@ -170,7 +170,7 @@ const Input: React.FC<Props> = (props) => {
 
       <h2>注意事項</h2>
       <p>
-        <a href="/tos" target="_blank">Sockbase利用規約</a>および<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>に同意しますか？
+        <a href="/tos" target="_blank">Sockbase 利用規約</a> および <a href="/privacy-policy" target="_blank">プライバシーポリシー</a> に同意しますか？
       </p>
       <FormSection>
         <FormItem>
@@ -183,7 +183,7 @@ const Input: React.FC<Props> = (props) => {
       </FormSection>
 
       {errorCount > 0 && <Alert type="danger">
-        {errorCount}個の入力項目に不備があります。
+        {errorCount} 個の入力項目に不備があります。
       </Alert>}
 
       <FormSection>

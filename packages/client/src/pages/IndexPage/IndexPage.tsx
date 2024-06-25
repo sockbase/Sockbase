@@ -46,7 +46,7 @@ const IndexPage: React.FC = () => {
 
   return (
     <DefaultBaseLayout>
-      <h2>Sockbaseマイページにログイン</h2>
+      <h2>Sockbase マイページにログイン</h2>
 
       {fromPathName && <Alert title="ログインが必要です" type="danger">
         このページにアクセスするにはログインが必要です。
@@ -79,7 +79,7 @@ const IndexPage: React.FC = () => {
           <Link to="/privacy-policy">こちら</Link>からご確認ください。
         </Alert>
 
-        <h2>Sockbaseとは？</h2>
+        <h2>Sockbase とは？</h2>
         <p>
           <a href="https://nectarition.jp">ねくたりしょん</a>が提供するイベント申し込み情報管理サービスです。
         </p>
@@ -92,7 +92,7 @@ const IndexPage: React.FC = () => {
 
         <h3>お支払い方法</h3>
         <p>
-          オンライン決済(クレジットカード, Google Pay, Apple Pay)がご利用いただけます。<br />
+          オンライン決済 (クレジットカード, Google Pay, Apple Pay) がご利用いただけます。<br />
           イベントによっては銀行振込もご利用いただけます。
         </p>
 

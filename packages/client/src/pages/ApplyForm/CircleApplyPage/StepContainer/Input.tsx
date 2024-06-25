@@ -308,7 +308,7 @@ const Input: React.FC<Props> = (props) => {
 
       <h2>サークルカット</h2>
       <ul>
-        <li>テンプレートを使用し、<u>PNG形式でのご提出をお願いいたします。</u></li>
+        <li>テンプレートを使用し、<u>PNG 形式でのご提出をお願いいたします。</u></li>
         <li>サークルカットの変更は、申し込み後のマイページから行えます。</li>
         <li>公序良俗に反する画像は使用できません。不特定多数の方の閲覧が可能なためご配慮をお願いいたします。</li>
       </ul>
@@ -337,7 +337,7 @@ const Input: React.FC<Props> = (props) => {
         </FormItem>
 
         <FormItem>
-          <FormLabel>サークル名(よみ)</FormLabel>
+          <FormLabel>サークル名 (よみ)</FormLabel>
           <FormInput
             placeholder='さーくるめい'
             value={app.circle.yomi}
@@ -357,7 +357,7 @@ const Input: React.FC<Props> = (props) => {
         </FormItem>
 
         <FormItem>
-          <FormLabel>ペンネーム(よみ)</FormLabel>
+          <FormLabel>ペンネーム (よみ)</FormLabel>
           <FormInput
             placeholder='ぺんねーむ'
             value={app.circle.penNameYomi}
@@ -384,7 +384,7 @@ const Input: React.FC<Props> = (props) => {
           </FormItem>
           <FormItem>
             <Alert>
-              成人向け作品を頒布する場合、イベント当日（{formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}）時点で18歳以上である必要があります。<br />
+              成人向け作品を頒布する場合、イベント当日 ({formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}) 時点で 18 歳以上である必要があります。<br />
               イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
             </Alert>
           </FormItem>
@@ -428,7 +428,7 @@ const Input: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>総搬入量</FormLabel>
           <FormTextarea
-            placeholder='合同誌: 1種1,000冊, 既刊: 5種合計500冊, 色紙: 1枚, グッズ: 3種合計30個'
+            placeholder='合同誌: 1 種 1,000 冊, 既刊: 5 種合計 500 冊, 色紙: 1 枚, グッズ: 3 種合計 30 個'
             value={app.overview.totalAmount}
             onChange={e => setApp(s => ({ ...s, overview: { ...s.overview, totalAmount: e.target.value } }))} />
           <FormHelp>単位まで入力してください。</FormHelp>
@@ -440,10 +440,10 @@ const Input: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      <h2>隣接配置希望(合体)情報</h2>
+      <h2>隣接配置希望 (合体) 情報</h2>
       <FormSection>
         <FormItem>
-          <FormLabel>合体希望サークル 申し込みID</FormLabel>
+          <FormLabel>合体希望サークル 申し込み ID</FormLabel>
           <FormInput
             placeholder='20231231235959123-abc0def1'
             value={app.unionCircleId}
@@ -474,7 +474,7 @@ const Input: React.FC<Props> = (props) => {
             value={links.twitterScreenName ?? ''}
             onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value.trim() }))} />
           <FormHelp hasError={!!links.twitterScreenName && !validator.isTwitterScreenName(links.twitterScreenName)}>
-            @を除いて入力してください
+            @ を除いて入力してください
           </FormHelp>
         </FormItem>
         <FormItem>
@@ -484,27 +484,27 @@ const Input: React.FC<Props> = (props) => {
             value={links.pixivUserId ?? ''}
             onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value.trim() }))} />
           <FormHelp hasError={!!links.pixivUserId && !validator.isOnlyNumber(links.pixivUserId)}>
-            ID部分のみを入力してください
+            ID 部分のみを入力してください
           </FormHelp>
         </FormItem>
         <FormItem>
-          <FormLabel>Webサイト</FormLabel>
+          <FormLabel>Web サイト</FormLabel>
           <FormInput
             placeholder='https://sumire.sockbase.net'
             value={links.websiteURL ?? ''}
             onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value.trim() }))} />
           <FormHelp hasError={!!links.websiteURL && !validator.isURL(links.websiteURL)}>
-            http://から始めてください
+            http:// から始めてください
           </FormHelp>
         </FormItem>
         <FormItem>
-          <FormLabel>お品書きURL</FormLabel>
+          <FormLabel>お品書き URL</FormLabel>
           <FormInput
             placeholder='https://oshina.sockbase.net'
             value={links.menuURL ?? ''}
             onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value.trim() }))} />
           <FormHelp hasError={!!links.menuURL && !validator.isURL(links.menuURL)}>
-            http://から始めてください
+            http:// から始めてください
           </FormHelp>
         </FormItem>
       </FormSection>
@@ -550,7 +550,7 @@ const Input: React.FC<Props> = (props) => {
           </FormItem>
           {app.paymentMethod === 'bankTransfer' && <FormItem>
             <Alert>
-                銀行振込の場合、申し込み完了までお時間をいただくことがございます。
+              銀行振込の場合、申し込み完了までお時間をいただくことがございます。
             </Alert>
           </FormItem>}
         </FormSection>
@@ -565,7 +565,7 @@ const Input: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormTextarea
-            placeholder='◯◯◯◯にて、△△人ほどの待機列が出来たことがあります。今回も最後尾札を用意する予定です。'
+            placeholder='◯◯◯◯ (イベント名) にて△△人ほどの待機列が出来たことがあります。'
             value={app.remarks}
             onChange={e => setApp(s => ({ ...s, remarks: e.target.value }))}
           ></FormTextarea>
@@ -574,7 +574,7 @@ const Input: React.FC<Props> = (props) => {
 
       <h2>注意事項</h2>
       <p>
-        <a href="/tos" target="_blank">Sockbase利用規約</a>および<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>に同意しますか？
+        <a href="/tos" target="_blank">Sockbase 利用規約</a> および <a href="/privacy-policy" target="_blank">プライバシーポリシー</a> に同意しますか？
       </p>
       <FormSection>
         <FormItem>
@@ -587,7 +587,7 @@ const Input: React.FC<Props> = (props) => {
       </FormSection>
 
       {errorCount > 0 && <Alert type="danger">
-        {errorCount}個の入力項目に不備があります。
+        {errorCount} 個の入力項目に不備があります。
       </Alert>}
       <FormSection>
         <FormButton

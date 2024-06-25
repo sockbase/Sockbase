@@ -171,7 +171,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
               <FormItem>
                 <FormLabel>総搬入量</FormLabel>
                 <FormTextarea
-                  placeholder='合同誌: 1種1,000冊, 既刊: 5種合計500冊, 色紙: 1枚, グッズ: 3種合計30個'
+                  placeholder='合同誌: 1 種 1,000 冊, 既刊: 5 種合計 500 冊, 色紙: 1 枚, グッズ: 3 種合計 30 個'
                   value={overview.totalAmount}
                   onChange={e => setOverview(s => s && ({ ...s, totalAmount: e.target.value }))}
                   hasError={!overview.totalAmount} />
@@ -184,7 +184,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
               </FormItem>
             </FormSection>
 
-            {errorCount !== 0 && <Alert type="danger">{errorCount}個の入力項目に不備があります。</Alert>}
+            {errorCount !== 0 && <Alert type="danger">{errorCount} 個の入力項目に不備があります。</Alert>}
 
             <FormSection>
               <FormItem>

@@ -80,14 +80,14 @@ const TicketView: React.FC<Props> = (props) => {
                 {props.userId !== ticketUser.userId &&
                   <>
                     <br />
-                    チケット購入者からチケット受け取りURLを送付してもらい、情報を入力してください。
+                    チケット購入者からチケット受け取り URL を送付してもらい、情報を入力してください。
                   </>}
               </Alert>
               {props.userId === ticketUser.userId &&
                 <>
                   <p>
                     自分でこのチケットを使う場合は「チケットを有効化する」を押してください。<br />
-                    他の方にチケットを渡す場合は、<Link to={`/dashboard/tickets/${props.ticketHashId}`}>チケット情報表示ページ</Link> から チケット受け取りURL を渡してください。
+                    他の方にチケットを渡す場合は、<Link to={`/dashboard/tickets/${props.ticketHashId}`}>チケット情報表示ページ</Link> から チケット受け取り URL を渡してください。
                   </p>
                   <FormSection>
                     <FormItem>
@@ -109,10 +109,10 @@ const TicketView: React.FC<Props> = (props) => {
                   自分のチケットは <Link to="/dashboard/mytickets">マイチケット</Link> から確認できます。
                 </Alert>}
               <p>
-                上のQRコードを入口スタッフまでご提示ください。
+                上の QR コードを入口スタッフまでご提示ください。
               </p>
               <p>
-                QRコードを提示できない場合は、この画面を印刷しご持参ください。
+                QR コードを提示できない場合は、この画面を印刷しご持参ください。
               </p>
             </>}
         </ContentContainer>
