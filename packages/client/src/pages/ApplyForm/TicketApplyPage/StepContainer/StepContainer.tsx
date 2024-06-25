@@ -145,21 +145,27 @@ const StepContainer: React.FC<Props> = (props) => {
         指定されたIDのチケットストアを見つけることができませんでした。<br />
         URLが正しく入力されていることを確認してください。
       </Alert>}
+
       {props.store && <>
         <h1>{props.store.storeName} 申し込み受付</h1>
-        {props.store.schedules.endApplication < now
-          ? <Alert type="danger" title="受付を終了しました">
-            このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
-          </Alert>
-          : <>
-            {props.store.descriptions.map((d, k) => <p key={k}>{d}</p>)}
-            <StepProgress
-              steps={stepProgresses.map((s, k) => ({
-                text: s,
-                isActive: k === step - 1
-              }))} />
-            {steps?.[step]}
-          </>}
+
+        {props.store.schedules.endApplication < now && <Alert type="danger" title="受付期間前です">
+          このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。
+        </Alert>}
+
+        {props.store.schedules.endApplication < now && <Alert type="danger" title="受付を終了しました">
+          このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
+        </Alert>}
+
+        {props.store.schedules.startApplication <= now && now < props.store.schedules.endApplication && <>
+          {props.store.descriptions.map((d, k) => <p key={k}>{d}</p>)}
+          <StepProgress
+            steps={stepProgresses.map((s, k) => ({
+              text: s,
+              isActive: k === step - 1
+            }))} />
+          {steps?.[step]}
+        </>}
       </>}
     </>
   )
