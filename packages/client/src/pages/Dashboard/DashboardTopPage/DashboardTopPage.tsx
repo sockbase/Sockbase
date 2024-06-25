@@ -30,7 +30,7 @@ const DashboardTopPage: React.FC = () => {
       <PageTitle
         icon={<MdHome />}
         title="ホーム"
-        description="Sockbaseマイページへようこそ！" />
+        description="Sockbase マイページへようこそ！" />
 
       <CardContainer>
         <TopCard
@@ -57,7 +57,7 @@ const DashboardTopPage: React.FC = () => {
           to="/dashboard/payments"
           icon={<MdPayments />}
           title="決済履歴"
-          description="Sockbaseを通して申し込んだサークル参加・チケットの決済履歴を表示します。" />
+          description="Sockbase を通して申し込んだサークル参加・チケットの決済履歴を表示します。" />
       </CardContainer>
 
       <h2>サポート・設定</h2>
@@ -66,12 +66,12 @@ const DashboardTopPage: React.FC = () => {
           to="/dashboard/contact"
           icon={<MdMail />}
           title="お問い合わせ"
-          description="Sockbase運営チームによるサポートが必要な場合は、こちらからお問い合わせください。" />
+          description="Sockbase 運営チームによるサポートが必要な場合は、こちらからお問い合わせください。" />
         <TopCard
           to="/dashboard/settings"
           icon={<MdSettings />}
           title="マイページ設定"
-          description="Sockbaseに登録している情報を変更します。" />
+          description="Sockbase に登録している情報を変更します。" />
       </CardContainer>
 
       {!!commonRole && commonRole >= 1 && <>
@@ -96,23 +96,23 @@ const DashboardTopPage: React.FC = () => {
           <TopCard
             to="/dashboard/search"
             icon={<MdSearch />}
-            title="検索(BETA)"
-            description="申し込みIDから内部管理IDを取得します。" />
+            title="検索 (BETA)"
+            description="申し込み ID から内部管理IDを取得します。" />
           <TopCard
             to="/dashboard/events/"
             icon={<MdEditCalendar />}
             title="管理イベント"
-            description="Sockbaseで管理しているイベントを表示します。" />
+            description="Sockbase で管理しているイベントを表示します。" />
           <TopCard
             to="/dashboard/stores"
             icon={<MdStore />}
             title="管理チケットストア"
-            description="Sockbaseで管理しているチケットストアを表示します。" />
+            description="Sockbase で管理しているチケットストアを表示します。" />
           <TopCard
             to="/dashboard/stream"
             icon={<MdQrCodeScanner />}
             title="ストリームターミナル"
-            description="QRコードの情報を読み取りストリームに出力します。" />
+            description="QR コードの情報を読み取りストリームに出力します。" />
         </CardContainer>
       </>}
 

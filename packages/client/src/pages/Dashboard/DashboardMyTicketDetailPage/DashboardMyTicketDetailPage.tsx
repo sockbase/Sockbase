@@ -112,7 +112,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
             <table>
               <tbody>
                 <tr>
-                  <th>チケットID</th>
+                  <th>チケット ID</th>
                   <td>{hashedTicketId} <CopyToClipboard content={hashedTicketId ?? ''} /></td>
                 </tr>
               </tbody>

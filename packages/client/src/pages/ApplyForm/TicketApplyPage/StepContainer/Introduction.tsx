@@ -66,7 +66,7 @@ const Introduction: React.FC<Props> = (props) => {
       {props.store.permissions.canUseBankTransfer
         ? <>
           <p>
-          参加費のお支払いには、クレジットカード・デビットカード・プリペイドカードを利用したオンライン決済のほか、銀行振込がご利用いただけます。
+            参加費のお支払いには、クレジットカード・デビットカード・プリペイドカードを利用したオンライン決済のほか、銀行振込がご利用いただけます。
           </p>
           <p>
             銀行振込の場合、手数料は申し込み者様によるご負担となります。<br />
@@ -128,7 +128,7 @@ const Introduction: React.FC<Props> = (props) => {
       <h2>申し込み管理システムについて</h2>
 
       <p>
-        今回のイベントは、<a href="https://nectarition.jp">ねくたりしょん</a>が運用する「Sockbase」を利用しています。<br />
+        今回のイベントは、<a href="https://nectarition.jp">ねくたりしょん</a> が運用する「Sockbase」を利用しています。<br />
         イベントの内容に関するご質問は、イベント主催である「<a href={props.store._organization.contactUrl}>{props.store._organization.name}</a>」へ直接お問い合わせください。
       </p>
 
@@ -141,7 +141,7 @@ const Introduction: React.FC<Props> = (props) => {
         </p>}
 
       <p>
-        詳しくは<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>をご確認ください。
+        詳しくは <a href="/privacy-policy" target="_blank">プライバシーポリシー</a> をご確認ください。
       </p>
 
       <FormSection>

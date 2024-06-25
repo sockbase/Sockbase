@@ -21,7 +21,7 @@ const EventInfo: React.FC<Props> = (props) => {
       <table>
         <tbody>
           <tr>
-            <th>イベントID</th>
+            <th>イベント ID</th>
             <td>{props.eventId || '(空欄)'}</td>
           </tr>
           <tr>
@@ -29,7 +29,7 @@ const EventInfo: React.FC<Props> = (props) => {
             <td>{props.event?.eventName || '(空欄)'}</td>
           </tr>
           <tr>
-            <th>イベントWebサイト</th>
+            <th>イベント Web サイト</th>
             <td>{props.event?.eventWebURL || '(空欄)'}</td>
           </tr>
           <tr>
@@ -43,7 +43,7 @@ const EventInfo: React.FC<Props> = (props) => {
       <table>
         <tbody>
           <tr>
-            <th>組織ID</th>
+            <th>組織 ID</th>
             <td>{props.event?._organization.id || '(空欄)'}</td>
           </tr>
           <tr>
@@ -51,7 +51,7 @@ const EventInfo: React.FC<Props> = (props) => {
             <td>{props.event?._organization.name || '(空欄)'}</td>
           </tr>
           <tr>
-            <th>連絡先URL</th>
+            <th>連絡先 URL</th>
             <td>{props.event?._organization.contactUrl || '(空欄)'}</td>
           </tr>
         </tbody>
@@ -61,11 +61,11 @@ const EventInfo: React.FC<Props> = (props) => {
       <table>
         <tbody>
           <tr>
-            <th>チケットストアID</th>
+            <th>チケットストア ID</th>
             <td>{props.event?.passConfig?.storeId || '(空欄)'}</td>
           </tr>
           <tr>
-            <th>チケットタイプID</th>
+            <th>チケットタイプ ID</th>
             <td>{props.event?.passConfig?.typeId || '(空欄)'}</td>
           </tr>
         </tbody>
@@ -113,7 +113,7 @@ const EventInfo: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th style={{ width: '25%' }}>ジャンルID</th>
+            <th style={{ width: '25%' }}>ジャンル ID</th>
             <th>ジャンル名</th>
           </tr>
         </thead>
@@ -133,13 +133,13 @@ const EventInfo: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th style={{ width: '10%' }}>スペースID</th>
+            <th style={{ width: '10%' }}>スペース ID</th>
             <th style={{ width: '20%' }}>名前</th>
             <th style={{ width: '30%' }}>説明</th>
             <th>参加費</th>
             <th>支払いURL</th>
-            <th>商品ID</th>
-            <th>2スペース</th>
+            <th>商品 ID</th>
+            <th>2 スペース</th>
             <th>通行証発券枚数</th>
           </tr>
         </thead>
@@ -152,7 +152,7 @@ const EventInfo: React.FC<Props> = (props) => {
               <td>{s.price.toLocaleString()}円</td>
               <td>{s.productInfo?.paymentURL}</td>
               <td>{s.productInfo?.productId}</td>
-              <td>{s.isDualSpace ? '2スペース' : '-'}</td>
+              <td>{s.isDualSpace ? '2 スペース' : '-'}</td>
               <td>{s.passCount?.toLocaleString() ?? 0}枚</td>
             </tr>)
             : <tr>

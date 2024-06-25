@@ -389,7 +389,7 @@ const InformationImport: React.FC<Props> = (props) => {
       <h3>イベント基礎情報</h3>
       <FormSection>
         <FormItem>
-          <FormLabel>イベントID</FormLabel>
+          <FormLabel>イベント ID</FormLabel>
           <FormInput
             value={eventId}
             onChange={e => setEventId(e.target.value)} />
@@ -401,7 +401,7 @@ const InformationImport: React.FC<Props> = (props) => {
             onChange={e => setEvent(s => ({ ...s, eventName: e.target.value }))}/>
         </FormItem>
         <FormItem>
-          <FormLabel>イベントWebサイト</FormLabel>
+          <FormLabel>イベント Web サイト</FormLabel>
           <FormInput
             value={event.eventWebURL}
             onChange={e => setEvent(s => ({ ...s, eventWebURL: e.target.value }))}/>
@@ -421,7 +421,7 @@ const InformationImport: React.FC<Props> = (props) => {
       <h3>組織情報</h3>
       <FormSection>
         <FormItem>
-          <FormLabel>組織ID</FormLabel>
+          <FormLabel>組織 ID</FormLabel>
           <FormInput
             value={event._organization.id}
             onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, id: e.target.value } }))}/>
@@ -433,7 +433,7 @@ const InformationImport: React.FC<Props> = (props) => {
             onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, name: e.target.value } }))}/>
         </FormItem>
         <FormItem>
-          <FormLabel>連絡先URL</FormLabel>
+          <FormLabel>連絡先 URL</FormLabel>
           <FormInput
             value={event._organization.contactUrl}
             onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, contactUrl: e.target.value } }))}/>
@@ -443,13 +443,13 @@ const InformationImport: React.FC<Props> = (props) => {
       <h3>サークル通行証情報</h3>
       <FormSection>
         <FormItem>
-          <FormLabel>チケットストアID</FormLabel>
+          <FormLabel>チケットストア ID</FormLabel>
           <FormInput
             value={event.passConfig?.storeId}
             onChange={e => setEvent(s => ({ ...s, passConfig: s.passConfig && { ...s.passConfig, storeId: e.target.value } }))} />
         </FormItem>
         <FormItem>
-          <FormLabel>チケットタイプID</FormLabel>
+          <FormLabel>チケットタイプ ID</FormLabel>
           <FormInput
             value={event.passConfig?.typeId}
             onChange={e => setEvent(s => ({ ...s, passConfig: s.passConfig && { ...s.passConfig, typeId: e.target.value } }))} />
@@ -519,7 +519,7 @@ const InformationImport: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th style={{ width: '25%' }}>ジャンルID</th>
+            <th style={{ width: '25%' }}>ジャンル ID</th>
             <th>ジャンル名</th>
           </tr>
         </thead>
@@ -543,12 +543,12 @@ const InformationImport: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th style={{ width: '10%' }}>スペースID</th>
+            <th style={{ width: '10%' }}>スペース ID</th>
             <th style={{ width: '10%' }}>名前</th>
             <th style={{ width: '25%' }}>説明</th>
             <th>参加費</th>
-            <th>支払いURL</th>
-            <th>商品ID</th>
+            <th>支払い URL</th>
+            <th>商品 ID</th>
             <th></th>
             <th>通行証枚数</th>
           </tr>
@@ -642,7 +642,7 @@ const InformationImport: React.FC<Props> = (props) => {
             <td>
               <FormCheckbox
                 name={`is-dualspace-${i}`}
-                label="2スペース"
+                label="2 スペース"
                 checked={s.isDualSpace}
                 onChange={checked => handleEditSpace(
                   i,

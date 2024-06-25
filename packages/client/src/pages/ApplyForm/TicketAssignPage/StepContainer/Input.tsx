@@ -120,7 +120,7 @@ const Input: React.FC<Props> = (props) => {
       </FormSection>
 
       {errorCount > 0 && <Alert type="danger">
-        {errorCount}個の入力項目に不備があります。
+        {errorCount} 個の入力項目に不備があります。
       </Alert>}
 
       <FormSection>

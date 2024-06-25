@@ -241,7 +241,7 @@ const DashboardStoreTicketListPage: React.FC = () => {
       </FormSection>
 
       <p>
-        参加者リストCSVコピー <CopyToClipboard content={ticketCSV} />
+        参加者リスト CSV コピー <CopyToClipboard content={ticketCSV} />
       </p>
 
       <FormSection>
@@ -295,7 +295,7 @@ const DashboardStoreTicketListPage: React.FC = () => {
               <th>種別</th>
               <th>購入者</th>
               <th>使用者</th>
-              <th>チケットID</th>
+              <th>チケット ID</th>
               <th>更新日</th>
             </tr>
           </thead>

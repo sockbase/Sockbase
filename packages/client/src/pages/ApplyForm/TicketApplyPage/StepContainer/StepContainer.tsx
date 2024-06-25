@@ -142,8 +142,8 @@ const StepContainer: React.FC<Props> = (props) => {
   return (
     <>
       {props.store === null && <Alert title="チケットストアが見つかりません" type="danger">
-        指定されたIDのチケットストアを見つけることができませんでした。<br />
-        URLが正しく入力されていることを確認してください。
+        指定された ID のチケットストアを見つけることができませんでした。<br />
+        URL が正しく入力されていることを確認してください。
       </Alert>}
 
       {props.store && <>

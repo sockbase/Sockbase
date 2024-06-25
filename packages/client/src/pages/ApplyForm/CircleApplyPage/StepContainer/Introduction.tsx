@@ -50,7 +50,7 @@ const Introduction: React.FC<Props> = (props) => {
             <td>{formatByDate(props.event.schedules.overviewFirstFixedAt - 1, 'YYYY年 M月 D日 H時mm分')}</td>
           </tr>
           <tr>
-            <th>配置発表(予定)</th>
+            <th>配置発表 (予定)</th>
             <td>{formatByDate(props.event.schedules.publishSpaces, 'YYYY年 M月 D日')}</td>
           </tr>
           <tr>
@@ -131,9 +131,9 @@ const Introduction: React.FC<Props> = (props) => {
         <li>サークルカット</li>
       </ul>
 
-      <h3>隣接配置(合体)を希望する場合</h3>
+      <h3>隣接配置 (合体) を希望する場合</h3>
       <ul>
-        <li>先に申し込んだ方の合体申し込みID</li>
+        <li>先に申し込んだ方の合体申し込み ID</li>
       </ul>
 
       <h3>プチオンリーに参加する場合</h3>
@@ -157,7 +157,7 @@ const Introduction: React.FC<Props> = (props) => {
           {
             props.event.spaces.map(i => <tr key={i.id}>
               <th>{i.name}</th>
-              <td>{i.price.toLocaleString()}円</td>
+              <td>{i.price.toLocaleString()} 円</td>
               <td>{i.description}</td>
             </tr>)
           }
@@ -171,7 +171,7 @@ const Introduction: React.FC<Props> = (props) => {
 
       <h2>申し込み管理システムについて</h2>
       <p>
-        今回のイベントは、<a href="https://nectarition.jp">ねくたりしょん</a>が運用する「Sockbase」を利用しています。<br />
+        今回のイベントは、<a href="https://nectarition.jp">ねくたりしょん</a> が運用する「Sockbase」を利用しています。<br />
         イベントの内容に関するご質問は、イベント主催である「<a href={props.event._organization.contactUrl}>{props.event._organization.name}</a>」へ直接お問い合わせください。
       </p>
       {import.meta.env.VITE_SOCKBASE_MANAGE_ORGANIZATION_ID === props.event._organization.id
@@ -182,7 +182,7 @@ const Introduction: React.FC<Props> = (props) => {
           申し込み情報はねくたりしょんが保管し、イベント主催である「{props.event._organization.name}」に提供いたします。
         </p>}
       <p>
-        詳しくは<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>をご確認ください。
+        詳しくは <a href="/privacy-policy" target="_blank">プライバシーポリシー</a> をご確認ください。
       </p>
 
       <FormSection>

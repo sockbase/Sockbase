@@ -20,7 +20,7 @@ const StoreInfo: React.FC<Props> = (props) => {
       <table>
         <tbody>
           <tr>
-            <th>チケットストアID</th>
+            <th>チケットストア ID</th>
             <td>{props.storeId}</td>
           </tr>
           <tr>
@@ -28,7 +28,7 @@ const StoreInfo: React.FC<Props> = (props) => {
             <td>{props.store?.storeName}</td>
           </tr>
           <tr>
-            <th>イベントWebサイト</th>
+            <th>イベント Web サイト</th>
             <td>{props.store?.storeWebURL}</td>
           </tr>
         </tbody>
@@ -38,7 +38,7 @@ const StoreInfo: React.FC<Props> = (props) => {
       <table>
         <tbody>
           <tr>
-            <th>組織ID</th>
+            <th>組織 ID</th>
             <td>{props.store?._organization.id}</td>
           </tr>
           <tr>
@@ -46,7 +46,7 @@ const StoreInfo: React.FC<Props> = (props) => {
             <td>{props.store?._organization.name}</td>
           </tr>
           <tr>
-            <th>連絡先URL</th>
+            <th>連絡先 URL</th>
             <td>{props.store?._organization.contactUrl}</td>
           </tr>
         </tbody>
@@ -78,12 +78,12 @@ const StoreInfo: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th style={{ width: '10%' }}>タイプID</th>
+            <th style={{ width: '10%' }}>タイプ ID</th>
             <th style={{ width: '25%' }}>タイプ名</th>
             <th style={{ width: '25%' }}>説明</th>
             <th style={{ width: '20%' }}>価格</th>
-            <th style={{ width: '10%' }}>支払いURL</th>
-            <th style={{ width: '10%' }}>商品ID</th>
+            <th style={{ width: '10%' }}>支払い URL</th>
+            <th style={{ width: '10%' }}>商品 ID</th>
             <th>公開？</th>
           </tr>
         </thead>

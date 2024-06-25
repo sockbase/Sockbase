@@ -119,7 +119,7 @@ const DashboardPaymentListPage: React.FC = () => {
       <PageTitle
         icon={<MdPayments />}
         title="決済履歴"
-        description="Sockbaseでのお支払い状況の一覧を表示中" />
+        description="Sockbase でのお支払い状況の一覧を表示中" />
 
       {payments && apps && events && tickets && stores && user?.email
         ? <PaymentList
