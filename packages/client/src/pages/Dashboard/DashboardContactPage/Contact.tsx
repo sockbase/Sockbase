@@ -87,7 +87,7 @@ const Contact: React.FC = () => {
         ? isSuccess
           ? <Alert type="success" title="送信が完了しました">
             お問い合わせが完了しました。<br />
-            通常3営業日以内にメールにてご返信いたしますので、今しばらくお待ちください。
+            通常 3 営業日以内にメールにてご返信いたしますので、今しばらくお待ちください。
           </Alert>
           : <>
             <FormSection>
@@ -124,17 +124,17 @@ const Contact: React.FC = () => {
                   onChange={e => setBody(e.target.value)}
                   hasError={bodyLength > maxBodyLength} />
                 <FormHelp hasError={bodyLength > maxBodyLength}>
-                  お問い合わせ内容を{maxBodyLength.toLocaleString()}文字以下で入力してください。
+                  お問い合わせ内容を {maxBodyLength.toLocaleString()} 文字以下で入力してください。
                 </FormHelp>
-                <FormLabel>{bodyLength.toLocaleString()}文字 / {maxBodyLength.toLocaleString()}文字</FormLabel>
+                <FormLabel>{bodyLength.toLocaleString()} 文字 / {maxBodyLength.toLocaleString()} 文字</FormLabel>
               </FormItem>
             </FormSection>
 
-            {errorCount !== 0 && <Alert type="danger">{errorCount}個の入力項目に不備があります。</Alert>}
+            {errorCount !== 0 && <Alert type="danger">{errorCount} 個の入力項目に不備があります。</Alert>}
 
             <p>
               返信はメールにて行います。<br />
-              迷惑メール設定にてドメイン規制設定を行なっている方は、受信許可ドメインに<code>@sockbase.net</code>を追加してください。
+              迷惑メール設定にてドメイン規制設定を行なっている方は、受信許可ドメインに <code>@sockbase.net</code> を追加してください。
             </p>
 
             <FormSection>

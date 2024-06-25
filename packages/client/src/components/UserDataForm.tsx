@@ -151,7 +151,7 @@ const UserDataForm: React.FC<Props> = (props) => {
       </>) ?? <></>}
 
       {(!fetchedUserData && <>
-        <h2>Sockbaseログイン情報</h2>
+        <h2>Sockbase ログイン情報</h2>
         <p>
             申し込み情報の確認等に使用するアカウントを作成します。
         </p>
@@ -176,7 +176,7 @@ const UserDataForm: React.FC<Props> = (props) => {
             </FormHelp>
           </FormItem>
           <FormItem>
-            <FormLabel>パスワード(確認)</FormLabel>
+            <FormLabel>パスワード (確認)</FormLabel>
             <FormInput type="password"
               placeholder='●●●●●●●●●●●●'
               value={userData.rePassword}

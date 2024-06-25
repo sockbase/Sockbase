@@ -54,17 +54,17 @@ const DashboardSearchPage: React.FC = () => {
   }, [appHashId])
 
   return (
-    <DashboardBaseLayout title="検索(BETA)" requireCommonRole={2}>
+    <DashboardBaseLayout title="検索 (BETA)" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle title="検索(BETA)" icon={<MdSearch />} description="横断検索には対応していません" />
+      <PageTitle title="検索 (BETA)" icon={<MdSearch />} description="横断検索には対応していません" />
       <TwoColumnsLayout>
         <>
           <h2>サークル参加申し込み情報</h2>
           <FormSection>
             <FormItem>
-              <FormLabel>申し込みID</FormLabel>
+              <FormLabel>申し込み ID</FormLabel>
               <FormInput
                 placeholder='2024xxxxxxxxxxxxx-xxxxxxxx'
                 value={appHashId}
@@ -86,33 +86,33 @@ const DashboardSearchPage: React.FC = () => {
           <table>
             <tbody>
               <tr>
-                <th>申し込みID</th>
+                <th>申し込み ID</th>
                 <td>
                   <a href={`/dashboard/applications/${appHashDoc?.hashId}`} target="_blank" rel="noreferrer">{appHashDoc?.hashId}</a>
                 </td>
               </tr>
               <tr>
-                <th>申し込み内部ID</th>
+                <th>申し込み内部 ID</th>
                 <td>{appHashDoc?.applicationId}</td>
               </tr>
               <tr>
-                <th>支払い内部ID</th>
+                <th>支払い内部 ID</th>
                 <td>{appHashDoc?.paymentId}</td>
               </tr>
               <tr>
-                <th>スペース内部ID</th>
+                <th>スペース内部 ID</th>
                 <td>{appHashDoc?.spaceId}</td>
               </tr>
               <tr>
-                <th>イベント組織ID</th>
+                <th>イベント組織 ID</th>
                 <td>{appHashDoc?.organizationId}</td>
               </tr>
               <tr>
-                <th>イベントID</th>
+                <th>イベント ID</th>
                 <td>{appHashDoc?.eventId}</td>
               </tr>
               <tr>
-                <th>ユーザID</th>
+                <th>ユーザ ID</th>
                 <td>{appHashDoc?.userId}</td>
               </tr>
             </tbody>

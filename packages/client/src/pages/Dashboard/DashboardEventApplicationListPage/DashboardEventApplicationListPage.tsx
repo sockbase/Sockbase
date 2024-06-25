@@ -209,7 +209,7 @@ const DashboardEventApplicationListPage: React.FC = () => {
       </FormSection>
 
       {(appsCSV && <p>
-        配置データCSVをコピー <CopyToClipboard content={appsCSV} />
+        配置データ CSV をコピー <CopyToClipboard content={appsCSV} />
       </p>) ?? <BlinkField />}
 
       {apps && <EventCircleApplications

@@ -30,7 +30,7 @@ const Payment: React.FC<Props> = (props) => {
   return (
     <>
       <Alert type="success" title="申し込み情報の送信が完了しました">
-        申し込みIDは「<b>{props.addedResult?.hashId}</b> <CopyToClipboard content={props.addedResult?.hashId ?? ''} />」です。
+        申し込み ID は「<b>{props.addedResult?.hashId}</b> <CopyToClipboard content={props.addedResult?.hashId ?? ''} />」です。
       </Alert>
 
       <p>

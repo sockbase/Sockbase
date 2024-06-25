@@ -76,7 +76,7 @@ const TicketAssignPage: React.FC = () => {
     <DefaultBaseLayout title="チケット受け取りページ">
       {(ticketUser === null || !ticketHashId) && <Alert type="danger" title="チケット情報が見つかりません">
         チケット情報を取得できませんでした。<br />
-        URLをもう一度お確かめください。
+        URL をもう一度お確かめください。
       </Alert>}
       {store && ticketHashId && ticketUser && <StepContainer
         store={store}

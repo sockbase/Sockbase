@@ -21,23 +21,23 @@ const Atamagami: React.FC<Props> = (props) => {
         </EventName>
         <CircleCount>
           <Header>申込確定サークル</Header>
-          {props.circleCount}サークル
+          {props.circleCount} サークル
         </CircleCount>
         <SpaceCount>
           <Header>要配置総スペース</Header>
-          {props.spaceCount}スペース
+          {props.spaceCount} スペース
         </SpaceCount>
         <AdultCount>
           <Header>成人向けサークル</Header>
-          {props.adultCount}サークル
+          {props.adultCount} サークル
         </AdultCount>
         <UnionCircleCount>
           <Header>合体申込サークル</Header>
-          {props.unionCircleCount}サークル
+          {props.unionCircleCount} サークル
         </UnionCircleCount>
         <PetitCount>
           <Header>プチオンリー申込</Header>
-          {props.petitCount}サークル
+          {props.petitCount} サークル
         </PetitCount>
         <Header>備考</Header>
       </EventMeta>

@@ -196,8 +196,8 @@ const StepContainer: React.FC<Props> = (props) => {
   return (
     <>
       {props.event === null && <Alert title="イベントが見つかりません" type="danger">
-        指定されたIDのイベントを見つけることができませんでした。<br />
-        URLが正しく入力されていることを確認してください。
+        指定された ID のイベントを見つけることができませんでした。<br />
+        URL が正しく入力されていることを確認してください。
       </Alert>}
 
       {props.event && <>

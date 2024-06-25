@@ -44,7 +44,7 @@ const DashboardEventCircleCutDownloadPage: React.FC = () => {
 
   const handleDownload = useCallback(() => {
     if (!eventId || !apps || !cutURLs || downloadCutHashIds.length <= 0) return
-    if (!confirm(`${downloadCutHashIds.length}件のサークルカットをダウンロードします\nよろしいですか？`)) return
+    if (!confirm(`${downloadCutHashIds.length} 件のサークルカットをダウンロードします\nよろしいですか？`)) return
 
     const downloadTasks = downloadCutHashIds
       .map(hashId => {
@@ -180,7 +180,7 @@ const DashboardEventCircleCutDownloadPage: React.FC = () => {
         <thead>
           <tr>
             <th style={{ width: '10%' }}></th>
-            <th>申し込みID</th>
+            <th>申し込み ID</th>
             <th>サークル名</th>
             <th>サークルカット</th>
           </tr>
@@ -214,7 +214,7 @@ const DashboardEventCircleCutDownloadPage: React.FC = () => {
       </table>
 
       <p>
-        ダウンロード対象のサークルカット: {downloadCutHashIds.length}件
+        ダウンロード対象のサークルカット: {downloadCutHashIds.length} 件
       </p>
 
       <FormSection>

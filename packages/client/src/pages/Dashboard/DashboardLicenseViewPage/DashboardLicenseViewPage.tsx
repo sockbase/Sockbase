@@ -23,7 +23,7 @@ const DashboardLicenseViewPage: React.FC = () => {
       <table>
         <tbody>
           <tr>
-            <th>ユーザID</th>
+            <th>ユーザ ID</th>
             <td>{user?.uid}</td>
           </tr>
           <tr>
