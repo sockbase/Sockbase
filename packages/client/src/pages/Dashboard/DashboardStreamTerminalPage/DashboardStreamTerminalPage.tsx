@@ -67,7 +67,7 @@ const DashboardStreamTerminalPage: React.FC = () => {
 
       <PageTitle
         title="ストリームターミナル"
-        description="QRコードの情報を読み取りストリームに出力します"
+        description="QR コードの情報を読み取りストリームに出力します"
         icon={<MdQrCodeScanner />} />
 
       <TwoColumnsLayout>
@@ -85,7 +85,7 @@ const DashboardStreamTerminalPage: React.FC = () => {
                 name="active-qrreader"
                 checked={activeQRReader}
                 onChange={checked => setActiveQRReader(checked)}
-                label="QRリーダーを開く" />
+                label="QR リーダーを開く" />
             </FormItem>
             {activeQRReader && <>
               <FormItem>
@@ -103,7 +103,7 @@ const DashboardStreamTerminalPage: React.FC = () => {
             <FormItem>
               <FormButton
                 onClick={() => writeStream('terminal', `ping ${new Date().getTime()}`)}
-                disabled={!user}>PINGを送信</FormButton>
+                disabled={!user}>PING を送信</FormButton>
             </FormItem>
             <FormItem>
               <FormLabel>受け取った情報</FormLabel>

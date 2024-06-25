@@ -296,7 +296,7 @@ const InformationInput: React.FC<Props> = (props) => {
       <h3>チケットストア基礎情報</h3>
       <FormSection>
         <FormItem>
-          <FormLabel>チケットストアID</FormLabel>
+          <FormLabel>チケットストア ID</FormLabel>
           <FormInput
             value={storeId}
             onChange={e => setStoreId(e.target.value)} />
@@ -308,7 +308,7 @@ const InformationInput: React.FC<Props> = (props) => {
             onChange={e => setStore(s => ({ ...s, storeName: e.target.value }))}/>
         </FormItem>
         <FormItem>
-          <FormLabel>イベントWebサイト</FormLabel>
+          <FormLabel>イベント Web サイト</FormLabel>
           <FormInput
             value={store.storeWebURL}
             onChange={e => setStore(s => ({ ...s, storeWebURL: e.target.value }))}/>
@@ -318,7 +318,7 @@ const InformationInput: React.FC<Props> = (props) => {
       <h3>組織情報</h3>
       <FormSection>
         <FormItem>
-          <FormLabel>組織ID</FormLabel>
+          <FormLabel>組織 ID</FormLabel>
           <FormInput
             value={store._organization.id}
             onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, id: e.target.value } }))}/>
@@ -330,7 +330,7 @@ const InformationInput: React.FC<Props> = (props) => {
             onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, name: e.target.value } }))}/>
         </FormItem>
         <FormItem>
-          <FormLabel>連絡先URL</FormLabel>
+          <FormLabel>連絡先 URL</FormLabel>
           <FormInput
             value={store._organization.contactUrl}
             onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, contactUrl: e.target.value } }))}/>
@@ -373,12 +373,12 @@ const InformationInput: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th style={{ width: '10%' }}>タイプID</th>
+            <th style={{ width: '10%' }}>タイプ ID</th>
             <th style={{ width: '15%' }}>タイプ名</th>
             <th style={{ width: '20%' }}>説明</th>
             <th style={{ width: '10%' }}>価格</th>
-            <th style={{ width: '10%' }}>支払いURL</th>
-            <th style={{ width: '10%' }}>商品ID</th>
+            <th style={{ width: '10%' }}>支払い URL</th>
+            <th style={{ width: '10%' }}>商品 ID</th>
             <th>チケットカラー</th>
             <th>非公開</th>
           </tr>

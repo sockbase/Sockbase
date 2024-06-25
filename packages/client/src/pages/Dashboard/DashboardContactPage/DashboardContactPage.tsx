@@ -11,7 +11,7 @@ const DashboardContactPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle icon={<MdMail />} title="お問い合わせ" description="Sockbase運営チームへのお問い合わせはこちらから" />
+      <PageTitle icon={<MdMail />} title="お問い合わせ" description="Sockbase 運営チームへのお問い合わせはこちらから" />
 
       <Contact />
     </DashboardBaseLayout>

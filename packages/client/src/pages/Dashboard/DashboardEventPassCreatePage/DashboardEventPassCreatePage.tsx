@@ -121,7 +121,7 @@ const DashboardEventPassCreatePage: React.FC = () => {
         <>
           <table>
             <thead>
-              <th>スペース（枚数）</th>
+              <th>スペース (枚数)</th>
               <th>サークル</th>
               <th>発券予定枚数</th>
             </thead>
@@ -129,15 +129,15 @@ const DashboardEventPassCreatePage: React.FC = () => {
               {event?.spaces.map(s => {
                 const c = getPassCount(s.id)
                 return (<tr key={s.id}>
-                  <td>{s.name}（{s.passCount?.toLocaleString() ?? 0}枚）</td>
-                  <td>{c?.appCount ?? 0}件</td>
-                  <td>{c?.passCount ?? 0}枚</td>
+                  <td>{s.name} ({s.passCount?.toLocaleString() ?? 0} 枚)</td>
+                  <td>{c?.appCount ?? 0} 件</td>
+                  <td>{c?.passCount ?? 0} 枚</td>
                 </tr>)
               })}
               {totalPassCount && <tr>
                 <td>- 合計 -</td>
-                <td>{totalPassCount.appCount}件</td>
-                <td>{totalPassCount.passCount}枚</td>
+                <td>{totalPassCount.appCount} 件</td>
+                <td>{totalPassCount.passCount} 枚</td>
               </tr>}
             </tbody>
           </table>
@@ -153,7 +153,7 @@ const DashboardEventPassCreatePage: React.FC = () => {
           </FormSection>
 
           {addedResult !== undefined && <Alert type="success">
-            {addedResult}枚発行しました
+            {addedResult} 枚発行しました
           </Alert>}
         </>
         <>

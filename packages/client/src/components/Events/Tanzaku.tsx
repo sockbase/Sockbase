@@ -74,7 +74,7 @@ const Tanzaku: React.FC<Props> = (props) => {
           {props.event.eventName}
         </EventName>
         <AppId>
-          <Header>申込みID</Header>
+          <Header>申込み ID</Header>
           {props.app?.hashId}
         </AppId>
         <CircleMeta>

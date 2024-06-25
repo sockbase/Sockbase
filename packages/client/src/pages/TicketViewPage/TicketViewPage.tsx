@@ -42,7 +42,7 @@ const TicketViewPage: React.FC = () => {
           {ticketUser === undefined && <Loading text="チケット情報" />}
           {ticketUser === null &&
             <Alert title="チケットの取得に失敗しました">
-              URLが間違っている可能性があります。
+              URL が間違っている可能性があります。
             </Alert>}
         </LoadingContainer>}
       {ticketHashId && ticketUser && store && user !== undefined &&

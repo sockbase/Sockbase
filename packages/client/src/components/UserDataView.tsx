@@ -51,7 +51,7 @@ const UserDataView: React.FC<Props> = (props) => {
         </tbody>
       </table>
 
-      <h2>Sockbaseログイン情報</h2>
+      <h2>Sockbase ログイン情報</h2>
       <table>
         <tbody>
           <tr>

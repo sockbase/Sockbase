@@ -76,7 +76,7 @@ const EventCircleApplications: React.FC<Props> = (props) => {
   return (
     <>
       <p>
-        総申込みサークル数(キャンセル除く): {circleCount ?? '-'}件
+        総申込みサークル数 (キャンセル除く): {circleCount ?? '-'} 件
       </p>
 
       <table>
@@ -84,7 +84,7 @@ const EventCircleApplications: React.FC<Props> = (props) => {
           <tr>
             <th>#</th>
             <th>ステータス</th>
-            <th>申し込みID</th>
+            <th>申し込み ID</th>
             <th><SortButton active={activeSortSpace} onClick={() => setActiveSortSpace(s => !s)}>配置</SortButton></th>
             <th>サークル名</th>
             <th>ペンネーム</th>

@@ -172,7 +172,7 @@ const DashboardEventSpaceManagePage: React.FC = () => {
         <thead>
           <tr>
             <th>スペース番号</th>
-            <th>申し込みID</th>
+            <th>申し込み ID</th>
             <th>サークル名</th>
             <th>ペンネーム</th>
           </tr>

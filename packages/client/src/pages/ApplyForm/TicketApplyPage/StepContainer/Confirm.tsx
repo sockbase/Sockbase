@@ -73,7 +73,7 @@ const Confirm: React.FC<Props> = (props) => {
 
       <h1>申し込み情報送信</h1>
       <p>
-        上記の内容で正しければ「決済に進む(申し込み情報送信)」ボタンを押してください。
+        上記の内容で正しければ「決済に進む (申し込み情報送信)」ボタンを押してください。
       </p>
       <p>
         修正する場合は「修正」ボタンを押してください。
@@ -97,7 +97,7 @@ const Confirm: React.FC<Props> = (props) => {
             <FormButton
               onClick={handleSubmit}
               disabled={isProgress}>
-              決済に進む(申し込み情報送信)
+              決済に進む (申し込み情報送信)
             </FormButton>
           </LoadingCircleWrapper>
         </FormItem>
@@ -107,7 +107,7 @@ const Confirm: React.FC<Props> = (props) => {
         <ProgressBar percent={props.submitProgressPercent}/>
         <Alert>
           送信処理に時間がかかる場合がございます。<br />
-          進捗率が100%になるまでそのままでお待ちください。
+          進捗率が 100% になるまでそのままでお待ちください。
         </Alert>
       </>}
     </>
