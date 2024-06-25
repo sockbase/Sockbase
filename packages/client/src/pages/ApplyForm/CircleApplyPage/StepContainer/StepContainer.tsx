@@ -172,6 +172,7 @@ const StepContainer: React.FC<Props> = (props) => {
     ])
   }, [
     props.event,
+    props.eyecatchURL,
     props.user,
     props.userData,
     props.pastApps,
@@ -198,21 +199,27 @@ const StepContainer: React.FC<Props> = (props) => {
         指定されたIDのイベントを見つけることができませんでした。<br />
         URLが正しく入力されていることを確認してください。
       </Alert>}
+
       {props.event && <>
         <h1>{props.event.eventName} サークル参加申し込み受付</h1>
-        {props.event.schedules.endApplication < now
-          ? <Alert type="danger" title="参加受付は終了しました">
+
+        {props.event.schedules.startApplication > now && <Alert type="danger" title="受付期間前です">
+          このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。
+        </Alert>}
+
+        {props.event.schedules.endApplication <= now && <Alert type="danger" title="受付を終了しました">
           このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
-          </Alert>
-          : <>
-            {props.event.descriptions.map((d, k) => <p key={k}>{d}</p>)}
-            <StepProgress
-              steps={stepProgresses.map((s, k) => ({
-                text: s,
-                isActive: k === step - 1
-              }))} />
-            {steps?.[step]}
-          </>}
+        </Alert>}
+
+        {props.event.schedules.startApplication <= now && now < props.event.schedules.endApplication && <>
+          {props.event.descriptions.map((d, k) => <p key={k}>{d}</p>)}
+          <StepProgress
+            steps={stepProgresses.map((s, k) => ({
+              text: s,
+              isActive: k === step - 1
+            }))} />
+          {steps?.[step]}
+        </>}
       </>}
     </>
   )
