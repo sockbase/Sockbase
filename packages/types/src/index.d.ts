@@ -503,6 +503,7 @@ export type SockbaseInquiryMetaDocument = SockbaseInquiryMeta & {
 export type SockbaseInquiryStatus = 0 | 1 | 2
 
 export interface SockbaseSendMailPayload {
+  cc: string
   subject: string
   body: string[]
 }
