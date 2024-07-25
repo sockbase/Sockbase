@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdPrint } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { type SockbaseApplicationDocument, type SockbaseEventDocument, type SockbaseApplicationMeta, type SockbaseAccount } from 'sockbase'
 import Atamagami from '../../../components/Events/Atamagami'
 import Tanzaku from '../../../components/Events/Tanzaku'
 import FormCheckbox from '../../../components/Form/Checkbox'
@@ -17,12 +16,20 @@ import useEvent from '../../../hooks/useEvent'
 import useUserData from '../../../hooks/useUserData'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import DashboardPrintLayout from '../../../layouts/DashboardPrintLayout/DashboardPrintLayout'
+import type {
+  SockbaseApplicationDocument,
+  SockbaseEventDocument,
+  SockbaseApplicationMeta,
+  SockbaseAccount,
+  SockbaseApplicationLinksDocument
+} from 'sockbase'
 
 const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>()
   const { getEventByIdAsync } = useEvent()
   const {
     getApplicationsByEventIdAsync,
+    getLinksByApplicationIdOptionalAsync,
     getCircleCutURLByHashedIdAsync,
     getApplicationMetaByIdAsync
   } = useApplication()
@@ -30,6 +37,7 @@ const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
 
   const [event, setEvent] = useState<SockbaseEventDocument>()
   const [apps, setApps] = useState<SockbaseApplicationDocument[]>()
+  const [links, setLinks] = useState<Record<string, SockbaseApplicationLinksDocument | null>>()
   const [appMetas, setAppMetas] = useState<Record<string, SockbaseApplicationMeta>>()
   const [circleCuts, setCircleCuts] = useState<Record<string, string | null>>()
   const [userDatas, setUserDatas] = useState<Record<string, SockbaseAccount>>()
@@ -82,6 +90,17 @@ const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
         await getApplicationsByEventIdAsync(eventId)
           .catch(err => { throw err }))
       setApps(fetchedApps)
+
+      Promise.all(
+        fetchedApps.map(a => a.id)
+          .map(async id => ({
+            id,
+            data: await getLinksByApplicationIdOptionalAsync(id)
+          }))
+      )
+        .then(fetchedLinks => fetchedLinks.reduce<Record<string, SockbaseApplicationLinksDocument | null>>((p, c) => ({ ...p, [c.id]: c.data }), {}))
+        .then(fetchedLinks => setLinks(fetchedLinks))
+        .catch(err => { throw err })
 
       Promise.all(
         fetchedApps.map(a => a.hashId)
@@ -190,13 +209,14 @@ const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
           adultCount={adultCount}
           unionCircleCount={unionCircleCount}
           petitCount={petitCount} />}
-        {printCircleTanzaku && apps && event && circleCuts && appMetas && userDatas && apps
+        {printCircleTanzaku && apps && links && event && circleCuts && appMetas && userDatas && apps
           .filter(a => appMetas[a.id].applicationStatus === 2)
           .map(a => a.hashId && <Tanzaku
             key={a.id}
             isDummy={false}
             event={event}
             app={a}
+            links={links[a.id]}
             userData={userDatas[a.userId]}
             unionCircle={getUnionCircle(a)}
             circleCutData={circleCuts[a.hashId]} />)}

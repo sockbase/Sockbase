@@ -196,12 +196,66 @@ const sendMailManuallyForEventAsync = async (payload: SockbaseSendMailForEventPa
       const mailRef = firestore.collection('_mails').doc()
       tx.create(mailRef, {
         to: user.email,
+        replyTo: payload.replyTo,
         message: {
           subject: template.subject,
           text: template.body.join('\n')
         }
       })
     })
+
+    if (payload.cc) {
+      const dummyApp: SockbaseApplicationDocument = {
+        id: '',
+        eventId: '',
+        userId: '',
+        spaceId: '',
+        circle: {
+          name: '送信控え',
+          genre: '',
+          yomi: '',
+          penName: '',
+          penNameYomi: '',
+          hasAdult: false
+        },
+        unionCircleId: '',
+        overview: {
+          totalAmount: '',
+          description: ''
+        },
+        petitCode: '',
+        paymentMethod: '',
+        remarks: '',
+        createdAt: null,
+        updatedAt: null,
+        hashId: ''
+      }
+      const dummyUser: SockbaseAccountDocument = {
+        id: '',
+        email: '',
+        name: '送信 太郎',
+        birthday: 0,
+        postalCode: '',
+        address: '',
+        telephone: '',
+        gender: 1
+      }
+      const mailRef = firestore.collection('_mails').doc()
+      const template = mailConfig.templates.sendManuallyForEvent(
+        payload.subject,
+        payload.body,
+        event,
+        dummyApp,
+        dummyUser)
+      tx.create(mailRef, {
+        to: payload.cc,
+        replyTo: payload.replyTo,
+        message: {
+          subject: `${template.subject} (CC)`,
+          text: template.body.join('\n')
+        }
+      })
+    }
   })
     .catch(err => { throw err })
 

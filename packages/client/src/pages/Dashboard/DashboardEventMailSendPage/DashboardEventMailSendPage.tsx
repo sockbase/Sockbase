@@ -6,6 +6,7 @@ import FormButton from '../../../components/Form/Button'
 import FormCheckbox from '../../../components/Form/Checkbox'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
+import FormHelp from '../../../components/Form/Help'
 import FormInput from '../../../components/Form/Input'
 import FormLabel from '../../../components/Form/Label'
 import FormTextarea from '../../../components/Form/Textarea'
@@ -15,12 +16,15 @@ import IconLabel from '../../../components/Parts/IconLabel'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import useEvent from '../../../hooks/useEvent'
 import useMail from '../../../hooks/useMail'
+import useValidate from '../../../hooks/useValidate'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 import type { SockbaseEventDocument, SockbaseMailSendTarget } from 'sockbase'
 
 const DashboardEventMailSendPage: React.FC = () => {
+  const validator = useValidate()
+
   const { eventId } = useParams<{ eventId: string }>()
   const { getEventByIdAsync } = useEvent()
   const {
@@ -35,6 +39,8 @@ const DashboardEventMailSendPage: React.FC = () => {
     confirmed: false,
     canceled: false
   })
+  const [mailCC, setMailCC] = useState('')
+  const [mailReplyTo, setMailReplyTo] = useState('')
   const [mailSubject, setMailSubject] = useState('')
   const [mailBody, setMailBody] = useState('')
   const [isProgress, setProgress] = useState(false)
@@ -43,17 +49,19 @@ const DashboardEventMailSendPage: React.FC = () => {
 
   const errorCount = useMemo(() => {
     const validators = [
-      !!mailSubject,
-      !!mailBody
+      validator.isNotEmpty(mailSubject),
+      validator.isNotEmpty(mailBody),
+      validator.isEmpty(mailCC) || validator.isEmail(mailCC),
+      validator.isEmpty(mailReplyTo) || validator.isEmail(mailReplyTo)
     ]
     return validators.filter(v => !v).length
-  }, [mailSubject, mailBody])
+  }, [mailSubject, mailBody, mailCC, mailReplyTo])
 
   const handleSend = useCallback(() => {
     if (!eventId || errorCount > 0) return
     if (!confirm('メールを送信します\nよろしいですか？')) return
     setProgress(true)
-    sendMailForEventAsync(eventId, targetFlag, mailSubject, mailBody)
+    sendMailForEventAsync(eventId, targetFlag, mailCC, mailReplyTo || null, mailSubject, mailBody)
       .then(result => {
         if (!result) {
           alert('メール送信に失敗しました')
@@ -66,7 +74,7 @@ const DashboardEventMailSendPage: React.FC = () => {
         throw err
       })
       .finally(() => setProgress(false))
-  }, [eventId, mailSubject, mailBody])
+  }, [eventId, errorCount, targetFlag, mailSubject, mailBody, mailCC, mailReplyTo])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -119,6 +127,24 @@ const DashboardEventMailSendPage: React.FC = () => {
                 checked={targetFlag.canceled}
                 onChange={checked => setTargetFlag(s => ({ ...s, canceled: checked }))}
                 inlined />
+            </FormItem>
+            <FormItem>
+              <FormLabel>返信控え送付先 (CC)</FormLabel>
+              <FormInput
+                value={mailCC}
+                onChange={e => setMailCC(e.target.value)}
+                disabled={isProgress} />
+            </FormItem>
+            <FormItem>
+              <FormLabel>返信先 (Reply-To)</FormLabel>
+              <FormInput
+                value={mailReplyTo}
+                onChange={e => setMailReplyTo(e.target.value)}
+                placeholder="support@sockbase.net"
+                disabled={isProgress} />
+              <FormHelp>
+                何も入力しない場合、返信先は Sockbase 管理者のメールアドレスになります。
+              </FormHelp>
             </FormItem>
             <FormItem>
               <FormLabel>件名</FormLabel>

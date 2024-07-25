@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 import ReactQRCode from 'react-qr-code'
-import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseEventDocument, SockbaseEventGenre, SockbaseEventSpace } from 'sockbase'
+import type { SockbaseAccount, SockbaseApplicationDocument, SockbaseApplicationLinksDocument, SockbaseEventDocument, SockbaseEventGenre, SockbaseEventSpace } from 'sockbase'
 
 interface Props {
   isDummy: boolean
   dummyNumber?: number
   app?: SockbaseApplicationDocument
+  links?: SockbaseApplicationLinksDocument | null
   event: SockbaseEventDocument
   userData?: SockbaseAccount
   unionCircle?: SockbaseApplicationDocument | null
@@ -95,6 +96,10 @@ const Tanzaku: React.FC<Props> = (props) => {
             </ruby>
           </PenName>
         </CircleMeta>
+        <TwitterId>
+          <Header>Twitter ID</Header>
+          {(props.links?.twitterScreenName && `@${props.links.twitterScreenName}`) || '(空欄)'}
+        </TwitterId>
         <Genre>
           <Header>ジャンル</Header>
           {genre?.name}
@@ -266,7 +271,7 @@ const AppIdQR = styled(ReactQRCode)`
 `
 const CircleArea = styled.div`
   display: grid;
-  grid-template-rows: auto auto auto auto 2fr 2fr 1fr;
+  grid-template-rows: auto auto auto auto auto 2fr 2fr 1fr;
   grid-template-columns: 1fr 1fr 1fr;
   border-left: 1px dotted #000000;
 `
@@ -293,6 +298,10 @@ const PenName = styled.div`
   padding-top: 9px;
   font-size: 1.25em;
   font-weight: bold;
+`
+const TwitterId = styled.div`
+  grid-column: 1 / 4;
+  border-bottom: 1px dotted #000000;
 `
 const Genre = styled.div`
   grid-column: 1 / 4;
