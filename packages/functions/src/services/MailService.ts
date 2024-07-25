@@ -196,6 +196,7 @@ const sendMailManuallyForEventAsync = async (payload: SockbaseSendMailForEventPa
       const mailRef = firestore.collection('_mails').doc()
       tx.create(mailRef, {
         to: user.email,
+        replyTo: payload.replyTo,
         message: {
           subject: template.subject,
           text: template.body.join('\n')
@@ -248,6 +249,7 @@ const sendMailManuallyForEventAsync = async (payload: SockbaseSendMailForEventPa
         dummyUser)
       tx.create(mailRef, {
         to: payload.cc,
+        replyTo: payload.replyTo,
         message: {
           subject: `${template.subject} (CC)`,
           text: template.body.join('\n')
