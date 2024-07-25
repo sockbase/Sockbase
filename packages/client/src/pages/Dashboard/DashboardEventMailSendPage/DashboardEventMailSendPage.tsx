@@ -15,12 +15,15 @@ import IconLabel from '../../../components/Parts/IconLabel'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import useEvent from '../../../hooks/useEvent'
 import useMail from '../../../hooks/useMail'
+import useValidate from '../../../hooks/useValidate'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 import type { SockbaseEventDocument, SockbaseMailSendTarget } from 'sockbase'
 
 const DashboardEventMailSendPage: React.FC = () => {
+  const validator = useValidate()
+
   const { eventId } = useParams<{ eventId: string }>()
   const { getEventByIdAsync } = useEvent()
   const {
@@ -35,6 +38,7 @@ const DashboardEventMailSendPage: React.FC = () => {
     confirmed: false,
     canceled: false
   })
+  const [mailCC, setMailCC] = useState('')
   const [mailSubject, setMailSubject] = useState('')
   const [mailBody, setMailBody] = useState('')
   const [isProgress, setProgress] = useState(false)
@@ -43,17 +47,18 @@ const DashboardEventMailSendPage: React.FC = () => {
 
   const errorCount = useMemo(() => {
     const validators = [
-      !!mailSubject,
-      !!mailBody
+      validator.isNotEmpty(mailSubject),
+      validator.isNotEmpty(mailBody),
+      validator.isEmpty(mailCC) || validator.isEmail(mailCC)
     ]
     return validators.filter(v => !v).length
-  }, [mailSubject, mailBody])
+  }, [mailSubject, mailBody, mailCC])
 
   const handleSend = useCallback(() => {
     if (!eventId || errorCount > 0) return
     if (!confirm('メールを送信します\nよろしいですか？')) return
     setProgress(true)
-    sendMailForEventAsync(eventId, targetFlag, mailSubject, mailBody)
+    sendMailForEventAsync(eventId, targetFlag, mailCC, mailSubject, mailBody)
       .then(result => {
         if (!result) {
           alert('メール送信に失敗しました')
@@ -66,7 +71,7 @@ const DashboardEventMailSendPage: React.FC = () => {
         throw err
       })
       .finally(() => setProgress(false))
-  }, [eventId, mailSubject, mailBody])
+  }, [eventId, errorCount, targetFlag, mailSubject, mailBody, mailCC])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -119,6 +124,13 @@ const DashboardEventMailSendPage: React.FC = () => {
                 checked={targetFlag.canceled}
                 onChange={checked => setTargetFlag(s => ({ ...s, canceled: checked }))}
                 inlined />
+            </FormItem>
+            <FormItem>
+              <FormLabel>CC</FormLabel>
+              <FormInput
+                value={mailCC}
+                onChange={e => setMailCC(e.target.value)}
+                disabled={isProgress} />
             </FormItem>
             <FormItem>
               <FormLabel>件名</FormLabel>
