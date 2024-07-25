@@ -210,7 +210,7 @@ const sendMailManuallyForEventAsync = async (payload: SockbaseSendMailForEventPa
         userId: '',
         spaceId: '',
         circle: {
-          name: 'テストサークル',
+          name: '送信控え',
           genre: '',
           yomi: '',
           penName: '',
@@ -232,7 +232,7 @@ const sendMailManuallyForEventAsync = async (payload: SockbaseSendMailForEventPa
       const dummyUser: SockbaseAccountDocument = {
         id: '',
         email: '',
-        name: 'テスト 太郎',
+        name: '送信 太郎',
         birthday: 0,
         postalCode: '',
         address: '',
