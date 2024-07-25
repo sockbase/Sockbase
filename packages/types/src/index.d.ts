@@ -504,6 +504,7 @@ export type SockbaseInquiryStatus = 0 | 1 | 2
 
 export interface SockbaseSendMailPayload {
   cc: string
+  replyTo: string | null
   subject: string
   body: string[]
 }
