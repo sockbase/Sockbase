@@ -3,14 +3,26 @@ import useFirebase from './useFirebase'
 import type { SockbaseMailSendTarget, SockbaseSendMailForEventPayload } from 'sockbase'
 
 interface IUseMail {
-  sendMailForEventAsync: (eventId: string, target: SockbaseMailSendTarget, mailSubject: string, mailBody: string) => Promise<boolean>
+  sendMailForEventAsync: (
+    eventId: string,
+    target: SockbaseMailSendTarget,
+    cc: string,
+    replyTo: string | null,
+    mailSubject: string,
+    mailBody: string) => Promise<boolean>
   previewMailBody: (mailBody: string) => string[]
 }
 const useMail = (): IUseMail => {
   const { getFunctions } = useFirebase()
 
   const sendMailForEventAsync =
-    async (eventId: string, target: SockbaseMailSendTarget, mailSubject: string, mailBody: string): Promise<boolean> => {
+    async (
+      eventId: string,
+      target: SockbaseMailSendTarget,
+      cc: string,
+      replyTo: string | null,
+      mailSubject: string,
+      mailBody: string): Promise<boolean> => {
       const functions = getFunctions()
       const sendMailFunction = FirebaseFunctions
         .httpsCallable<SockbaseSendMailForEventPayload, boolean>(
@@ -18,6 +30,8 @@ const useMail = (): IUseMail => {
         'mail-sendMailManuallyForEvent')
       const sendResult = await sendMailFunction({
         eventId,
+        cc,
+        replyTo,
         target,
         subject: mailSubject,
         body: mailBody.split('\n')
