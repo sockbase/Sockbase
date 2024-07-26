@@ -38,7 +38,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
     const type = store.types
       .filter(t => t.id === ticketUser.typeId)[0]
 
-    return `${store.storeName} (${type.name})`
+    return `${store.name} (${type.name})`
   }, [ticketUser, store])
 
   useEffect(() => {

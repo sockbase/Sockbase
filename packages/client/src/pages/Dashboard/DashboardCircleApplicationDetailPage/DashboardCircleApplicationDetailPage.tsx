@@ -70,7 +70,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
 
   const title = useMemo(() => {
     if (!event) return '申し込み情報を読み込み中'
-    return `${event.eventName} 申し込み情報`
+    return `${event.name} 申し込み情報`
   }, [event])
 
   const eventSpace = useMemo((): SockbaseEventSpace | undefined => {
@@ -192,11 +192,11 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           ? <>
             <li><Link to="/dashboard/events">管理イベント</Link></li>
             <li>{event?._organization.name}</li>
-            <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName}</Link></li>
+            <li><Link to={`/dashboard/events/${eventId}`}>{event?.name}</Link></li>
           </>
           : <>
             <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
-            <li>{event ? event.eventName : <BlinkField />}</li>
+            <li>{event ? event.name : <BlinkField />}</li>
           </>}
       </Breadcrumbs>
 
@@ -263,7 +263,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               </tr>}
               <tr>
                 <th>申し込んだイベント</th>
-                <td>{(event && `${event.eventName} ${formatByDate(event.schedules.startEvent, '(YYYY年 M月 D日 開催)')}`) || <BlinkField />}</td>
+                <td>{(event && `${event.name} ${formatByDate(event.schedules.startEvent, '(YYYY年 M月 D日 開催)')}`) || <BlinkField />}</td>
               </tr>
               <tr>
                 <th>サークル名</th>

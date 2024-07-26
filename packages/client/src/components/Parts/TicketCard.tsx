@@ -18,7 +18,7 @@ const TicketCard: React.FC<Props> = (props) => {
   return (
     <Container key={props.ticketUser.hashId} to={`/dashboard/mytickets/${props.ticketUser.hashId}`}>
       <Header color={props.ticketUser.used ? 'var(--pending-color)' : props.type?.color ?? 'var(--background-disabled-color)'}>
-        {props.store?.storeName}
+        {props.store?.name}
       </Header>
       <Content>
         <ContentTitle>チケット種別</ContentTitle>

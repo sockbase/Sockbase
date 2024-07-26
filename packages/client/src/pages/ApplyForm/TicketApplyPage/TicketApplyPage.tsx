@@ -24,7 +24,7 @@ const TicketApplyPage: React.FC = () => {
 
   const pageTitle = useMemo(() => {
     if (!store) return
-    return `${store.storeName} 申し込み受付ページ`
+    return `${store.name} 申し込み受付ページ`
   }, [store])
 
   const handleLoginAsync = useCallback(async (email: string, password: string) => {

@@ -37,9 +37,9 @@ const manuallySuffix = [
 
 const templates = {
   acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument, space: SockbaseEventSpace, genre: SockbaseEventGenre) => ({
-    subject: `[${event.eventName}] サークル参加申し込み 内容確認`,
+    subject: `[${event.name}] サークル参加申し込み 内容確認`,
     body: [
-      `この度は、${event.eventName}への参加申し込みをいただき、誠にありがとうございます。お申し込みいただいた内容を確認いたしました。`,
+      `この度は、${event.name}への参加申し込みをいただき、誠にありがとうございます。お申し込みいただいた内容を確認いたしました。`,
       'お申し込みいただいた内容は以下の通りです。',
       '',
       '[サークル情報]',
@@ -48,9 +48,9 @@ const templates = {
       `ペンネーム: ${app.circle.penName}`,
       '',
       '[イベント情報]',
-      `イベント名: ${event.eventName}`,
+      `イベント名: ${event.name}`,
       `会期: ${dayjs(event.schedules.startEvent).tz().format('YYYY年 M月 D日 H時mm分')} 〜 ${dayjs(event.schedules.endEvent).tz().format('H時mm分')}`,
-      // '場所: ', // TODO: 場所 あとで追記
+      `会場: ${event.venue.name}`,
       '',
       'お申し込み内容の確認・変更は以下のURLよりご確認いただけます。',
       `https://sockbase.net/dashboard/applications/${app.hashId}`,
@@ -62,9 +62,9 @@ const templates = {
     ]
   }),
   requestCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace, email: string) => ({
-    subject: `[${event.eventName}] サークル参加費 お支払いのお願い`,
+    subject: `[${event.name}] サークル参加費 お支払いのお願い`,
     body: [
-      `この度は、${event.eventName}への参加申し込みをいただき、誠にありがとうございます。`,
+      `この度は、${event.name}への参加申し込みをいただき、誠にありがとうございます。`,
       '',
       'サークル参加費のお支払いのご案内をいたします。',
       '',
@@ -94,7 +94,7 @@ const templates = {
           ''
         ],
       '[申し込み情報]',
-      `イベント名: ${event.eventName}`,
+      `イベント名: ${event.name}`,
       `サークル名: ${app.circle.name}`,
       `ペンネーム: ${app.circle.penName}`,
       `スペース: ${space.name}`,
@@ -120,7 +120,7 @@ const templates = {
       '※オンライン決済の場合、領収書はメールにて別途送付いたします。',
       '',
       '[申し込み情報]',
-      `イベント名: ${event.eventName}`,
+      `イベント名: ${event.name}`,
       `サークル名: ${app.circle.name}`,
       `ペンネーム: ${app.circle.penName}`,
       `スペース: ${space.name}`,
@@ -129,12 +129,12 @@ const templates = {
     ]
   }),
   updateUnionCircle: (event: SockbaseEvent, app: SockbaseApplicationDocument, unionApp: SockbaseApplicationDocument) => ({
-    subject: `[${event.eventName}] 隣接希望・合体申し込みを受け付けました`,
+    subject: `[${event.name}] 隣接希望・合体申し込みを受け付けました`,
     body: [
       '以下のサークルが隣接希望・合体申し込みを申請し、システムに登録されましたのでお知らせいたします。',
       '',
       '[申請元サークル情報]',
-      `イベント名: ${event.eventName}`,
+      `イベント名: ${event.name}`,
       `サークル名: ${app.circle.name}`,
       `ペンネーム: ${app.circle.penName}`,
       `申し込みID: ${app.hashId ?? ''}`,
@@ -149,19 +149,19 @@ const templates = {
     ]
   }),
   acceptTicket: (store: SockbaseStoreDocument, type: SockbaseStoreType, ticket: SockbaseTicketDocument) => ({
-    subject: `[${store.storeName}] チケット申し込み 内容確認`,
+    subject: `[${store.name}] チケット申し込み 内容確認`,
     body: [
-      `この度は、${store.storeName}への参加申し込みをいただき、誠にありがとうございます。お申し込みいただいた内容を確認いたしました。`,
+      `この度は、${store.name}への参加申し込みをいただき、誠にありがとうございます。お申し込みいただいた内容を確認いたしました。`,
       'お申し込みいただいた内容は以下の通りです。',
       '',
       '[チケット情報]',
-      `チケットストア名: ${store.storeName}`,
-      `イベント日程: ${dayjs(store.schedules.startEvent).tz().format('YYYY年 M月 D日 H時mm分')} 〜 ${dayjs(store.schedules.endEvent).tz().format('H時mm分')}`,
+      `チケットストア名: ${store.name}`,
+      `会期: ${dayjs(store.schedules.startEvent).tz().format('YYYY年 M月 D日 H時mm分')} 〜 ${dayjs(store.schedules.endEvent).tz().format('H時mm分')}`,
+      ...(store.venue ? [`会場: ${store.venue.name}`] : []),
       `チケット種別: ${type.name}`,
       '',
       '購入したチケットは以下のURLからご確認いただけます。',
       `https://sockbase.net/dashboard/tickets/${ticket.hashId}`,
-      // '場所: ', // TODO: 場所 あとで追記
       '',
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',
@@ -170,9 +170,9 @@ const templates = {
     ]
   }),
   requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketDocument, store: SockbaseStore, type: SockbaseStoreType, email: string) => ({
-    subject: `[${store.storeName}] お支払いのお願い`,
+    subject: `[${store.name}] お支払いのお願い`,
     body: [
-      `この度は、${store.storeName}への参加申し込みをいただき、誠にありがとうございます。`,
+      `この度は、${store.name}への参加申し込みをいただき、誠にありがとうございます。`,
       '',
       '参加費のお支払いのご案内をいたします。',
       '',
@@ -206,7 +206,7 @@ const templates = {
           ''
         ],
       '[申し込み情報]',
-      `イベント名: ${store.storeName}`,
+      `イベント名: ${store.name}`,
       `チケット種別: ${type.name}`,
       `チケットID: ${ticket.hashId}`,
       '',
@@ -217,7 +217,7 @@ const templates = {
     ]
   }),
   acceptTicketPayment: (payment: SockbasePaymentDocument, store: SockbaseStoreDocument, type: SockbaseStoreType, ticket: SockbaseTicketDocument) => ({
-    subject: `[${store.storeName}] お支払い完了のお知らせ`,
+    subject: `[${store.name}] お支払い完了のお知らせ`,
     body: [
       '以下の通り、お支払いを受け付けました。',
       'ご利用ありがとうございました。',
@@ -230,7 +230,7 @@ const templates = {
       '※オンライン決済の場合、領収書はメールにて別途送付いたします。',
       '',
       '[申し込み情報]',
-      `チケットストア名: ${store.storeName}`,
+      `チケットストア名: ${store.name}`,
       `チケット種別: ${type.name}`,
       `チケットID: ${ticket.hashId}`,
       ...autoSuffix
@@ -252,7 +252,7 @@ const templates = {
     ]
   }),
   sendManuallyForEvent: (subject: string, body: string[], event: SockbaseEvent, app: SockbaseApplicationDocument, user: SockbaseAccountDocument) => ({
-    subject: `[${event.eventName}] ${subject}`,
+    subject: `[${event.name}] ${subject}`,
     body: [
       app.circle.name,
       `${user.name} 様`,

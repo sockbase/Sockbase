@@ -52,7 +52,7 @@ const DashboardEventSpaceManagePage: React.FC = () => {
 
   const pageTitle = useMemo(() => {
     if (!event) return ''
-    return `${event.eventName} 配置管理`
+    return `${event.name} 配置管理`
   }, [event])
 
   const handleDownload = useCallback(() => {
@@ -137,11 +137,11 @@ const DashboardEventSpaceManagePage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
-        <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName ?? <BlinkField />}</Link></li>
+        <li><Link to={`/dashboard/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title={event?.eventName}
+        title={event?.name}
         description="配置管理"
         icon={<MdAssignmentTurnedIn />}
         isLoading={!event} />

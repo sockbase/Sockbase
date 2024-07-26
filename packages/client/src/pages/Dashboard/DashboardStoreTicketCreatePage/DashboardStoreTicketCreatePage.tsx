@@ -84,7 +84,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
 
   const pageTitle = useMemo(() => {
     if (!store) return ''
-    return `${store.storeName} チケット作成`
+    return `${store.name} チケット作成`
   }, [store])
 
   const errorCount = useMemo(() => {
@@ -111,9 +111,9 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
-        <li><Link to={`/dashboard/stores/${storeId}`}>{store?.storeName ?? <BlinkField />}</Link></li>
+        <li><Link to={`/dashboard/stores/${storeId}`}>{store?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
-      <PageTitle title={store?.storeName} icon={<MdStore />} description={'チケット作成'} isLoading={!store} />
+      <PageTitle title={store?.name} icon={<MdStore />} description={'チケット作成'} isLoading={!store} />
 
       <TwoColumnsLayout>
         <>

@@ -26,11 +26,15 @@ const EventInfo: React.FC<Props> = (props) => {
           </tr>
           <tr>
             <th>イベント名</th>
-            <td>{props.event?.eventName || '(空欄)'}</td>
+            <td>{props.event?.name || '(空欄)'}</td>
           </tr>
           <tr>
             <th>イベント Web サイト</th>
-            <td>{props.event?.eventWebURL || '(空欄)'}</td>
+            <td>{props.event?.websiteURL || '(空欄)'}</td>
+          </tr>
+          <tr>
+            <th>会場名</th>
+            <td>{props.event?.venue.name || '(空欄)'}</td>
           </tr>
           <tr>
             <th>アイキャッチ画像</th>

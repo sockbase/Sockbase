@@ -108,7 +108,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     })
 
   const webhookBody = {
-    username: `Sockbase: ${store.storeName}`,
+    username: `Sockbase: ${store.name}`,
     embeds: [
       {
         title: 'チケット申し込みを受け付けました！',
@@ -117,7 +117,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
         fields: [
           {
             name: 'チケットストア名',
-            value: store.storeName
+            value: store.name
           },
           {
             name: '種類',

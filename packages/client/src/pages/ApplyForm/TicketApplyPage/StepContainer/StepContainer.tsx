@@ -147,7 +147,7 @@ const StepContainer: React.FC<Props> = (props) => {
       </Alert>}
 
       {props.store && <>
-        <h1>{props.store.storeName} 申し込み受付</h1>
+        <h1>{props.store.name} 申し込み受付</h1>
 
         {props.store.schedules.endApplication < now && <Alert type="danger" title="受付期間前です">
           このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。

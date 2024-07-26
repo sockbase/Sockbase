@@ -118,7 +118,7 @@ const DashboardMyTicketsPage: React.FC = () => {
                 ? usedTicketUsers
                   .map((t, i) => <tr key={t.hashId}>
                     <td>{i + 1}</td>
-                    <th>{getStore(t.storeId)?.storeName}</th>
+                    <th>{getStore(t.storeId)?.name}</th>
                     <td>{getType(t.storeId, t.typeId)?.name}</td>
                     <td>{formatByDate(t.usedAt, 'YYYY年 M月 D日 H時mm分')}</td>
                     <td><Link to={`/dashboard/mytickets/${t.hashId}`}>詳細</Link></td>

@@ -29,8 +29,11 @@ const InformationImport: React.FC<Props> = (props) => {
 
   const [eventId, setEventId] = useState('')
   const [event, setEvent] = useState<SockbaseEvent>({
-    eventName: '',
-    eventWebURL: '',
+    name: '',
+    websiteURL: '',
+    venue: {
+      name: ''
+    },
     descriptions: [''],
     rules: [''],
     spaces: [],
@@ -397,14 +400,20 @@ const InformationImport: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>イベント名</FormLabel>
           <FormInput
-            value={event.eventName}
-            onChange={e => setEvent(s => ({ ...s, eventName: e.target.value }))}/>
+            value={event.name}
+            onChange={e => setEvent(s => ({ ...s, name: e.target.value }))}/>
         </FormItem>
         <FormItem>
           <FormLabel>イベント Web サイト</FormLabel>
           <FormInput
-            value={event.eventWebURL}
-            onChange={e => setEvent(s => ({ ...s, eventWebURL: e.target.value }))}/>
+            value={event.websiteURL}
+            onChange={e => setEvent(s => ({ ...s, websiteURL: e.target.value }))}/>
+        </FormItem>
+        <FormItem>
+          <FormLabel>会場名</FormLabel>
+          <FormInput
+            value={event.venue.name}
+            onChange={e => setEvent(s => ({ ...s, venue: { ...s.venue, name: e.target.value } }))}/>
         </FormItem>
         <FormItem>
           <FormLabel>アイキャッチ画像</FormLabel>
