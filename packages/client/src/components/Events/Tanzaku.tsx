@@ -104,25 +104,24 @@ const Tanzaku: React.FC<Props> = (props) => {
           <Header>ジャンル</Header>
           {genre?.name}
         </Genre>
-        <Overview>
-          <Header>頒布物概要</Header>
-          {props.app?.overview.description}
-        </Overview>
-        <TotalAmount>
-          <Header>総搬入量</Header>
-          {props.app?.overview.totalAmount}
-        </TotalAmount>
-        <Age>
-          <Header>開催時年齢</Header>
-          {eventAge}
-        </Age>
-        <Gender>
-          <Header>性別</Header>
-          {gender}
-        </Gender>
-        <SpecialRemarks>
-          <Header>メモ</Header>
-        </SpecialRemarks>
+        <AssignMeta>
+          <Overview>
+            <Header>頒布物概要</Header>
+            {props.app?.overview.description}
+          </Overview>
+          <TotalAmount>
+            <Header>総搬入量</Header>
+            {props.app?.overview.totalAmount}
+          </TotalAmount>
+          <Age>
+            <Header>開催時年齢</Header>
+            {eventAge}
+          </Age>
+          <Gender>
+            <Header>性別</Header>
+            {gender}
+          </Gender>
+        </AssignMeta>
       </CircleArea>
       {props.app?.circle.hasAdult && <AdultBar />}
       {space?.isDualSpace && <DualSpaceBar />}
@@ -270,33 +269,34 @@ const AppIdQR = styled(ReactQRCode)`
   padding: 7px;
 `
 const CircleArea = styled.div`
-  display: grid;
-  grid-template-rows: auto auto auto auto auto 2fr 2fr 1fr;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   border-left: 1px dotted #000000;
 `
 const EventName = styled.div`
-  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
 `
 const AppId = styled.div`
-  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
 `
 const CircleMeta = styled.div`
-  grid-column: 1 / 4;
   border-bottom: 1px dotted #000000;
+`
+const AssignMeta = styled.div`
+flex-grow: 1;
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 1fr 1fr;
 `
 const CircleName = styled.div`
   padding: 6px;
   padding-top: 9px;
-  font-size: 1.5em;
+  font-size: 1.25em;
   font-weight: bold;
 `
 const PenName = styled.div`
   padding: 6px;
   padding-top: 9px;
-  font-size: 1.25em;
   font-weight: bold;
 `
 const TwitterId = styled.div`
@@ -324,8 +324,4 @@ const Age = styled.div`
 `
 const Gender = styled.div`
   grid-column: 2;
-  border-right: 1px dotted #000000;
-`
-const SpecialRemarks = styled.div`
-  grid-column: 3;
 `
