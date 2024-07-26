@@ -72,7 +72,7 @@ const Tanzaku: React.FC<Props> = (props) => {
       <CircleArea>
         <EventName>
           <Header>イベント</Header>
-          {props.event.eventName}
+          {props.event.name}
         </EventName>
         <AppId>
           <Header>申込み ID</Header>

@@ -163,7 +163,7 @@ const DashboardEventApplicationListPage: React.FC = () => {
 
   const title = useMemo(() => {
     if (!event) return '申し込み一覧を読み込み中'
-    return `${event.eventName} 申し込み一覧`
+    return `${event.name} 申し込み一覧`
   }, [event])
 
   return (
@@ -175,7 +175,7 @@ const DashboardEventApplicationListPage: React.FC = () => {
       </Breadcrumbs>
       <PageTitle
         icon={<MdEditCalendar />}
-        title={event?.eventName}
+        title={event?.name}
         description="申し込みサークル一覧"
         isLoading={!event} />
       <FormSection>

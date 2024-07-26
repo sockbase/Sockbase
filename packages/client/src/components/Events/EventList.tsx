@@ -42,7 +42,7 @@ const EventList: React.FC = () => {
             <ul>
               {evs.map(e =>
                 <li key={e.id}>
-                  <Link to={`/dashboard/events/${e.id}`}>{e.eventName}</Link>
+                  <Link to={`/dashboard/events/${e.id}`}>{e.name} </Link>@{e.venue.name}
                 </li>)}
             </ul>
           </li>))}

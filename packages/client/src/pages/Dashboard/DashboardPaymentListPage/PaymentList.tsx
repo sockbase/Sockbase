@@ -46,7 +46,7 @@ const PaymentList: React.FC<Props> = (props) => {
       if (!app) return '(不明なイベント)'
 
       const event = props.events[app.eventId]
-      return event.eventName
+      return event.name
     } else if (payment.ticketId) {
       const ticket = props.tickets[payment.ticketId]
       if (!ticket) return '(不明なチケットストア)'
@@ -55,7 +55,7 @@ const PaymentList: React.FC<Props> = (props) => {
       const type = store.types
         .filter(t => t.id === ticket.typeId)[0]
 
-      return `${store.storeName}(${type.name})`
+      return `${store.name}(${type.name})`
     }
 
     return '-'

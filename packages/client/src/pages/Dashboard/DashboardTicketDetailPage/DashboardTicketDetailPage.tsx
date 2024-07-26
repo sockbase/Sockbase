@@ -77,7 +77,7 @@ const DashboardTicketDetailPage: React.FC = () => {
 
   const pageTitle = useMemo(() => {
     if (!store || !type) return undefined
-    return `${store.storeName} (${type.name})`
+    return `${store.name} (${type.name})`
   }, [store, type])
 
   const assignURL = useMemo(() =>
@@ -224,7 +224,7 @@ const DashboardTicketDetailPage: React.FC = () => {
         {isAdmin
           ? <>
             <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
-            <li><Link to={`/dashboard/stores/${store?.id}`}>{store?.storeName ?? <BlinkField />}</Link></li>
+            <li><Link to={`/dashboard/stores/${store?.id}`}>{store?.name ?? <BlinkField />}</Link></li>
           </>
           : <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>}
 

@@ -15,7 +15,7 @@ const Complete: React.FC<Props> = (props) => {
       <h1>チケットを受け取りました</h1>
 
       <p>
-        {props.store.storeName} ({props.selectedType.name}) を受け取りました。
+        {props.store.name} ({props.selectedType.name}) を受け取りました。
       </p>
 
       <h2>使用方法</h2>

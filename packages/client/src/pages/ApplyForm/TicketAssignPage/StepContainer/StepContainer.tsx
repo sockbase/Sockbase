@@ -111,7 +111,7 @@ const StepContainer: React.FC<Props> = (props) => {
       </>}
 
       {!props.ticketUser.usableUserId && <>
-        <h1>{props.store.storeName} チケット受け取りページ</h1>
+        <h1>{props.store.name} チケット受け取りページ</h1>
         {steps?.[step]}
       </>}
     </>

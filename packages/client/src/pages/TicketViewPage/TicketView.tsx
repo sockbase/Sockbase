@@ -64,7 +64,7 @@ const TicketView: React.FC<Props> = (props) => {
       <TicketContainer>
         <TitleWrapper color={type?.color || 'var(--background-disabled-color)'} disabled={!ticketUser?.usableUserId || ticketUser?.used}>
           <TitleContainer>
-            <StoreName>{props.store.storeName}</StoreName>
+            <StoreName>{props.store.name}</StoreName>
             <TypeName>{type?.name}</TypeName>
             <QRCodeArea>
               <QRCode value={props.ticketHashId} size={192} />

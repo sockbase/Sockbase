@@ -43,7 +43,7 @@ const NewCircleApplyPage: React.FC = () => {
 
   const pageTitle = useMemo(() => {
     if (!event) return
-    return `${event.eventName} サークル申し込みページ`
+    return `${event.name} サークル申し込みページ`
   }, [event])
 
   const handleLoginAsync = useCallback(async (email: string, password: string) => {
