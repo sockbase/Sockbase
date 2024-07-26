@@ -80,7 +80,7 @@ const Input: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>チケット名</th>
-            <td>{props.store.storeName}</td>
+            <td>{props.store.name}</td>
           </tr>
           <tr>
             <th>参加種別</th>
@@ -93,7 +93,7 @@ const Input: React.FC<Props> = (props) => {
           <tr>
             <th></th>
             <td>
-              <a href={props.store.storeWebURL} target="_blank" rel="noreferrer">その他の開催情報…</a>
+              <a href={props.store.websiteURL} target="_blank" rel="noreferrer">その他の開催情報…</a>
             </td>
           </tr>
         </tbody>

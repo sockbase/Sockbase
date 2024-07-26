@@ -93,11 +93,11 @@ const DashboardEventMailSendPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
-        <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName ?? <BlinkField />}</Link></li>
+        <li><Link to={`/dashboard/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title={event?.eventName}
+        title={event?.name}
         description="メール送信"
         icon={<MdMail />}
         isLoading={!event} />
@@ -166,7 +166,7 @@ const DashboardEventMailSendPage: React.FC = () => {
         <>
           <h3>送信プレビュー</h3>
 
-          <h4>[{event?.eventName}] {mailSubject}</h4>
+          <h4>[{event?.name}] {mailSubject}</h4>
           <SendPreview>{mailBodyPreview.join('\n')}</SendPreview>
         </>
       </TwoColumnsLayout>

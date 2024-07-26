@@ -115,11 +115,11 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
           ? <>
             <li><Link to="/dashboard/events">管理イベント</Link></li>
             <li>{event?._organization.name ?? <BlinkField />}</li>
-            <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName}</Link></li>
+            <li><Link to={`/dashboard/events/${eventId}`}>{event?.name}</Link></li>
           </>
           : <>
             <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
-            <li>{event?.eventName ?? <BlinkField />}</li>
+            <li>{event?.name ?? <BlinkField />}</li>
           </>}
         <li>
           {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}

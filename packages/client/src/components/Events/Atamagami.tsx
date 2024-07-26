@@ -17,7 +17,7 @@ const Atamagami: React.FC<Props> = (props) => {
           {props.event._organization.name}
         </OrganizationName>
         <EventName>
-          {props.event.eventName}
+          {props.event.name}
         </EventName>
         <CircleCount>
           <Header>申込確定サークル</Header>

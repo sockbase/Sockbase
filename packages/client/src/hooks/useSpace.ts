@@ -101,7 +101,7 @@ const useSpace = (): IUseSpace => {
         })
 
       const applicationDataSheet = XLSX.utils.aoa_to_sheet([
-        [eventId, `${event.eventName} 配置データ作成`],
+        [eventId, `${event.name} 配置データ作成`],
         [formatByDate(now, 'YYYY/MM/DD HH:mm:ss 作成')],
         [''],
         ['', '→B列以降は確認用です。変更しても反映されません。'],

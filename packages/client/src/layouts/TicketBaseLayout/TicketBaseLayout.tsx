@@ -21,7 +21,7 @@ const TicketBaseLayout: React.FC<Props> = (props) => {
 
   const pageTitle = useMemo(() => {
     if (!props.ticketUser || !props.store) return '読み込み中'
-    return `${props.store.storeName}(${typeName})`
+    return `${props.store.name}(${typeName})`
   }, [props.ticketUser, props.store])
 
   return (

@@ -189,7 +189,7 @@ const Input: React.FC<Props> = (props) => {
 
     const pastApp = props.pastApps?.filter(a => a.id === pastAppId)[0]
     if (!pastApp) return
-    if (!confirm(`${pastApp.circle.name} (${props.pastEvents[pastApp.eventId].eventName}) から申し込み情報を引用します。\nよろしいですか？`)) return
+    if (!confirm(`${pastApp.circle.name} (${props.pastEvents[pastApp.eventId].name}) から申し込み情報を引用します。\nよろしいですか？`)) return
 
     setApp({
       ...pastApp,
@@ -274,7 +274,7 @@ const Input: React.FC<Props> = (props) => {
               onChange={e => setPastAppId(e.target.value)}>
               <option value="">選択してください</option>
               {props.pastApps.map(a =>
-                <option key={a.id} value={a.id}>{a.circle.name} ({props.pastEvents?.[a.eventId].eventName})</option>)}
+                <option key={a.id} value={a.id}>{a.circle.name} ({props.pastEvents?.[a.eventId].name})</option>)}
             </FormSelect>
           </FormItem>
           <FormItem inlined>

@@ -6,7 +6,7 @@
 
 - VSCode
   - VSCode拡張
-    - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+    - [ESLint](https://marketvenue.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
 #### 処理系バージョン
 

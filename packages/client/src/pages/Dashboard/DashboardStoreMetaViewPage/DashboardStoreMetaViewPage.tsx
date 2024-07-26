@@ -36,11 +36,11 @@ const DashboardStoreMetaViewPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
         <li>{store?._organization.name}</li>
-        <li><Link to={`/dashboard/stores/${storeId}`}>{store?.storeName}</Link></li>
+        <li><Link to={`/dashboard/stores/${storeId}`}>{store?.name}</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title={store?.storeName}
+        title={store?.name}
         description="チケットストアメタ情報"
         icon={<MdStore />}
         isLoading={!store} />

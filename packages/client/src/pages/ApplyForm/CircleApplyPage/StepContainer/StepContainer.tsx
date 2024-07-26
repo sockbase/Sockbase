@@ -201,7 +201,7 @@ const StepContainer: React.FC<Props> = (props) => {
       </Alert>}
 
       {props.event && <>
-        <h1>{props.event.eventName} サークル参加申し込み受付</h1>
+        <h1>{props.event.name} サークル参加申し込み受付</h1>
 
         {props.event.schedules.startApplication > now && <Alert type="danger" title="受付期間前です">
           このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。

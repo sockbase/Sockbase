@@ -155,8 +155,9 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
   toFirestore: (event: SockbaseEventDocument): DocumentData => ({
-    eventName: event.eventName,
-    eventWebURL: event.eventWebURL,
+    name: event.name,
+    websiteURL: event.websiteURL,
+    venue: event.venue,
     descriptions: event.descriptions,
     rules: event.rules,
     spaces: event.spaces,
@@ -171,8 +172,9 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
     const event = snapshot.data() as SockbaseEventDocument
     return {
       id: snapshot.id,
-      eventName: event.eventName,
-      eventWebURL: event.eventWebURL,
+      name: event.name,
+      websiteURL: event.websiteURL,
+      venue: event.venue,
       descriptions: event.descriptions,
       rules: event.rules,
       spaces: event.spaces
@@ -240,8 +242,9 @@ export const overviewConverter: FirestoreDataConverter<SockbaseApplicationOvervi
 
 export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
   toFirestore: (store: SockbaseStoreDocument): DocumentData => ({
-    storeName: store.storeName,
-    storeWebURL: store.storeWebURL,
+    name: store.name,
+    websiteURL: store.websiteURL,
+    venue: store.venue,
     descriptions: store.descriptions,
     rules: store.rules,
     schedules: store.schedules,
@@ -254,8 +257,9 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
     const store = snapshot.data()
     return {
       id: snapshot.id,
-      storeName: store.storeName,
-      storeWebURL: store.storeWebURL,
+      name: store.name,
+      websiteURL: store.websiteURL,
+      venue: store.venue,
       descriptions: store.descriptions,
       rules: store.rules,
       schedules: store.schedules,

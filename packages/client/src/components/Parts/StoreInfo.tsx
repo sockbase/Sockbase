@@ -25,11 +25,15 @@ const StoreInfo: React.FC<Props> = (props) => {
           </tr>
           <tr>
             <th>チケットストア名</th>
-            <td>{props.store?.storeName}</td>
+            <td>{props.store?.name}</td>
           </tr>
           <tr>
             <th>イベント Web サイト</th>
-            <td>{props.store?.storeWebURL}</td>
+            <td>{props.store?.websiteURL}</td>
+          </tr>
+          <tr>
+            <th>会場名</th>
+            <td>{props.store?.venue?.name || '(空欄)'}</td>
           </tr>
         </tbody>
       </table>

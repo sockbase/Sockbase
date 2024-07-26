@@ -70,11 +70,11 @@ const DashboardTicketListPage: React.FC = () => {
   }
   useEffect(onInitialize, [getMyTicketsAsync])
 
-  const getStoreName = (storeId: string): string => {
+  const getname = (storeId: string): string => {
     if (!stores) return ''
     const store = stores
       .filter(s => s.id === storeId)[0]
-    return store.storeName
+    return store.name
   }
 
   const getType = (storeId: string, typeId: string): SockbaseStoreType | undefined => {
@@ -125,7 +125,7 @@ const DashboardTicketListPage: React.FC = () => {
               ? tickets
                 .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
                 .map((t) => <tr key={t.id}>
-                  <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getStoreName(t.storeId)}</Link></th>
+                  <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getname(t.storeId)}</Link></th>
                   <td>{t.hashId && <TicketAssignStatusLabel status={!!getTicketUser(t.hashId)?.usableUserId} />}</td>
                   <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
                   <td>{t.id && <ApplicationStatusLabel status={getTicketApplicationStatus(t.id)} />}</td>
