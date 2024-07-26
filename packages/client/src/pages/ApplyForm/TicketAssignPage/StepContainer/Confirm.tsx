@@ -44,7 +44,7 @@ const Confirm: React.FC<Props> = (props) => {
         <tbody>
           <tr>
             <th>チケット名</th>
-            <td>{props.store.storeName}</td>
+            <td>{props.store.name}</td>
           </tr>
           <tr>
             <th>参加種別</th>

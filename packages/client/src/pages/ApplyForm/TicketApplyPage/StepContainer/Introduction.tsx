@@ -27,7 +27,7 @@ const Introduction: React.FC<Props> = (props) => {
       <h1>申し込みの前に</h1>
 
       <p>
-        このページでは「{props.store.storeName}」へのサークル参加申し込みを受け付けます。<br />
+        このページでは「{props.store.name}」へのサークル参加申し込みを受け付けます。<br />
         申し込み手続きを進める前に以下の内容を確認してください。
       </p>
 

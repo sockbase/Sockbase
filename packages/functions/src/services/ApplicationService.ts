@@ -158,7 +158,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
   }
 
   const webhookBody = {
-    username: `Sockbase: ${event.eventName}`,
+    username: `Sockbase: ${event.name}`,
     embeds: [
       {
         title: 'サークル申し込みを受け付けました！',
@@ -167,7 +167,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
         fields: [
           {
             name: 'イベント名',
-            value: event.eventName
+            value: event.name
           },
           {
             name: 'サークル名',

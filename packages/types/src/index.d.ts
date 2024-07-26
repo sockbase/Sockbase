@@ -4,8 +4,11 @@ export type valueOf<T> = T[keyof T]
  * イベント
  */
 export interface SockbaseEvent {
-  eventName: string
-  eventWebURL: string
+  name: string
+  websiteURL: string
+  venue: {
+    name: string
+  }
   descriptions: string[]
   rules: string[]
   spaces: SockbaseEventSpace[]
@@ -69,8 +72,11 @@ export interface SockbaseEventGenre {
  * チケットストア
  */
 export interface SockbaseStore {
-  storeName: string
-  storeWebURL: string
+  name: string
+  websiteURL: string
+  venue: {
+    name: string
+  } | null
   descriptions: string[]
   rules: string[]
   types: SockbaseStoreType[]

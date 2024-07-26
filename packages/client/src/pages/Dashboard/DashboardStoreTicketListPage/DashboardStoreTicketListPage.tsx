@@ -59,7 +59,7 @@ const DashboardStoreTicketListPage: React.FC = () => {
 
   const pageTitle = useMemo(() => {
     if (!store) return '読み込み中'
-    return `${store.storeName} チケット一覧`
+    return `${store.name} チケット一覧`
   }, [store])
 
   const getType = useCallback((typeId: string): SockbaseStoreType | undefined => {
@@ -230,7 +230,7 @@ const DashboardStoreTicketListPage: React.FC = () => {
         <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
         <li>{store?._organization.name ?? <BlinkField />}</li>
       </Breadcrumbs>
-      <PageTitle title={store?.storeName} icon={<MdStore />} description="発券済みチケットの一覧" isLoading={!store} />
+      <PageTitle title={store?.name} icon={<MdStore />} description="発券済みチケットの一覧" isLoading={!store} />
 
       <FormSection>
         <FormItem inlined>

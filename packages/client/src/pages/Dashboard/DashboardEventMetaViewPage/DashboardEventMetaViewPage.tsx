@@ -38,11 +38,11 @@ const DashboardEventMetaViewPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
-        <li><Link to={`/dashboard/events/${eventId}`}>{event?.eventName ?? <BlinkField />}</Link></li>
+        <li><Link to={`/dashboard/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title={event?.eventName}
+        title={event?.name}
         description="イベントメタ情報"
         icon={<MdCalendarViewMonth />}
         isLoading={!event} />

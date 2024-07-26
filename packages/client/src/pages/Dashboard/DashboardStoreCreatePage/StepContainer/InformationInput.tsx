@@ -21,8 +21,11 @@ const InformationInput: React.FC<Props> = (props) => {
 
   const [storeId, setStoreId] = useState('')
   const [store, setStore] = useState<SockbaseStore>({
-    storeName: '',
-    storeWebURL: '',
+    name: '',
+    websiteURL: '',
+    venue: {
+      name: ''
+    },
     descriptions: [''],
     rules: [''],
     types: [],
@@ -56,6 +59,7 @@ const InformationInput: React.FC<Props> = (props) => {
   }])
 
   const [openPackageInputArea, setOpenPackageInputArea] = useState(false)
+  const [showVenueName, setShowVenueName] = useState(false)
 
   const handleEditDescription = useCallback((index: number, description: string) => {
     const newDescriptions = [...store.descriptions]
@@ -98,6 +102,7 @@ const InformationInput: React.FC<Props> = (props) => {
       storeId,
       {
         ...store,
+        venue: (showVenueName && store.venue) || null,
         descriptions: store.descriptions.filter(d => d),
         rules: store.rules.filter(r => r),
         types: editableTypes
@@ -115,11 +120,12 @@ const InformationInput: React.FC<Props> = (props) => {
           private: t.isPrivate
         }))
       })
-  }, [storeId, store, editableTypes])
+  }, [storeId, store, editableTypes, showVenueName])
 
   const fetchStore = useCallback((st: SockbaseStore) => {
     const fetchedStore = {
       ...st,
+      venue: st.venue || null,
       descriptions: (st.descriptions.length && st.descriptions) || [''],
       rules: (st.rules.length && st.rules) || [''],
       permissions: {
@@ -128,7 +134,9 @@ const InformationInput: React.FC<Props> = (props) => {
       },
       isPublic: !!st.isPublic
     }
+
     setStore(fetchedStore)
+    setShowVenueName(!!st.venue)
 
     const fetchedEditableTypes = st.types.length
       ? st.types
@@ -304,14 +312,28 @@ const InformationInput: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>チケットストア名</FormLabel>
           <FormInput
-            value={store.storeName}
-            onChange={e => setStore(s => ({ ...s, storeName: e.target.value }))}/>
+            value={store.name}
+            onChange={e => setStore(s => ({ ...s, name: e.target.value }))}/>
         </FormItem>
         <FormItem>
           <FormLabel>イベント Web サイト</FormLabel>
           <FormInput
-            value={store.storeWebURL}
-            onChange={e => setStore(s => ({ ...s, storeWebURL: e.target.value }))}/>
+            value={store.websiteURL}
+            onChange={e => setStore(s => ({ ...s, websiteURL: e.target.value }))}/>
+        </FormItem>
+        <FormItem>
+          <FormLabel>会場名</FormLabel>
+          <FormCheckbox
+            name={'show-venue-name'}
+            label={'会場名を表示する'}
+            checked={showVenueName}
+            onChange={checked => setShowVenueName(checked)} />
+        </FormItem>
+        <FormItem>
+          <FormInput
+            value={store.venue?.name}
+            onChange={e => setStore(s => ({ ...s, venue: { ...s.venue, name: e.target.value } }))}
+            disabled={!showVenueName} />
         </FormItem>
       </FormSection>
 
@@ -533,6 +555,8 @@ const InformationInput: React.FC<Props> = (props) => {
             label="参加費の銀行振込を許可する"
             checked={store.permissions.canUseBankTransfer}
             onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } })) }/>
+        </FormItem>
+        <FormItem>
           <FormCheckbox
             name="ticketUserAutoAssign"
             label="チケット使用者を自動で割り当てる"

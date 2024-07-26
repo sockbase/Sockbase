@@ -65,7 +65,7 @@ const DashboardStoreListPage: React.FC = () => {
           <li key={id}>{id}
             <ul>
               {sts.map(s => <li key={s.id}>
-                <Link to={`/dashboard/stores/${s.id}`}>{s.storeName}</Link>
+                <Link to={`/dashboard/stores/${s.id}`}>{s.name}</Link> {s.venue && `@${s.venue.name}`}
               </li>)}
             </ul>
           </li>

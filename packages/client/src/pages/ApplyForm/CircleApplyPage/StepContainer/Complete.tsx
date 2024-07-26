@@ -31,7 +31,7 @@ const Complete: React.FC<Props> = (props) => {
           </LinkButton>
         </FormItem>
         <FormItem>
-          <AnchorButton href={props.event?.eventWebURL}>
+          <AnchorButton href={props.event?.websiteURL}>
             イベントサイトへ戻る
           </AnchorButton>
         </FormItem>

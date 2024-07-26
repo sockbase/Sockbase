@@ -150,8 +150,9 @@ export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseEvent => {
     const event = snapshot.data()
     return {
-      eventName: event.eventName,
-      eventWebURL: event.eventWebURL,
+      name: event.name,
+      websiteURL: event.websiteURL,
+      venue: event.place,
       descriptions: event.descriptions,
       rules: event.rules,
       spaces: event.spaces,
@@ -211,8 +212,9 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
     const storeDoc = snapshot.data()
     return {
       id: snapshot.id,
-      storeName: storeDoc.storeName,
-      storeWebURL: storeDoc.websiteURL,
+      name: storeDoc.name,
+      websiteURL: storeDoc.websiteURL,
+      venue: storeDoc.place,
       descriptions: storeDoc.descriptions,
       rules: storeDoc.rules,
       types: storeDoc.types,

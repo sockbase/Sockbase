@@ -353,7 +353,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
             <tbody>
               <tr>
                 <th>チケットストア</th>
-                <td>{ticketUser !== undefined && store !== null ? store?.storeName : <BlinkField />}</td>
+                <td>{ticketUser !== undefined && store !== null ? store?.name : <BlinkField />}</td>
               </tr>
               <tr>
                 <th>参加種別</th>
