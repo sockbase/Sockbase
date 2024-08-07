@@ -58,6 +58,7 @@ export interface SockbaseEventSpace {
   } | null
   isDualSpace: boolean
   passCount?: number
+  acceptApplication: boolean | null
 }
 
 /**
