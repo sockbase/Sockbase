@@ -295,10 +295,12 @@ const Input: React.FC<Props> = (props) => {
           <FormRadio
             name="space"
             values={
-              props.event.spaces.map(i => ({
-                text: `${i.name} ${i.price.toLocaleString()}円 / ${i.description}`,
-                value: i.id
-              }))
+              props.event.spaces
+                .filter(s => s.acceptApplication)
+                .map(s => ({
+                  text: `${s.name} ${s.price.toLocaleString()}円 / ${s.description}`,
+                  value: s.id
+                }))
             }
             onChange={spaceId => setApp(s => ({ ...s, spaceId }))}
             value={app.spaceId}
