@@ -58,12 +58,16 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .catch(() => {
       throw new https.HttpsError('not-found', 'Event')
     })
+  const space = event.spaces.filter(s => s.id === payload.app.spaceId)[0]
+
   if (event.schedules.startApplication > timestamp || timestamp > event.schedules.endApplication) {
     throw new https.HttpsError('deadline-exceeded', 'application_out_of_term')
   } else if (!event.permissions.allowAdult && payload.app.circle.hasAdult) {
     throw new https.HttpsError('invalid-argument', 'invalid_argument_adult')
   } else if (!event.permissions.canUseBankTransfer && payload.app.paymentMethod === 'bankTransfer') {
     throw new https.HttpsError('invalid-argument', 'invalid_argument_bankTransfer')
+  } else if (!space.acceptApplication) {
+    throw new https.HttpsError('invalid-argument', 'invalid_argument_acceptApplication')
   }
 
   const appDoc: SockbaseApplicationDocument = {
@@ -110,8 +114,6 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .doc(`/_applicationOverviews/${appId}`)
     .withConverter(overviewConverter)
     .set(overview)
-
-  const space = event.spaces.filter(s => s.id === payload.app.spaceId)[0]
 
   const bankTransferCode = PaymentService.generateBankTransferCode(now)
   const paymentId = space.productInfo
