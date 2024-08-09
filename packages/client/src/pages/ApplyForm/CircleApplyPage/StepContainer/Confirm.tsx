@@ -3,7 +3,6 @@ import FormButton from '../../../../components/Form/Button'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
-import CircleCutImage from '../../../../components/Parts/CircleCutImage'
 import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrapper'
 import ProgressBar from '../../../../components/Parts/ProgressBar'
 import UserDataView from '../../../../components/UserDataView'
@@ -24,7 +23,6 @@ interface Props {
   links: SockbaseApplicationLinks | undefined
   userData: SockbaseAccountSecure | undefined
   fetchedUserData: SockbaseAccount | null | undefined
-  circleCutData: string | undefined
   selectedGenre: SockbaseEventGenre | undefined
   selectedSpace: SockbaseEventSpace | undefined
   selectedPaymentMethod: { id: string, description: string } | undefined
@@ -54,13 +52,6 @@ const Confirm: React.FC<Props> = (props) => {
   return (
     <>
       <h1>入力内容の確認</h1>
-
-      <h2>サークルカット</h2>
-      <FormSection>
-        <FormItem>
-          {props.circleCutData && <CircleCutImage src={props.circleCutData} />}
-        </FormItem>
-      </FormSection>
 
       <h2>サークル情報</h2>
       <table>
