@@ -30,7 +30,7 @@ const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
   const {
     getApplicationsByEventIdAsync,
     getLinksByApplicationIdOptionalAsync,
-    getCircleCutURLByHashedIdAsync,
+    getCircleCutURLByHashedIdNullableAsync,
     getApplicationMetaByIdAsync
   } = useApplication()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
@@ -108,10 +108,10 @@ const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
           .map(id => id ?? '')
           .map(async id => ({
             id,
-            data: await getCircleCutURLByHashedIdAsync(id)
+            data: await getCircleCutURLByHashedIdNullableAsync(id)
           }))
       )
-        .then(fetchedCircleCuts => fetchedCircleCuts.reduce<Record<string, string>>((p, c) => ({ ...p, [c.id]: c.data }), {}))
+        .then(fetchedCircleCuts => fetchedCircleCuts.reduce<Record<string, string | null>>((p, c) => ({ ...p, [c.id]: c.data }), {}))
         .then(fetchedCircleCuts => setCircleCuts(fetchedCircleCuts))
         .catch(err => { throw err })
 

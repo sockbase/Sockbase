@@ -196,7 +196,8 @@ const DashboardEventCircleCutDownloadPage: React.FC = () => {
                     label='DL'
                     name={`cutDownload-${a.id}`}
                     checked={(a.hashId && downloadCutHashIds.includes(a.hashId)) || false}
-                    onChange={checked => setDownloadQueue(a.hashId, checked)} />
+                    onChange={checked => setDownloadQueue(a.hashId, checked)}
+                    disabled={!circleCutURL} />
                 </td>
                 <td>{a.hashId}</td>
                 <td>{a.circle.name}</td>
