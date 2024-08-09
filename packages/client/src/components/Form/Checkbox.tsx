@@ -6,6 +6,7 @@ interface Props {
   checked: boolean
   onChange: (checked: boolean) => void
   inlined?: boolean
+  disabled?: boolean
 }
 const FormCheckbox: React.FC<Props> = (props) => {
   return (
@@ -14,7 +15,8 @@ const FormCheckbox: React.FC<Props> = (props) => {
         name={props.name}
         id={`${props.name}`}
         onChange={e => props.onChange(e.target.checked)}
-        checked={props.checked} />
+        checked={props.checked}
+        disabled={props.disabled} />
       <StyledCheckboxLabel htmlFor={props.name} inlined={props.inlined}>{props.label}</StyledCheckboxLabel>
     </>
   )
@@ -82,6 +84,16 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
     }
     &::after {
       opacity: 1;
+    }
+  }
+
+  input:disabled + & {
+    border: 2px solid var(--outline-color);
+    background-color: var(--background-disabled-color);
+    color: var(--text-disabled-color);
+    cursor: not-allowed;
+    &::before {
+      border: 3px solid var(--outline-color);
     }
   }
 

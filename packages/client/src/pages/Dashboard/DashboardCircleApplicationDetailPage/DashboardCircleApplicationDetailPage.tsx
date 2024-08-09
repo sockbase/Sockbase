@@ -40,7 +40,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const {
     getApplicationIdByHashedIdAsync,
     getApplicationByIdAsync,
-    getCircleCutURLByHashedIdAsync,
+    getCircleCutURLByHashedIdNullableAsync,
     updateApplicationStatusByIdAsync,
     getLinksByApplicationIdOptionalAsync,
     getOverviewByApplicationIdOptionalAsync,
@@ -62,7 +62,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const [links, setLinks] = useState<SockbaseApplicationLinksDocument | null>()
   const [overview, setOverview] = useState<SockbaseApplicationOverviewDocument | null>()
   const [space, setSpace] = useState<SockbaseSpaceDocument | null>()
-  const [circleCutURL, setCircleCutURL] = useState<string>()
+  const [circleCutURL, setCircleCutURL] = useState<string | null>()
   const [isAdmin, setAdmin] = useState<boolean | null>()
   const [applicationDeleted, setApplicationDeleted] = useState(false)
 
@@ -138,7 +138,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           .then(fetchedPayment => setPayment(fetchedPayment))
           .catch(err => { throw err })
 
-        getCircleCutURLByHashedIdAsync(hashedAppId)
+        getCircleCutURLByHashedIdNullableAsync(hashedAppId)
           .then(fetchedCircleCutURL => setCircleCutURL(fetchedCircleCutURL))
           .catch(err => { throw err })
 
@@ -207,18 +207,21 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
         isLoading={!app} />
 
       {payment?.status === 0 && <Alert type='danger' title='サークル参加費のお支払いをお願いいたします'>
-        申し込み手続きを円滑に行うため<Link to="/dashboard/payments">こちら</Link>からお支払いをお願いいたします。
+        お支払いは <Link to="/dashboard/payments">決済履歴</Link> からお願いいたします。
+      </Alert>}
+
+      {circleCutURL === null && event && <Alert type="danger" title="サークルカットを提出してください">
+        サークルカットは <Link to={`/dashboard/applications/${hashedAppId}/cut`}>サークルカットを変更</Link> から提出できます。
       </Alert>}
 
       {!links && event &&
         <Alert type="danger" title="カタログ掲載情報を入力してください">
-          カタログ掲載情報は<Link to={`/dashboard/applications/${hashedAppId}/links`}>こちら</Link>から入力できます。<br />
-          カタログに掲載する情報は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点のものとさせていただきます。
+          カタログ掲載情報は <Link to={`/dashboard/applications/${hashedAppId}/links`}>こちら</Link> から入力できます。
         </Alert>}
 
       {links && event && event.schedules.catalogInformationFixedAt > now &&
-        <Alert type="danger" title="カタログ掲載情報締切にご注意ください">
-          カタログ掲載情報の確定日は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> です。<br />
+        <Alert title="カタログ掲載情報締切にご注意ください">
+          <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> で時点の情報をカタログ等に掲載いたします。<br />
           確定日以降の情報は掲載されませんのでご注意ください。
         </Alert>}
 
@@ -321,9 +324,13 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               <tr>
                 <th>サークルカット</th>
                 <td>
-                  {circleCutURL && <a href={circleCutURL} target="_blank" rel="noreferrer">
-                    <CircleCutImage src={circleCutURL} />
-                  </a>}
+                  {circleCutURL
+                    ? <a href={circleCutURL} target="_blank" rel="noreferrer">
+                      <CircleCutImage src={circleCutURL} />
+                    </a>
+                    : circleCutURL === null
+                      ? <Link to={`/dashboard/applications/${hashedAppId}/cut`}>サークルカットを提出</Link>
+                      : <></>}
                 </td>
               </tr>
               <tr>

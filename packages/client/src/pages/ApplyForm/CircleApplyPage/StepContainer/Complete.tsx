@@ -2,6 +2,7 @@ import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
 import LinkButton from '../../../../components/Parts/LinkButton'
+import useDayjs from '../../../../hooks/useDayjs'
 import type { SockbaseApplicationAddedResult, SockbaseEventDocument } from 'sockbase'
 
 interface Props {
@@ -9,29 +10,29 @@ interface Props {
   addedResult: SockbaseApplicationAddedResult | undefined
 }
 const Complete: React.FC<Props> = (props) => {
+  const { formatByDate } = useDayjs()
+
   return (
     <>
-      <h2>申し込みが完了しました</h2>
+      <h1>申し込みが完了しました</h1>
       <p>
         お申し込みいただきましてありがとうございました。
       </p>
+
+      <h2>サークルカットの提出・差し替え</h2>
       <p>
-        オンライン決済の場合、決済が完了してから 1 日程度で自動的に反映されます。<br />
-        3 日経っても反映されない場合は、こちらからお問い合わせください。
-      </p>
-      <p>
-        銀行振込の場合、お振込みいただいてから 1 週間程度お時間をいただくことがございます。<br />
-        1 週間経っても反映されない場合は、こちらからお問い合わせください。
+        サークルカットの提出・差し替えは「申し込み内容確認ページ」から行うことができます。<br />
+        {formatByDate((props.event?.schedules.catalogInformationFixedAt ?? 0) - 1, 'YYYY年 M月 D日')}時点の情報を元にカタログ等を制作いたしますので、変更がある場合はこの日までにご提出いただくようお願いいたします。
       </p>
 
       <FormSection>
         <FormItem>
-          <LinkButton color="default" to={`/dashboard/applications/${props.addedResult?.hashId}`}>
-            マイページを開く
+          <LinkButton to={`/dashboard/applications/${props.addedResult?.hashId}`}>
+            申し込み内容を確認する
           </LinkButton>
         </FormItem>
         <FormItem>
-          <AnchorButton href={props.event?.websiteURL}>
+          <AnchorButton color="default" href={props.event?.websiteURL}>
             イベントサイトへ戻る
           </AnchorButton>
         </FormItem>
