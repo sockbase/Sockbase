@@ -155,11 +155,13 @@ const Introduction: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {
-            props.event.spaces.map(i => <tr key={i.id}>
-              <th>{i.name}</th>
-              <td>{i.price.toLocaleString()} 円</td>
-              <td>{i.description}</td>
-            </tr>)
+            props.event.spaces
+              .filter(s => s.acceptApplication)
+              .map(i => <tr key={i.id}>
+                <th>{i.name}</th>
+                <td>{i.price.toLocaleString()} 円</td>
+                <td>{i.description}</td>
+              </tr>)
           }
         </tbody>
       </table>

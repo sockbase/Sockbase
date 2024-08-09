@@ -214,6 +214,7 @@ const UnionCircleMeta = styled.div`
   height: calc(1em + 4px);
   border-bottom: 1px dotted #000000;
   border-right: 1px dotted #000000;
+  overflow: hidden;
 `
 const UnionCircleIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
@@ -226,7 +227,6 @@ const UnionCircleIndicator = styled.div<{ active: boolean }>`
 `
 const UnionCircleName = styled.div`
   padding: 2px;
-  overflow: hidden;
 `
 const PetitMeta = styled.div`
   grid-column: 1;
@@ -234,6 +234,7 @@ const PetitMeta = styled.div`
   grid-template-columns: calc(1em + 4px) 1fr;
   height: calc(1em + 4px);
   border-right: 1px dotted #000000;
+  overflow: hidden;
 `
 const PetitIndicator = styled.div<{ active: boolean }>`
   ${props => props.active && `
