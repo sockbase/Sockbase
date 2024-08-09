@@ -103,7 +103,7 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
 
   const user = await getUser(email)
   if (!user) {
-    res.status(404).send({ error: 'NotFound', detail: `user(${email}) is not found` })
+    res.send({ error: 'NotFound', detail: `user(${email}) is not found` })
     noticeMessage(orgId, paymentId, `user(${email}) is not found`)
     return
   }
