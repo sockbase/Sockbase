@@ -156,8 +156,9 @@ const checkoutPaymentAsync = async (req: https.Request, res: Response): Promise<
   noticeMessage(orgId, paymentId, null)
 }
 
-const getUser = async (email: string): Promise<UserRecord> => {
+const getUser = async (email: string): Promise<UserRecord | null> => {
   const user = await auth.getUserByEmail(email)
+    .catch(() => null)
   return user
 }
 
