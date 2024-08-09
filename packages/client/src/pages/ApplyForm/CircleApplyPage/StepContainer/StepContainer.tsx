@@ -5,6 +5,7 @@ import Alert from '../../../../components/Parts/Alert'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
 import CheckAccount from './CheckAccount'
+import CircleCut from './CircleCut'
 import Complete from './Complete'
 import Confirm from './Confirm'
 import Input from './Input'
@@ -21,7 +22,7 @@ import type {
   SockbaseEventDocument
 } from 'sockbase'
 
-const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
+const stepProgresses = ['説明', '入力', '確認', '決済', '提出']
 
 interface Props {
   user: User | null | undefined
@@ -46,8 +47,6 @@ const StepContainer: React.FC<Props> = (props) => {
   const [app, setApp] = useState<SockbaseApplication>()
   const [links, setLinks] = useState<SockbaseApplicationLinks>()
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
-  const [circleCutData, setCircleCutData] = useState<string>()
-  const [circleCutFile, setCircleCutFile] = useState<File>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
   const [addedResult, setAddedResult] = useState<SockbaseApplicationAddedResult>()
@@ -69,7 +68,7 @@ const StepContainer: React.FC<Props> = (props) => {
   }, [app])
 
   const handleSubmitAsync = useCallback(async () => {
-    if (!app || !links || !circleCutFile) return
+    if (!app || !links) return
 
     setSubmitProgressPercent(10)
 
@@ -86,22 +85,16 @@ const StepContainer: React.FC<Props> = (props) => {
       })
     }
 
-    setSubmitProgressPercent(30)
+    setSubmitProgressPercent(50)
 
     await props.submitApplicationAsync({ app, links })
       .then(async result => {
-        setSubmitProgressPercent(80)
+        setSubmitProgressPercent(100)
         setAddedResult(result)
-
-        await props.updateCircleCutFileAsync(result.hashId, circleCutFile)
-          .then(async () => {
-            setSubmitProgressPercent(100)
-            await (new Promise((resolve) => setTimeout(resolve, 2000)))
-          })
-          .catch(err => { throw err })
+        await (new Promise((resolve) => setTimeout(resolve, 2000)))
       })
       .catch(err => { throw err })
-  }, [app, links, userData, circleCutFile])
+  }, [app, links, userData])
 
   useEffect(() => window.scrollTo(0, 0), [step])
 
@@ -128,25 +121,21 @@ const StepContainer: React.FC<Props> = (props) => {
         app={app}
         links={links}
         userData={userData}
-        circleCutFile={circleCutFile}
         pastApps={props.pastApps}
         pastAppLinks={props.pastAppLinks}
         pastEvents={props.pastEvents}
         fetchedUserData={props.userData}
         prevStep={() => setStep(1)}
-        nextStep={(a, l, u, cd, cf) => {
+        nextStep={(a, l, u) => {
           setApp(a)
           setLinks(l)
           setUserData(u)
-          setCircleCutData(cd)
-          setCircleCutFile(cf)
           setStep(3)
         }}/>,
       <Confirm
         key="confirm"
         event={props.event}
         app={app}
-        circleCutData={circleCutData}
         links={links}
         userData={userData}
         fetchedUserData={props.userData}
@@ -165,6 +154,12 @@ const StepContainer: React.FC<Props> = (props) => {
         addedResult={addedResult}
         selectedSpace={selectedSpace}
         nextStep={() => setStep(5)} />,
+      <CircleCut
+        key="circle-cut"
+        app={app}
+        event={props.event}
+        addedResult={addedResult}
+        nextStep={() => setStep(6) }/>,
       <Complete
         key="complete"
         event={props.event}
@@ -181,8 +176,6 @@ const StepContainer: React.FC<Props> = (props) => {
     app,
     links,
     userData,
-    circleCutFile,
-    circleCutData,
     selectedSpace,
     selectedGenre,
     selectedPaymentMethod,

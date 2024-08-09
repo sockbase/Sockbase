@@ -11,10 +11,8 @@ import FormRadio from '../../../../components/Form/Radio'
 import FormSelect from '../../../../components/Form/Select'
 import FormTextarea from '../../../../components/Form/Textarea'
 import Alert from '../../../../components/Parts/Alert'
-import CircleCutImage from '../../../../components/Parts/CircleCutImage'
 import UserDataForm from '../../../../components/UserDataForm'
 import useDayjs from '../../../../hooks/useDayjs'
-import useFile from '../../../../hooks/useFile'
 import useValidate from '../../../../hooks/useValidate'
 import type {
   SockbaseAccount,
@@ -58,7 +56,6 @@ interface Props {
   app: SockbaseApplication | undefined
   links: SockbaseApplicationLinks | undefined
   userData: SockbaseAccountSecure | undefined
-  circleCutFile: File | null | undefined
   pastApps: SockbaseApplicationDocument[] | null | undefined
   pastAppLinks: Record<string, SockbaseApplicationLinks | null> | null | undefined
   pastEvents: Record<string, SockbaseEventDocument> | null | undefined
@@ -67,19 +64,13 @@ interface Props {
   nextStep: (
     app: SockbaseApplication,
     links: SockbaseApplicationLinks,
-    userData: SockbaseAccountSecure | undefined,
-    circleCutData: string,
-    circleCutFile: File
+    userData: SockbaseAccountSecure | undefined
   ) => void
 }
 
 const Input: React.FC<Props> = (props) => {
   const validator = useValidate()
   const { formatByDate } = useDayjs()
-  const {
-    data: circleCutDataWithHook,
-    openAsDataURL: openCircleCut
-  } = useFile()
 
   const initialApp = useMemo(() => ({
     ...initialAppBase,
@@ -90,9 +81,6 @@ const Input: React.FC<Props> = (props) => {
   const [app, setApp] = useState(initialApp)
   const [links, setLinks] = useState(initialAppLinksBase)
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
-  const [circleCutFile, setCircleCutFile] = useState<File | null>()
-  const [circleCutData, setCircleCutData] = useState<string>()
-
   const [isAgreed, setAgreed] = useState(false)
 
   const [pastAppId, setPastAppId] = useState<string>()
@@ -112,8 +100,6 @@ const Input: React.FC<Props> = (props) => {
   const errorCount = useMemo(() => {
     const validators = [
       validator.isIn(app.spaceId, spaceIds),
-      !validator.isNull(circleCutFile),
-      circleCutData && validator.isNotEmpty(circleCutData),
       validator.isNotEmpty(app.circle.name),
       validator.isOnlyHiragana(app.circle.yomi),
       validator.isNotEmpty(app.circle.penName),
@@ -162,14 +148,12 @@ const Input: React.FC<Props> = (props) => {
     app,
     userData,
     links,
-    circleCutFile,
-    circleCutData,
     isAgreed
   ])
 
   const handleSubmit = useCallback(() => {
     if (errorCount > 0) return
-    if (!circleCutData || !circleCutFile) return
+
     const sanitizedApp: SockbaseApplication = {
       ...app,
       circle: {
@@ -180,8 +164,8 @@ const Input: React.FC<Props> = (props) => {
     const sanitizedLinks: SockbaseApplicationLinks = {
       ...links
     }
-    props.nextStep(sanitizedApp, sanitizedLinks, userData, circleCutData, circleCutFile)
-  }, [errorCount, props.event, app, links, userData, circleCutData, circleCutFile])
+    props.nextStep(sanitizedApp, sanitizedLinks, userData)
+  }, [errorCount, props.event, app, links, userData])
 
   const handleApplyPastApp = useCallback(() => {
     if (!pastAppId) return
@@ -236,21 +220,7 @@ const Input: React.FC<Props> = (props) => {
     if (props.userData) {
       setUserData(props.userData)
     }
-
-    if (props.circleCutFile) {
-      setCircleCutFile(props.circleCutFile)
-    }
-  }, [props.app, props.links, props.event, props.userData, props.circleCutFile])
-
-  useEffect(() => {
-    if (!circleCutFile) return
-    openCircleCut(circleCutFile)
-  }, [circleCutFile])
-
-  useEffect(() => {
-    if (!circleCutDataWithHook) return
-    setCircleCutData(circleCutDataWithHook)
-  }, [circleCutDataWithHook])
+  }, [props.app, props.links, props.event, props.userData])
 
   return (
     <>
@@ -305,26 +275,6 @@ const Input: React.FC<Props> = (props) => {
             onChange={spaceId => setApp(s => ({ ...s, spaceId }))}
             value={app.spaceId}
             hasError={isAppliedPastApp && !app.spaceId} />
-        </FormItem>
-      </FormSection>
-
-      <h2>サークルカット</h2>
-      <ul>
-        <li>テンプレートを使用し、<u>PNG 形式でのご提出をお願いいたします。</u></li>
-        <li>サークルカットの変更は、申し込み後のマイページから行えます。</li>
-        <li>公序良俗に反する画像は使用できません。不特定多数の方の閲覧が可能なためご配慮をお願いいたします。</li>
-      </ul>
-      <FormSection>
-        <FormItem>
-          <FormLabel>サークルカット</FormLabel>
-          <FormInput
-            type="file"
-            accept="image/png"
-            onChange={e => setCircleCutFile(e.target.files?.[0])}
-            hasError={isAppliedPastApp && !circleCutData} />
-        </FormItem>
-        <FormItem>
-          {circleCutData && <CircleCutImage src={circleCutData} />}
         </FormItem>
       </FormSection>
 
