@@ -67,3 +67,5 @@ node_modules/
 .env
 
 gha-creds-*.json
+
+.DS_Store

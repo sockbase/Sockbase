@@ -77,7 +77,8 @@ const InformationImport: React.FC<Props> = (props) => {
     productId: '',
     paymentURL: '',
     isDualSpace: false,
-    passCount: ''
+    passCount: '',
+    acceptApplication: true
   }])
 
   const {
@@ -117,7 +118,8 @@ const InformationImport: React.FC<Props> = (props) => {
     paymentURL: string,
     productId: string,
     isDualSpace: boolean,
-    passCount: string) => {
+    passCount: string,
+    acceptApplication: boolean) => {
     const newSpaces = [...editableSpaces]
     newSpaces[index] = {
       id,
@@ -127,7 +129,8 @@ const InformationImport: React.FC<Props> = (props) => {
       productId,
       paymentURL,
       isDualSpace,
-      passCount
+      passCount,
+      acceptApplication
     }
     setEditableSpaces(newSpaces)
   }, [editableSpaces])
@@ -152,7 +155,8 @@ const InformationImport: React.FC<Props> = (props) => {
             productId: s.productId
           }) || null,
           isDualSpace: s.isDualSpace,
-          passCount: Number(s.passCount)
+          passCount: Number(s.passCount),
+          acceptApplication: s.acceptApplication
         }))
       },
       eyecatchFile,
@@ -200,7 +204,8 @@ const InformationImport: React.FC<Props> = (props) => {
           productId: s.productInfo?.productId ?? '',
           paymentURL: s.productInfo?.paymentURL ?? '',
           isDualSpace: !!s.isDualSpace,
-          passCount: s.passCount?.toString() ?? ''
+          passCount: s.passCount?.toString() ?? '',
+          acceptApplication: !!s.acceptApplication
         }))
       : [{
         id: '',
@@ -210,7 +215,8 @@ const InformationImport: React.FC<Props> = (props) => {
         productId: '',
         paymentURL: '',
         isDualSpace: false,
-        passCount: ''
+        passCount: '',
+        acceptApplication: true
       }]
     setEditableSpaces(fetchedEditableSpaces)
   }, [])
@@ -327,7 +333,8 @@ const InformationImport: React.FC<Props> = (props) => {
       lastSpace.paymentURL ||
       lastSpace.productId ||
       lastSpace.isDualSpace ||
-      lastSpace.passCount) {
+      lastSpace.passCount ||
+      !lastSpace.acceptApplication) {
       const newSpaces = [...editableSpaces, {
         id: '',
         name: '',
@@ -336,7 +343,8 @@ const InformationImport: React.FC<Props> = (props) => {
         paymentURL: '',
         productId: '',
         isDualSpace: false,
-        passCount: ''
+        passCount: '',
+        acceptApplication: true
       }]
       setEditableSpaces(newSpaces)
       return
@@ -350,7 +358,8 @@ const InformationImport: React.FC<Props> = (props) => {
       inputedSpace?.paymentURL ||
       inputedSpace?.productId ||
       inputedSpace?.isDualSpace ||
-      inputedSpace?.passCount) return
+      inputedSpace?.passCount ||
+      !inputedSpace?.acceptApplication) return
 
     const trimedSpaces = editableSpaces.slice(undefined, -1)
     if (trimedSpaces.length < 1) return
@@ -558,8 +567,9 @@ const InformationImport: React.FC<Props> = (props) => {
             <th>参加費</th>
             <th>支払い URL</th>
             <th>商品 ID</th>
-            <th></th>
             <th>通行証枚数</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -576,7 +586,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.paymentURL,
                   s.productId,
                   s.isDualSpace,
-                  s.passCount)}/>
+                  s.passCount,
+                  s.acceptApplication)}/>
             </td>
             <td>
               <FormInput
@@ -590,7 +601,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.paymentURL,
                   s.productId,
                   s.isDualSpace,
-                  s.passCount)} />
+                  s.passCount,
+                  s.acceptApplication)} />
             </td>
             <td>
               <FormInput
@@ -604,7 +616,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.paymentURL,
                   s.productId,
                   s.isDualSpace,
-                  s.passCount)} />
+                  s.passCount,
+                  s.acceptApplication)} />
             </td>
             <td>
               <FormInput
@@ -618,7 +631,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.paymentURL,
                   s.productId,
                   s.isDualSpace,
-                  s.passCount)} />
+                  s.passCount,
+                  s.acceptApplication)} />
             </td>
             <td>
               <FormInput
@@ -632,7 +646,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   e.target.value,
                   s.productId,
                   s.isDualSpace,
-                  s.passCount)} />
+                  s.passCount,
+                  s.acceptApplication)} />
             </td>
             <td>
               <FormInput
@@ -646,7 +661,23 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.paymentURL,
                   e.target.value,
                   s.isDualSpace,
-                  s.passCount)} />
+                  s.passCount,
+                  s.acceptApplication)} />
+            </td>
+            <td>
+              <FormInput
+                value={s.passCount}
+                onChange={e => handleEditSpace(
+                  i,
+                  s.id,
+                  s.name,
+                  s.description,
+                  s.price,
+                  s.paymentURL,
+                  s.productId,
+                  s.isDualSpace,
+                  e.target.value,
+                  s.acceptApplication)} />
             </td>
             <td>
               <FormCheckbox
@@ -662,12 +693,15 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.paymentURL,
                   s.productId,
                   checked,
-                  s.passCount)} />
+                  s.passCount,
+                  s.acceptApplication)} />
             </td>
             <td>
-              <FormInput
-                value={s.passCount}
-                onChange={e => handleEditSpace(
+              <FormCheckbox
+                name={`allow-application-${i}`}
+                label="受入"
+                checked={s.acceptApplication}
+                onChange={checked => handleEditSpace(
                   i,
                   s.id,
                   s.name,
@@ -676,7 +710,8 @@ const InformationImport: React.FC<Props> = (props) => {
                   s.paymentURL,
                   s.productId,
                   s.isDualSpace,
-                  e.target.value)} />
+                  s.passCount,
+                  checked)} />
             </td>
           </tr>))}
         </tbody>
