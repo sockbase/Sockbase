@@ -47,6 +47,7 @@ const StyledStepProgress = styled.ol`
     }
     &::after {
       position: absolute;
+      top: 0;
       left: 7px;
       counter-increment: listItemCount 1;
       content: counter(listItemCount);

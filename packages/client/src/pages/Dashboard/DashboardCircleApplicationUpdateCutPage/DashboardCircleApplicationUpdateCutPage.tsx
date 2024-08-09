@@ -29,7 +29,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
   const {
     getApplicationIdByHashedIdAsync,
     getApplicationByIdAsync,
-    getCircleCutURLByHashedIdAsync,
+    getCircleCutURLByHashedIdNullableAsync,
     uploadCircleCutFileAsync
   } = useApplication()
   const { getEventByIdAsync } = useEvent()
@@ -46,7 +46,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
   const [event, setEvent] = useState<SockbaseEvent>()
   const [isAdmin, setAdmin] = useState<boolean | null>()
 
-  const [currentCircleCut, setCurrentCircleCut] = useState<string>()
+  const [currentCircleCut, setCurrentCircleCut] = useState<string | null>()
   const [circleCutData, setCircleCutData] = useState<string | null>()
   const [circleCutFile, setCircleCutFile] = useState<File | null>()
 
@@ -80,7 +80,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
       const fetchedAppId = await getApplicationIdByHashedIdAsync(hashedAppId)
       const fetchedApp = await getApplicationByIdAsync(fetchedAppId.applicationId)
       const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
-      const fetchedCircleCutURL = await getCircleCutURLByHashedIdAsync(hashedAppId)
+      const fetchedCircleCutURL = await getCircleCutURLByHashedIdNullableAsync(hashedAppId)
       const fetchedIsAdmin = checkIsAdminByOrganizationId(fetchedEvent._organization.id)
 
       // setAppId(fetchedAppId.applicationId)

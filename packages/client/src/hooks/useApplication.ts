@@ -200,7 +200,13 @@ const useApplication = (): IUseApplication => {
       const storage = getStorage()
       const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${appHash.hashId}`)
       await FirebaseStorage.deleteObject(circleCutRef)
-        .catch(err => { throw err })
+        .catch((err: Error) => {
+          if (err.message.includes('storage/object-not-found')) {
+            console.error(err)
+            return
+          }
+          throw err
+        })
     }
 
   const uploadCircleCutFileAsync =
