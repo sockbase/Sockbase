@@ -221,7 +221,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
 
       {links && event && event.schedules.catalogInformationFixedAt > now &&
         <Alert title="カタログ掲載情報締切にご注意ください">
-          <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> で時点の情報をカタログ等に掲載いたします。<br />
+          <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をカタログ等に掲載いたします。<br />
           確定日以降の情報は掲載されませんのでご注意ください。
         </Alert>}
 
