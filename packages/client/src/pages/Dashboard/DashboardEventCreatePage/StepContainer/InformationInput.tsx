@@ -149,13 +149,13 @@ const InformationImport: React.FC<Props> = (props) => {
           id: s.id,
           name: s.name,
           description: s.description,
-          price: Number(s.price),
-          productInfo: (Number(s.price) > 0 && {
+          price: Number(s.price.replace(/\D/g, '')),
+          productInfo: (Number(s.price.replace(/\D/g, '')) > 0 && {
             paymentURL: s.paymentURL,
             productId: s.productId
           }) || null,
           isDualSpace: s.isDualSpace,
-          passCount: Number(s.passCount),
+          passCount: Number(s.passCount.replace(/\D/g, '')),
           acceptApplication: s.acceptApplication
         }))
       },
@@ -637,6 +637,7 @@ const InformationImport: React.FC<Props> = (props) => {
             <td>
               <FormInput
                 value={s.paymentURL}
+                disabled={Number(s.price.replaceAll(/\D/g, '')) <= 0}
                 onChange={e => handleEditSpace(
                   i,
                   s.id,
@@ -652,6 +653,7 @@ const InformationImport: React.FC<Props> = (props) => {
             <td>
               <FormInput
                 value={s.productId}
+                disabled={Number(s.price.replaceAll(/\D/g, '')) <= 0}
                 onChange={e => handleEditSpace(
                   i,
                   s.id,
