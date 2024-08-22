@@ -155,8 +155,8 @@ const EventInfo: React.FC<Props> = (props) => {
               <td>{s.name}</td>
               <td>{s.description}</td>
               <td>{s.price.toLocaleString()}円</td>
-              <td>{s.productInfo?.paymentURL}</td>
-              <td>{s.productInfo?.productId}</td>
+              <td>{s.productInfo?.paymentURL ?? '-'}</td>
+              <td>{s.productInfo?.productId ?? '-'}</td>
               <td>{s.passCount?.toLocaleString() ?? 0}枚</td>
               <td>{s.isDualSpace ? '2 スペース' : '-'}</td>
               <td>{s.acceptApplication ? '受入' : '-'}</td>
