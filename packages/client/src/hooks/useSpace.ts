@@ -95,6 +95,7 @@ const useSpace = (): IUseSpace => {
           return [
             null,
             a.hashId,
+            a.spaceId,
             a.circle.name,
             a.circle.yomi,
             a.circle.penName
@@ -109,6 +110,7 @@ const useSpace = (): IUseSpace => {
         [
           'スペース番号',
           '申し込みID',
+          'スペース',
           'サークル名',
           'サークル名よみ',
           'ペンネーム'
