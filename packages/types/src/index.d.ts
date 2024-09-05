@@ -117,7 +117,11 @@ export interface SockbaseStoreType {
     paymentURL: string
   } | null
   color: string
-  private: boolean
+  isPublic: boolean
+  anotherTicket: {
+    storeId: string
+    typeId: string
+  } | null
 }
 
 /**

@@ -100,7 +100,7 @@ const StoreInfo: React.FC<Props> = (props) => {
               <td>{t.price.toLocaleString()}円</td>
               <td>{t.productInfo?.paymentURL}</td>
               <td>{t.productInfo?.productId}</td>
-              <td>{t.private ? '非公開' : '公開'}</td>
+              <td>{t.isPublic ? '公開' : '非公開'}</td>
             </tr>)
             : <tr>
               <td colSpan={8}>チケットタイプ情報が入力されていません</td>

@@ -55,7 +55,7 @@ const InformationInput: React.FC<Props> = (props) => {
     productId: '',
     paymentURL: '',
     color: '',
-    isPrivate: true
+    isPublic: true
   }])
 
   const [openPackageInputArea, setOpenPackageInputArea] = useState(false)
@@ -82,7 +82,7 @@ const InformationInput: React.FC<Props> = (props) => {
     productId: string,
     paymentURL: string,
     color: string,
-    isPrivate: boolean) => {
+    isPublic: boolean) => {
     const newTypes = [...editableTypes]
     newTypes[index] = {
       id,
@@ -92,7 +92,7 @@ const InformationInput: React.FC<Props> = (props) => {
       productId,
       paymentURL,
       color,
-      isPrivate
+      isPublic
     }
     setEditableTypes(newTypes)
   }, [editableTypes])
@@ -117,7 +117,8 @@ const InformationInput: React.FC<Props> = (props) => {
             productId: t.productId
           })) || null,
           color: t.color || '#000000',
-          private: t.isPrivate
+          isPublic: t.isPublic,
+          anotherTicket: null
         }))
       })
   }, [storeId, store, editableTypes, showVenueName])
@@ -148,7 +149,7 @@ const InformationInput: React.FC<Props> = (props) => {
           paymentURL: t.productInfo?.paymentURL ?? '',
           productId: t.productInfo?.productId ?? '',
           color: t.color,
-          isPrivate: !!t.private
+          isPublic: !!t.isPublic
         }))
       : [{
         id: '',
@@ -158,7 +159,7 @@ const InformationInput: React.FC<Props> = (props) => {
         paymentURL: '',
         productId: '',
         color: '',
-        isPrivate: true
+        isPublic: true
       }]
     setEditableTypes(fetchedEditableTypes)
   }, [])
@@ -239,7 +240,7 @@ const InformationInput: React.FC<Props> = (props) => {
       lastType.paymentURL ||
       lastType.productId ||
       lastType.color ||
-      !lastType.isPrivate) {
+      !lastType.isPublic) {
       const newRules = [...editableTypes, {
         id: '',
         name: '',
@@ -248,7 +249,7 @@ const InformationInput: React.FC<Props> = (props) => {
         paymentURL: '',
         productId: '',
         color: '',
-        isPrivate: true
+        isPublic: true
       }]
       setEditableTypes(newRules)
       return
@@ -262,7 +263,7 @@ const InformationInput: React.FC<Props> = (props) => {
       inputedType?.paymentURL ||
       inputedType?.productId ||
       inputedType?.color ||
-      !inputedType?.isPrivate) return
+      !inputedType?.isPublic) return
 
     const trimedTypes = editableTypes.slice(undefined, -1)
     if (trimedTypes.length < 1) return
@@ -402,7 +403,7 @@ const InformationInput: React.FC<Props> = (props) => {
             <th style={{ width: '10%' }}>支払い URL</th>
             <th style={{ width: '10%' }}>商品 ID</th>
             <th>チケットカラー</th>
-            <th>非公開</th>
+            <th>公開</th>
           </tr>
         </thead>
         <tbody>
@@ -419,7 +420,7 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
-                  t.isPrivate)}/>
+                  t.isPublic)}/>
             </td>
             <td>
               <FormInput
@@ -433,7 +434,7 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
-                  t.isPrivate)}/>
+                  t.isPublic)}/>
             </td>
             <td>
               <FormInput
@@ -447,7 +448,7 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
-                  t.isPrivate)}/>
+                  t.isPublic)}/>
             </td>
             <td>
               <FormInput
@@ -461,7 +462,7 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
-                  t.isPrivate)}/>
+                  t.isPublic)}/>
             </td>
             <td>
               <FormInput
@@ -475,7 +476,7 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   e.target.value,
                   t.color,
-                  t.isPrivate)}/>
+                  t.isPublic)}/>
             </td>
             <td>
               <FormInput
@@ -489,7 +490,7 @@ const InformationInput: React.FC<Props> = (props) => {
                   e.target.value,
                   t.paymentURL,
                   t.color,
-                  t.isPrivate)}/>
+                  t.isPublic)}/>
             </td>
             <td>
               <FormInput
@@ -504,14 +505,14 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   e.target.value,
-                  t.isPrivate
+                  t.isPublic
                 )}/>
             </td>
             <td>
               <FormCheckbox
-                name={`private-${i}`}
-                label="非公開"
-                checked={t.isPrivate}
+                name={`public-${i}`}
+                label="公開"
+                checked={t.isPublic}
                 onChange={checked => handleEditType(
                   i,
                   t.id,
