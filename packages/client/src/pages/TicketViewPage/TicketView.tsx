@@ -62,6 +62,9 @@ const TicketView: React.FC<Props> = (props) => {
   return (
     <Container>
       <TicketContainer>
+        <TicketStatusContainer>
+          {props.ticketUser.used && <UsedTicketAlert>このチケットは使用済みです</UsedTicketAlert>}
+        </TicketStatusContainer>
         <TitleWrapper color={type?.color || 'var(--background-disabled-color)'} disabled={!ticketUser?.usableUserId || ticketUser?.used}>
           <TitleContainer>
             <StoreName>{props.store.name}</StoreName>
@@ -141,30 +144,32 @@ const Container = styled.div`
 `
 const TicketContainer = styled.div`
   display: grid;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto auto auto auto;
   max-width: 840px;
   
   @media screen and (max-width: 840px) {
     height: 100%;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto auto 1fr auto;
   }
 `
 const TitleWrapper = styled.section<{ disabled?: boolean, color: string }>`
   background-color: ${props => props.disabled
     ? 'var(--pending-color)'
     : props.color || 'var(--background-disabled-color)'};
-  border-radius: 5px 5px 0 0;
-  @media screen and (max-width: 840px) {
-    border-radius: 0;
-  }
 `
-
+const TicketStatusContainer = styled.div`
+`
+const UsedTicketAlert = styled.div`
+  background-color: var(--danger-color);
+  padding: 10px;
+  text-align: center;
+`
 const loopBackgroundKeyframes = keyframes`
   0% {
     background-position: 0 0;
   }
   100% {
-    background-position: 256px -256px;
+    background-position: 256px 256px;
   }
 `
 const TitleContainer = styled.section`
@@ -210,11 +215,6 @@ const Footer = styled.footer`
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
   background-color: var(--background-gray-color);
   text-align: right;
-  border-radius: 0 0 5px 5px;
-
-  @media screen and (max-width: 840px) {
-    border-radius: 0;
-  }
 `
 
 const UpdatedDate = styled.section`
