@@ -47,13 +47,27 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
 
   const createdResult = await createTicketCoreAsync(userId, store, type, ticket, false, now)
 
-  if (type.anotherTicket) {
+  if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
+    const anotherTicketStoreDoc = await firestore.doc(`stores/${type.anotherTicket.storeId}`)
+      .withConverter(storeConverter)
+      .get()
+    const anotherTicketStore = anotherTicketStoreDoc.data()
+    if (!anotherTicketStore) {
+      throw new functions.https.HttpsError('not-found', 'anotherTicketStore')
+    }
+
+    const anotherTicketType = anotherTicketStore.types.filter(t => t.id === type.anotherTicket?.typeId)[0]
+    if (!anotherTicketType) {
+      throw new functions.https.HttpsError('not-found', 'anotherTicketType')
+    }
+
     const anotherTicket: SockbaseTicket = {
       storeId: type.anotherTicket.storeId,
       typeId: type.anotherTicket.typeId,
       paymentMethod: 'online'
     }
-    await createTicketCoreAsync(userId, store, type, anotherTicket, true, now)
+
+    await createTicketCoreAsync(userId, anotherTicketStore, anotherTicketType, anotherTicket, true, now)
   }
 
   const webhookBody = {
@@ -87,7 +101,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
   }
 }
 
-const createTicketForAdminAsync = async (createdUserId: string, store: SockbaseStoreDocument, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
+const createTicketForAdminAsync = async (createdUserId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
   const now = new Date()
 
   const user = await auth
@@ -101,9 +115,15 @@ const createTicketForAdminAsync = async (createdUserId: string, store: SockbaseS
       }
     })
 
-  const type = store.types
-    .filter(t => t.isPublic)
-    .filter(t => t.id === typeId)[0]
+  const storeDoc = await firestore.doc(`stores/${storeId}`)
+    .withConverter(storeConverter)
+    .get()
+  const store = storeDoc.data()
+  if (!store) {
+    throw new functions.https.HttpsError('not-found', 'store')
+  }
+
+  const type = store.types.filter(t => t.id === typeId)[0]
   if (!type) {
     throw new functions.https.HttpsError('not-found', 'type')
   }
@@ -116,13 +136,27 @@ const createTicketForAdminAsync = async (createdUserId: string, store: SockbaseS
 
   const createdResult = await createTicketCoreAsync(user.uid, store, type, ticket, false, now, createdUserId)
 
-  if (type.anotherTicket) {
+  if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
+    const anotherTicketStoreDoc = await firestore.doc(`stores/${type.anotherTicket.storeId}`)
+      .withConverter(storeConverter)
+      .get()
+    const anotherTicketStore = anotherTicketStoreDoc.data()
+    if (!anotherTicketStore) {
+      throw new functions.https.HttpsError('not-found', 'anotherTicketStore')
+    }
+
+    const anotherTicketType = anotherTicketStore.types.filter(t => t.id === type.anotherTicket?.typeId)[0]
+    if (!anotherTicketType) {
+      throw new functions.https.HttpsError('not-found', 'anotherTicketType')
+    }
+
     const anotherTicket: SockbaseTicket = {
       storeId: type.anotherTicket.storeId,
       typeId: type.anotherTicket.typeId,
       paymentMethod: 'online'
     }
-    await createTicketCoreAsync(user.uid, store, type, anotherTicket, true, now, createdUserId)
+
+    await createTicketCoreAsync(user.uid, anotherTicketStore, anotherTicketType, anotherTicket, true, now, createdUserId)
   }
 
   return {

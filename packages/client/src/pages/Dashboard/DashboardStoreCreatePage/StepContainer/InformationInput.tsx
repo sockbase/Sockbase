@@ -55,7 +55,9 @@ const InformationInput: React.FC<Props> = (props) => {
     productId: '',
     paymentURL: '',
     color: '',
-    isPublic: true
+    isPublic: true,
+    anotherTicketStoreId: '',
+    anotherTicketTypeId: ''
   }])
 
   const [openPackageInputArea, setOpenPackageInputArea] = useState(false)
@@ -82,6 +84,8 @@ const InformationInput: React.FC<Props> = (props) => {
     productId: string,
     paymentURL: string,
     color: string,
+    anotherTicketStoreId: string,
+    anotherTicketTypeId: string,
     isPublic: boolean) => {
     const newTypes = [...editableTypes]
     newTypes[index] = {
@@ -92,7 +96,9 @@ const InformationInput: React.FC<Props> = (props) => {
       productId,
       paymentURL,
       color,
-      isPublic
+      isPublic,
+      anotherTicketStoreId,
+      anotherTicketTypeId
     }
     setEditableTypes(newTypes)
   }, [editableTypes])
@@ -106,7 +112,7 @@ const InformationInput: React.FC<Props> = (props) => {
         descriptions: store.descriptions.filter(d => d),
         rules: store.rules.filter(r => r),
         types: editableTypes
-          .filter(t => t.id || t.name || t.description || t.price || t.paymentURL || t.productId || t.color)
+          .filter(t => t.id || t.name || t.description || t.price || t.paymentURL || t.productId || t.color || t.anotherTicketStoreId || t.anotherTicketTypeId)
           .map<SockbaseStoreType>(t => ({
           id: t.id,
           name: t.name,
@@ -118,7 +124,12 @@ const InformationInput: React.FC<Props> = (props) => {
           })) || null,
           color: t.color || '#000000',
           isPublic: t.isPublic,
-          anotherTicket: null
+          anotherTicket: t.anotherTicketStoreId
+            ? {
+              storeId: t.anotherTicketStoreId,
+              typeId: t.anotherTicketTypeId
+            }
+            : null
         }))
       })
   }, [storeId, store, editableTypes, showVenueName])
@@ -149,7 +160,9 @@ const InformationInput: React.FC<Props> = (props) => {
           paymentURL: t.productInfo?.paymentURL ?? '',
           productId: t.productInfo?.productId ?? '',
           color: t.color,
-          isPublic: !!t.isPublic
+          isPublic: !!t.isPublic,
+          anotherTicketStoreId: t.anotherTicket?.storeId ?? '',
+          anotherTicketTypeId: t.anotherTicket?.typeId ?? ''
         }))
       : [{
         id: '',
@@ -159,7 +172,9 @@ const InformationInput: React.FC<Props> = (props) => {
         paymentURL: '',
         productId: '',
         color: '',
-        isPublic: true
+        isPublic: true,
+        anotherTicketStoreId: '',
+        anotherTicketTypeId: ''
       }]
     setEditableTypes(fetchedEditableTypes)
   }, [])
@@ -240,7 +255,9 @@ const InformationInput: React.FC<Props> = (props) => {
       lastType.paymentURL ||
       lastType.productId ||
       lastType.color ||
-      !lastType.isPublic) {
+      !lastType.isPublic ||
+      lastType.anotherTicketStoreId ||
+      lastType.anotherTicketTypeId) {
       const newRules = [...editableTypes, {
         id: '',
         name: '',
@@ -249,7 +266,9 @@ const InformationInput: React.FC<Props> = (props) => {
         paymentURL: '',
         productId: '',
         color: '',
-        isPublic: true
+        isPublic: true,
+        anotherTicketStoreId: '',
+        anotherTicketTypeId: ''
       }]
       setEditableTypes(newRules)
       return
@@ -263,7 +282,11 @@ const InformationInput: React.FC<Props> = (props) => {
       inputedType?.paymentURL ||
       inputedType?.productId ||
       inputedType?.color ||
-      !inputedType?.isPublic) return
+      !inputedType?.isPublic ||
+      inputedType?.anotherTicketStoreId ||
+      inputedType?.anotherTicketTypeId) {
+      return
+    }
 
     const trimedTypes = editableTypes.slice(undefined, -1)
     if (trimedTypes.length < 1) return
@@ -398,11 +421,13 @@ const InformationInput: React.FC<Props> = (props) => {
           <tr>
             <th style={{ width: '10%' }}>タイプ ID</th>
             <th style={{ width: '15%' }}>タイプ名</th>
-            <th style={{ width: '20%' }}>説明</th>
+            <th style={{ width: '10%' }}>説明</th>
             <th style={{ width: '10%' }}>価格</th>
-            <th style={{ width: '10%' }}>支払い URL</th>
-            <th style={{ width: '10%' }}>商品 ID</th>
+            <th>支払い URL</th>
+            <th>商品 ID</th>
             <th>チケットカラー</th>
+            <th>別チケットストア ID</th>
+            <th>別チケットタイプ ID</th>
             <th>公開</th>
           </tr>
         </thead>
@@ -420,6 +445,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
+                  t.anotherTicketStoreId,
+                  t.anotherTicketTypeId,
                   t.isPublic)}/>
             </td>
             <td>
@@ -434,6 +461,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
+                  t.anotherTicketStoreId,
+                  t.anotherTicketTypeId,
                   t.isPublic)}/>
             </td>
             <td>
@@ -448,6 +477,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
+                  t.anotherTicketStoreId,
+                  t.anotherTicketTypeId,
                   t.isPublic)}/>
             </td>
             <td>
@@ -462,6 +493,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
+                  t.anotherTicketStoreId,
+                  t.anotherTicketTypeId,
                   t.isPublic)}/>
             </td>
             <td>
@@ -476,6 +509,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   e.target.value,
                   t.color,
+                  t.anotherTicketStoreId,
+                  t.anotherTicketTypeId,
                   t.isPublic)}/>
             </td>
             <td>
@@ -490,6 +525,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   e.target.value,
                   t.paymentURL,
                   t.color,
+                  t.anotherTicketStoreId,
+                  t.anotherTicketTypeId,
                   t.isPublic)}/>
             </td>
             <td>
@@ -505,8 +542,42 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   e.target.value,
+                  t.anotherTicketStoreId,
+                  t.anotherTicketTypeId,
                   t.isPublic
                 )}/>
+            </td>
+            <td>
+              <FormInput
+                value={t.anotherTicketStoreId}
+                onChange={e => handleEditType(
+                  i,
+                  t.id,
+                  t.name,
+                  t.description,
+                  t.price,
+                  t.productId,
+                  t.paymentURL,
+                  t.color,
+                  e.target.value,
+                  t.anotherTicketTypeId,
+                  t.isPublic)}/>
+            </td>
+            <td>
+              <FormInput
+                value={t.anotherTicketTypeId}
+                onChange={e => handleEditType(
+                  i,
+                  t.id,
+                  t.name,
+                  t.description,
+                  t.price,
+                  t.productId,
+                  t.paymentURL,
+                  t.color,
+                  t.anotherTicketStoreId,
+                  e.target.value,
+                  t.isPublic)}/>
             </td>
             <td>
               <FormCheckbox
@@ -522,6 +593,8 @@ const InformationInput: React.FC<Props> = (props) => {
                   t.productId,
                   t.paymentURL,
                   t.color,
+                  t.anotherTicketStoreId,
+                  t.anotherTicketTypeId,
                   checked)} />
             </td>
           </tr>)}
