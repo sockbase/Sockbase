@@ -105,7 +105,7 @@ const DashboardEventApplicationSoleilTSVExportPage: React.FC = () => {
   return (
     <DashboardBaseLayout title="Soleil データ出力" requireCommonRole={2}>
       <Breadcrumbs>
-        <li>ホーム</li>
+        <li><Link to="/dashboard">ホーム</Link></li>
         <li><Link to="/dashboard/events">管理イベント</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
         <li><Link to={`/dashboard/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
