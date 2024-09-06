@@ -426,8 +426,8 @@ const InformationInput: React.FC<Props> = (props) => {
             <th>支払い URL</th>
             <th>商品 ID</th>
             <th>チケットカラー</th>
-            <th>別チケットストア ID</th>
-            <th>別チケットタイプ ID</th>
+            <th>アナザーチケットストア ID</th>
+            <th>アナザーチケットタイプ ID</th>
             <th>公開</th>
           </tr>
         </thead>

@@ -387,6 +387,14 @@ export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdA
 }
 
 /**
+ * サークル通行証発行リザルト
+ */
+export interface SockbaseCirclePassCreatedResult {
+  circlePassCount: number
+  anotherTicketCount: number
+}
+
+/**
  * アカウント
  */
 export interface SockbaseAccount {

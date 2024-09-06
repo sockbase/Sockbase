@@ -88,8 +88,8 @@ const StoreInfo: React.FC<Props> = (props) => {
             <th style={{ width: '20%' }}>価格</th>
             <th style={{ width: '10%' }}>支払い URL</th>
             <th style={{ width: '10%' }}>商品 ID</th>
-            <th>別チケットストア ID</th>
-            <th>別チケットタイプ ID</th>
+            <th>アナザーチケットストア ID</th>
+            <th>アナザーチケットタイプ ID</th>
             <th>公開？</th>
           </tr>
         </thead>

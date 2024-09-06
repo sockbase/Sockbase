@@ -14,7 +14,7 @@ import useEvent from '../../../hooks/useEvent'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
-import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseCirclePassCreatedResult, SockbaseEvent } from 'sockbase'
 
 const DashboardEventPassCreatePage: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>()
@@ -32,7 +32,7 @@ const DashboardEventPassCreatePage: React.FC = () => {
   const [appMetas, setAppMetas] = useState<Record<string, SockbaseApplicationMeta>>()
 
   const [isProgress, setProgress] = useState(false)
-  const [addedResult, setAddedResult] = useState<number>()
+  const [addedResult, setAddedResult] = useState<SockbaseCirclePassCreatedResult>()
 
   const getPassCount = useCallback((spaceId: string | null) => {
     if (!event || !apps || !appMetas) return
@@ -152,8 +152,9 @@ const DashboardEventPassCreatePage: React.FC = () => {
             </FormItem>
           </FormSection>
 
-          {addedResult !== undefined && <Alert type="success">
-            {addedResult} 枚発行しました
+          {addedResult !== undefined && <Alert type="success" title="サークル通行証を発行しました">
+            サークル通行証: {addedResult.circlePassCount} 枚<br />
+            アナザーチケット: {addedResult.anotherTicketCount} 枚
           </Alert>}
         </>
         <>
