@@ -25,6 +25,7 @@ import Alert from '../../../components/Parts/Alert'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import IconLabel from '../../../components/Parts/IconLabel'
+import QRReaderComponent from '../../../components/Parts/QRReaderComponent'
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
 import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel'
@@ -32,7 +33,6 @@ import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketU
 import useDayjs from '../../../hooks/useDayjs'
 import useFirebaseError from '../../../hooks/useFirebaseError'
 import usePayment from '../../../hooks/usePayment'
-import useQRReader from '../../../hooks/useQRReader'
 import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import useValidate from '../../../hooks/useValidate'
@@ -54,11 +54,12 @@ const DashboardTicketTerminalPage: React.FC = () => {
   } = useStore()
   const { getPaymentAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
-  const { data: qrData, QRReaderComponent, resetData } = useQRReader()
   const validator = useValidate()
 
   const [playSEOK] = useSound(OKSound)
   const [playSENG] = useSound(NGSound)
+
+  const [qrData, setQRData] = useState<string | null>()
 
   const [ticketHashId, setTicketHashId] = useState('')
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
@@ -219,7 +220,9 @@ const DashboardTicketTerminalPage: React.FC = () => {
   }, [ticket])
 
   useEffect(() => {
+    console.log(ticketHashId)
     if (!qrData) return
+    if (qrData === ticketHashId) return
 
     if (!validator.isTicketHashId(qrData)) {
       playSENG()
@@ -238,8 +241,8 @@ const DashboardTicketTerminalPage: React.FC = () => {
 
     if (isHoldQRReader) return
     setActiveQRReader(false)
-    resetData()
-  }, [qrData])
+    setQRData(null)
+  }, [qrData, ticketHashId])
 
   useEffect(() => {
     document.addEventListener('keydown', keyDownEvent)
@@ -295,7 +298,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
           </Alert>}
 
           {isActiveQRReader && <ReaderWrap>
-            <QRReaderComponent />
+            <QRReaderComponent onScan={r => setQRData(r.getText())}/>
           </ReaderWrap>}
         </>
 

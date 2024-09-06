@@ -66,7 +66,7 @@ export const createTicketForAdmin = https.onCall(
 
     const userId = context.auth.uid
 
-    const result = await StoreService.createTicketForAdminAsync(userId, store, param.createTicketData.typeId, param.createTicketData.email)
+    const result = await StoreService.createTicketForAdminAsync(userId, param.storeId, param.createTicketData.typeId, param.createTicketData.email)
     return result
   }
 )

@@ -1,23 +1,23 @@
-import {
-  type DocumentData,
-  type FirestoreDataConverter,
-  type QueryDocumentSnapshot
+import type {
+  DocumentData,
+  FirestoreDataConverter,
+  QueryDocumentSnapshot
 } from 'firebase-admin/firestore'
-import {
-  type SockbaseApplicationOverviewDocument,
-  type SockbaseAccountDocument,
-  type SockbaseApplicationDocument,
-  type SockbaseApplicationHashIdDocument,
-  type SockbaseApplicationLinksDocument,
-  type SockbaseEvent,
-  type SockbaseInquiryDocument,
-  type SockbaseInquiryMetaDocument,
-  type SockbasePaymentDocument,
-  type SockbaseStoreDocument,
-  type SockbaseTicketDocument,
-  type SockbaseTicketUsedStatus,
-  type SockbaseTicketUserDocument,
-  type SockbaseApplicationMeta
+import type {
+  SockbaseApplicationOverviewDocument,
+  SockbaseAccountDocument,
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationLinksDocument,
+  SockbaseEvent,
+  SockbaseInquiryDocument,
+  SockbaseInquiryMetaDocument,
+  SockbasePaymentDocument,
+  SockbaseStoreDocument,
+  SockbaseTicketDocument,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketUserDocument,
+  SockbaseApplicationMeta
 } from 'sockbase'
 
 export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> = {
