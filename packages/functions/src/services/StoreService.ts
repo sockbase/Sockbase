@@ -7,7 +7,9 @@ import {
   type SockbaseTicketCreatedResult,
   type SockbaseTicketUsedStatus,
   type SockbaseStoreDocument,
-  type SockbaseStoreType
+  type SockbaseStoreType,
+  type SockbaseAccountDocument,
+  type PaymentMethod
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
@@ -46,6 +48,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
   }
 
   const createdResult = await createTicketCoreAsync(userId, store, type, ticket, false, now)
+  await updateTicketUserDataAsync(userId, store.id)
 
   if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
     const anotherTicketStoreDoc = await firestore.doc(`stores/${type.anotherTicket.storeId}`)
@@ -68,6 +71,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     }
 
     await createTicketCoreAsync(userId, anotherTicketStore, anotherTicketType, anotherTicket, true, now)
+    await updateTicketUserDataAsync(userId, anotherTicketStore.id)
   }
 
   const webhookBody = {
@@ -135,6 +139,7 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
   }
 
   const createdResult = await createTicketCoreAsync(user.uid, store, type, ticket, false, now, createdUserId)
+  await updateTicketUserDataAsync(user.uid, store.id)
 
   if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
     const anotherTicketStoreDoc = await firestore.doc(`stores/${type.anotherTicket.storeId}`)
@@ -157,6 +162,7 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
     }
 
     await createTicketCoreAsync(user.uid, anotherTicketStore, anotherTicketType, anotherTicket, true, now, createdUserId)
+    await updateTicketUserDataAsync(user.uid, anotherTicketStore.id)
   }
 
   return {
@@ -172,7 +178,7 @@ const createTicketCoreAsync =
     userId: string,
     store: SockbaseStoreDocument,
     type: SockbaseStoreType,
-    ticket: SockbaseTicket,
+    paymentMethod: PaymentMethod,
     isAnotherTicket: boolean,
     now: Date,
     createdUserId?: string
@@ -184,7 +190,9 @@ const createTicketCoreAsync =
 
     const hashId = generateTicketHashId(now)
     const ticketDoc: SockbaseTicketDocument = {
-      ...ticket,
+      storeId: store.id,
+      typeId: type.id,
+      paymentMethod: paymentMethod === 1 ? 'online' : 'bankTransfer',
       userId,
       createdAt: now,
       updatedAt: now,
@@ -244,8 +252,6 @@ const createTicketCoreAsync =
         paymentId
       })
 
-    await updateTicketUserDataAsync(store.id, userId)
-
     return {
       ticketId,
       ticketDoc,
@@ -254,7 +260,7 @@ const createTicketCoreAsync =
     }
   }
 
-export const generateTicketHashId = (now: Date): string => {
+const generateTicketHashId = (now: Date): string => {
   const codeDigit = 32
   const randomId = random.generateRandomCharacters(codeDigit)
 
@@ -284,7 +290,7 @@ const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: Sockbas
 }
 
 const updateTicketUserDataAsync =
-  async (storeId: string, userId: string): Promise<void> => {
+  async (userId: string, storeId: string): Promise<void> => {
     const userDoc = await firestore
       .doc(`/users/${userId}`)
       .withConverter(userConverter)
@@ -294,6 +300,11 @@ const updateTicketUserDataAsync =
       throw new functions.https.HttpsError('not-found', 'user')
     }
 
+    await updateTicketUserDataCoreAsync(userId, storeId, userData)
+  }
+
+const updateTicketUserDataCoreAsync =
+  async (userId: string, storeId: string, userData: SockbaseAccountDocument): Promise<void> => {
     await firestore
       .doc(`stores/${storeId}/_users/${userId}`)
       .withConverter(userConverter)
@@ -304,5 +315,8 @@ export default {
   createTicketAsync,
   createTicketForAdminAsync,
   updateTicketUsedStatusAsync,
-  updateTicketUserDataAsync
+  updateTicketUserDataAsync,
+  createTicketCoreAsync,
+  generateTicketHashId,
+  updateTicketUserDataCoreAsync
 }
