@@ -1,12 +1,11 @@
 import { https } from 'firebase-functions/v1'
-import { type SockbaseTicketDocument, type SockbaseAccountDocument, type SockbaseApplicationMeta } from 'sockbase'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { ticketConverter, userConverter } from '../libs/converters'
 import { getApplicationMetaByAppIdAsync, getApplicationsByEventIdAsync } from '../models/application'
 import { getEventByIdAsync } from '../models/event'
 import { getStoreByIdAsync } from '../models/store'
 import { getUserDataAsync } from '../models/user'
-import { generateTicketHashId } from './StoreService'
+import StoreService from './StoreService'
+import type { SockbaseAccountDocument, SockbaseApplicationMeta, SockbaseTicket } from 'sockbase'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
@@ -66,59 +65,24 @@ const createPassesAsync = async (userId: string, eventId: string): Promise<numbe
 
   const addedCount = await Promise.all(ticketsToCreate.map(async t => {
     const userData = userDatas[t.targetUserId]
-    await firestore
-      .doc(`stores/${storeId}/_users/${t.targetUserId}`)
-      .withConverter(userConverter)
-      .set(userData)
+    await StoreService.updateTicketUserDataCoreAsync(t.targetUserId, storeId, userData)
 
     for (let i = 0; i < t.passCount; i++) {
-      const hashId = generateTicketHashId(now)
-      const ticketDoc: SockbaseTicketDocument = {
+      const ticket: SockbaseTicket = {
         storeId,
         typeId,
-        paymentMethod: 'online',
-        userId: t.targetUserId,
-        createdAt: now,
-        updatedAt: null,
-        hashId,
-        createdUserId: userId
+        paymentMethod: 'online'
       }
 
-      const ticketResult = await firestore
-        .collection('_tickets')
-        .withConverter(ticketConverter)
-        .add(ticketDoc)
-      const ticketId = ticketResult.id
-
-      await firestore
-        .doc(`_tickets/${ticketId}/private/meta`)
-        .set({ applicationStatus: 2 })
-
-      await firestore
-        .doc(`_tickets/${ticketId}/private/usedStatus`)
-        .set({
-          used: false,
-          usedAt: null
-        })
-
-      await firestore
-        .doc(`_ticketHashIds/${hashId}`)
-        .set({
-          hashId,
-          ticketId,
-          paymentId: null
-        })
-
-      await firestore
-        .doc(`_ticketUsers/${hashId}`)
-        .set({
-          userId: t.targetUserId,
-          storeId,
-          typeId,
-          usableUserId: null,
-          used: false,
-          usedAt: null
-        })
+      await StoreService.createTicketCoreAsync(
+        t.targetUserId,
+        store,
+        type,
+        ticket,
+        false,
+        now,
+        userId
+      )
     }
 
     return t.passCount
