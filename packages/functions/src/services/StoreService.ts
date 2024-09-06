@@ -47,7 +47,13 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     throw new functions.https.HttpsError('not-found', 'type')
   }
 
-  const createdResult = await createTicketCoreAsync(userId, store, type, ticket, false, now)
+  const createdResult = await createTicketCoreAsync(
+    userId,
+    store,
+    type,
+    ticket.paymentMethod === 'online' ? 1 : 2,
+    false,
+    now)
   await updateTicketUserDataAsync(userId, store.id)
 
   if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
@@ -64,13 +70,7 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
       throw new functions.https.HttpsError('not-found', 'anotherTicketType')
     }
 
-    const anotherTicket: SockbaseTicket = {
-      storeId: type.anotherTicket.storeId,
-      typeId: type.anotherTicket.typeId,
-      paymentMethod: 'online'
-    }
-
-    await createTicketCoreAsync(userId, anotherTicketStore, anotherTicketType, anotherTicket, true, now)
+    await createTicketCoreAsync(userId, anotherTicketStore, anotherTicketType, 1, true, now)
     await updateTicketUserDataAsync(userId, anotherTicketStore.id)
   }
 
@@ -132,13 +132,7 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
     throw new functions.https.HttpsError('not-found', 'type')
   }
 
-  const ticket: SockbaseTicket = {
-    storeId: store.id,
-    typeId,
-    paymentMethod: 'online'
-  }
-
-  const createdResult = await createTicketCoreAsync(user.uid, store, type, ticket, false, now, createdUserId)
+  const createdResult = await createTicketCoreAsync(user.uid, store, type, 1, false, now, createdUserId)
   await updateTicketUserDataAsync(user.uid, store.id)
 
   if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
@@ -155,13 +149,7 @@ const createTicketForAdminAsync = async (createdUserId: string, storeId: string,
       throw new functions.https.HttpsError('not-found', 'anotherTicketType')
     }
 
-    const anotherTicket: SockbaseTicket = {
-      storeId: type.anotherTicket.storeId,
-      typeId: type.anotherTicket.typeId,
-      paymentMethod: 'online'
-    }
-
-    await createTicketCoreAsync(user.uid, anotherTicketStore, anotherTicketType, anotherTicket, true, now, createdUserId)
+    await createTicketCoreAsync(user.uid, anotherTicketStore, anotherTicketType, 1, true, now, createdUserId)
     await updateTicketUserDataAsync(user.uid, anotherTicketStore.id)
   }
 
@@ -192,7 +180,7 @@ const createTicketCoreAsync =
     const ticketDoc: SockbaseTicketDocument = {
       storeId: store.id,
       typeId: type.id,
-      paymentMethod: paymentMethod === 1 ? 'online' : 'bankTransfer',
+      paymentMethod: isAdmin || paymentMethod === 1 ? 'online' : 'bankTransfer',
       userId,
       createdAt: now,
       updatedAt: now,
@@ -210,7 +198,7 @@ const createTicketCoreAsync =
     const paymentId = type.productInfo && !isAdmin
       ? await PaymentService.createPaymentAsync(
         userId,
-        ticket.paymentMethod === 'online' ? 1 : 2,
+        paymentMethod,
         bankTransferCode,
         type.productInfo.productId,
         type.price,
@@ -238,7 +226,7 @@ const createTicketCoreAsync =
       .set({
         userId,
         storeId: store.id,
-        typeId: ticket.typeId,
+        typeId: type.id,
         usableUserId: store.permissions.ticketUserAutoAssign ? userId : null,
         used: false,
         usedAt: null
