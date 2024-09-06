@@ -117,7 +117,11 @@ export interface SockbaseStoreType {
     paymentURL: string
   } | null
   color: string
-  private: boolean
+  isPublic: boolean
+  anotherTicket: {
+    storeId: string
+    typeId: string
+  } | null
 }
 
 /**
@@ -380,6 +384,14 @@ export interface SockbaseTicketAddedResult {
 export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
   email: string
   createdAt: number
+}
+
+/**
+ * サークル通行証発行リザルト
+ */
+export interface SockbaseCirclePassCreatedResult {
+  circlePassCount: number
+  anotherTicketCount: number
 }
 
 /**

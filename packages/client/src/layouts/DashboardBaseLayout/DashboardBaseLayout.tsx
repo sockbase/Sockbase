@@ -123,7 +123,7 @@ const StyledContainer = styled.section<{ isSlim: boolean }>`
       gridTemplateColumns: 'auto 1fr'
     }
     : {
-      gridTemplateColumns: '25% 1fr'
+      gridTemplateColumns: '20% 1fr'
     }}
     
   @media screen and (max-width: 840px) {

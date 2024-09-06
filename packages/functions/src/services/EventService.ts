@@ -1,17 +1,18 @@
 import { https } from 'firebase-functions/v1'
-import { type SockbaseTicketDocument, type SockbaseAccountDocument, type SockbaseApplicationMeta } from 'sockbase'
-import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { ticketConverter, userConverter } from '../libs/converters'
 import { getApplicationMetaByAppIdAsync, getApplicationsByEventIdAsync } from '../models/application'
 import { getEventByIdAsync } from '../models/event'
 import { getStoreByIdAsync } from '../models/store'
 import { getUserDataAsync } from '../models/user'
-import { generateTicketHashId } from './StoreService'
+import StoreService from './StoreService'
+import type {
+  SockbaseAccountDocument,
+  SockbaseApplicationMeta,
+  SockbaseCirclePassCreatedResult,
+  SockbaseStoreDocument,
+  SockbaseStoreType
+} from 'sockbase'
 
-const adminApp = FirebaseAdmin.getFirebaseAdmin()
-const firestore = adminApp.firestore()
-
-const createPassesAsync = async (userId: string, eventId: string): Promise<number> => {
+const createPassesAsync = async (userId: string, eventId: string): Promise<SockbaseCirclePassCreatedResult> => {
   const now = new Date()
 
   const event = await getEventByIdAsync(eventId)
@@ -27,8 +28,21 @@ const createPassesAsync = async (userId: string, eventId: string): Promise<numbe
     throw new https.HttpsError('not-found', 'store')
   }
 
-  const storeId = store.id
-  const typeId = type.id
+  let anotherTicketStore: SockbaseStoreDocument | undefined
+  let anotherTicketType: SockbaseStoreType | undefined
+
+  if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
+    anotherTicketStore = await getStoreByIdAsync(type.anotherTicket.storeId)
+      .catch(err => {
+        console.error(err)
+        throw new https.HttpsError('not-found', 'anotherTicketStore')
+      })
+
+    anotherTicketType = anotherTicketStore.types.filter(t => t.id === type.anotherTicket?.typeId)[0]
+    if (!anotherTicketType) {
+      throw new https.HttpsError('not-found', 'anotherTicketType')
+    }
+  }
 
   const appIds = fetchedApps.map(a => a.id)
   const appMetas = await Promise.all(appIds.map(async id => ({
@@ -66,64 +80,52 @@ const createPassesAsync = async (userId: string, eventId: string): Promise<numbe
 
   const addedCount = await Promise.all(ticketsToCreate.map(async t => {
     const userData = userDatas[t.targetUserId]
-    await firestore
-      .doc(`stores/${storeId}/_users/${t.targetUserId}`)
-      .withConverter(userConverter)
-      .set(userData)
+    await StoreService.updateTicketUserDataCoreAsync(t.targetUserId, store.id, userData)
 
     for (let i = 0; i < t.passCount; i++) {
-      const hashId = generateTicketHashId(now)
-      const ticketDoc: SockbaseTicketDocument = {
-        storeId,
-        typeId,
-        paymentMethod: 'online',
-        userId: t.targetUserId,
-        createdAt: now,
-        updatedAt: null,
-        hashId,
-        createdUserId: userId
-      }
-
-      const ticketResult = await firestore
-        .collection('_tickets')
-        .withConverter(ticketConverter)
-        .add(ticketDoc)
-      const ticketId = ticketResult.id
-
-      await firestore
-        .doc(`_tickets/${ticketId}/private/meta`)
-        .set({ applicationStatus: 2 })
-
-      await firestore
-        .doc(`_tickets/${ticketId}/private/usedStatus`)
-        .set({
-          used: false,
-          usedAt: null
-        })
-
-      await firestore
-        .doc(`_ticketHashIds/${hashId}`)
-        .set({
-          hashId,
-          ticketId,
-          paymentId: null
-        })
-
-      await firestore
-        .doc(`_ticketUsers/${hashId}`)
-        .set({
-          userId: t.targetUserId,
-          storeId,
-          typeId,
-          usableUserId: null,
-          used: false,
-          usedAt: null
-        })
+      await StoreService.createTicketCoreAsync(
+        t.targetUserId,
+        store,
+        type,
+        1,
+        false,
+        now,
+        userId
+      )
     }
 
-    return t.passCount
+    if (anotherTicketStore && anotherTicketType) {
+      await StoreService.updateTicketUserDataCoreAsync(t.targetUserId, anotherTicketStore.id, userData)
+
+      for (let i = 0; i < t.passCount; i++) {
+        await StoreService.createTicketCoreAsync(
+          t.targetUserId,
+          anotherTicketStore,
+          anotherTicketType,
+          1,
+          true,
+          now,
+          userId
+        )
+      }
+    }
+
+    return {
+      circlePassCount: t.passCount,
+      anotherTicketCount: anotherTicketStore && anotherTicketType
+        ? t.passCount
+        : 0
+    }
   }))
-    .then(addedResults => addedResults.reduce((p, c) => p + c, 0))
+    .then(addedResults => addedResults.reduce<SockbaseCirclePassCreatedResult>(
+      (p, c) => ({
+        circlePassCount: p.circlePassCount + c.circlePassCount,
+        anotherTicketCount: p.anotherTicketCount + c.anotherTicketCount
+      }),
+      {
+        circlePassCount: 0,
+        anotherTicketCount: 0
+      }))
 
   return addedCount
 }
