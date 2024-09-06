@@ -182,6 +182,10 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
           {
             name: 'スペース',
             value: space.name
+          },
+          {
+            name: '支払い方法',
+            value: payload.app.paymentMethod === 'online' ? 'オンライン' : '銀行振込'
           }
         ]
       }
