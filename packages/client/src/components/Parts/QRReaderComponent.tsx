@@ -1,36 +1,42 @@
-import { useCallback, useState } from 'react'
-import { QrReader } from 'react-qr-reader'
+import { useEffect, useRef } from 'react'
+import { BrowserQRCodeReader, type IScannerControls } from '@zxing/browser'
+import type { Result } from '@zxing/library'
 
 interface Props {
-  setData: (data: string) => void
+  onScan: (data: Result) => void
 }
 const QRReaderComponent: React.FC<Props> = (props) => {
-  const [data, setData] = useState<string>()
+  const controlsRef = useRef<IScannerControls | null>(null)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
-  const handleScan = useCallback((result: any) => {
-    console.log(result?.text, data)
-    if (!result?.text) return
-    props.setData(result?.text)
-    setData(result?.text)
-  }, [data])
+  useEffect(() => {
+    if (!videoRef.current) return
+
+    const codeReader = new BrowserQRCodeReader()
+    codeReader.decodeFromVideoDevice(
+      undefined,
+      videoRef.current,
+      (result, error, controls) => {
+        if (error) return
+        if (result) {
+          props.onScan(result)
+        }
+
+        controlsRef.current = controls
+      })
+      .catch(err => { throw err })
+
+    return () => {
+      if (!controlsRef.current) return
+
+      controlsRef.current.stop()
+      controlsRef.current = null
+    }
+  }, [props.onScan])
 
   return (
     <>
-      <QrReader
-        constraints={{ facingMode: 'environment' }}
-        onResult={handleScan}
-        scanDelay={250}
-        videoStyle={
-          {
-            // position: 'unset'
-          }
-        }
-        videoContainerStyle={
-          {
-            // paddingTop: 'unset'
-          }
-        }
-      />
+      <video style={{ maxWidth: '100%' }} ref={videoRef} />
     </>
   )
 }
