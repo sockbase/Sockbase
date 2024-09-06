@@ -298,7 +298,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
           </Alert>}
 
           {isActiveQRReader && <ReaderWrap>
-            <QRReaderComponent setData={d => setQRData(d)}/>
+            <QRReaderComponent onScan={r => setQRData(r.getText())}/>
           </ReaderWrap>}
         </>
 
