@@ -39,7 +39,7 @@ const templates = {
   acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument, space: SockbaseEventSpace, genre: SockbaseEventGenre) => ({
     subject: `[${event.name}] サークル参加申し込み 内容確認`,
     body: [
-      `この度は、${event.name}への参加申し込みをいただき、誠にありがとうございます。お申し込みいただいた内容を確認いたしました。`,
+      `この度は、${event.name}への参加申し込みをいただき、誠にありがとうございます。`,
       'お申し込みいただいた内容は以下の通りです。',
       '',
       '[サークル情報]',
@@ -54,6 +54,13 @@ const templates = {
       '',
       'お申し込み内容の確認・変更は以下のURLよりご確認いただけます。',
       `https://sockbase.net/dashboard/applications/${app.hashId}`,
+      '',
+      '[サークルカットご提出のお願い]',
+      'お申し込み時にサークルカットをご提出いただいていない場合、',
+      'お申し込み内容確認ページの「サークルカットを差し替える」ボタンか、',
+      '下記リンクからご提出いただくようお願いいたします。',
+      '',
+      `https://sockbase.net/dashboard/applications/${app.hashId}/cut`,
       '',
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',

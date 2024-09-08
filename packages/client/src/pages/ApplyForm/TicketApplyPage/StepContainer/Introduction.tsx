@@ -111,7 +111,7 @@ const Introduction: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {props.store.types
-            .filter(t => !t.private)
+            .filter(t => t.isPublic)
             .map(t => <tr key={t.id}>
               <th>{t.name}</th>
               <td>{t.price.toLocaleString()}円</td>

@@ -3,12 +3,13 @@ import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { eventConverter } from '../libs/converters'
 
 import EventService from '../services/EventService'
+import type { SockbaseCirclePassCreatedResult } from 'sockbase'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const FirestoreDB = adminApp.firestore()
 
 export const createPasses = https.onCall(
-  async (eventId: string, context): Promise<number> => {
+  async (eventId: string, context): Promise<SockbaseCirclePassCreatedResult> => {
     if (!context.auth?.token.roles) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }

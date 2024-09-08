@@ -6,7 +6,10 @@ import {
   type SockbaseTicketAddedResult,
   type SockbaseTicketCreatedResult,
   type SockbaseTicketUsedStatus,
-  type SockbaseStoreDocument
+  type SockbaseStoreDocument,
+  type SockbaseStoreType,
+  type SockbaseAccountDocument,
+  type PaymentMethod
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
 import random from '../helpers/random'
@@ -37,75 +40,39 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     throw new functions.https.HttpsError('invalid-argument', 'invalid_argument_bankTransfer')
   }
 
-  await updateTicketUserDataAsync(storeId, userId)
-
-  const hashId = generateTicketHashId(now)
-  const ticketDoc: SockbaseTicketDocument = {
-    ...ticket,
-    userId,
-    createdAt: now,
-    updatedAt: null,
-    hashId,
-    createdUserId: null
-  }
-
-  const ticketResult = await firestore
-    .collection('_tickets')
-    .withConverter(ticketConverter)
-    .add(ticketDoc)
-  const ticketId = ticketResult.id
-
-  await firestore
-    .doc(`/_tickets/${ticketId}/private/meta`)
-    .set({ applicationStatus: 0 })
-
-  await firestore
-    .doc(`/_tickets/${ticketId}/private/usedStatus`)
-    .withConverter(ticketUsedStatusConverter)
-    .set({
-      used: false,
-      usedAt: null
-    })
-
   const type = store.types
-    .filter(t => !t.private)
+    .filter(t => t.isPublic)
     .filter(t => t.id === ticket.typeId)[0]
   if (!type) {
     throw new functions.https.HttpsError('not-found', 'type')
   }
 
-  const bankTransferCode = PaymentService.generateBankTransferCode(now)
+  const createdResult = await createTicketCoreAsync(
+    userId,
+    store,
+    type,
+    ticket.paymentMethod === 'online' ? 1 : 2,
+    false,
+    now)
+  await updateTicketUserDataAsync(userId, store.id)
 
-  const paymentId = type.productInfo
-    ? await PaymentService.createPaymentAsync(
-      userId,
-      ticket.paymentMethod === 'online' ? 1 : 2,
-      bankTransferCode,
-      type.productInfo.productId,
-      type.price,
-      'ticket',
-      ticketId
-    )
-    : null
+  if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
+    const anotherTicketStoreDoc = await firestore.doc(`stores/${type.anotherTicket.storeId}`)
+      .withConverter(storeConverter)
+      .get()
+    const anotherTicketStore = anotherTicketStoreDoc.data()
+    if (!anotherTicketStore) {
+      throw new functions.https.HttpsError('not-found', 'anotherTicketStore')
+    }
 
-  await firestore
-    .doc(`/_ticketHashIds/${hashId}`)
-    .set({
-      hashId,
-      ticketId,
-      paymentId
-    })
+    const anotherTicketType = anotherTicketStore.types.filter(t => t.id === type.anotherTicket?.typeId)[0]
+    if (!anotherTicketType) {
+      throw new functions.https.HttpsError('not-found', 'anotherTicketType')
+    }
 
-  await firestore
-    .doc(`/_ticketUsers/${hashId}`)
-    .set({
-      userId,
-      storeId,
-      typeId: ticket.typeId,
-      usableUserId: store.permissions.ticketUserAutoAssign ? userId : null,
-      used: false,
-      usedAt: null
-    })
+    await createTicketCoreAsync(userId, anotherTicketStore, anotherTicketType, 1, true, now)
+    await updateTicketUserDataAsync(userId, anotherTicketStore.id)
+  }
 
   const webhookBody = {
     username: `Sockbase: ${store.name}`,
@@ -132,25 +99,13 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
     .then(() => console.log('sent webhook'))
     .catch(err => { throw err })
 
-  const result: SockbaseTicketAddedResult = {
-    hashId,
-    bankTransferCode
+  return {
+    hashId: createdResult.hashId,
+    bankTransferCode: createdResult.bankTransferCode
   }
-
-  return result
 }
 
-export const generateTicketHashId = (now: Date): string => {
-  const codeDigit = 32
-  const randomId = random.generateRandomCharacters(codeDigit)
-
-  const formatedDateTime = dayjs(now).tz().format('YYYYMMDDHHmmssSSS')
-  const hashId = `${formatedDateTime}-${randomId}`
-
-  return hashId
-}
-
-const createTicketForAdminAsync = async (createdUserId: string, store: SockbaseStoreDocument, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
+const createTicketForAdminAsync = async (createdUserId: string, storeId: string, typeId: string, email: string): Promise<SockbaseTicketCreatedResult> => {
   const now = new Date()
 
   const user = await auth
@@ -164,63 +119,143 @@ const createTicketForAdminAsync = async (createdUserId: string, store: SockbaseS
       }
     })
 
-  await updateTicketUserDataAsync(store.id, user.uid)
-
-  const hashId = generateTicketHashId(now)
-  const ticketDoc: SockbaseTicketDocument = {
-    storeId: store.id,
-    typeId,
-    paymentMethod: 'online',
-    userId: user.uid,
-    createdAt: now,
-    updatedAt: null,
-    hashId,
-    createdUserId
+  const storeDoc = await firestore.doc(`stores/${storeId}`)
+    .withConverter(storeConverter)
+    .get()
+  const store = storeDoc.data()
+  if (!store) {
+    throw new functions.https.HttpsError('not-found', 'store')
   }
 
-  const ticketResult = await firestore
-    .collection('_tickets')
-    .withConverter(ticketConverter)
-    .add(ticketDoc)
+  const type = store.types.filter(t => t.id === typeId)[0]
+  if (!type) {
+    throw new functions.https.HttpsError('not-found', 'type')
+  }
 
-  const ticketId = ticketResult.id
+  const createdResult = await createTicketCoreAsync(user.uid, store, type, 1, false, now, createdUserId)
+  await updateTicketUserDataAsync(user.uid, store.id)
 
-  await firestore
-    .doc(`/_tickets/${ticketId}/private/meta`)
-    .set({ applicationStatus: 2 })
+  if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
+    const anotherTicketStoreDoc = await firestore.doc(`stores/${type.anotherTicket.storeId}`)
+      .withConverter(storeConverter)
+      .get()
+    const anotherTicketStore = anotherTicketStoreDoc.data()
+    if (!anotherTicketStore) {
+      throw new functions.https.HttpsError('not-found', 'anotherTicketStore')
+    }
 
-  await firestore
-    .doc(`/_tickets/${ticketId}/private/usedStatus`)
-    .set({
-      used: false,
-      usedAt: null
-    })
+    const anotherTicketType = anotherTicketStore.types.filter(t => t.id === type.anotherTicket?.typeId)[0]
+    if (!anotherTicketType) {
+      throw new functions.https.HttpsError('not-found', 'anotherTicketType')
+    }
 
-  await firestore
-    .doc(`/_ticketHashIds/${hashId}`)
-    .set({
-      hashId,
-      ticketId,
-      paymentId: null
-    })
-
-  await firestore
-    .doc(`/_ticketUsers/${hashId}`)
-    .set({
-      userId: user.uid,
-      storeId: store.id,
-      typeId,
-      usableUserId: null,
-      used: false,
-      usedAt: null
-    })
+    await createTicketCoreAsync(user.uid, anotherTicketStore, anotherTicketType, 1, true, now, createdUserId)
+    await updateTicketUserDataAsync(user.uid, anotherTicketStore.id)
+  }
 
   return {
-    ...ticketDoc,
-    id: ticketId,
-    createdAt: ticketDoc.createdAt?.getTime() ?? 0,
+    ...createdResult.ticketDoc,
+    id: createdResult.ticketId,
+    createdAt: createdResult.ticketDoc.createdAt?.getTime() ?? 0,
     email: user.email ?? ''
   }
+}
+
+const createTicketCoreAsync =
+  async (
+    userId: string,
+    store: SockbaseStoreDocument,
+    type: SockbaseStoreType,
+    paymentMethod: PaymentMethod,
+    isAnotherTicket: boolean,
+    now: Date,
+    createdUserId?: string
+  ): Promise<SockbaseTicketAddedResult & {
+    ticketDoc: SockbaseTicketDocument
+    ticketId: string
+  }> => {
+    const isAdmin = !!createdUserId || isAnotherTicket
+
+    const hashId = generateTicketHashId(now)
+    const ticketDoc: SockbaseTicketDocument = {
+      storeId: store.id,
+      typeId: type.id,
+      paymentMethod: isAdmin || paymentMethod === 1 ? 'online' : 'bankTransfer',
+      userId,
+      createdAt: now,
+      updatedAt: now,
+      hashId,
+      createdUserId: createdUserId ?? null
+    }
+
+    const ticketResult = await firestore
+      .collection('_tickets')
+      .withConverter(ticketConverter)
+      .add(ticketDoc)
+    const ticketId = ticketResult.id
+
+    const bankTransferCode = PaymentService.generateBankTransferCode(now)
+    const paymentId = type.productInfo && !isAdmin
+      ? await PaymentService.createPaymentAsync(
+        userId,
+        paymentMethod,
+        bankTransferCode,
+        type.productInfo.productId,
+        type.price,
+        'ticket',
+        ticketId
+      )
+      : null
+
+    await firestore
+      .doc(`/_tickets/${ticketId}/private/meta`)
+      .set({
+        applicationStatus: isAdmin ? 2 : 0
+      })
+
+    await firestore
+      .doc(`/_tickets/${ticketId}/private/usedStatus`)
+      .withConverter(ticketUsedStatusConverter)
+      .set({
+        used: false,
+        usedAt: null
+      })
+
+    await firestore
+      .doc(`/_ticketUsers/${hashId}`)
+      .set({
+        userId,
+        storeId: store.id,
+        typeId: type.id,
+        usableUserId: store.permissions.ticketUserAutoAssign ? userId : null,
+        used: false,
+        usedAt: null
+      })
+
+    await firestore
+      .doc(`/_ticketHashIds/${hashId}`)
+      .set({
+        hashId,
+        ticketId,
+        paymentId
+      })
+
+    return {
+      ticketId,
+      ticketDoc,
+      hashId,
+      bankTransferCode
+    }
+  }
+
+const generateTicketHashId = (now: Date): string => {
+  const codeDigit = 32
+  const randomId = random.generateRandomCharacters(codeDigit)
+
+  const formatedDateTime = dayjs(now).tz().format('YYYYMMDDHHmmssSSS')
+  const hashId = `${formatedDateTime}-${randomId}`
+
+  return hashId
 }
 
 const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: SockbaseTicketUsedStatus): Promise<void> => {
@@ -243,7 +278,7 @@ const updateTicketUsedStatusAsync = async (ticketId: string, ticketUsed: Sockbas
 }
 
 const updateTicketUserDataAsync =
-  async (storeId: string, userId: string): Promise<void> => {
+  async (userId: string, storeId: string): Promise<void> => {
     const userDoc = await firestore
       .doc(`/users/${userId}`)
       .withConverter(userConverter)
@@ -253,6 +288,11 @@ const updateTicketUserDataAsync =
       throw new functions.https.HttpsError('not-found', 'user')
     }
 
+    await updateTicketUserDataCoreAsync(userId, storeId, userData)
+  }
+
+const updateTicketUserDataCoreAsync =
+  async (userId: string, storeId: string, userData: SockbaseAccountDocument): Promise<void> => {
     await firestore
       .doc(`stores/${storeId}/_users/${userId}`)
       .withConverter(userConverter)
@@ -263,5 +303,8 @@ export default {
   createTicketAsync,
   createTicketForAdminAsync,
   updateTicketUsedStatusAsync,
-  updateTicketUserDataAsync
+  updateTicketUserDataAsync,
+  createTicketCoreAsync,
+  generateTicketHashId,
+  updateTicketUserDataCoreAsync
 }
