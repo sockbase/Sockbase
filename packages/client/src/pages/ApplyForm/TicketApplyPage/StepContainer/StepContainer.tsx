@@ -149,7 +149,7 @@ const StepContainer: React.FC<Props> = (props) => {
       {props.store && <>
         <h1>{props.store.name} 申し込み受付</h1>
 
-        {props.store.schedules.endApplication < now && <Alert type="danger" title="受付期間前です">
+        {now < props.store.schedules.startApplication && <Alert type="danger" title="受付期間前です">
           このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。
         </Alert>}
 
@@ -157,7 +157,7 @@ const StepContainer: React.FC<Props> = (props) => {
           このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
         </Alert>}
 
-        {props.store.schedules.startApplication <= now && now < props.store.schedules.endApplication && <>
+        {props.store.schedules.startApplication < now && now <= props.store.schedules.endApplication && <>
           {props.store.descriptions.map((d, k) => <p key={k}>{d}</p>)}
           <StepProgress
             steps={stepProgresses.map((s, k) => ({

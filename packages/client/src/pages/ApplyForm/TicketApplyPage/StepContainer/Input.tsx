@@ -109,7 +109,7 @@ const Input: React.FC<Props> = (props) => {
             name="type"
             values={
               props.store.types
-                .filter(t => !t.private)
+                .filter(t => t.isPublic)
                 .map(t => ({
                   text: `${t.name} ${t.price.toLocaleString()}円 / ${t.description}`,
                   value: t.id

@@ -118,7 +118,8 @@ service cloud.firestore {
         
       allow create: if request.auth.uid == request.resource.data.userId
         && getApplication(applicationId) != null;
-      allow update: if request.auth.uid == resource.data.userId;
+      allow update: if request.auth.uid == resource.data.userId
+        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
       allow delete: if isSystemAdmin(request.auth.uid);
     }
 
@@ -128,7 +129,8 @@ service cloud.firestore {
 
       allow create: if request.auth.uid == request.resource.data.userId
         && getApplication(applicationId) != null;
-      allow update: if request.auth.uid == resource.data.userId;
+      allow update: if request.auth.uid == resource.data.userId
+        || isOrganizationAdmin(request.auth.uid, getEvent(getApplication(applicationId).eventId)._organization.id);
       allow delete: if isSystemAdmin(request.auth.uid);
     }
 

@@ -7,7 +7,12 @@ import {
   spaceConverter
 } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
+import type {
+  SockbaseCirclePassCreatedResult,
+  SockbaseEvent,
+  SockbaseEventDocument,
+  SockbaseSpaceDocument
+} from 'sockbase'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
@@ -18,7 +23,7 @@ interface IUseEvent {
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
   createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
   uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
-  createPassesAsync: (eventId: string) => Promise<number>
+  createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreatedResult>
 }
 
 const useEvent = (): IUseEvent => {
@@ -124,10 +129,10 @@ const useEvent = (): IUseEvent => {
     }
 
   const createPassesAsync =
-    async (eventId: string): Promise<number> => {
+    async (eventId: string): Promise<SockbaseCirclePassCreatedResult> => {
       const functions = getFunctions()
       const createPassesFunction = FirebaseFunctions
-        .httpsCallable<string, number>(
+        .httpsCallable<string, SockbaseCirclePassCreatedResult>(
         functions,
         'event-createPasses')
       const createResult = await createPassesFunction(eventId)
