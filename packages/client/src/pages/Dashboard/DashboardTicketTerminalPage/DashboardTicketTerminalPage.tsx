@@ -220,7 +220,6 @@ const DashboardTicketTerminalPage: React.FC = () => {
   }, [ticket])
 
   useEffect(() => {
-    console.log(ticketHashId)
     if (!qrData) return
     if (qrData === ticketHashId) return
 
