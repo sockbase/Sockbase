@@ -1,38 +1,39 @@
 import { useEffect, useRef } from 'react'
-import { BrowserQRCodeReader, type IScannerControls } from '@zxing/browser'
+import { BrowserQRCodeReader } from '@zxing/browser'
 import type { Result } from '@zxing/library'
 
 interface Props {
   onScan: (data: Result) => void
 }
 const QRReaderComponent: React.FC<Props> = (props) => {
-  const controlsRef = useRef<IScannerControls | null>(null)
+  const mountedRef = useRef<boolean>(false)
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
   useEffect(() => {
     if (!videoRef.current) return
+    mountedRef.current = true
 
     const codeReader = new BrowserQRCodeReader()
     codeReader.decodeFromVideoDevice(
       undefined,
       videoRef.current,
       (result, error, controls) => {
+        if (!mountedRef.current) {
+          controls.stop()
+        }
+
         if (error) return
+        
         if (result) {
           props.onScan(result)
         }
-
-        controlsRef.current = controls
       })
       .catch(err => { throw err })
 
     return () => {
-      if (!controlsRef.current) return
-
-      controlsRef.current.stop()
-      controlsRef.current = null
+      mountedRef.current = false
     }
-  }, [props.onScan])
+  }, [props])
 
   return (
     <>
