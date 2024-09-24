@@ -118,6 +118,7 @@ a {
 
 ul, ol, p {
   color: var(--text-color);
+  line-height: 2em;
 }
 
 code {
