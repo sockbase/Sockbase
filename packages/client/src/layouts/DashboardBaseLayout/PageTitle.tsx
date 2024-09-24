@@ -26,7 +26,7 @@ const StyledPageTitleContainer = styled.header`
   display: grid;
   padding-bottom: 20px;
   margin-bottom: 20px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--title-border-color);
 
   grid-template-columns: 64px 1fr;
   grid-template-rows: auto auto;
