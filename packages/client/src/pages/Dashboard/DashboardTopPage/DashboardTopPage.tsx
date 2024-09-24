@@ -11,7 +11,8 @@ import {
   MdStore,
   MdWallet,
   MdBadge,
-  MdSearch
+  MdSearch,
+  MdInfo
 } from 'react-icons/md'
 import styled from 'styled-components'
 import FormItem from '../../../components/Form/FormItem'
@@ -122,8 +123,13 @@ const DashboardTopPage: React.FC = () => {
           <TopCard
             to="/dashboard/inquiries"
             icon={<MdInbox />}
-            title="問い合わせ管理"
+            title="お問い合わせ管理"
             description="利用者から届いたお問い合わせを管理します。" />
+          <TopCard
+            to="/dashboard/informations"
+            icon={<MdInfo />}
+            title="お知らせ管理"
+            description="お知らせを管理します。" />
         </CardContainer>
       </>}
 
