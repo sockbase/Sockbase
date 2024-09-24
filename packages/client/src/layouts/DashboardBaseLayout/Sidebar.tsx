@@ -17,7 +17,8 @@ import {
   MdBadge,
   MdSearch,
   MdArrowBackIosNew,
-  MdArrowForwardIos
+  MdArrowForwardIos,
+  MdInfo
 } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -152,8 +153,14 @@ const menu: MenuSection[] = [
       {
         key: 'manageInquiries',
         icon: <MdInbox />,
-        text: '問い合わせ管理',
+        text: 'お問い合わせ管理',
         link: '/dashboard/inquiries'
+      },
+      {
+        key: 'manageInformations',
+        icon: <MdInfo />,
+        text: 'お知らせ管理',
+        link: '/dashboard/informations'
       }
     ]
   }
