@@ -32,6 +32,9 @@ import DashboardEventMailSendPage from '../Dashboard/DashboardEventMailSendPage/
 import DashboardEventMetaViewPage from '../Dashboard/DashboardEventMetaViewPage/DashboardEventMetaViewPage'
 import DashboardEventPassCreatePage from '../Dashboard/DashboardEventPassCreatePage/DashboardEventPassCreatePage'
 import DashboardEventSpaceManagePage from '../Dashboard/DashboardEventSpaceManagePage/DashboardEventSpaceManagePage'
+import DashboardInformationCreatePage from '../Dashboard/DashboardInformationCreatePage/DashboardInformationCreatePage'
+import DashboardInformationDetailPage from '../Dashboard/DashboardInformationDetailPage/DashboardInformationDetailPage'
+import DashboardInformationListPage from '../Dashboard/DashboardInformationListPage/DashboardInformationListPage'
 import DashboardInquiryDetailPage from '../Dashboard/DashboardInquiryDetailPage/DashboardInquiryDetailPage'
 import DashboardInquiryListPage from '../Dashboard/DashboardInquiryListPage/DashboardInquiryListPage'
 import DashboardLicenseViewPage from '../Dashboard/DashboardLicenseViewPage/DashboardLicenseViewPage'
@@ -51,6 +54,7 @@ import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/Dashbo
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
 import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from '../IndexPage/IndexPage'
+import InformationDetailPage from '../InformationDetailPage/InformationDetailPage'
 import PasswordResetPage from '../PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from '../Static/PrivacyPolicyPage'
 import TermsOfServicePage from '../Static/TermsOfServicePage'
@@ -85,6 +89,15 @@ const router = createBrowserRouter([
       {
         path: 'privacy-policy',
         element: <PrivacyPolicyPage />
+      },
+      {
+        path: 'informations',
+        children: [
+          {
+            path: ':informationId',
+            element: <InformationDetailPage />
+          }
+        ]
       },
       {
         path: 'reset-password',
@@ -322,6 +335,23 @@ const router = createBrowserRouter([
           {
             path: 'stream',
             element: <DashboardStreamTerminalPage />
+          },
+          {
+            path: 'informations',
+            children: [
+              {
+                index: true,
+                element: <DashboardInformationListPage />
+              },
+              {
+                path: 'create',
+                element: <DashboardInformationCreatePage />
+              },
+              {
+                path: ':informationId',
+                element: <DashboardInformationDetailPage />
+              }
+            ]
           }
         ]
       }

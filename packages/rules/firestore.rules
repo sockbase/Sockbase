@@ -205,6 +205,12 @@ service cloud.firestore {
         allow write: if isSystemAdmin(request.auth.uid);
       }
     }
+
+    match /informations/{informationId} {
+      allow read: if resource.data.isPublished
+        || isSystemAdmin(request.auth.uid);
+      allow write: if isSystemAdmin(request.auth.uid);
+    }
     
     // match /{document=**} {
     //  allow read, write: if false;
