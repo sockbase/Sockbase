@@ -54,7 +54,7 @@ h2 {
     display: block;
     content: '';
     height: 6px;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 2px solid var(--title-border-color);
     position: inherit;
     z-index: -1;
     margin-bottom: 20px;
