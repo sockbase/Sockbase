@@ -42,8 +42,7 @@ const InformationDetailPage: React.FC = () => {
       </Breadcrumbs>
 
       {information === undefined && <Alert title='お知らせを取得中'>
-        お知らせを取得しています。<br />
-        しばらくお待ちください。
+        お知らせを取得しています。しばらくお待ちください。
       </Alert>}
 
       {information === null && <Alert title='お知らせが見つかりませんでした' type='danger'>
