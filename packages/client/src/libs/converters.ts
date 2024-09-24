@@ -24,7 +24,8 @@ import type {
   SockbaseAccount,
   SockbaseInquiryDocument,
   SockbaseInquiryMetaDocument,
-  SockbasePaymentDocument
+  SockbasePaymentDocument,
+  SockbaseInformationDocument
 } from 'sockbase'
 
 export const accountConverter: FirestoreDataConverter<SockbaseAccount> = {
@@ -407,3 +408,22 @@ export const inquiryMetaConverter: FirestoreDataConverter<SockbaseInquiryMetaDoc
       }
     }
   }
+
+export const informationConverter: FirestoreDataConverter<SockbaseInformationDocument> = {
+  toFirestore: (info: SockbaseInformationDocument) => ({
+    title: info.title,
+    body: info.body,
+    updatedAt: info.updatedAt,
+    isPublished: info.isPublished
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseInformationDocument => {
+    const info = snapshot.data()
+    return {
+      id: snapshot.id,
+      title: info.title,
+      body: info.body,
+      updatedAt: info.updatedAt,
+      isPublished: info.isPublished
+    }
+  }
+}

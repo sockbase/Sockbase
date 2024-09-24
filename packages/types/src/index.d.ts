@@ -544,3 +544,14 @@ export interface SockbaseMailSendTarget {
   confirmed: boolean
   canceled: boolean
 }
+
+export interface SockbaseInformation {
+  title: string
+  body: string
+  updatedAt: number
+  isPublished: boolean
+}
+
+export type SockbaseInformationDocument = SockbaseInformation & {
+  id: string
+}

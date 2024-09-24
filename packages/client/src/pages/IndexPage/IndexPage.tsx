@@ -8,6 +8,7 @@ import Loading from '../../components/Parts/Loading'
 import useFirebase from '../../hooks/useFirebase'
 import useFirebaseError from '../../hooks/useFirebaseError'
 import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
+import InformationList from './InformationList'
 import Login from './Login'
 
 export interface User {
@@ -79,6 +80,8 @@ const IndexPage: React.FC = () => {
           <Link to="/privacy-policy">こちら</Link>からご確認ください。
         </Alert>
 
+        <InformationList />
+
         <h2>Sockbase とは？</h2>
         <p>
           <a href="https://nectarition.jp">ねくたりしょん</a>が提供するイベント申し込み情報管理サービスです。
@@ -107,7 +110,7 @@ const IndexPage: React.FC = () => {
           <li>申し込み後に関するお問い合わせ: マイページメニューの「お問い合わせ」</li>
         </ul>
 
-        <h3>表記事項</h3>
+        <h3>法律に基づく事項</h3>
         <ul>
           <li><Link to="/tos">利用規約・特定商取引法に基づく表記</Link></li>
           <li><Link to="/privacy-policy">プライバシーポリシー</Link></li>
