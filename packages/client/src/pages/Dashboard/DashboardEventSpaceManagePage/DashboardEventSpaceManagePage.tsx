@@ -166,7 +166,7 @@ const DashboardEventSpaceManagePage: React.FC = () => {
         </FormItem>
       </FormSection>
 
-      {loadErrorMessage && <Alert type="danger">{loadErrorMessage}</Alert>}
+      {loadErrorMessage && <Alert type="error" title="エラーが発生しました">{loadErrorMessage}</Alert>}
 
       <table>
         <thead>
@@ -212,7 +212,7 @@ const DashboardEventSpaceManagePage: React.FC = () => {
         </FormItem>
       </FormSection>
 
-      {updateErrorMessage && <Alert type="danger">{updateErrorMessage}</Alert>}
+      {updateErrorMessage && <Alert type="error" title="エラーが発生しました">{updateErrorMessage}</Alert>}
 
     </DashboardBaseLayout>
   )

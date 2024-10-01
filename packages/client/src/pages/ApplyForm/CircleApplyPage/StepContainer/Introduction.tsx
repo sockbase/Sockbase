@@ -118,7 +118,7 @@ const Introduction: React.FC<Props> = (props) => {
 
       {!props.event.permissions.allowAdult && <>
         <h2>お知らせ</h2>
-        <Alert type="danger" title="成人向け作品の頒布はできません">
+        <Alert type="error" title="成人向け作品の頒布はできません">
           今回のイベントでは、会場からの要請・運営の都合上、成人向け作品の頒布はできません。<br />
           予めご了承ください。
         </Alert>

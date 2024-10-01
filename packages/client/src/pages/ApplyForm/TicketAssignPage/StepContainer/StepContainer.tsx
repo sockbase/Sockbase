@@ -100,7 +100,7 @@ const StepContainer: React.FC<Props> = (props) => {
   return (
     <>
       {props.ticketUser.usableUserId && <>
-        <Alert type="danger" title="受け取り済みのチケットです">
+        <Alert type="error" title="受け取り済みのチケットです">
           このチケットは既に受け取り済みです。
         </Alert>
         {props.user?.uid === props.ticketUser.usableUserId && <FormSection>

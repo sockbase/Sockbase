@@ -155,12 +155,10 @@ const Input: React.FC<Props> = (props) => {
                 onChange={v => setTicket(s => ({ ...s, paymentMethod: v }))} />
             </FormItem>
             {ticket.paymentMethod === 'bankTransfer' && <FormItem>
-              <Alert>
-                銀行振込の場合、申し込み完了までお時間をいただくことがございます。
-              </Alert>
+              <Alert type="warning" title="銀行振込の場合、申し込み完了までお時間をいただくことがございます。" />
             </FormItem>}
           </FormSection>
-          : <Alert>申し込みたい参加種別を選択してください</Alert>}
+          : <Alert type="info" title="申し込みたい参加種別を選択してください" />}
       </>}
 
       <UserDataForm
@@ -182,9 +180,7 @@ const Input: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      {errorCount > 0 && <Alert type="danger">
-        {errorCount} 個の入力項目に不備があります。
-      </Alert>}
+      {errorCount > 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
 
       <FormSection>
         <FormButton

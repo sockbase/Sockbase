@@ -78,7 +78,7 @@ const TicketView: React.FC<Props> = (props) => {
         <ContentContainer>
           {ticketUser && ticketUser.usableUserId === null
             ? <>
-              <Alert title="チケットの割り当てが完了していません" type="danger">
+              <Alert type="error" title="チケットの割り当てが完了していません">
                 このチケットを使うユーザの割り当てが完了していません。
                 {props.userId !== ticketUser.userId &&
                   <>
@@ -103,11 +103,11 @@ const TicketView: React.FC<Props> = (props) => {
             </>
             : <>
               {props.ticketUser.used
-                ? <Alert type="danger" title="使用済みです">
+                ? <Alert type="error" title="使用済みです">
                   このチケットは既に使用されています。
                 </Alert>
                 : ticketUser && props.userId !== ticketUser.usableUserId &&
-                <Alert title="他の方に割り当てられているチケットです" type="danger">
+                <Alert type="warning" title="他の方に割り当てられているチケットです">
                   あなたが使用すると、割り当てた方が使用できなくなります。<br />
                   自分のチケットは <Link to="/dashboard/mytickets">マイチケット</Link> から確認できます。
                 </Alert>}

@@ -141,7 +141,7 @@ const StepContainer: React.FC<Props> = (props) => {
 
   return (
     <>
-      {props.store === null && <Alert title="チケットストアが見つかりません" type="danger">
+      {props.store === null && <Alert title="チケットストアが見つかりません" type="error">
         指定された ID のチケットストアを見つけることができませんでした。<br />
         URL が正しく入力されていることを確認してください。
       </Alert>}
@@ -149,11 +149,11 @@ const StepContainer: React.FC<Props> = (props) => {
       {props.store && <>
         <h1>{props.store.name} 申し込み受付</h1>
 
-        {now < props.store.schedules.startApplication && <Alert type="danger" title="受付期間前です">
+        {now < props.store.schedules.startApplication && <Alert type="error" title="受付期間前です">
           このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。
         </Alert>}
 
-        {props.store.schedules.endApplication < now && <Alert type="danger" title="受付を終了しました">
+        {props.store.schedules.endApplication < now && <Alert type="error" title="受付を終了しました">
           このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
         </Alert>}
 

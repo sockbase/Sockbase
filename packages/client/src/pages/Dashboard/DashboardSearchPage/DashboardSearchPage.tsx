@@ -77,7 +77,7 @@ const DashboardSearchPage: React.FC = () => {
                 disabled={processStatus.application || !appHashId}>検索</FormButton>
             </FormItem>
             {errorMessage && <FormItem>
-              <Alert type="danger">{errorMessage}</Alert>
+              <Alert type="error" title="エラーが発生しました">{errorMessage}</Alert>
             </FormItem>}
           </FormSection>
         </>

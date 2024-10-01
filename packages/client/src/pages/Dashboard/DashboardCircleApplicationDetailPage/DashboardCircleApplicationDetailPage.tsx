@@ -206,33 +206,33 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
         description="申し込み情報"
         isLoading={!app} />
 
-      {payment?.status === 0 && <Alert type='danger' title='サークル参加費のお支払いをお願いいたします'>
+      {payment?.status === 0 && <Alert type="warning" title="サークル参加費のお支払いをお願いいたします">
         お支払いは <Link to="/dashboard/payments">決済履歴</Link> からお願いいたします。
       </Alert>}
 
-      {circleCutURL === null && event && <Alert type="danger" title="サークルカットを提出してください">
+      {circleCutURL === null && event && <Alert type="warning" title="サークルカットを提出してください">
         サークルカットは <Link to={`/dashboard/applications/${hashedAppId}/cut`}>サークルカットを変更</Link> から提出できます。
       </Alert>}
 
       {!links && event &&
-        <Alert type="danger" title="カタログ掲載情報を入力してください">
+        <Alert type="warning" title="カタログ掲載情報を入力してください">
           カタログ掲載情報は <Link to={`/dashboard/applications/${hashedAppId}/links`}>こちら</Link> から入力できます。
         </Alert>}
 
       {links && event && event.schedules.catalogInformationFixedAt > now &&
-        <Alert title="カタログ掲載情報締切にご注意ください">
+        <Alert type="info" title="カタログ掲載情報締切にご注意ください">
           <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をカタログ等に掲載いたします。<br />
           確定日以降の情報は掲載されませんのでご注意ください。
         </Alert>}
 
       {event && event.schedules.overviewFirstFixedAt > now &&
-        <Alert title="配置情報締切までに頒布物情報を更新してください">
+        <Alert type="info" title="配置情報締切までに頒布物情報を更新してください">
           <b>{formatByDate(event.schedules.overviewFirstFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報で配置を行います。<br />
           申し込み時から大きく変更がある場合は必ず更新を行ってください。
         </Alert>}
 
       {event && event.schedules.overviewFirstFixedAt <= now && event.schedules.overviewFinalFixedAt > now &&
-        <Alert title="頒布物情報を最新の状態にしてください">
+        <Alert type="info" title="頒布物情報を最新の状態にしてください">
           <b>{formatByDate(event.schedules.overviewFinalFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をイベント運営で使用いたします。<br />
           実際に頒布する作品の情報をご入力いただきますようお願いいたします。
         </Alert>}
