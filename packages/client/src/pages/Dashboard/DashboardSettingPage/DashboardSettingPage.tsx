@@ -201,8 +201,8 @@ const DashboardSettingPage: React.FC = () => {
               </FormItem>
             </FormSection>
 
-            {error && <Alert type="danger" title="エラーが発生しました">{error.message}</Alert>}
-            {errorCount !== 0 && <Alert type="danger">{errorCount} 個の入力項目に不備があります。</Alert>}
+            {error && <Alert type="error" title="エラーが発生しました">{error.message}</Alert>}
+            {errorCount !== 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
 
             <FormSection>
               <FormItem>

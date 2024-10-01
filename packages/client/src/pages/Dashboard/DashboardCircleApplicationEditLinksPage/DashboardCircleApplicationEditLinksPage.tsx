@@ -130,19 +130,19 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
         ? <TwoColumnsLayout>
           <>
             {event.schedules.catalogInformationFixedAt > now &&
-              <Alert type="danger" title="カタログ掲載情報締切にご注意ください">
+              <Alert type="info" title="カタログ掲載情報締切にご注意ください">
                 カタログ掲載情報の確定日は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> です。<br />
                 確定日以降の情報は掲載されませんのでご注意ください。
               </Alert>}
 
             {event && event.schedules.overviewFirstFixedAt > now &&
-              <Alert title="配置情報締切までに頒布物情報を更新してください">
+              <Alert type="info" title="配置情報締切までに頒布物情報を更新してください">
                 <b>{formatByDate(event.schedules.overviewFirstFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報で配置を行います。<br />
                 申し込み時から大きく変更がある場合は必ず更新を行ってください。
               </Alert>}
 
             {event && event.schedules.overviewFirstFixedAt <= now && event.schedules.overviewFinalFixedAt > now &&
-              <Alert title="頒布物情報を最新の状態にしてください">
+              <Alert type="info" title="頒布物情報を最新の状態にしてください">
                 <b>{formatByDate(event.schedules.overviewFinalFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をイベント運営で使用いたします。<br />
                 実際に頒布する作品の情報をご入力いただきますようお願いいたします。
               </Alert>}
@@ -190,7 +190,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
               </FormItem>
             </FormSection>
 
-            {errorCount !== 0 && <Alert type="danger">{errorCount} 個の入力項目に不備があります。</Alert>}
+            {errorCount !== 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
 
             <FormSection>
               <FormItem>

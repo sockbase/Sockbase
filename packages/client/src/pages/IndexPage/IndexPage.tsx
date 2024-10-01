@@ -49,7 +49,7 @@ const IndexPage: React.FC = () => {
     <DefaultBaseLayout>
       <h2>Sockbase マイページにログイン</h2>
 
-      {fromPathName && <Alert title="ログインが必要です" type="danger">
+      {fromPathName && <Alert type="warning" title="ログインが必要です">
         このページにアクセスするにはログインが必要です。
       </Alert>}
 

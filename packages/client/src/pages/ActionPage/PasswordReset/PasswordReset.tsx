@@ -38,7 +38,7 @@ const PasswordReset: React.FC<Props> = (props) => {
 
   return (
     <>
-      {errorMessage && <Alert title="エラーが発生しました" type="danger">
+      {errorMessage && <Alert title="エラーが発生しました" type="error">
         {errorMessage}
       </Alert>}
 

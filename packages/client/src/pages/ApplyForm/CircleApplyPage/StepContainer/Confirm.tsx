@@ -178,7 +178,7 @@ const Confirm: React.FC<Props> = (props) => {
         修正する場合は「修正」ボタンを押してください。
       </p>
 
-      {errorMessage && <Alert type="danger" title="エラーが発生しました">
+      {errorMessage && <Alert type="error" title="エラーが発生しました">
         {errorMessage}
       </Alert>}
 
@@ -203,7 +203,7 @@ const Confirm: React.FC<Props> = (props) => {
 
       {isProgress && <>
         <ProgressBar percent={props.submitProgressPercent}/>
-        <Alert>
+        <Alert type="info" title="申し込み情報を送信中です">
           送信処理に時間がかかる場合がございます。<br />
           進捗率が 100% になるまでそのままでお待ちください。
         </Alert>

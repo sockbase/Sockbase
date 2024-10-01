@@ -74,9 +74,9 @@ const Payment: React.FC<Props> = (props) => {
         {props.app?.paymentMethod === 'online'
           ? <>
             <h2>オンライン決済でのお支払い</h2>
-            <Alert>
-              メールアドレスは自動で入力されます。<br />
-              別のメールアドレスを入力すると、お支払いの確認までお時間をいただく場合がございますので、<b>絶対に変更しないでください。</b>
+            <Alert type="warning" title="決済画面に表示されるメールアドレスは変更しないでください">
+              決済画面のメールアドレスは自動入力されています。<br />
+              変更した場合、決済確認ができなくなる可能性がありますので絶対に変更しないでください。
             </Alert>
             <p>
               「決済画面を開く」より決済を行ってください。
@@ -95,7 +95,7 @@ const Payment: React.FC<Props> = (props) => {
             <p>
               {formatByDate((props.event?.schedules.endApplication ?? 0) - 1, 'YYYY/MM/DD')} までに以下の口座へ所定の金額のお振込みをお願いいたします。
             </p>
-            <Alert>
+            <Alert type="warning" title="お支払い補助番号について">
               お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「{props.addedResult?.bankTransferCode}」を入力してください。
             </Alert>
             <table>
@@ -122,9 +122,7 @@ const Payment: React.FC<Props> = (props) => {
                 </tr>
               </tbody>
             </table>
-            <Alert>
-              ※振込みにかかる手数料は、サークル様のご負担となります。
-            </Alert>
+            <Alert type="warning" title="振込みにかかる手数料は、サークル様のご負担となります。" />
             <FormSection>
               <FormCheckbox
                 name="check-payment"

@@ -1,52 +1,75 @@
+import type { ReactElement } from 'react'
+import { MdCheck, MdDangerous, MdInfoOutline, MdWarningAmber } from 'react-icons/md'
 import styled from 'styled-components'
-import type { valueOf } from 'sockbase'
 
-const AlertType = {
-  Danger: 'danger',
-  Success: 'success'
-} as const
-type AlertTypes = valueOf<typeof AlertType>
+type AlertType = 'info' | 'success' | 'warning' | 'error'
+
+const iconMap: Record<AlertType, ReactElement> = {
+  info: <MdInfoOutline />,
+  success: <MdCheck />,
+  warning: <MdWarningAmber />,
+  error: <MdDangerous />
+}
+
+const colorMap: Record<AlertType, string> = {
+  info: 'var(--info-color)',
+  success: 'var(--success-color)',
+  warning: 'var(--warning-color)',
+  error: 'var(--danger-color)'
+}
 
 interface Props {
-  type?: AlertTypes
-  title?: string
-  children: React.ReactNode
+  type: AlertType
+  title: string
+  children?: React.ReactNode
 }
 const Alert: React.FC<Props> = (props) => {
   return (
-    <AlertContainer type={props.type}>
-      <AlertTitle>{props.title}</AlertTitle>
-      <AlertContent>{props.children}</AlertContent>
-    </AlertContainer>
+    <Container type={props.type}>
+      <Header>
+        <HeaderIcon type={props.type}>
+          {iconMap[props.type]}
+        </HeaderIcon>
+        <HeaderTitle>
+          {props.title}
+        </HeaderTitle>
+      </Header>
+      {props.children && <Body>{props.children}</Body>}
+    </Container>
   )
 }
 
-const AlertContainer = styled.div<{ type?: AlertTypes }>`
+export default Alert
+
+const Container = styled.div<{ type: AlertType }>`
   margin-bottom: 20px;
-  padding: 10px;
-  background-color: var(--background-light-color);
-  color: var(--text-color);
-  border-radius: 5px;
-  border-left: 8px solid var(--primary-brand-color);
   &:last-child {
     margin-bottom: 0;
   }
-
-${props => {
-    if (props.type === 'success') {
-      return {
-        borderLeft: '8px solid var(--success-color)'
-      }
-    } else if (props.type === 'danger') {
-      return {
-        borderLeft: '8px solid var(--danger-color)'
-      }
-    }
-  }}
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid ${props => colorMap[props.type]};
+  border-left: 6px solid ${props => colorMap[props.type]};
+  border-radius: 5px;
 `
-const AlertTitle = styled.div`
+const Header = styled.div`
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 10px;
+`
+const HeaderIcon = styled.div<{ type: AlertType }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    width: 24px;
+    height: 24px;
+    color: ${props => colorMap[props.type]};
+  }
+`
+const HeaderTitle = styled.div`
   font-weight: bold;
 `
-const AlertContent = styled.div``
-
-export default Alert
+const Body = styled.div``
