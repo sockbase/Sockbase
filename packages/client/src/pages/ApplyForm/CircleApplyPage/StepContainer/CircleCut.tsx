@@ -81,8 +81,7 @@ const CircleCut: React.FC<Props> = (props) => {
         <li>公序良俗に反する画像は使用できません。不特定多数の方の閲覧が可能なためご配慮をお願いいたします。</li>
       </ul>
 
-      <Alert>
-        サークルカットの提出は <b>必須</b> です。<br />
+      <Alert type="warning" title="サークルカットの提出は必須です">
         後でアップロードすることも可能ですが、<b>{formatByDate((props.event?.schedules.catalogInformationFixedAt ?? 0) - 1, 'YYYY年 M月 D日')}</b> までにご提出いただくようお願いいたします。
       </Alert>
 

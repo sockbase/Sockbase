@@ -61,13 +61,11 @@ const CheckAccount: React.FC<Props> = (props) => {
         <p>
           現在、<b>{props.user.email}</b> としてログインしています。<br />
         </p>
-        {appliedApp && <Alert title="二重申し込みはできません" type="danger">
+        {appliedApp && <Alert type="error" title="二重申し込みはできません">
           このイベントには申し込み済みです。<br />
           申し込み情報は <Link to={`/dashboard/applications/${appliedApp.hashId}`}>こちら</Link> からご確認いただけます。
         </Alert>}
-        <Alert>
-          別のアカウントで申し込みを行うには、ログアウトしてください。
-        </Alert>
+        <Alert type="info" title="別のアカウントで申し込みを行うには、ログアウトしてください。" />
         <FormSection>
           <FormItem>
             <FormButton color="default" onClick={handleLogout}>ログアウト</FormButton>

@@ -41,7 +41,7 @@ const TicketViewPage: React.FC = () => {
         <LoadingContainer>
           {ticketUser === undefined && <Loading text="チケット情報" />}
           {ticketUser === null &&
-            <Alert title="チケットの取得に失敗しました">
+            <Alert type="error" title="チケットの取得に失敗しました">
               URL が間違っている可能性があります。
             </Alert>}
         </LoadingContainer>}

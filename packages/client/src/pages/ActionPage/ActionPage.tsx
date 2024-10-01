@@ -41,7 +41,7 @@ const ActionPage: React.FC = () => {
 
   return (
     <DefaultBaseLayout title={form?.title}>
-      {errorMessage && <Alert title="エラーが発生しました" type="danger">
+      {errorMessage && <Alert title="エラーが発生しました" type="error">
         {errorMessage}
       </Alert>}
 

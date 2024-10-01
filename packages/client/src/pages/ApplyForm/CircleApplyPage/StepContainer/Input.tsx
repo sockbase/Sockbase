@@ -335,7 +335,7 @@ const Input: React.FC<Props> = (props) => {
             </FormSelect>
           </FormItem>
           <FormItem>
-            <Alert>
+            <Alert type="warning" title="成人向け作品の頒布について">
               成人向け作品を頒布する場合、イベント当日 ({formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}) 時点で 18 歳以上である必要があります。<br />
               イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
             </Alert>
@@ -370,8 +370,7 @@ const Input: React.FC<Props> = (props) => {
           </FormHelp>
         </FormItem>
         <FormItem>
-          <Alert>
-            「頒布物概要」に記載された内容を元に配置します。<br />
+          <Alert type="info" title="「頒布物概要」に記載された内容を元に配置します。">
             サークルカットの内容は考慮されませんのでご注意ください。
           </Alert>
         </FormItem>
@@ -386,9 +385,7 @@ const Input: React.FC<Props> = (props) => {
           <FormHelp>単位まで入力してください。</FormHelp>
         </FormItem>
         <FormItem>
-          <Alert>
-            搬入量が決まっていない場合は、最大の持ち込み予定数を入力してください。
-          </Alert>
+          <Alert type="info" title="搬入量が決まっていない場合は、最大の持ち込み予定数を入力してください。" />
         </FormItem>
       </FormSection>
 
@@ -501,16 +498,14 @@ const Input: React.FC<Props> = (props) => {
               hasError={isAppliedPastApp && !app.paymentMethod}/>
           </FormItem>
           {app.paymentMethod === 'bankTransfer' && <FormItem>
-            <Alert>
-              銀行振込の場合、申し込み完了までお時間をいただくことがございます。
-            </Alert>
+            <Alert type="warning" title="銀行振込の場合、申し込み完了までお時間をいただくことがございます。" />
           </FormItem>}
         </FormSection>
-        : <Alert>申し込みたいスペース数を選択してください</Alert>}
+        : <Alert type="info" title="申し込みたいスペース数を選択してください" />}
 
       <h2>通信欄</h2>
       <p>申し込みにあたり運営チームへの要望等がありましたら入力してください。</p>
-      <Alert>
+      <Alert type="info" title="通信欄にご入力いただきたい事項について">
         合同誌の発行予定がある場合や、今までのイベントで長い待機列が出来たことがある場合は、その旨をご記入いただけますと幸いです。<br />
         追って運営チームよりご状況等をお伺いする場合がございます。
       </Alert>
@@ -538,9 +533,8 @@ const Input: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      {errorCount > 0 && <Alert type="danger">
-        {errorCount} 個の入力項目に不備があります。
-      </Alert>}
+      {errorCount > 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
+
       <FormSection>
         <FormButton
           disabled={!isAgreed || errorCount > 0}

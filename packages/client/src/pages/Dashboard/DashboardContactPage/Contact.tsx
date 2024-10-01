@@ -115,7 +115,7 @@ const Contact: React.FC = () => {
               <FormItem>
                 <FormLabel>お問い合わせ内容</FormLabel>
                 {inquiryContext?.description && <FormItem>
-                  <Alert type='danger' title={inquiryContext?.name}>
+                  <Alert type='info' title={inquiryContext?.name}>
                     {inquiryContext?.description ?? ''}
                   </Alert>
                 </FormItem>}
@@ -130,7 +130,7 @@ const Contact: React.FC = () => {
               </FormItem>
             </FormSection>
 
-            {errorCount !== 0 && <Alert type="danger">{errorCount} 個の入力項目に不備があります。</Alert>}
+            {errorCount !== 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`}/>}
 
             <p>
               返信はメールにて行います。<br />

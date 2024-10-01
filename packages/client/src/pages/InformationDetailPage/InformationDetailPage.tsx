@@ -41,11 +41,11 @@ const InformationDetailPage: React.FC = () => {
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
 
-      {information === undefined && <Alert title='お知らせを取得中'>
+      {information === undefined && <Alert type="info" title="お知らせを取得中">
         お知らせを取得しています。しばらくお待ちください。
       </Alert>}
 
-      {information === null && <Alert title='お知らせが見つかりませんでした' type='danger'>
+      {information === null && <Alert type="error" title="お知らせが見つかりませんでした">
         URL をお確かめの上、再度お試しください。
       </Alert>}
 

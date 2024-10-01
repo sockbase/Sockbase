@@ -105,7 +105,7 @@ const DashboardTicketListPage: React.FC = () => {
       </Breadcrumbs>
       <PageTitle title="購入済みチケット一覧" icon={<MdWallet />} description="あなたが購入したチケットを表示中" />
 
-      <Alert title="受け取ったチケットが見つからない場合">
+      <Alert type="info" title="受け取ったチケットが見つからない場合">
         受け取ったチケットは <Link to="/dashboard/mytickets">マイチケット</Link> で確認できます。
       </Alert>
 

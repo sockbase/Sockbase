@@ -146,9 +146,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
             </FormItem>
           </FormSection>
 
-          {error && <Alert title="エラーが発生しました" type="danger">
-            {error}
-          </Alert>}
+          {error && <Alert type="error" title="エラーが発生しました">{error}</Alert>}
 
           <FormSection>
             <FormItem>
