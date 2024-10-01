@@ -74,7 +74,7 @@ const TicketAssignPage: React.FC = () => {
 
   return (
     <DefaultBaseLayout title="チケット受け取りページ">
-      {(ticketUser === null || !ticketHashId) && <Alert type="danger" title="チケット情報が見つかりません">
+      {(ticketUser === null || !ticketHashId) && <Alert type="error" title="チケット情報が見つかりません">
         チケット情報を取得できませんでした。<br />
         URL をもう一度お確かめください。
       </Alert>}

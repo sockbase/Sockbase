@@ -65,7 +65,7 @@ const Confirm: React.FC<Props> = (props) => {
         修正する場合は「修正」ボタンを押してください。
       </p>
 
-      {errorMessage && <Alert type="danger" title="エラーが発生しました">
+      {errorMessage && <Alert type="error" title="エラーが発生しました">
         {errorMessage}
       </Alert>}
 

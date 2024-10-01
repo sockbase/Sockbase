@@ -84,7 +84,7 @@ const DashboardMyTicketsPage: React.FC = () => {
           {unusedTicketUsers
             ? unusedTicketUsers.length !== 0
               ? <>
-                <Alert title="購入したチケットが見つからない場合">
+                <Alert type="info" title="購入したチケットが見つからない場合">
                   購入したチケットは <Link to="/dashboard/tickets">購入済みチケット一覧</Link> で確認できます。
                 </Alert>
                 <TicketsRack>

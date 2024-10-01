@@ -70,9 +70,7 @@ const PasswordResetPage: React.FC = () => {
         </FormItem>
       </FormSection>
 
-      {!!errorCount && <Alert type="danger">
-        {errorCount} 件の入力項目に不備があります。
-      </Alert>}
+      {errorCount > 0 && <Alert type="error" title={`${errorCount} 件の入力項目に不備があります。`}/>}
 
       <FormSection>
         <FormItem>
@@ -85,9 +83,7 @@ const PasswordResetPage: React.FC = () => {
         メールボックスをご確認ください。
       </Alert>}
 
-      {errorMessage && <Alert type="danger" title="エラーが発生しました">
-        {errorMessage}
-      </Alert>}
+      {errorMessage && <Alert type="error" title="エラーが発生しました">{errorMessage}</Alert>}
     </DefaultBaseLayout>
   )
 }

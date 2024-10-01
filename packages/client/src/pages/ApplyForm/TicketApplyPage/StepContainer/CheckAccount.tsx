@@ -41,9 +41,7 @@ const CheckAccount: React.FC<Props> = (props) => {
         <p>
           現在、<b>{props.user.email}</b> としてログインしています。<br />
         </p>
-        <Alert>
-          別のアカウントで申し込みを行うには、ログアウトしてください。
-        </Alert>
+        <Alert type="info" title="別のアカウントで申し込みを行うには、ログアウトしてください。" />
         <FormSection>
           <FormItem>
             <FormButton color="default" onClick={handleLogout}>ログアウト</FormButton>

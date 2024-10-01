@@ -292,7 +292,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
               </FormButton>
             </FormItem>
           </FormSection>
-          {ticketUser === null && <Alert type="danger" title="チケット情報が見つかりませんでした">
+          {ticketUser === null && <Alert type="error" title="チケット情報が見つかりませんでした">
             正しいチケット ID を入力してください。
           </Alert>}
 
@@ -305,7 +305,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
           <h2>チケット情報</h2>
           {ticketMeta && type &&
               (ticketMeta.applicationStatus !== 2 || !ticketUser?.usableUserId || (type.productInfo && payment?.status !== 1)) &&
-              <Alert type="danger" title="このチケットは使用できません。">
+              <Alert type="warning" title="このチケットは使用できません。">
                 <ul>
                   {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。</li>}
                   {!ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。</li>}
@@ -322,7 +322,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
                 </FormItem>}
               </FormSection>}
 
-          {usedStatusError && <Alert type="danger" title="エラーが発生しました">
+          {usedStatusError && <Alert type="error" title="エラーが発生しました">
             {usedStatusError}
           </Alert>}
 

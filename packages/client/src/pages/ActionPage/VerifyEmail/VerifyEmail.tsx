@@ -30,12 +30,11 @@ const VerifyEmail: React.FC<Props> = (props) => {
 
   return (
     <>
-      {errorMessage && <Alert type="danger" title="エラーが発生しました">
+      {errorMessage && <Alert type="error" title="エラーが発生しました">
         {errorMessage}
       </Alert>}
 
-      {isSuccess && <Alert type="success">
-        メールアドレスの確認が完了しました。<br />
+      {isSuccess && <Alert type="success" title="メールアドレスの確認が完了しました">
         タブを閉じてください。
       </Alert>}
     </>

@@ -13,8 +13,8 @@ const StoreInfo: React.FC<Props> = (props) => {
   return (
     <>
       {props.store && (props.store.isPublic
-        ? <Alert type="success">チケットストアは公開されます</Alert>
-        : <Alert type="danger">チケットストアは公開されません</Alert>)}
+        ? <Alert type="success" title="チケットストアは公開されます" />
+        : <Alert type="warning" title="チケットストアは公開されません" />)}
 
       <h3>チケットストア基礎情報</h3>
       <table>

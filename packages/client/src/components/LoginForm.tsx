@@ -77,7 +77,7 @@ const LoginForm: React.FC = () => {
           </LinkButton>
         </FormItem>
         {error && <FormItem>
-          <Alert title="エラーが発生しました" type="danger">
+          <Alert title="エラーが発生しました" type="error">
             {error}
           </Alert>
         </FormItem>}

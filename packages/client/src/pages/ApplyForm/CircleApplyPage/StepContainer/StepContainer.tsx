@@ -188,7 +188,7 @@ const StepContainer: React.FC<Props> = (props) => {
 
   return (
     <>
-      {props.event === null && <Alert title="イベントが見つかりません" type="danger">
+      {props.event === null && <Alert title="イベントが見つかりません" type="error">
         指定された ID のイベントを見つけることができませんでした。<br />
         URL が正しく入力されていることを確認してください。
       </Alert>}
@@ -196,11 +196,11 @@ const StepContainer: React.FC<Props> = (props) => {
       {props.event && <>
         <h1>{props.event.name} サークル参加申し込み受付</h1>
 
-        {now < props.event.schedules.startApplication && <Alert type="danger" title="受付期間前です">
+        {now < props.event.schedules.startApplication && <Alert type="error" title="受付期間前です">
           このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。
         </Alert>}
 
-        {props.event.schedules.endApplication <= now && <Alert type="danger" title="受付を終了しました">
+        {props.event.schedules.endApplication <= now && <Alert type="error" title="受付を終了しました">
           このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
         </Alert>}
 
