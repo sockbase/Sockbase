@@ -104,7 +104,6 @@ const Input: React.FC<Props> = (props) => {
       validator.isOnlyHiragana(app.circle.yomi),
       validator.isNotEmpty(app.circle.penName),
       validator.isOnlyHiragana(app.circle.penNameYomi),
-      props.event.permissions.allowAdult || !app.circle.hasAdult,
       validator.isIn(app.circle.genre, genreIds),
       validator.isNotEmpty(app.overview.description),
       validator.isNotEmpty(app.overview.totalAmount),
@@ -114,6 +113,8 @@ const Input: React.FC<Props> = (props) => {
       !links.pixivUserId || validator.isOnlyNumber(links.pixivUserId),
       !links.websiteURL || validator.isURL(links.websiteURL),
       !links.menuURL || validator.isURL(links.menuURL),
+      props.event.permissions.allowAdult || !app.circle.hasAdult,
+      props.event.permissions.canUseBankTransfer || app.paymentMethod === 'online',
       isAgreed
     ]
 
