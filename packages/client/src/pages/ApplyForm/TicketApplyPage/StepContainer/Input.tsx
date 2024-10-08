@@ -45,7 +45,7 @@ const Input: React.FC<Props> = (props) => {
   const errorCount = useMemo(() => {
     const validators = [
       validator.isIn(ticket.typeId, typeIds),
-      !selectedType?.productInfo || !props.store.permissions.canUseBankTransfer || ticket.paymentMethod === 'online',
+      !selectedType?.productInfo || props.store.permissions.canUseBankTransfer || ticket.paymentMethod === 'online',
       !selectedType?.productInfo || validator.isNotEmpty(ticket.paymentMethod),
       isAgreed
     ]
@@ -123,42 +123,48 @@ const Input: React.FC<Props> = (props) => {
       {selectedType?.productInfo && <>
         <h2>参加費お支払い方法</h2>
         {selectedType
-          ? <FormSection>
-            <FormItem>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>申し込む種別</th>
-                    <td>{selectedType.name}</td>
-                  </tr>
-                  <tr>
-                    <th>詳細情報</th>
-                    <td>{selectedType.description}</td>
-                  </tr>
-                  <tr>
-                    <th>お支払い額</th>
-                    <td>{selectedType.price.toLocaleString()}円</td>
-                  </tr>
-                </tbody>
-              </table>
-            </FormItem>
-            <FormItem>
-              <FormRadio
-                name="paymentMethod"
-                values={sockbaseShared.constants.payment.methods
-                  .filter(i => i.id !== 'bankTransfer' || props.store.permissions.canUseBankTransfer)
-                  .map(i => ({
-                    text: i.description,
-                    value: i.id
-                  }))}
-                value={ticket.paymentMethod}
-                onChange={v => setTicket(s => ({ ...s, paymentMethod: v }))} />
-            </FormItem>
-            {ticket.paymentMethod === 'bankTransfer' && <FormItem>
-              <Alert type="warning" title="銀行振込の場合、申し込み完了までお時間をいただくことがございます。" />
-            </FormItem>}
-          </FormSection>
-          : <Alert type="info" title="申し込みたい参加種別を選択してください" />}
+          ? (
+            <FormSection>
+              <FormItem>
+                <table>
+                  <tbody>
+                    <tr>
+                      <th>申し込む種別</th>
+                      <td>{selectedType.name}</td>
+                    </tr>
+                    <tr>
+                      <th>詳細情報</th>
+                      <td>{selectedType.description}</td>
+                    </tr>
+                    <tr>
+                      <th>お支払い額</th>
+                      <td>{selectedType.price.toLocaleString()}円</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </FormItem>
+              <FormItem>
+                <FormRadio
+                  name="paymentMethod"
+                  values={sockbaseShared.constants.payment.methods
+                    .filter(i => i.id !== 'bankTransfer' || props.store.permissions.canUseBankTransfer)
+                    .map(i => ({
+                      text: i.description,
+                      value: i.id
+                    }))}
+                  value={ticket.paymentMethod}
+                  onChange={v => setTicket(s => ({ ...s, paymentMethod: v }))} />
+              </FormItem>
+              {ticket.paymentMethod === 'bankTransfer' && (
+                <FormItem>
+                  <Alert type="warning" title="銀行振込の場合、申し込み完了までお時間をいただくことがございます。" />
+                </FormItem>
+              )}
+            </FormSection>
+          )
+          : (
+            <Alert type="info" title="申し込みたい参加種別を選択してください" />
+          )}
       </>}
 
       <UserDataForm
