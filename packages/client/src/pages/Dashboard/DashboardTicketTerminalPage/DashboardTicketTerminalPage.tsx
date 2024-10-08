@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MdCheck, MdQrCodeScanner, MdSearch } from 'react-icons/md'
+import { MdCheck, MdQrCodeScanner, MdRefresh, MdSearch } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import {
@@ -177,10 +177,11 @@ const DashboardTicketTerminalPage: React.FC = () => {
     setTicketHashId(s => `${s}${event.key}`)
   }, [ticketUser, ticketHashId])
 
-  useEffect(() => {
-    if (ticketHashId) return
+  const handleReset = useCallback((showDialog: boolean) => {
+    if (showDialog && !confirm('読み取り結果をリセットします。\nよろしいですか？')) return
 
     setUsedStatusError(undefined)
+    setTicketUser(undefined)
     setStore(undefined)
     setTicketHash(undefined)
     setUsedStatus(undefined)
@@ -189,6 +190,11 @@ const DashboardTicketTerminalPage: React.FC = () => {
     setPayment(undefined)
     setOwnerUser(undefined)
     setUsableUser(undefined)
+  }, [])
+
+  useEffect(() => {
+    if (ticketHashId) return
+    handleReset(false)
   }, [ticketHashId])
 
   useEffect(() => {
@@ -292,39 +298,60 @@ const DashboardTicketTerminalPage: React.FC = () => {
               </FormButton>
             </FormItem>
           </FormSection>
-          {ticketUser === null && <Alert type="error" title="チケット情報が見つかりませんでした">
-            正しいチケット ID を入力してください。
-          </Alert>}
+          {ticketUser === null && (
+            <Alert type="error" title="チケット情報が見つかりませんでした">
+              正しいチケット ID を入力してください。
+            </Alert>
+          )}
 
-          {isActiveQRReader && <ReaderWrap>
-            <QRReaderComponent onScan={r => setQRData(r.getText())}/>
-          </ReaderWrap>}
+          {isActiveQRReader && (
+            <ReaderWrap>
+              <QRReaderComponent onScan={r => setQRData(r.getText())}/>
+            </ReaderWrap>
+          )}
         </>
 
         <>
           <h2>チケット情報</h2>
-          {ticketMeta && type &&
-              (ticketMeta.applicationStatus !== 2 || !ticketUser?.usableUserId || (type.productInfo && payment?.status !== 1)) &&
+          {ticketMeta && type && (
+            (ticketMeta.applicationStatus !== 2 || !ticketUser?.usableUserId || (type.productInfo && payment?.status !== 1)) && (
               <Alert type="warning" title="このチケットは使用できません。">
                 <ul>
                   {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。</li>}
                   {!ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。</li>}
                   {type.productInfo && payment?.status !== 1 && <li>支払いが完了していません。</li>}
                 </ul>
-              </Alert>}
+              </Alert>
+            )
+          )}
 
-          {usedStatus &&
-              <FormSection>
-                {!usedStatus.used && <FormItem>
-                  <FormButton onClick={() => updateTicketUsedStatus(true)} disabled={isProgressForUsedStatus || !canUseTicket}>
-                    <IconLabel label="使用済みにする" icon={<MdCheck />} />
+          {usedStatus && (
+            <FormSection>
+              {!usedStatus.used && <FormItem>
+                <FormButton onClick={() => updateTicketUsedStatus(true)} disabled={isProgressForUsedStatus || !canUseTicket}>
+                  <IconLabel label="使用済みにする" icon={<MdCheck />} />
+                </FormButton>
+              </FormItem>}
+              {usedStatus.used && (
+                <>
+                  <p>
+                    このチケットは使用済みです。
+                  </p>
+                  <FormButton onClick={() => handleReset(true)} color="default">
+                    <IconLabel
+                      label="読み取りリセット"
+                      icon={<MdRefresh />} />
                   </FormButton>
-                </FormItem>}
-              </FormSection>}
+                </>
+              )}
+            </FormSection>
+          )}
 
-          {usedStatusError && <Alert type="error" title="エラーが発生しました">
-            {usedStatusError}
-          </Alert>}
+          {usedStatusError && (
+            <Alert type="error" title="エラーが発生しました">
+              {usedStatusError}
+            </Alert>
+          )}
 
           <table>
             <tbody>
