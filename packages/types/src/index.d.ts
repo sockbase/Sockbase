@@ -545,6 +545,9 @@ export interface SockbaseMailSendTarget {
   canceled: boolean
 }
 
+/**
+ * お知らせ
+ */
 export interface SockbaseInformation {
   title: string
   body: string
@@ -552,6 +555,32 @@ export interface SockbaseInformation {
   isPublished: boolean
 }
 
+/**
+ * お知らせ(DB取得)
+ */
 export type SockbaseInformationDocument = SockbaseInformation & {
   id: string
 }
+
+/**
+ * サークルリスト制御
+ */
+export interface SockbaseCircleListControl {
+  eventId: string
+  isPublic: boolean
+  type: CircleListType
+}
+
+/**
+ * サークルリスト制御(DB取得)
+ */
+export type SockbaseCircleListControlDocument = SockbaseCircleListControl & {
+  id: string
+}
+
+/**
+ * サークルリストの種類
+ * 0: 仮公開用 (50音順)
+ * 1: 本公開用 (スペース番号順)
+ */
+export type CircleListType = 0 | 1

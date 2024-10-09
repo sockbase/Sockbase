@@ -1,0 +1,27 @@
+---
+import type { SockbaseEventDocument } from "sockbase";
+import listLib from "../../libs/list";
+import eventLib from "../../libs/event";
+import Root from "../../layouts/Root.astro";
+
+export const getStaticPaths = async () => {
+  const controls = await listLib.getListControlsAsync();
+  const eventIds = controls.map((control) => control.eventId);
+  const events = await Promise.all(eventIds.map(async id => ({
+    id,
+    data: await eventLib.getEventByIdAsync(id),
+  })))
+    .then(fetchedEvents => fetchedEvents.reduce((p, c) => ({ ...p, [c.id]: c.data }), {} as Record<string, SockbaseEventDocument>));
+
+  return controls.map((control) => ({
+    params: { slug: control.eventId },
+    props: { event: events[control.eventId] }
+  }));
+}
+
+const { event } = Astro.props;
+---
+
+<Root>
+  <h1>{event.name} サークルリスト</h1>
+</Root>
