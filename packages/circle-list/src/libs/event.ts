@@ -1,20 +1,20 @@
-import type { SockbaseEventDocument } from 'sockbase'
+import type { SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 
 const getEventByIdAsync = async (eventId: string): Promise<SockbaseEventDocument> => {
   const dummy = {
     id: eventId,
-    name: 'string',
-    websiteURL: 'string',
+    name: 'ダミーイベント',
+    websiteURL: 'https://example.com',
     venue: {
-      name: 'string'
+      name: 'ダミー会場'
     },
-    descriptions: ['string'],
-    rules: ['string'],
+    descriptions: ['string1'],
+    rules: ['string1'],
     spaces: [
       {
-        id: 'string',
-        name: 'string',
-        description: 'string',
+        id: 'dummySpace1',
+        name: 'ダミースペース1',
+        description: 'ダミー説明1',
         price: 0,
         productInfo: null,
         isDualSpace: true,
@@ -24,13 +24,13 @@ const getEventByIdAsync = async (eventId: string): Promise<SockbaseEventDocument
     ],
     genres: [
       {
-        id: 'string',
-        name: 'string'
+        id: 'dummyGenre1',
+        name: 'ダミージャンル1'
       }
     ],
     passConfig: {
-      storeId: 'string',
-      typeId: 'string'
+      storeId: 'ダミーストア',
+      typeId: 'ダミータイプ'
     },
     schedules: {
       startApplication: 0,
@@ -43,9 +43,9 @@ const getEventByIdAsync = async (eventId: string): Promise<SockbaseEventDocument
       endEvent: 0
     },
     _organization: {
-      id: 'string',
-      name: 'string',
-      contactUrl: 'string'
+      id: 'dummyOrganization1',
+      name: 'ダミー団体1',
+      contactUrl: 'https://example.com'
     },
     permissions: {
       allowAdult: false,
@@ -57,8 +57,21 @@ const getEventByIdAsync = async (eventId: string): Promise<SockbaseEventDocument
   return dummy
 }
 
+const getSpacesByEventIdAsync = async (eventId: string): Promise<SockbaseSpaceDocument[]> => {
+  const dummy = Array.from({ length: 20 }, (_, i) => ({
+    id: `dummySpace${i + 1}`,
+    eventId,
+    spaceGroupOrder: 0,
+    spaceOrder: i,
+    spaceName: `D-${String(i + 1).padStart(2, '0')}`
+  }))
+
+  return dummy
+}
+
 const eventLib = {
-  getEventByIdAsync
+  getEventByIdAsync,
+  getSpacesByEventIdAsync
 }
 
 export default eventLib
