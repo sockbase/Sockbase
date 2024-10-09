@@ -1,15 +1,22 @@
 ---
-import type { SockbaseApplicationDocument, SockbaseApplicationHashIdDocument, SockbaseEventDocument, SockbaseSpaceDocument } from "sockbase";
+import type {
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationLinksDocument,
+  SockbaseEventDocument,
+  SockbaseSpaceDocument
+} from "sockbase";
 import listLib from "../../libs/list";
 import eventLib from "../../libs/event";
-import Root from "../../layouts/Root.astro";
+import DefaultLayout from "../../layouts/DefaultLayout.astro";
 import applicationLib from "../../libs/application";
 
-type ListProps = {
+type ListProp = {
   event: SockbaseEventDocument;
   spaces: SockbaseSpaceDocument[];
   appHashes: SockbaseApplicationHashIdDocument[];
   apps: SockbaseApplicationDocument[];
+  appLinks: SockbaseApplicationLinksDocument[];
 }
 
 export const getStaticPaths = async () => {
@@ -17,39 +24,73 @@ export const getStaticPaths = async () => {
 
   const eventIds = controls.map((control) => control.eventId);
 
-  const props = await Promise.all(eventIds.map(async id => ({
+  const event = await Promise.all(eventIds.map(async id => eventLib.getEventByIdAsync(id)))
+
+  const spaces = await Promise.all(eventIds.map(async id => ({
     id,
-    event: await eventLib.getEventByIdAsync(id),
-    spaces: await eventLib.getSpacesByEventIdAsync(id),
-    appHashes: await applicationLib.getApplicationHashIdByEventIdAsync(id),
-    apps: await applicationLib.getApplicationsByEventIdAsync(id)
+    data: await eventLib.getSpacesByEventIdAsync(id)
   })))
-    .then(fetchedEvents => {
-      return fetchedEvents
-        .reduce(
-          (p, c) => ({
-            ...p,
-            [c.id]: {
-              event: c.event,
-              spaces: c.spaces,
-              appHashes: c.appHashes,
-              apps: c.apps
-          }}),
-          {} as Record<string, ListProps>)
-    });
+    .then(fetchedSpaces => {
+      return fetchedSpaces.reduce((p, c) => ({
+        ...p,
+        [c.id]: c.data
+      }), {} as Record<string, SockbaseSpaceDocument[]>)
+    })
+
+  const appHashes = await Promise.all(eventIds.map(async id => ({
+    id,
+    data: await applicationLib.getApplicationHashIdByEventIdAsync(id)
+  })))
+    .then(fetchedAppHashes => {
+      return fetchedAppHashes.reduce((p, c) => ({
+        ...p,
+        [c.id]: c.data
+      }), {} as Record<string, SockbaseApplicationHashIdDocument[]>)
+    })
+
+  const apps = await Promise.all(eventIds.map(async id => ({
+    id,
+    data: await applicationLib.getApplicationsByEventIdAsync(id)
+  })))
+    .then(fetchedApps => {
+      return fetchedApps.reduce((p, c) => ({
+        ...p,
+        [c.id]: c.data
+      }), {} as Record<string, SockbaseApplicationDocument[]>)
+    })
+
+  const appIds = Object.values(apps).flat().map(a => a.id)
+  const appLinks = await Promise.all(appIds.map(async id => await applicationLib.getApplicationLinksByIdAsync(id)))
+
+  const listProp = event.reduce((p, e) => {
+    const spacesByEvent = spaces[e.id];
+    const appHashesByEvent = appHashes[e.id];
+    const appsByEvent = apps[e.id];
+    const appIdsByEvent = appsByEvent.map(a => a.id);
+    const appLinksByEvent = appLinks.filter(appLink => appIdsByEvent.includes(appLink.applicationId));
+
+    return {
+      ...p,
+      [e.id] : {
+        event: e,
+        spaces: spacesByEvent,
+        appHashes: appHashesByEvent,
+        apps: appsByEvent,
+        appLinks: appLinksByEvent
+      }
+    }
+  }, {} as Record<string, ListProp>)
 
   return controls.map((control) => ({
     params: { slug: control.eventId },
-    props: props[control.eventId]
+    props: listProp[control.eventId]
   }));
 }
 
-const props = Astro.props as ListProps
-
-console.log(props.appHashes, props.apps);
+const props = Astro.props as ListProp
 ---
 
-<Root>
+<DefaultLayout title={`${props.event.name} サークルリスト`}>
   <h1>{props.event.name} サークルリスト</h1>
   <table>
     <thead>
@@ -57,21 +98,49 @@ console.log(props.appHashes, props.apps);
         <th>スペース</th>
         <th>サークル</th>
         <th>ペンネーム</th>
+        <th>成人向</th>
+        <th>リンク</th>
       </tr>
     </thead>
     <tbody>
       {props.spaces.map((space) => {
         const hashDoc = props.appHashes.find(appHash => appHash.spaceId === space.id);
         const appDoc = props.apps.find(app => app.id === hashDoc?.applicationId);
+        const appLinksDoc = props.appLinks.find(appLink => appLink.applicationId === appDoc?.id);
+
+        const links = [
+          ...appLinksDoc?.twitterScreenName
+            ? [{ label: 'X', path: `https://twitter.com/${appLinksDoc.twitterScreenName}` }]
+            : [],
+          ...appLinksDoc?.pixivUserId
+            ? [{ label: 'pixiv', path: `https://www.pixiv.net/users/${appLinksDoc.pixivUserId}` }]
+            : [],
+          ...appLinksDoc?.websiteURL
+            ? [{ label: 'Web', path: appLinksDoc.websiteURL }]
+            : [],
+          ...appLinksDoc?.menuURL
+            ? [{ label: 'お品書き', path: appLinksDoc.menuURL }]
+            : [],
+        ]
 
         return (
         <tr>
           <td>{space.spaceName}</td>
           <td>{appDoc?.circle.name}</td>
           <td>{appDoc?.circle.penName}</td>
+          <td>{appDoc?.circle.hasAdult && '成人向'}</td>
+          <td>
+            {links.map((link, index) => (
+              <><a href={link.path} target="_blank">{link.label}</a>{index < links.length - 1 && ' '}</>
+            ))}
+          </td>
         </tr>
         )
       })}
     </tbody>
   </table>
-</Root>
+</DefaultLayout>
+
+<style lang="scss">
+
+</style>

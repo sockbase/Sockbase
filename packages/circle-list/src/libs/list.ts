@@ -1,16 +1,19 @@
+import { getFirebaseAdmin } from './FirebaseAdmin'
+import { circleListControlConverter } from './converters'
 import type { SockbaseCircleListControlDocument } from 'sockbase'
 
-const getListControlsAsync = async (): Promise<SockbaseCircleListControlDocument[]> => {
-  const dummy: SockbaseCircleListControlDocument[] = [
-    {
-      id: 'dummy1',
-      eventId: 'dummyEvent1',
-      isPublic: true,
-      type: 0
-    }
-  ]
+const admin = getFirebaseAdmin()
+const db = admin.firestore()
 
-  return dummy
+const getListControlsAsync = async (): Promise<SockbaseCircleListControlDocument[]> => {
+  const listControlDocs = await db.collection('circleListControls')
+    .withConverter(circleListControlConverter)
+    .get()
+  const listControls = listControlDocs.docs
+    .filter(d => d.exists)
+    .map(d => d.data())
+
+  return listControls
 }
 
 const listLib = {

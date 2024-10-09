@@ -1,0 +1,33 @@
+---
+import Root from "./Root.astro";
+
+export interface Props {
+	title: string
+}
+const { title } = Astro.props
+---
+
+<Root title={title}>
+  <main id="main">
+    <slot />
+  </main>
+  <footer id="footer">
+    Powered by Sockbase
+  </footer>
+</Root>
+
+<style lang="scss">
+  #main {
+    padding: 40px 10%;
+    @media screen and (max-width: 840px) {
+      padding: 20px;
+    }
+  }
+  #footer {
+    padding: 20px 10%;
+    @media screen and (max-width: 840px) {
+      padding: 20px;
+      padding-top: 0;
+    }
+  }
+</style>
