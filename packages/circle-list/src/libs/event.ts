@@ -1,72 +1,33 @@
+import { getFirebaseAdmin } from './FirebaseAdmin'
+import { eventConverter, spaceConverter } from './converters'
 import type { SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 
+const admin = getFirebaseAdmin()
+const db = admin.firestore()
+
 const getEventByIdAsync = async (eventId: string): Promise<SockbaseEventDocument> => {
-  const dummy = {
-    id: eventId,
-    name: 'ダミーイベント',
-    websiteURL: 'https://example.com',
-    venue: {
-      name: 'ダミー会場'
-    },
-    descriptions: ['string1'],
-    rules: ['string1'],
-    spaces: [
-      {
-        id: 'dummySpace1',
-        name: 'ダミースペース1',
-        description: 'ダミー説明1',
-        price: 0,
-        productInfo: null,
-        isDualSpace: true,
-        passCount: 0,
-        acceptApplication: null
-      }
-    ],
-    genres: [
-      {
-        id: 'dummyGenre1',
-        name: 'ダミージャンル1'
-      }
-    ],
-    passConfig: {
-      storeId: 'ダミーストア',
-      typeId: 'ダミータイプ'
-    },
-    schedules: {
-      startApplication: 0,
-      endApplication: 0,
-      overviewFirstFixedAt: 0,
-      publishSpaces: 0,
-      catalogInformationFixedAt: 0,
-      overviewFinalFixedAt: 0,
-      startEvent: 0,
-      endEvent: 0
-    },
-    _organization: {
-      id: 'dummyOrganization1',
-      name: 'ダミー団体1',
-      contactUrl: 'https://example.com'
-    },
-    permissions: {
-      allowAdult: false,
-      canUseBankTransfer: false
-    },
-    isPublic: true
+  const eventDoc = await db.doc(`events/${eventId}`)
+    .withConverter(eventConverter)
+    .get()
+  const event = eventDoc.data()
+  if (!event) {
+    throw new Error(`Event not found: ${eventId}`)
   }
 
-  return dummy
+  return event
 }
 
 const getSpacesByEventIdAsync = async (eventId: string): Promise<SockbaseSpaceDocument[]> => {
-  const dummy = Array.from({ length: 20 }, (_, i) => ({
-    id: `dummySpace${i + 1}`,
-    eventId,
-    spaceGroupOrder: 0,
-    spaceOrder: i,
-    spaceName: `D-${String(i + 1).padStart(2, '0')}`
-  }))
+  const spaceDocs = await db.collection('spaces')
+    .withConverter(spaceConverter)
+    .where('eventId', '==', eventId)
+    .get()
+  const spaces = spaceDocs.docs
+    .filter(d => d.exists)
+    .map(d => d.data())
+    .sort((a, b) => (a.spaceGroupOrder * 100 + a.spaceOrder) - (b.spaceGroupOrder * 100 + b.spaceOrder))
 
-  return dummy
+  return spaces
 }
 
 const eventLib = {

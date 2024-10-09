@@ -1,53 +1,56 @@
-import type { SockbaseApplicationDocument, SockbaseApplicationHashIdDocument } from 'sockbase'
+import { getFirebaseAdmin } from './FirebaseAdmin'
+import { applicationConverter, applicationHashIdConverter, applicationLinksConverter } from './converters'
+import type {
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationLinksDocument
+} from 'sockbase'
+
+const admin = getFirebaseAdmin()
+const db = admin.firestore()
 
 const getApplicationsByEventIdAsync = async (eventId: string): Promise<SockbaseApplicationDocument[]> => {
-  const createDummyApplication = (id: number): SockbaseApplicationDocument => ({
-    id: `dummyApplication${id}`,
-    hashId: `dummyHash${id}`,
-    userId: `dummyUser${id}`,
-    eventId: 'dummyEvent1',
-    spaceId: 'dummySpace1',
-    circle: {
-      name: `ダミーサークル${id}`,
-      yomi: `だみーさーくる${id}`,
-      penName: `ダミーペンネーム${id}`,
-      penNameYomi: `だみーぺんねーむ${id}`,
-      hasAdult: false,
-      genre: 'dummyGenre1'
-    },
-    overview: {
-      description: `ダミー説明${id}`,
-      totalAmount: `ダミー搬入量${id}`
-    },
-    unionCircleId: `dummyHash${id + 1}`,
-    petitCode: `ダミープチオンリー${id}`,
-    paymentMethod: 'online',
-    remarks: `ダミー備考${id}`,
-    createdAt: null,
-    updatedAt: null
-  })
+  const appDocs = await db.collection('_applications')
+    .withConverter(applicationConverter)
+    .where('eventId', '==', eventId)
+    .get()
 
-  return Array.from({ length: 20 }, (_, i) => createDummyApplication(i + 1))
+  const apps = appDocs.docs
+    .filter(d => d.exists)
+    .map(d => d.data())
+
+  return apps
 }
 
 const getApplicationHashIdByEventIdAsync = async (eventId: string): Promise<SockbaseApplicationHashIdDocument[]> => {
-  const createDummyHashId = (id: number): SockbaseApplicationHashIdDocument => ({
-    id: `dummyHash${id}`,
-    hashId: `dummyHash${id}`,
-    userId: `dummyUser${id}`,
-    applicationId: `dummyApplication${id}`,
-    paymentId: `dummyPayment${id}`,
-    spaceId: `dummySpace${id}`,
-    eventId: 'dummyEvent1',
-    organizationId: `dummyOrganization${id}`
-  })
+  const appHashDocs = await db.collection('_applicationHashIds')
+    .withConverter(applicationHashIdConverter)
+    .where('eventId', '==', eventId)
+    .get()
 
-  return Array.from({ length: 20 }, (_, i) => createDummyHashId(i + 1))
+  const appHashes = appHashDocs.docs
+    .filter(d => d.exists)
+    .map(d => d.data())
+
+  return appHashes
+}
+
+const getApplicationLinksByIdAsync = async (appId: string): Promise<SockbaseApplicationLinksDocument> => {
+  const appLinksDoc = await db.doc(`_applicationLinks/${appId}`)
+    .withConverter(applicationLinksConverter)
+    .get()
+  const appLinks = appLinksDoc.data()
+  if (!appLinks) {
+    throw new Error(`ApplicationLinks not found: ${appId}`)
+  }
+
+  return appLinks
 }
 
 const applicationLib = {
   getApplicationsByEventIdAsync,
-  getApplicationHashIdByEventIdAsync
+  getApplicationHashIdByEventIdAsync,
+  getApplicationLinksByIdAsync
 }
 
 export default applicationLib

@@ -1,8 +1,8 @@
 ---
 import type { SockbaseEventDocument } from "sockbase";
-import Root from "../layouts/Root.astro";
 import eventLib from "../libs/event";
 import listLib from "../libs/list";
+import DefaultLayout from "../layouts/DefaultLayout.astro";
 
 const listControls = await listLib.getListControlsAsync();
 const publishedLists = listControls.filter((control) => control.isPublic);
@@ -15,7 +15,7 @@ const events = await Promise.all(eventIds.map(async id => ({
 
 ---
 
-<Root>
+<DefaultLayout title="ホーム">
 	<h1>Sockbase サークルリスト</h1>
 	<h2>現在公開されているサークルリスト</h2>
 	<ul>
@@ -25,4 +25,4 @@ const events = await Promise.all(eventIds.map(async id => ({
 			</li>
 		))}
 	</ul>
-</Root>
+</DefaultLayout>
