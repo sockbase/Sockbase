@@ -7,6 +7,7 @@ export const getFirebaseAdmin = (): admin.app.App => {
   const app = admin.apps[0]
   if (app) return app
   return admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountCredential)
+    credential: admin.credential.cert(serviceAccountCredential),
+    storageBucket: import.meta.env.FIREBASE_STORAGE_BUCKET
   })
 }

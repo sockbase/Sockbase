@@ -8,6 +8,7 @@ import type {
 
 const admin = getFirebaseAdmin()
 const db = admin.firestore()
+const storage = admin.storage().bucket()
 
 const getApplicationsByEventIdAsync = async (eventId: string): Promise<SockbaseApplicationDocument[]> => {
   const appDocs = await db.collection('_applications')
@@ -47,10 +48,19 @@ const getApplicationLinksByIdAsync = async (appId: string): Promise<SockbaseAppl
   return appLinks
 }
 
+const getCircleCutURLByAppHashIdAsync = async (appHashId: string): Promise<string | null> => {
+  const url = await storage.file(`circleCuts/${appHashId}`).getSignedUrl({
+    action: 'read',
+    expires: Date.now() + 1000 * 60 * 60 * 25 // 1日に1回ビルドするので、24 + 1時間有効なURLを発行
+  })
+  return url[0]
+}
+
 const applicationLib = {
   getApplicationsByEventIdAsync,
   getApplicationHashIdByEventIdAsync,
-  getApplicationLinksByIdAsync
+  getApplicationLinksByIdAsync,
+  getCircleCutURLByAppHashIdAsync
 }
 
 export default applicationLib

@@ -21,7 +21,7 @@ const events = await Promise.all(eventIds.map(async id => ({
 	<ul>
 		{publishedLists.map((control) => (
 			<li>
-				<a href={`/events/${control.eventId}`}>{events[control.eventId].name}</a>
+				<a href={`/circle-lists/${control.id}`}>{events[control.eventId].name}</a>
 			</li>
 		))}
 	</ul>
