@@ -1,4 +1,4 @@
-name: '🚀 Circle List Auto Deploy'
+name: '🤖 Circle List Auto Deploy'
 
 on:
   workflow_dispatch:
