@@ -1,28 +1,11 @@
 ---
-import type { SockbaseEventDocument } from "sockbase";
-import eventLib from "../libs/event";
-import listLib from "../libs/list";
 import DefaultLayout from "../layouts/DefaultLayout.astro";
-
-const listControls = await listLib.getListControlsAsync();
-const publishedLists = listControls.filter((control) => control.isPublic);
-const eventIds = publishedLists.map((control) => control.eventId);
-const events = await Promise.all(eventIds.map(async id => ({
-	id,
-	data: await eventLib.getEventByIdAsync(id),
-})))
-	.then(fetchedEvents => fetchedEvents.reduce((p, c) => ({ ...p, [c.id]: c.data }), {} as Record<string, SockbaseEventDocument>));
-
 ---
 
 <DefaultLayout title="ホーム">
 	<h1>Sockbase サークルリスト</h1>
-	<h2>現在公開されているサークルリスト</h2>
-	<ul>
-		{publishedLists.map((control) => (
-			<li>
-				<a href={`/circle-lists/${control.id}`}>{events[control.eventId].name}</a>
-			</li>
-		))}
-	</ul>
+	<p>
+		トップページから直接アクセスすることはできません。<br />
+		イベント主催者から提供されたリンクを使用してアクセスしてください。
+	</p>
 </DefaultLayout>
