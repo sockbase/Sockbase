@@ -1,9 +1,10 @@
 import { getFirebaseAdmin } from './FirebaseAdmin'
-import { applicationConverter, applicationHashIdConverter, applicationLinksConverter } from './converters'
+import { applicationConverter, applicationHashIdConverter, applicationLinksConverter, applicationMetaConverter } from './converters'
 import type {
   SockbaseApplicationDocument,
   SockbaseApplicationHashIdDocument,
-  SockbaseApplicationLinksDocument
+  SockbaseApplicationLinksDocument,
+  SockbaseApplicationMeta
 } from 'sockbase'
 
 const admin = getFirebaseAdmin()
@@ -48,6 +49,18 @@ const getApplicationLinksByIdAsync = async (appId: string): Promise<SockbaseAppl
   return appLinks
 }
 
+const getApplicationMetaByIdAsync = async (appId: string): Promise<SockbaseApplicationMeta> => {
+  const appDoc = await db.doc(`_applications/${appId}/private/meta`)
+    .withConverter(applicationMetaConverter)
+    .get()
+  const appMeta = appDoc.data()
+  if (!appMeta) {
+    throw new Error(`ApplicationMeta not found: ${appId}`)
+  }
+
+  return appMeta
+}
+
 const getCircleCutURLByAppHashIdAsync = async (appHashId: string): Promise<string | null> => {
   const url = await storage.file(`circleCuts/${appHashId}`).getSignedUrl({
     action: 'read',
@@ -59,6 +72,7 @@ const getCircleCutURLByAppHashIdAsync = async (appHashId: string): Promise<strin
 const applicationLib = {
   getApplicationsByEventIdAsync,
   getApplicationHashIdByEventIdAsync,
+  getApplicationMetaByIdAsync,
   getApplicationLinksByIdAsync,
   getCircleCutURLByAppHashIdAsync
 }
