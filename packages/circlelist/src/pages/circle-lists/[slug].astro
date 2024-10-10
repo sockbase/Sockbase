@@ -25,6 +25,8 @@ type ListProp = {
 }
 
 export const getStaticPaths = async () => {
+  const now = new Date();
+
   const controls = (await listLib.getListControlsAsync())
     .filter(c => c.isPublic);
   if (controls.length === 0) {
@@ -34,7 +36,6 @@ export const getStaticPaths = async () => {
   const eventIds = controls.map((control) => control.eventId);
 
   const events = await Promise.all(eventIds.map(async id => eventLib.getEventByIdAsync(id)))
-
   const spaces = await Promise.all(eventIds.map(async id => ({
     id,
     data: await eventLib.getSpacesByEventIdAsync(id)
@@ -199,6 +200,10 @@ const spaces = props.listControl.type === 1
 ---
 
 <DefaultLayout title={`${props.event.name} サークルリスト`}>
+  <ul class="breadcrumbs">
+    <li><a href={props.event.websiteURL}>イベントサイト</a></li>
+  </ul>
+
   <h1>{props.event.name} サークルリスト</h1>
 
   {props.listControl.type === 0 && (
@@ -222,7 +227,7 @@ const spaces = props.listControl.type === 1
       {spaces.map(s => (
         <tr>
           <td>
-            {s.circleCutURL && <a href={s.circleCutURL.url} target="_blank"><img src={s.circleCutURL.url} class="circleCutImage" /></a>}
+            {s.circleCutURL && <a href={s.circleCutURL.url}><img src={s.circleCutURL.url} class="circleCutImage" /></a>}
           </td>
           {props.listControl.type === 1 && <td>{s.spaceName}</td>}
           <td>{s.circleName}</td>
