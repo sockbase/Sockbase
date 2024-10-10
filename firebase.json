@@ -1,21 +1,36 @@
 {
-  "hosting": {
-    "public": "./packages/client/dist",
-    "predeploy": [
-      "yarn workspace client build"
-    ],
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  },
+  "hosting": [
+    {
+      "target": "user",
+      "public": "./packages/user/dist",
+      "predeploy": [
+        "yarn workspace user build"
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    },
+    {
+      "target": "circlelist",
+      "public": "./packages/circlelist/dist",
+      "predeploy": [
+        "yarn workspace circlelist build"
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ]
+    }
+  ],
   "functions": {
     "runtime": "nodejs20",
     "source": "./packages/functions",
