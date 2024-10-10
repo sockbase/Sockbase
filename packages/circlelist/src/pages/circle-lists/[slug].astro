@@ -12,6 +12,7 @@ import listLib from "../../libs/list";
 import eventLib from "../../libs/event";
 import DefaultLayout from "../../layouts/DefaultLayout.astro";
 import applicationLib from "../../libs/application";
+import dayjs from "dayjs"
 
 type ListProp = {
   listControl: SockbaseCircleListControlDocument;
@@ -34,7 +35,6 @@ export const getStaticPaths = async () => {
   const eventIds = controls.map((control) => control.eventId);
 
   const events = await Promise.all(eventIds.map(async id => eventLib.getEventByIdAsync(id)))
-
   const spaces = await Promise.all(eventIds.map(async id => ({
     id,
     data: await eventLib.getSpacesByEventIdAsync(id)
@@ -150,6 +150,7 @@ const convertLinks = (app: SockbaseApplicationDocument) => {
 }
 
 const props = Astro.props as ListProp
+const now = new Date();
 
 const apps = props.apps
   .filter(a => props.appMetas[a.id].applicationStatus === 2)
@@ -199,7 +200,15 @@ const spaces = props.listControl.type === 1
 ---
 
 <DefaultLayout title={`${props.event.name} サークルリスト`}>
+  <ul class="breadcrumbs">
+    <li><a href={props.event.websiteURL}>イベントサイト</a></li>
+  </ul>
+
   <h1>{props.event.name} サークルリスト</h1>
+
+  <p class="date">
+    {dayjs(now).format("YYYY年 M月 D日")} 更新
+  </p>
 
   {props.listControl.type === 0 && (
     <p>
@@ -222,7 +231,7 @@ const spaces = props.listControl.type === 1
       {spaces.map(s => (
         <tr>
           <td>
-            {s.circleCutURL && <a href={s.circleCutURL.url} target="_blank"><img src={s.circleCutURL.url} class="circleCutImage" /></a>}
+            {s.circleCutURL && <a href={s.circleCutURL.url}><img src={s.circleCutURL.url} class="circleCutImage" /></a>}
           </td>
           {props.listControl.type === 1 && <td>{s.spaceName}</td>}
           <td>{s.circleName}</td>
@@ -242,10 +251,10 @@ const spaces = props.listControl.type === 1
 </DefaultLayout>
 
 <style lang="scss">
-.circleCutImage {
-  height: 64px;
-  &:focus {
-    height: 128px;
+  .date {
+    margin-top: -10px;
   }
-}
+  .circleCutImage {
+    height: 96px;
+  }
 </style>
