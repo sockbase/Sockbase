@@ -33,8 +33,6 @@ const InformationDetailPage: React.FC = () => {
       .catch(err => { throw err })
   }, [informationId, getInformationByIdNullableAsync])
 
-  console.log(informationBody)
-
   return (
     <DefaultBaseLayout title={information ? information.title : 'お知らせ'}>
       <Breadcrumbs>
