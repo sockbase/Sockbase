@@ -63,6 +63,6 @@ jobs:
           NODE_OPTIONS: "--max_old_space_size=5000"
         run: |
           firebase use ${{ vars.VITE_FIREBASE_PROJECT_ID }}
-          firebase target:apply hosting user ${{ (github.ref == 'refs/heads/master' && 'cb-user-prod') || (github.ref == 'refs/heads/develop' && 'cb-user-staging') || '' }}
-          firebase target:apply hosting circlelist ${{ (github.ref == 'refs/heads/master' && 'cb-circlelist-prod') || (github.ref == 'refs/heads/develop' && 'cb-circlelist-staging') || '' }}
+          firebase target:apply hosting user ${{ (github.ref == 'refs/heads/master' && 'sb-user-prod') || (github.ref == 'refs/heads/develop' && 'sb-user-staging') || '' }}
+          firebase target:apply hosting circlelist ${{ (github.ref == 'refs/heads/master' && 'sb-circlelist-prod') || (github.ref == 'refs/heads/develop' && 'sb-circlelist-staging') || '' }}
           firebase deploy
