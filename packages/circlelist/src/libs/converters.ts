@@ -1,5 +1,13 @@
 import type { FirestoreDataConverter } from 'firebase-admin/firestore'
-import type { SockbaseApplicationDocument, SockbaseApplicationHashIdDocument, SockbaseApplicationLinksDocument, SockbaseCircleListControlDocument, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
+import type {
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationLinksDocument,
+  SockbaseApplicationMeta,
+  SockbaseCircleListControlDocument,
+  SockbaseEventDocument,
+  SockbaseSpaceDocument
+} from 'sockbase'
 
 export const circleListControlConverter: FirestoreDataConverter<SockbaseCircleListControlDocument> = {
   toFirestore: () => ({}),
@@ -65,6 +73,16 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
       pixivUserId: data.pixivUserId,
       websiteURL: data.websiteURL,
       menuURL: data.menuURL
+    }
+  }
+}
+
+export const applicationMetaConverter: FirestoreDataConverter<SockbaseApplicationMeta> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot) => {
+    const data = snapshot.data()
+    return {
+      applicationStatus: data.applicationStatus
     }
   }
 }
