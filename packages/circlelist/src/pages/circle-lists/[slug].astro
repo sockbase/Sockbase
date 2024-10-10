@@ -222,7 +222,7 @@ const spaces = props.listControl.type === 1
       {spaces.map(s => (
         <tr>
           <td>
-            {s.circleCutURL && <img src={s.circleCutURL.url} class="circleCutImage" />}
+            {s.circleCutURL && <a href={s.circleCutURL.url} target="_blank"><img src={s.circleCutURL.url} class="circleCutImage" /></a>}
           </td>
           {props.listControl.type === 1 && <td>{s.spaceName}</td>}
           <td>{s.circleName}</td>
