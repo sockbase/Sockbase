@@ -1,24 +1,13 @@
 name: '🚀 Circle List Auto Deploy'
 
 on:
-  push:
-    branches:
-      - 'master'
-      - 'develop'
   workflow_dispatch:
-  #   inputs:
-  #     deployment_target:
-  #       description: 'Deployment target'
-  #       required: true
-  #       default: 'staging'
-  #       type: choice
-  #       options:
-  #         - staging
-  #         - production
+  schedule:
+    - cron: '0 3 * * *'
 
 jobs:
   build-and-deploy:
-    environment: ${{ (github.ref == 'refs/heads/master' && 'production') || (github.ref == 'refs/heads/develop' && 'staging') || '' }}
+    environment: production
     runs-on: ubuntu-latest
 
     env:
@@ -48,5 +37,5 @@ jobs:
           NODE_OPTIONS: "--max_old_space_size=5000"
         run: |
           firebase use ${{ vars.VITE_FIREBASE_PROJECT_ID }}
-          firebase target:apply hosting circlelist ${{ (github.ref == 'refs/heads/master' && 'sb-circlelist-prod') || (github.ref == 'refs/heads/develop' && 'sb-circlelist-staging') || '' }}
+          firebase target:apply hosting circlelist sb-circlelist-prod
           firebase deploy --only hosting:circlelist
