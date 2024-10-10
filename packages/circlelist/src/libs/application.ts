@@ -62,7 +62,7 @@ const getApplicationMetaByIdAsync = async (appId: string): Promise<SockbaseAppli
 }
 
 const getCircleCutURLByAppHashIdAsync = async (appHashId: string): Promise<string | null> => {
-  const url = await storage.file(`circleCuts/${appHashId}`).getSignedUrl({
+  const url = await storage.file(`circleCuts/thumbnails/${appHashId}_512x512`).getSignedUrl({
     action: 'read',
     expires: Date.now() + 1000 * 60 * 60 * 25 // 1日に1回ビルドするので、24 + 1時間有効なURLを発行
   })
