@@ -1,9 +1,9 @@
-name: '🚀 Circle List Auto Deploy'
+name: '🤖 Circle List Auto Deploy'
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 15 * * *'
 
 jobs:
   build-and-deploy:
