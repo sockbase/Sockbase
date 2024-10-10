@@ -25,7 +25,6 @@ const getSpacesByEventIdAsync = async (eventId: string): Promise<SockbaseSpaceDo
   const spaces = spaceDocs.docs
     .filter(d => d.exists)
     .map(d => d.data())
-    .sort((a, b) => (a.spaceGroupOrder * 100 + a.spaceOrder) - (b.spaceGroupOrder * 100 + b.spaceOrder))
 
   return spaces
 }

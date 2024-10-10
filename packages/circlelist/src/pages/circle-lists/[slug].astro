@@ -1,0 +1,226 @@
+---
+import type {
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationLinksDocument,
+  SockbaseCircleListControlDocument,
+  SockbaseEventDocument,
+  SockbaseSpaceDocument
+} from "sockbase";
+import listLib from "../../libs/list";
+import eventLib from "../../libs/event";
+import DefaultLayout from "../../layouts/DefaultLayout.astro";
+import applicationLib from "../../libs/application";
+import type { map } from "astro:schema";
+
+type ListProp = {
+  listControl: SockbaseCircleListControlDocument;
+  event: SockbaseEventDocument;
+  spaces: SockbaseSpaceDocument[];
+  appHashes: SockbaseApplicationHashIdDocument[];
+  apps: SockbaseApplicationDocument[];
+  appLinks: SockbaseApplicationLinksDocument[];
+  circleCutURLs: { id: string; url: string | null }[];
+}
+
+export const getStaticPaths = async () => {
+  const controls = await listLib.getListControlsAsync();
+
+  const eventIds = controls.map((control) => control.eventId);
+
+  const events = await Promise.all(eventIds.map(async id => eventLib.getEventByIdAsync(id)))
+
+  const spaces = await Promise.all(eventIds.map(async id => ({
+    id,
+    data: await eventLib.getSpacesByEventIdAsync(id)
+  })))
+    .then(fetchedSpaces => {
+      return fetchedSpaces.reduce((p, c) => ({
+        ...p,
+        [c.id]: c.data
+      }), {} as Record<string, SockbaseSpaceDocument[]>)
+    })
+
+  const appHashes = await Promise.all(eventIds.map(async id => ({
+    id,
+    data: await applicationLib.getApplicationHashIdByEventIdAsync(id)
+  })))
+    .then(fetchedAppHashes => {
+      return fetchedAppHashes.reduce((p, c) => ({
+        ...p,
+        [c.id]: c.data
+      }), {} as Record<string, SockbaseApplicationHashIdDocument[]>)
+    })
+
+  const apps = await Promise.all(eventIds.map(async id => ({
+    id,
+    data: await applicationLib.getApplicationsByEventIdAsync(id)
+  })))
+    .then(fetchedApps => {
+      return fetchedApps.reduce((p, c) => ({
+        ...p,
+        [c.id]: c.data
+      }), {} as Record<string, SockbaseApplicationDocument[]>)
+    })
+
+  const appIds = Object.values(apps).flat().map(a => a.id)
+  const appHashIds = Object.values(apps).flat().map(a => a.hashId)
+  const appLinks = await Promise.all(appIds.map(async id => await applicationLib.getApplicationLinksByIdAsync(id)))
+  const circleCutURLs = await Promise.all(appHashIds
+    .filter(id => id)
+    .map(async id => ({
+      id: id ?? '',
+      url: await applicationLib.getCircleCutURLByAppHashIdAsync(id ?? '')
+    })))
+
+  const listProp = controls.reduce((p, c) => {
+    const event = events.find(e => e.id === c.eventId);
+    if (!event) {
+      return p;
+    }
+
+    const spacesByEvent = spaces[c.eventId]
+    const appHashesByEvent = appHashes[c.eventId];
+    const appsByEvent = apps[c.eventId];
+    const appIdsByEvent = appsByEvent.map(a => a.id);
+    const appHashIdsByEvent = appsByEvent.map(a => a.hashId);
+    const appLinksByEvent = appLinks.filter(appLink => appIdsByEvent.includes(appLink.applicationId));
+    const circleCutURLsByEvent = circleCutURLs.filter(circleCutURL => appHashIdsByEvent.includes(circleCutURL.id));
+
+    return {
+      ...p,
+      [c.id] : {
+        listControl: c,
+        event,
+        spaces: spacesByEvent,
+        appHashes: appHashesByEvent,
+        apps: appsByEvent,
+        appLinks: appLinksByEvent,
+        circleCutURLs: circleCutURLsByEvent
+      }
+    }
+  }, {} as Record<string, ListProp>)
+
+  return controls.map((control) => ({
+    params: { slug: control.id },
+    props: listProp[control.id]
+  }));
+}
+
+const props = Astro.props as ListProp
+
+const convertLinks = (app: SockbaseApplicationDocument) => {
+  const appLinksDoc = props.appLinks.find(appLink => appLink.applicationId === app.id);
+  return [
+    ...appLinksDoc?.twitterScreenName
+      ? [{ label: 'X', path: `https://x.com/${appLinksDoc.twitterScreenName}` }]
+      : [],
+    ...appLinksDoc?.pixivUserId
+      ? [{ label: 'pixiv', path: `https://www.pixiv.net/users/${appLinksDoc.pixivUserId}` }]
+      : [],
+    ...appLinksDoc?.websiteURL
+      ? [{ label: 'Web', path: appLinksDoc.websiteURL }]
+      : [],
+    ...appLinksDoc?.menuURL
+      ? [{ label: 'お品書き', path: appLinksDoc.menuURL }]
+      : [],
+  ]
+}
+
+const spaces = props.listControl.type === 1
+  ? props.spaces
+    .sort((a, b) => (a.spaceGroupOrder * 100 + a.spaceOrder) - (b.spaceGroupOrder * 100 + b.spaceOrder))
+    .map(s => {
+      const hashDoc = props.appHashes.find(appHash => appHash.spaceId === s.id);
+      const appDoc = props.apps.find(app => app.id === hashDoc?.applicationId);
+      if (!appDoc) {
+        return {
+          spaceName: s.spaceName,
+          circleName: '',
+          penName: '',
+          hasAdult: false,
+          links: []
+        }
+      }
+
+      const links = convertLinks(appDoc);
+      const circleCutURL = props.circleCutURLs.find(circleCutURL => circleCutURL.id === appDoc.hashId);
+
+      return {
+        spaceName: s.spaceName,
+        circleName: appDoc.circle.name,
+        penName: appDoc.circle.penName,
+        hasAdult: appDoc.circle.hasAdult,
+        links,
+        circleCutURL
+      }
+    })
+  : props.apps
+    .sort((a, b) => a.circle.yomi.localeCompare(b.circle.yomi))
+    .map(app => {
+      const links = convertLinks(app);
+      const circleCutURL = props.circleCutURLs.find(circleCutURL => circleCutURL.id === app.hashId);
+
+      return {
+        spaceName: null,
+        circleName: app.circle.name,
+        penName: app.circle.penName,
+        hasAdult: app.circle.hasAdult,
+        links,
+        circleCutURL
+      }
+    })
+
+---
+
+<DefaultLayout title={`${props.event.name} サークルリスト`}>
+  <h1>{props.event.name} サークルリスト</h1>
+
+  {props.listControl.type === 0 && (
+    <p>
+      申し込みを受理したサークルの一覧を 50 音順で表示しています。
+    </p>
+  )}
+
+  <table>
+    <thead>
+      <tr>
+        <th>&nbsp;</th>
+        {props.listControl.type === 1 && <th>スペース</th>}
+        <th>サークル</th>
+        <th>ペンネーム</th>
+        <th>成人向</th>
+        <th>リンク</th>
+      </tr>
+    </thead>
+    <tbody>
+      {spaces.map(s => (
+        <tr>
+          <td>
+            {s.circleCutURL && <img src={s.circleCutURL.url} class="circleCutImage" />}
+          </td>
+          {props.listControl.type === 1 && <td>{s.spaceName}</td>}
+          <td>{s.circleName}</td>
+          <td>{s.penName}</td>
+          <td>{s.hasAdult ? '成人向' : '-'}</td>
+          <td>
+            {s.links.length === 0 && '-'}
+            {s.links.map((link, index) => (
+              <><a href={link.path} target="_blank">{link.label}</a>{index < s.links.length - 1 && ' '}</>
+            ))}
+          </td>
+        </tr>
+        )
+      )}
+    </tbody>
+  </table>
+</DefaultLayout>
+
+<style lang="scss">
+.circleCutImage {
+  height: 64px;
+  &:focus {
+    height: 128px;
+  }
+}
+</style>

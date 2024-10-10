@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import SortButton from '../../components/Parts/SortButton'
-import ApplicationStatusLabel from '../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import SortButton from '../Parts/SortButton'
+import ApplicationStatusLabel from '../Parts/StatusLabel/ApplicationStatusLabel'
 import type {
   SockbaseAccount,
   SockbaseApplicationDocument,
