@@ -135,7 +135,7 @@ const convertLinks = (app: SockbaseApplicationDocument) => {
   const appLinksDoc = props.appLinks.find(appLink => appLink.applicationId === app.id);
   return [
     ...appLinksDoc?.twitterScreenName
-      ? [{ label: 'X', path: `https://x.com/${appLinksDoc.twitterScreenName}` }]
+      ? [{ label: 'X (Twitter)', path: `https://x.com/${appLinksDoc.twitterScreenName}` }]
       : [],
     ...appLinksDoc?.pixivUserId
       ? [{ label: 'pixiv', path: `https://www.pixiv.net/users/${appLinksDoc.pixivUserId}` }]
