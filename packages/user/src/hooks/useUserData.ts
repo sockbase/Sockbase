@@ -6,6 +6,7 @@ import type { SockbaseAccount } from 'sockbase'
 
 interface IUseUserData {
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
+  updateUserDataWithStoreIdAsync: (userId: string, storeId: string, userData: SockbaseAccount) => Promise<void>
   getMyUserDataAsync: () => Promise<SockbaseAccount | null>
   getUserDataByUserIdAsync: (userId: string) => Promise<SockbaseAccount>
   getUserDataByUserIdAndEventIdAsync: (userId: string, eventId: string) => Promise<SockbaseAccount>
@@ -19,6 +20,14 @@ const useUserData = (): IUseUserData => {
     async (userId: string, userData: SockbaseAccount): Promise<void> => {
       const db = getFirestore()
       const userRef = FirestoreDB.doc(db, 'users', userId)
+        .withConverter(accountConverter)
+      await FirestoreDB.setDoc(userRef, userData)
+    }
+
+  const updateUserDataWithStoreIdAsync =
+    async (userId: string, storeId: string, userData: SockbaseAccount): Promise<void> => {
+      const db = getFirestore()
+      const userRef = FirestoreDB.doc(db, `stores/${storeId}/_users/${userId}`)
         .withConverter(accountConverter)
       await FirestoreDB.setDoc(userRef, userData)
     }
@@ -94,6 +103,7 @@ const useUserData = (): IUseUserData => {
 
   return {
     updateUserDataAsync,
+    updateUserDataWithStoreIdAsync,
     getMyUserDataAsync,
     getUserDataByUserIdAsync,
     getUserDataByUserIdAndEventIdAsync,
