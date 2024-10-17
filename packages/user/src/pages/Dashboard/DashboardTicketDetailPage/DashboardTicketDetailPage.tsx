@@ -59,7 +59,7 @@ const DashboardTicketDetailPage: React.FC = () => {
   const [store, setStore] = useState<SockbaseStoreDocument>()
   const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
-  const [payment, setPayment] = useState<SockbasePaymentDocument>()
+  const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus>()
   const [isAdmin, setAdmin] = useState<boolean | null>()
@@ -186,7 +186,10 @@ const DashboardTicketDetailPage: React.FC = () => {
         .then(fetchedTicketUsedStatus => setTicketUsedStatus(fetchedTicketUsedStatus))
         .catch(err => { throw err })
 
-      if (!ticketHash.paymentId) return
+      if (!ticketHash.paymentId) {
+        setPayment(null)
+        return
+      }
       getPaymentAsync(ticketHash.paymentId)
         .then(fetchedPayment => setPayment(fetchedPayment))
         .catch(err => { throw err })
@@ -244,20 +247,24 @@ const DashboardTicketDetailPage: React.FC = () => {
                     <BlinkField />}
                 </td>
               </tr>
-              {type?.productInfo && <tr>
+              <tr>
                 <th>お支払い状況</th>
                 <td>
-                  {(payment && (
-                    payment?.status === 0
-                      ? <Link to="/dashboard/payments">
-                        <PaymentStatusLabel payment={payment} isLink={true}/>
-                      </Link>
-                      : <>
-                        <PaymentStatusLabel payment={payment} />
-                      </>)) ||
-                      <BlinkField />}
+                  {payment === undefined
+                    ? <BlinkField />
+                    : payment === null
+                      ? <>お支払いは不要です</>
+                      : payment.status === 0
+                        ? (
+                          <Link to="/dashboard/payments">
+                            <PaymentStatusLabel payment={payment} isLink={true}/>
+                          </Link>
+                        )
+                        : (
+                          <PaymentStatusLabel payment={payment} />
+                        )}
                 </td>
-              </tr>}
+              </tr>
               <tr>
                 <th>割り当て状況</th>
                 <td>{(ticketUser && <TicketAssignStatusLabel status={!!ticketUser.usableUserId} />) ?? <BlinkField />}</td>
