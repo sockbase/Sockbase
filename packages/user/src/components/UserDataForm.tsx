@@ -26,6 +26,7 @@ interface Props {
   fetchedUserData: SockbaseAccount | null | undefined
   userData: SockbaseAccountSecure | undefined
   setUserData: (userData: SockbaseAccountSecure) => void
+  isTicketAssignPage?: boolean
 }
 const UserDataForm: React.FC<Props> = (props) => {
   const validator = useValidate()
@@ -86,7 +87,7 @@ const UserDataForm: React.FC<Props> = (props) => {
   return (
     <>
       {(!fetchedUserData?.gender && <>
-        <h2>申し込み責任者情報</h2>
+        <h2>{props.isTicketAssignPage ? 'チケット使用者情報' : '申し込み責任者情報'}</h2>
         <FormSection>
           <FormItem>
             <FormLabel>氏名</FormLabel>

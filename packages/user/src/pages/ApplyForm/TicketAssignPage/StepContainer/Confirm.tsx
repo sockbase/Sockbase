@@ -55,7 +55,8 @@ const Confirm: React.FC<Props> = (props) => {
 
       <UserDataView
         fetchedUserData={props.fetchedUserData}
-        userData={props.userData} />
+        userData={props.userData}
+        isTicketAssignPage={true} />
 
       <h1>チケットを受け取る</h1>
       <p>
