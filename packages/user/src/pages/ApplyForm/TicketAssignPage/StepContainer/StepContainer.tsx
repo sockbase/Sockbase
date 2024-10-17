@@ -25,6 +25,7 @@ interface Props {
   logoutAsync: () => Promise<void>
   createUserAsync: (email: string, password: string) => Promise<User>
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
+  updateUserDataWithStoreIdAsync: (userId: string, storeId: string, userData: SockbaseAccount) => Promise<void>
   assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
 }
 const StepContainer: React.FC<Props> = (props) => {
@@ -47,14 +48,17 @@ const StepContainer: React.FC<Props> = (props) => {
       const newUser = await props.createUserAsync(userData.email, userData.password)
       await props.updateUserDataAsync(newUser.uid, userData)
       await props.assignTicketUserAsync(newUser.uid, props.ticketHashId)
+      await props.updateUserDataWithStoreIdAsync(newUser.uid, props.store.id, userData)
       return
     }
 
     if (props.userData && !props.userData?.gender) {
-      await props.updateUserDataAsync(props.user.uid, {
+      const newUserData: SockbaseAccount = {
         ...props.userData,
         gender: userData?.gender
-      })
+      }
+      await props.updateUserDataAsync(props.user.uid, newUserData)
+      await props.updateUserDataWithStoreIdAsync(props.user.uid, props.store.id, newUserData)
     }
     await props.assignTicketUserAsync(props.user.uid, props.ticketHashId)
   }, [props.user, props.userData, props.ticketHashId, userData])

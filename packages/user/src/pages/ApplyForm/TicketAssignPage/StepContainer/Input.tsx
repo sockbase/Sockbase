@@ -102,7 +102,8 @@ const Input: React.FC<Props> = (props) => {
       <UserDataForm
         fetchedUserData={props.fetchedUserData}
         userData={props.userData}
-        setUserData={u => setUserData(u)} />
+        setUserData={u => setUserData(u)}
+        isTicketAssignPage={true} />
 
       <h2>注意事項</h2>
       <p>
