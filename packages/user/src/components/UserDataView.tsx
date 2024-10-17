@@ -5,6 +5,7 @@ import type { SockbaseAccount, SockbaseAccountSecure } from 'sockbase'
 interface Props {
   fetchedUserData: SockbaseAccount | null | undefined
   userData: SockbaseAccountSecure | undefined
+  isTicketAssignPage?: boolean
 }
 const UserDataView: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
@@ -21,7 +22,7 @@ const UserDataView: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h2>申し込み者情報</h2>
+      <h2>{props.isTicketAssignPage ? 'チケット使用者情報' : '申し込み責任者情報'}</h2>
       <table>
         <tbody>
           <tr>

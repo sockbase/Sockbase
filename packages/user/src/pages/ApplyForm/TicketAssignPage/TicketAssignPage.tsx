@@ -23,7 +23,8 @@ const TicketAssignPage: React.FC = () => {
   } = useStore()
   const {
     getMyUserDataAsync,
-    updateUserDataAsync
+    updateUserDataAsync,
+    updateUserDataWithStoreIdAsync
   } = useUserData()
 
   const ticketHashId = useMemo(() => searchParams.get('thi') ?? undefined, [searchParams])
@@ -88,6 +89,7 @@ const TicketAssignPage: React.FC = () => {
         logoutAsync={handleLogoutAsync}
         createUserAsync={createUserAsync}
         updateUserDataAsync={updateUserDataAsync}
+        updateUserDataWithStoreIdAsync={updateUserDataWithStoreIdAsync}
         assignTicketUserAsync={assignTicketUserAsync} />}
     </DefaultBaseLayout>
   )
