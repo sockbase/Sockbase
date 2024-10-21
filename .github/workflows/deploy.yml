@@ -5,6 +5,8 @@ on:
     branches:
       - 'master'
       - 'develop'
+    paths:
+      - "packages/**"
   # workflow_dispatch:
   #   inputs:
   #     deployment_target:
