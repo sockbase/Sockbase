@@ -1,7 +1,7 @@
 name: "💅 Lint functions"
 on:
   push:
-    path:
+    paths:
       - "packages/functions/**"
 jobs:
   lint:
