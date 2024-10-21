@@ -11,6 +11,8 @@ const useFirebaseError = (): IUseFirebaseError => {
         return 'メールアドレスまたはパスワードが間違っています'
       } else if (errorMessage.includes('auth/email-already-in-use')) {
         return 'メールアドレスが既に使われているため、アカウントを作成することができませんでした。'
+      } else if (errorMessage.includes('auth/too-many-requests')) {
+        return 'ログインに複数回失敗したためアカウントがロックされました。パスワードを再設定してください。'
       } else if (
         errorMessage.includes('internal') ||
         errorMessage.includes('INTERNAL')
