@@ -33,7 +33,7 @@ const EventCircleApplications: React.FC<Props> = (props) => {
   const sortedApps = useMemo(() => {
     const apps = Object.entries(props.apps)
       .filter(([_, app]) => !!app.hashId)
-      .sort(([_a, a], [_b, b]) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
+      .sort(([_a, a], [_b, b]) => (b.createdAt?.getTime() ?? Number.MAX_SAFE_INTEGER) - (a.createdAt?.getTime() ?? Number.MIN_SAFE_INTEGER))
 
     if (!activeSortSpace || !props.spaces || !props.appHashs) {
       return apps
@@ -46,7 +46,7 @@ const EventCircleApplications: React.FC<Props> = (props) => {
 
       const aSpace = props.spaces?.filter(s => s.id === aAppHash.spaceId)[0]
       const bSpace = props.spaces?.filter(s => s.id === bAppHash.spaceId)[0]
-      const aOrder = aSpace ? aSpace.spaceGroupOrder * 100 + aSpace.spaceOrder : Number.MAX_SAFE_INTEGER
+      const aOrder = aSpace ? aSpace.spaceGroupOrder * 100 + aSpace.spaceOrder : Number.MIN_SAFE_INTEGER
       const bOrder = bSpace ? bSpace.spaceGroupOrder * 100 + bSpace.spaceOrder : Number.MAX_SAFE_INTEGER
 
       return aOrder - bOrder
