@@ -44,13 +44,10 @@ const useValidate = (): IUseValidate => {
   const isEmail = (value: string): boolean => validator.isEmail(value)
 
   const isApplicationHashId = (value: string): boolean =>
-    isMatchRegex(value, /^\d{17}-[0-9a-f]{8}$/)
+    isMatchRegex(value, /^(\d{17}-[0-9a-f]{8})|(SC\d{4}[0-9A-Z]{12})$/)
 
   const isTicketHashId = (value: string): boolean =>
-    isMatchRegex(
-      value,
-      /^\d{17}-[123456789ABCEFGHJKLNPRSTUWXYZabcdefghkmnprstvwxz]{32}$/
-    )
+    isMatchRegex(value, /^(\d{17}-[1-9A-Za-z]{32})|(ST\d{4}[0-9A-Z]{12})$/)
 
   const isStrongPassword = (value: string): boolean =>
     isMatchRegex(value, /(?=.*[A-Z])[a-zA-Z0-9]+/) && value.length >= 12

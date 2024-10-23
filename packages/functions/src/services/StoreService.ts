@@ -249,12 +249,10 @@ const createTicketCoreAsync =
   }
 
 const generateTicketHashId = (now: Date): string => {
-  const codeDigit = 32
-  const randomId = random.generateRandomCharacters(codeDigit)
-
-  const formatedDateTime = dayjs(now).tz().format('YYYYMMDDHHmmssSSS')
-  const hashId = `${formatedDateTime}-${randomId}`
-
+  const codeDigit = 12
+  const randomId = random.generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+  const formatedDateTime = dayjs(now).tz().format('MMDD')
+  const hashId = `ST${formatedDateTime}${randomId}`
   return hashId
 }
 

@@ -235,7 +235,7 @@ const Input: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      {props.pastApps?.length && <>
+      {props.pastApps && props.pastApps.length > 0 && <>
         <h2>過去の申し込み情報を引用</h2>
         <FormSection>
           <FormItem>
@@ -395,7 +395,7 @@ const Input: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>合体希望サークル 申し込み ID</FormLabel>
           <FormInput
-            placeholder='20231231235959123-abc0def1'
+            placeholder='SCXXXXABCDEFGHIJKL'
             value={app.unionCircleId}
             onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value.trim() }))}
             hasError={!validator.isEmpty(app.unionCircleId) && !validator.isApplicationHashId(app.unionCircleId)} />

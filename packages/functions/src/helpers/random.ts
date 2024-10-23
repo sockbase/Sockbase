@@ -1,5 +1,5 @@
-const generateRandomCharacters = (length: number): string => {
-  const BaseCharacters = '123456789ABCEFGHJKLNPRSTUWXYZabcdefghkmnprstvwxz'
+const generateRandomCharacters = (length: number, baseCharacters?: string): string => {
+  const BaseCharacters = baseCharacters ?? '123456789ABCEFGHJKLNPRSTUWXYZabcdefghkmnprstvwxz'
   const CharactersLength = BaseCharacters.length - 1
 
   const randoms: number[] = []
