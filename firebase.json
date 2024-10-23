@@ -29,6 +29,24 @@
         "**/.*",
         "**/node_modules/**"
       ]
+    },
+    {
+      "target": "admin",
+      "public": "./packages/admin/dist",
+      "predeploy": [
+        "yarn workspace admin build"
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ],
   "functions": {
