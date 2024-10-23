@@ -1,4 +1,3 @@
-import { MD5, enc } from 'crypto-js'
 import { https } from 'firebase-functions'
 import {
   type SockbaseApplicationLinksDocument,
@@ -10,6 +9,7 @@ import {
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
 
+import random from '../helpers/random'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { applicationConverter, applicationLinksConverter, overviewConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
@@ -128,7 +128,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     )
     : null
 
-  const hashId = generateHashId(payload.app.eventId, appId, now)
+  const hashId = generateHashId(now)
   await firestore.doc(`/_applications/${appId}`)
     .set({
       hashId
@@ -208,15 +208,11 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
   return result
 }
 
-const generateHashId = (eventId: string, refId: string, now: Date): string => {
-  const salt = 'sockbase-yogurt-koharurikka516'
-  const codeDigit = 8
-  const refHashId = MD5(`${eventId}.${refId}.${salt}`)
-    .toString(enc.Hex)
-    .slice(0, codeDigit)
-  const formatedDateTime = dayjs(now).tz().format('YYYYMMDDHHmmssSSS')
-  const hashId = `${formatedDateTime}-${refHashId}`
-
+const generateHashId = (now: Date): string => {
+  const codeDigit = 12
+  const randomId = random.generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+  const formatedDateTime = dayjs(now).tz().format('MMDD')
+  const hashId = `SC${formatedDateTime}${randomId}`
   return hashId
 }
 
