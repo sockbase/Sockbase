@@ -6,7 +6,7 @@ import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
 const InquiryListPage: React.FC = () => {
   return (
-    <DefaultLayout title='問い合わせ管理'>
+    <DefaultLayout title='問い合わせ管理' requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>

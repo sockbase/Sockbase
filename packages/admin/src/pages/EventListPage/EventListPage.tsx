@@ -6,7 +6,7 @@ import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
 const EventListPage: React.FC = () => {
   return (
-    <DefaultLayout title='イベント管理'>
+    <DefaultLayout title='イベント管理' requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
