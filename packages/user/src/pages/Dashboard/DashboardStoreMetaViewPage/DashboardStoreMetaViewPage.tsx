@@ -34,7 +34,7 @@ const DashboardStoreMetaViewPage: React.FC = () => {
     <DashboardBaseLayout title="チケットストアメタ情報" requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
+        <li>管理チケットストア</li>
         <li>{store?._organization.name}</li>
         <li><Link to={`/dashboard/stores/${storeId}`}>{store?.name}</Link></li>
       </Breadcrumbs>
