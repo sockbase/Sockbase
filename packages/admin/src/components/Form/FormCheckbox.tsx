@@ -29,6 +29,7 @@ const Checkbox = styled.input.attrs({ type: 'checkbox' })`
 
 const CheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   ${buttonStyle}
+  display: inline-block;
   position: relative;
   padding-left: 35px;
   padding-right: 10px;

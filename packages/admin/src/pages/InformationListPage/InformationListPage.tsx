@@ -56,6 +56,11 @@ const InformationListPage: React.FC = () => {
               <td><Link to={`/dashboard/informations/${i.id}`}>{i.title}</Link></td>
               <td>{i.isPublished ? '公開' : '-'}</td>
             </tr>)}
+          {informations?.length === 0 && (
+            <tr>
+              <td colSpan={3}>お知らせはありません</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </DefaultLayout>
