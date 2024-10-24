@@ -3,18 +3,18 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import PageTitle from '../../components/Parts/PageTitle'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
-const App: React.FC = () => {
+const IndexPage: React.FC = () => {
   return (
-    <DefaultLayout>
+    <DefaultLayout title='ホーム'>
       <Breadcrumbs>
         <li>ホーム</li>
       </Breadcrumbs>
       <PageTitle
         icon={<MdHome />}
-        title="ホーム"
-        description="ホーム" />
+        title="ホーム" />
+      App
     </DefaultLayout>
   )
 }
 
-export default App
+export default IndexPage
