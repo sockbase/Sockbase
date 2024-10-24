@@ -1,5 +1,5 @@
 import type { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore'
-import type { SockbaseEventDocument, SockbaseStoreDocument } from 'sockbase'
+import type { SockbaseEventDocument, SockbaseInformationDocument, SockbaseStoreDocument } from 'sockbase'
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
   toFirestore: (event: SockbaseEventDocument): DocumentData => ({
@@ -66,6 +66,25 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
       },
       types: store.types,
       isPublic: store.isPublic
+    }
+  }
+}
+
+export const informationConverter: FirestoreDataConverter<SockbaseInformationDocument> = {
+  toFirestore: (info: SockbaseInformationDocument) => ({
+    title: info.title,
+    body: info.body,
+    updatedAt: info.updatedAt,
+    isPublished: info.isPublished
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseInformationDocument => {
+    const info = snapshot.data()
+    return {
+      id: snapshot.id,
+      title: info.title,
+      body: info.body,
+      updatedAt: info.updatedAt,
+      isPublished: info.isPublished
     }
   }
 }

@@ -8,8 +8,7 @@ import {
   MdQrCodeScanner,
   MdSettings,
   MdWallet,
-  MdSearch,
-  MdInfo
+  MdSearch
 } from 'react-icons/md'
 import styled from 'styled-components'
 import FormItem from '../../../components/Form/FormItem'
@@ -111,11 +110,6 @@ const DashboardTopPage: React.FC = () => {
                 icon={<MdInbox />}
                 title="お問い合わせ管理"
                 description="利用者から届いたお問い合わせを管理します。" />
-              <TopCard
-                to="/dashboard/informations"
-                icon={<MdInfo />}
-                title="お知らせ管理"
-                description="お知らせを管理します。" />
             </CardContainer>
           </>}
         </>

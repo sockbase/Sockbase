@@ -33,7 +33,6 @@ import DashboardEventPassCreatePage from '../Dashboard/DashboardEventPassCreateP
 import DashboardEventSpaceManagePage from '../Dashboard/DashboardEventSpaceManagePage/DashboardEventSpaceManagePage'
 import DashboardInformationCreatePage from '../Dashboard/DashboardInformationCreatePage/DashboardInformationCreatePage'
 import DashboardInformationDetailPage from '../Dashboard/DashboardInformationDetailPage/DashboardInformationDetailPage'
-import DashboardInformationListPage from '../Dashboard/DashboardInformationListPage/DashboardInformationListPage'
 import DashboardInquiryDetailPage from '../Dashboard/DashboardInquiryDetailPage/DashboardInquiryDetailPage'
 import DashboardInquiryListPage from '../Dashboard/DashboardInquiryListPage/DashboardInquiryListPage'
 import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
@@ -42,7 +41,6 @@ import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/Dash
 import DashboardSearchPage from '../Dashboard/DashboardSearchPage/DashboardSearchPage'
 import DashboardSettingPage from '../Dashboard/DashboardSettingPage/DashboardSettingPage'
 import DashboardStoreCreatePage from '../Dashboard/DashboardStoreCreatePage/DashboardStoreCreatePage'
-import DashboardStoreListPage from '../Dashboard/DashboardStoreListPage/DashboardStoreListPage'
 import DashboardStoreMetaViewPage from '../Dashboard/DashboardStoreMetaViewPage/DashboardStoreMetaViewPage'
 import DashboardStoreTicketCreatePage from '../Dashboard/DashboardStoreTicketCreatePage/DashboardStoreTicketCreatePage'
 import DashboardStoreTicketListPage from '../Dashboard/DashboardStoreTicketListPage/DashboardStoreTicketListPage'
@@ -262,10 +260,6 @@ const router = createBrowserRouter([
             path: 'stores',
             children: [
               {
-                index: true,
-                element: <DashboardStoreListPage />
-              },
-              {
                 path: 'create',
                 element: <DashboardStoreCreatePage />
               },
@@ -329,10 +323,6 @@ const router = createBrowserRouter([
           {
             path: 'informations',
             children: [
-              {
-                index: true,
-                element: <DashboardInformationListPage />
-              },
               {
                 path: 'create',
                 element: <DashboardInformationCreatePage />
