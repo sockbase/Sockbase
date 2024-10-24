@@ -37,7 +37,6 @@ import DashboardInformationDetailPage from '../Dashboard/DashboardInformationDet
 import DashboardInformationListPage from '../Dashboard/DashboardInformationListPage/DashboardInformationListPage'
 import DashboardInquiryDetailPage from '../Dashboard/DashboardInquiryDetailPage/DashboardInquiryDetailPage'
 import DashboardInquiryListPage from '../Dashboard/DashboardInquiryListPage/DashboardInquiryListPage'
-import DashboardLicenseViewPage from '../Dashboard/DashboardLicenseViewPage/DashboardLicenseViewPage'
 import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
 import DashboardMyTicketListPage from '../Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
@@ -323,10 +322,6 @@ const router = createBrowserRouter([
                 element: <DashboardInquiryDetailPage />
               }
             ]
-          },
-          {
-            path: 'license',
-            element: <DashboardLicenseViewPage />
           },
           {
             path: 'search',
