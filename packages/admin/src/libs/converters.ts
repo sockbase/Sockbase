@@ -1,5 +1,5 @@
 import type { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore'
-import type { SockbaseEventDocument, SockbaseInformationDocument, SockbaseStoreDocument } from 'sockbase'
+import type { SockbaseEventDocument, SockbaseInformationDocument, SockbaseInquiryDocument, SockbaseInquiryMetaDocument, SockbaseStoreDocument } from 'sockbase'
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
   toFirestore: (event: SockbaseEventDocument): DocumentData => ({
@@ -88,3 +88,49 @@ export const informationConverter: FirestoreDataConverter<SockbaseInformationDoc
     }
   }
 }
+
+export const inquiryConverter: FirestoreDataConverter<SockbaseInquiryDocument> =
+  {
+    toFirestore: (inquiry: SockbaseInquiryDocument) => ({
+      userId: inquiry.userId,
+      inquiryType: inquiry.inquiryType,
+      body: inquiry.body,
+      createdAt: null,
+      updatedAt: null
+    }),
+    fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseInquiryDocument => {
+      const inquiry = snapshot.data()
+      return {
+        id: snapshot.id,
+        userId: inquiry.userId,
+        inquiryType: inquiry.inquiryType,
+        body: inquiry.body,
+        status: inquiry.status,
+        createdAt: inquiry.createdAt
+          ? new Date(inquiry.createdAt.seconds * 1000)
+          : null,
+        updatedAt: inquiry.updatedAt
+          ? new Date(inquiry.updatedAt.seconds * 1000)
+          : null
+      }
+    }
+  }
+
+export const inquiryMetaConverter: FirestoreDataConverter<SockbaseInquiryMetaDocument> =
+  {
+    toFirestore: (meta: SockbaseInquiryMetaDocument) => ({
+      status: meta.status
+    }),
+    fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseInquiryMetaDocument => {
+      const meta = snapshot.data()
+      return {
+        status: meta.status,
+        createdAt: meta.createdAt
+          ? new Date(meta.createdAt.seconds * 1000)
+          : null,
+        updatedAt: meta.updatedAt
+          ? new Date(meta.updatedAt.seconds * 1000)
+          : null
+      }
+    }
+  }

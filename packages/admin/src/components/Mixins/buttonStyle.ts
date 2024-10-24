@@ -9,6 +9,7 @@ const buttonStyle = css`
   color: var(--text-foreground-color);
   background-color: var(--background-color);
   cursor: pointer;
+  user-select: none;
   transition: background-color 0.1s;
 
   &:active {

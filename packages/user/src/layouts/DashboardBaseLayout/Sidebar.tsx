@@ -10,7 +10,6 @@ import {
   MdSettings,
   MdQrCodeScanner,
   MdMail,
-  MdInbox,
   MdWallet,
   MdSearch,
   MdArrowBackIosNew,
@@ -114,25 +113,6 @@ const menu: MenuSection[] = [
         icon: <MdSearch />,
         text: '検索',
         link: '/dashboard/search'
-      },
-      {
-        key: 'streamTerminal',
-        icon: <MdQrCodeScanner />,
-        text: 'ストリームターミナル',
-        link: '/dashboard/stream'
-      }
-    ]
-  },
-  {
-    sectionKey: 'system',
-    sectionName: 'システム操作',
-    requireSystemRole: sockbaseShared.enumerations.user.permissionRoles.admin,
-    items: [
-      {
-        key: 'manageInquiries',
-        icon: <MdInbox />,
-        text: 'お問い合わせ管理',
-        link: '/dashboard/inquiries'
       }
     ]
   }
