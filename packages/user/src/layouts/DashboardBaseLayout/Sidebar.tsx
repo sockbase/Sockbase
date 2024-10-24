@@ -14,7 +14,6 @@ import {
   MdMail,
   MdInbox,
   MdWallet,
-  MdBadge,
   MdSearch,
   MdArrowBackIosNew,
   MdArrowForwardIos,
@@ -105,12 +104,6 @@ const menu: MenuSection[] = [
         icon: <MdQrCodeScanner />,
         text: 'チケット照会ターミナル',
         link: '/dashboard/tickets/terminal'
-      },
-      {
-        key: 'license',
-        icon: <MdBadge />,
-        text: '権限',
-        link: '/dashboard/license'
       }
     ]
   },

@@ -1,25 +1,24 @@
 import { MdBadge } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import sockbaseShared from 'shared'
-import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
-import useFirebase from '../../../hooks/useFirebase'
-import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import PageTitle from '../../components/Parts/PageTitle'
+import useFirebase from '../../hooks/useFirebase'
+import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
-const DashboardLicenseViewPage: React.FC = () => {
+const LicensePage: React.FC = () => {
   const { user, roles } = useFirebase()
 
   return (
-    <DashboardBaseLayout title="権限" requireCommonRole={1}>
+    <DefaultLayout title='権限'>
       <Breadcrumbs>
-        <li><Link to='/dashboard'>マイページ</Link></li>
+        <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
       <PageTitle
         icon={<MdBadge />}
-        title="権限"
-        description="付与されている権限情報を表示します" />
+        title="権限" />
 
-      <h2>ユーザー情報</h2>
+      <h2>ユーザ情報</h2>
       <table>
         <tbody>
           <tr>
@@ -50,9 +49,8 @@ const DashboardLicenseViewPage: React.FC = () => {
             </tr>)}
         </tbody>
       </table>
-
-    </DashboardBaseLayout>
+    </DefaultLayout>
   )
 }
 
-export default DashboardLicenseViewPage
+export default LicensePage
