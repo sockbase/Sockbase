@@ -119,12 +119,6 @@ const menu: MenuSection[] = [
         link: '/dashboard/search'
       },
       {
-        key: 'manageEvents',
-        icon: <MdEditCalendar />,
-        text: 'イベント管理',
-        link: '/dashboard/events'
-      },
-      {
         key: 'manageStores',
         icon: <MdStore />,
         text: 'チケットストア管理',

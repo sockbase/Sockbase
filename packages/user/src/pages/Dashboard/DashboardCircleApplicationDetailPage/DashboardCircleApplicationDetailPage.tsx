@@ -57,7 +57,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const [appId, setAppId] = useState<string>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
   const [event, setEvent] = useState<SockbaseEvent>()
-  const [eventId, setEventId] = useState<string>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [links, setLinks] = useState<SockbaseApplicationLinksDocument | null>()
   const [overview, setOverview] = useState<SockbaseApplicationOverviewDocument | null>()
@@ -158,7 +157,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
 
         setAppId(fetchedAppHashDoc.applicationId)
         setApp(fetchedApp)
-        setEventId(fetchedApp.eventId)
       }
     fetchApplicationAsync()
       .catch(err => {
@@ -188,16 +186,8 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
     <DashboardBaseLayout title={title} requireSystemRole={0}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        {isAdmin
-          ? <>
-            <li><Link to="/dashboard/events">管理イベント</Link></li>
-            <li>{event?._organization.name}</li>
-            <li><Link to={`/dashboard/events/${eventId}`}>{event?.name}</Link></li>
-          </>
-          : <>
-            <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
-            <li>{event ? event.name : <BlinkField />}</li>
-          </>}
+        <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
+        <li>{event ? event.name : <BlinkField />}</li>
       </Breadcrumbs>
 
       <PageTitle

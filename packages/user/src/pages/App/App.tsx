@@ -27,7 +27,6 @@ import DashboardEventApplicationPrintTanzakuPage from '../Dashboard/DashboardEve
 import DashboardEventApplicationSoleilTSVExportPage from '../Dashboard/DashboardEventApplicationSoleilTSVExportPage/DashboardEventSoleilTSVExportPage'
 import DashboardEventCircleCutDownloadPage from '../Dashboard/DashboardEventCircleCutDownloadPage/DashboardEventCircleCutDownloadPage'
 import DashboardEventCreatePage from '../Dashboard/DashboardEventCreatePage/DashboardEventCreatePage'
-import DashboardEventListPage from '../Dashboard/DashboardEventListPage/DashboardEventListPage'
 import DashboardEventMailSendPage from '../Dashboard/DashboardEventMailSendPage/DashboardEventMailSendPage'
 import DashboardEventMetaViewPage from '../Dashboard/DashboardEventMetaViewPage/DashboardEventMetaViewPage'
 import DashboardEventPassCreatePage from '../Dashboard/DashboardEventPassCreatePage/DashboardEventPassCreatePage'
@@ -169,10 +168,6 @@ const router = createBrowserRouter([
           {
             path: 'events',
             children: [
-              {
-                index: true,
-                element: <DashboardEventListPage />
-              },
               {
                 path: 'create',
                 element: <DashboardEventCreatePage />

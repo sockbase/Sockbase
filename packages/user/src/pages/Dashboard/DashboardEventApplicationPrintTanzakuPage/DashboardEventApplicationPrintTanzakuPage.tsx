@@ -152,7 +152,7 @@ const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
       <ControlContainer>
         <Breadcrumbs>
           <li><Link to="/dashboard">マイページ</Link></li>
-          <li><Link to="/dashboard/events">管理イベント</Link></li>
+          <li>管理イベント</li>
           <li>{event?._organization.name ?? <BlinkField />}</li>
           <li><Link to={`/dashboard/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
         </Breadcrumbs>

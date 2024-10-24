@@ -1,5 +1,4 @@
 import {
-  MdEditCalendar,
   MdCollectionsBookmark,
   MdHome,
   MdInbox,
@@ -97,11 +96,6 @@ const DashboardTopPage: React.FC = () => {
                 icon={<MdSearch />}
                 title="検索 (BETA)"
                 description="申し込み ID から内部管理IDを取得します。" />
-              <TopCard
-                to="/dashboard/events/"
-                icon={<MdEditCalendar />}
-                title="管理イベント"
-                description="Sockbase で管理しているイベントを表示します。" />
               <TopCard
                 to="/dashboard/stores"
                 icon={<MdStore />}
