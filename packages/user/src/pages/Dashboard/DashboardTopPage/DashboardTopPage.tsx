@@ -7,7 +7,6 @@ import {
   MdPayments,
   MdQrCodeScanner,
   MdSettings,
-  MdStore,
   MdWallet,
   MdSearch,
   MdInfo
@@ -96,11 +95,6 @@ const DashboardTopPage: React.FC = () => {
                 icon={<MdSearch />}
                 title="検索 (BETA)"
                 description="申し込み ID から内部管理IDを取得します。" />
-              <TopCard
-                to="/dashboard/stores"
-                icon={<MdStore />}
-                title="管理チケットストア"
-                description="Sockbase で管理しているチケットストアを表示します。" />
               <TopCard
                 to="/dashboard/stream"
                 icon={<MdQrCodeScanner />}

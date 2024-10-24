@@ -1,29 +1,47 @@
 import { useCallback } from 'react'
-import { collection, getDocs, getFirestore, query, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
 import { eventConverter } from '../libs/converters'
+import useFirebase from './useFirebase'
 import type { SockbaseEventDocument } from 'sockbase'
 
 interface IUseEvent {
+  getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
   getEventsByOrganizationIdAsync: (organizationId: string) => Promise<SockbaseEventDocument[]>
 }
 
 const useEvent = (): IUseEvent => {
+  const { getFirestore } = useFirebase()
+  const db = getFirestore()
+
+  const getEventByIdAsync =
+    useCallback(async (eventId: string): Promise<SockbaseEventDocument> => {
+      const eventRef = doc(db, 'events', eventId)
+        .withConverter(eventConverter)
+
+      const eventDoc = await getDoc(eventRef)
+      if (!eventDoc.exists()) {
+        throw new Error('event not found')
+      }
+
+      return eventDoc.data()
+    }, [])
+
   const getEventsByOrganizationIdAsync =
-  useCallback(async (organizationId: string): Promise<SockbaseEventDocument[]> => {
-    const db = getFirestore()
-    const eventsRef = collection(db, 'events')
-      .withConverter(eventConverter)
-    const eventsQuery = query(
-      eventsRef,
-      where('_organization.id', '==', organizationId))
-    const eventsSnapshot = await getDocs(eventsQuery)
-    const queryDocs = eventsSnapshot.docs
-      .filter(doc => doc.exists())
-      .map(doc => doc.data())
-    return queryDocs
-  }, [])
+    useCallback(async (organizationId: string): Promise<SockbaseEventDocument[]> => {
+      const eventsRef = collection(db, 'events')
+        .withConverter(eventConverter)
+      const eventsQuery = query(
+        eventsRef,
+        where('_organization.id', '==', organizationId))
+      const eventsSnapshot = await getDocs(eventsQuery)
+      const queryDocs = eventsSnapshot.docs
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
+      return queryDocs
+    }, [])
 
   return {
+    getEventByIdAsync,
     getEventsByOrganizationIdAsync
   }
 }

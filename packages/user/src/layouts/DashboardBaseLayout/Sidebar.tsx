@@ -9,8 +9,6 @@ import {
   MdPayments,
   MdSettings,
   MdQrCodeScanner,
-  MdEditCalendar,
-  MdStore,
   MdMail,
   MdInbox,
   MdWallet,
@@ -117,12 +115,6 @@ const menu: MenuSection[] = [
         icon: <MdSearch />,
         text: '検索',
         link: '/dashboard/search'
-      },
-      {
-        key: 'manageStores',
-        icon: <MdStore />,
-        text: 'チケットストア管理',
-        link: '/dashboard/stores'
       },
       {
         key: 'streamTerminal',

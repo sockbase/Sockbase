@@ -224,13 +224,7 @@ const DashboardTicketDetailPage: React.FC = () => {
     <DashboardBaseLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        {isAdmin
-          ? <>
-            <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
-            <li><Link to={`/dashboard/stores/${store?.id}`}>{store?.name ?? <BlinkField />}</Link></li>
-          </>
-          : <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>}
-
+        <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>
       </Breadcrumbs>
       <PageTitle title={pageTitle} icon={<MdWallet />} description="購入済みチケット情報" isLoading={!store} />
 

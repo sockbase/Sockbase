@@ -1,12 +1,14 @@
 import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import EventListPage from './pages/EventListPage/EventListPage'
+import EventViewPage from './pages/EventViewPage/EventViewPage'
 import IndexPage from './pages/IndexPage/IndexPage'
 import InformationListPage from './pages/InformationListPage/InformationListPage'
 import InquiryListPage from './pages/InquiryListPage/InquiryListPage'
 import LicensePage from './pages/LicenseViewPage/LicenseViewPage'
 import LoginPage from './pages/LoginPage/LoginPage'
 import StoreListPage from './pages/StoreListPage/StoreListPage'
+import StoreViewPage from './pages/StoreViewPage/StoreViewPage'
 import TicketTerminalPage from './pages/TicketTerminalPage/TicketTerminalPage'
 
 const Root: React.FC = () => {
@@ -36,7 +38,16 @@ const routes = createBrowserRouter([
       },
       {
         path: 'stores',
-        element: <StoreListPage />
+        children: [
+          {
+            index: true,
+            element: <StoreListPage />
+          },
+          {
+            path: ':storeId',
+            element: <StoreViewPage />
+          }
+        ]
       },
       {
         path: 'tickets',
@@ -49,7 +60,16 @@ const routes = createBrowserRouter([
       },
       {
         path: 'events',
-        element: <EventListPage />
+        children: [
+          {
+            index: true,
+            element: <EventListPage />
+          },
+          {
+            path: ':eventId',
+            element: <EventViewPage />
+          }
+        ]
       },
       {
         path: 'informations',

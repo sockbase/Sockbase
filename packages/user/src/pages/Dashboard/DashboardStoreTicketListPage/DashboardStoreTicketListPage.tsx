@@ -227,7 +227,7 @@ const DashboardStoreTicketListPage: React.FC = () => {
     <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/stores">管理チケットストア</Link></li>
+        <li>管理チケットストア</li>
         <li>{store?._organization.name ?? <BlinkField />}</li>
       </Breadcrumbs>
       <PageTitle title={store?.name} icon={<MdStore />} description="発券済みチケットの一覧" isLoading={!store} />
