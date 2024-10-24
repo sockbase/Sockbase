@@ -6,8 +6,7 @@ import {
   MdPayments,
   MdQrCodeScanner,
   MdSettings,
-  MdWallet,
-  MdSearch
+  MdWallet
 } from 'react-icons/md'
 import styled from 'styled-components'
 import FormItem from '../../../components/Form/FormItem'
@@ -82,17 +81,6 @@ const DashboardTopPage: React.FC = () => {
                 icon={<MdQrCodeScanner />}
                 title="チケット照会ターミナル"
                 description="チケットコードを用いて情報を表示し、使用ステータスを管理します。" />
-            </CardContainer>
-          </>}
-
-          {!!commonRole && commonRole >= 2 && <>
-            <h2>申し込み管理</h2>
-            <CardContainer>
-              <TopCard
-                to="/dashboard/search"
-                icon={<MdSearch />}
-                title="検索 (BETA)"
-                description="申し込み ID から内部管理IDを取得します。" />
             </CardContainer>
           </>}
         </>
