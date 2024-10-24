@@ -40,9 +40,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
 
   const [appId, setAppId] = useState<string>()
   const [app, setApp] = useState<SockbaseApplicationDocument>()
-  const [eventId, setEventId] = useState<string>()
   const [event, setEvent] = useState<SockbaseEvent>()
-  const [isAdmin, setAdmin] = useState<boolean | null>()
   const [overview, setOverview] = useState<SockbaseApplicationOverview>()
   const [isProgress, setProgress] = useState(false)
 
@@ -55,15 +53,12 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
       const fetchedAppHashDoc = await getApplicationIdByHashedIdAsync(hashedAppId)
       const fetchedApp = await getApplicationByIdAsync(fetchedAppHashDoc.applicationId)
       const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
-      const fetchedIsAdmin = checkIsAdminByOrganizationId(fetchedEvent._organization.id)
 
       const fetchedAppId = fetchedAppHashDoc.applicationId
 
       setAppId(fetchedAppId)
       setApp(fetchedApp)
-      setEventId(fetchedApp.eventId)
       setEvent(fetchedEvent)
-      setAdmin(fetchedIsAdmin)
 
       const fetchedOverview = await getOverviewByApplicationIdOptionalAsync(fetchedAppId)
 
@@ -107,16 +102,8 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
     <DashboardBaseLayout title="頒布物情報編集" requireSystemRole={0}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        {isAdmin
-          ? <>
-            <li><Link to="/dashboard/events">管理イベント</Link></li>
-            <li>{event?._organization.name ?? <BlinkField />}</li>
-            <li><Link to={`/dashboard/events/${eventId}`}>{event?.name}</Link></li>
-          </>
-          : <>
-            <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
-            <li>{event?.name ?? <BlinkField />}</li>
-          </>}
+        <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
+        <li>{event?.name ?? <BlinkField />}</li>
         <li>
           {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>

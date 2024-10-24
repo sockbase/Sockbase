@@ -171,7 +171,7 @@ const DashboardEventApplicationListPage: React.FC = () => {
     <DashboardBaseLayout title={title} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/events">管理イベント</Link></li>
+        <li>管理イベント</li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
       </Breadcrumbs>
       <PageTitle

@@ -10,7 +10,7 @@ const DashboardEventCreatePage: React.FC = () => {
     <DashboardBaseLayout title="イベント作成" requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/events">管理イベント</Link></li>
+        <li>管理イベント</li>
       </Breadcrumbs>
 
       <PageTitle
