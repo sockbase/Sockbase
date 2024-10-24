@@ -37,7 +37,6 @@ import DashboardInquiryDetailPage from '../Dashboard/DashboardInquiryDetailPage/
 import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
 import DashboardMyTicketListPage from '../Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
-import DashboardSearchPage from '../Dashboard/DashboardSearchPage/DashboardSearchPage'
 import DashboardSettingPage from '../Dashboard/DashboardSettingPage/DashboardSettingPage'
 import DashboardStoreCreatePage from '../Dashboard/DashboardStoreCreatePage/DashboardStoreCreatePage'
 import DashboardStoreMetaViewPage from '../Dashboard/DashboardStoreMetaViewPage/DashboardStoreMetaViewPage'
@@ -305,10 +304,6 @@ const router = createBrowserRouter([
                 element: <DashboardInquiryDetailPage />
               }
             ]
-          },
-          {
-            path: 'search',
-            element: <DashboardSearchPage />
           },
           {
             path: 'informations',

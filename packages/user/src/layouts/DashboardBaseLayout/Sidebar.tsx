@@ -11,7 +11,6 @@ import {
   MdQrCodeScanner,
   MdMail,
   MdWallet,
-  MdSearch,
   MdArrowBackIosNew,
   MdArrowForwardIos
 } from 'react-icons/md'
@@ -100,19 +99,6 @@ const menu: MenuSection[] = [
         icon: <MdQrCodeScanner />,
         text: 'チケット照会ターミナル',
         link: '/dashboard/tickets/terminal'
-      }
-    ]
-  },
-  {
-    sectionKey: 'event',
-    sectionName: 'イベント管理',
-    requireCommonRole: sockbaseShared.enumerations.user.permissionRoles.admin,
-    items: [
-      {
-        key: 'omnisearch',
-        icon: <MdSearch />,
-        text: '検索',
-        link: '/dashboard/search'
       }
     ]
   }
