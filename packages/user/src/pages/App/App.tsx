@@ -34,7 +34,6 @@ import DashboardEventSpaceManagePage from '../Dashboard/DashboardEventSpaceManag
 import DashboardInformationCreatePage from '../Dashboard/DashboardInformationCreatePage/DashboardInformationCreatePage'
 import DashboardInformationDetailPage from '../Dashboard/DashboardInformationDetailPage/DashboardInformationDetailPage'
 import DashboardInquiryDetailPage from '../Dashboard/DashboardInquiryDetailPage/DashboardInquiryDetailPage'
-import DashboardInquiryListPage from '../Dashboard/DashboardInquiryListPage/DashboardInquiryListPage'
 import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
 import DashboardMyTicketListPage from '../Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
@@ -44,7 +43,6 @@ import DashboardStoreCreatePage from '../Dashboard/DashboardStoreCreatePage/Dash
 import DashboardStoreMetaViewPage from '../Dashboard/DashboardStoreMetaViewPage/DashboardStoreMetaViewPage'
 import DashboardStoreTicketCreatePage from '../Dashboard/DashboardStoreTicketCreatePage/DashboardStoreTicketCreatePage'
 import DashboardStoreTicketListPage from '../Dashboard/DashboardStoreTicketListPage/DashboardStoreTicketListPage'
-import DashboardStreamTerminalPage from '../Dashboard/DashboardStreamTerminalPage/DashboardStreamTerminalPage'
 import DashboardTicketDetailPage from '../Dashboard/DashboardTicketDetailPage/DashboardTicketDetailPage'
 import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/DashboardTicketListPage'
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
@@ -303,10 +301,6 @@ const router = createBrowserRouter([
             path: 'inquiries',
             children: [
               {
-                index: true,
-                element: <DashboardInquiryListPage />
-              },
-              {
                 path: ':inquiryId',
                 element: <DashboardInquiryDetailPage />
               }
@@ -315,10 +309,6 @@ const router = createBrowserRouter([
           {
             path: 'search',
             element: <DashboardSearchPage />
-          },
-          {
-            path: 'stream',
-            element: <DashboardStreamTerminalPage />
           },
           {
             path: 'informations',

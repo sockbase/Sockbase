@@ -97,7 +97,7 @@ const DashboardInquiryListPage: React.FC = () => {
     <DashboardBaseLayout title="お問い合わせ一覧" requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
-        <li><Link to="/dashboard/inquiries">問い合わせ一覧</Link></li>
+        <li>問い合わせ一覧</li>
       </Breadcrumbs>
       <PageTitle icon={<MdMail />} title={inquiry && getInquiryType(inquiry?.inquiryType).name} description={`#${inquiryId}`} isLoading={!inquiry} />
       {(!inquiry || !inquiryMeta) && <Loading text={`問い合わせ情報 #${inquiryId}`} />}

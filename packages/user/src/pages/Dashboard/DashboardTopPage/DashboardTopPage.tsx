@@ -1,7 +1,6 @@
 import {
   MdCollectionsBookmark,
   MdHome,
-  MdInbox,
   MdLocalActivity,
   MdMail,
   MdPayments,
@@ -22,7 +21,7 @@ import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout
 import InformationList from '../../IndexPage/InformationList'
 
 const DashboardTopPage: React.FC = () => {
-  const { systemRole, commonRole } = useRole()
+  const { commonRole } = useRole()
 
   return (
     <DashboardBaseLayout title="マイページ トップ">
@@ -94,22 +93,6 @@ const DashboardTopPage: React.FC = () => {
                 icon={<MdSearch />}
                 title="検索 (BETA)"
                 description="申し込み ID から内部管理IDを取得します。" />
-              <TopCard
-                to="/dashboard/stream"
-                icon={<MdQrCodeScanner />}
-                title="ストリームターミナル"
-                description="QR コードの情報を読み取りストリームに出力します。" />
-            </CardContainer>
-          </>}
-
-          {!!systemRole && systemRole >= 2 && <>
-            <h2>システム操作</h2>
-            <CardContainer>
-              <TopCard
-                to="/dashboard/inquiries"
-                icon={<MdInbox />}
-                title="お問い合わせ管理"
-                description="利用者から届いたお問い合わせを管理します。" />
             </CardContainer>
           </>}
         </>
