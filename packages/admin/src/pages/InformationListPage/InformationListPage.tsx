@@ -6,7 +6,7 @@ import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
 const InformationListPage: React.FC = () => {
   return (
-    <DefaultLayout title='お知らせ管理'>
+    <DefaultLayout title='お知らせ管理' requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>

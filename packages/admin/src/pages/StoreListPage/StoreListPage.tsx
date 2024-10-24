@@ -6,7 +6,7 @@ import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
 const StoreListPage: React.FC = () => {
   return (
-    <DefaultLayout title='チケットストア管理'>
+    <DefaultLayout title='チケットストア管理' requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>

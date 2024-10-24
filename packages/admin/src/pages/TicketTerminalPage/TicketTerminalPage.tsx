@@ -6,7 +6,7 @@ import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
 const TicketTerminalPage: React.FC = () => {
   return (
-    <DefaultLayout title='チケット照会ターミナル'>
+    <DefaultLayout title='チケット照会ターミナル' requireCommonRole={1}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>

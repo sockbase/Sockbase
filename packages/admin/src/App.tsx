@@ -5,6 +5,7 @@ import IndexPage from './pages/IndexPage/IndexPage'
 import InformationListPage from './pages/InformationListPage/InformationListPage'
 import InquiryListPage from './pages/InquiryListPage/InquiryListPage'
 import LicensePage from './pages/LicensePage/LicensePage'
+import LoginPage from './pages/LoginPage/LoginPage'
 import StoreListPage from './pages/StoreListPage/StoreListPage'
 import TicketTerminalPage from './pages/TicketTerminalPage/TicketTerminalPage'
 
@@ -24,6 +25,10 @@ const routes = createBrowserRouter([
       {
         index: true,
         element: <IndexPage />
+      },
+      {
+        path: 'login',
+        element: <LoginPage />
       },
       {
         path: 'license',
