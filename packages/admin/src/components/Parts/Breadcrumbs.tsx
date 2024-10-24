@@ -2,8 +2,9 @@ import styled from 'styled-components'
 
 const Breadcrumbs = styled.ul`
   margin: 0;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   padding: 0;
+  font-size: 0.9em;
   
   &:last-child {
     margin-bottom: 0;
@@ -21,10 +22,10 @@ const Breadcrumbs = styled.ul`
       position: absolute;
       display: inline-block;
       content: '';
-      width: 8px;
-      height: 8px;
-      top: calc(50% - 4px);
-      right: 10px;
+      width: 6px;
+      height: 6px;
+      top: calc(50% - 3px);
+      right: 14px;
       
       border-bottom: 2px solid var(--border-color);
       border-right: 2px solid var(--border-color);

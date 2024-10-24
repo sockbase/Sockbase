@@ -5,9 +5,13 @@ html, body {
   font-family: sans-serif;
 
   background-color: var(--background-body-color);
-  color: var(--text-foreground-color);
+  color: var(--text-color);
 }
 
 #root {
   height: 100%;
+}
+
+a {
+  color: var(--link-color);
 }
