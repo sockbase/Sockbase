@@ -40,7 +40,7 @@ const DashboardInformationDetailPage: React.FC = () => {
     <DashboardBaseLayout title="お知らせ詳細" requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/dashboard">ホーム</Link></li>
-        <li><Link to="/dashboard/informations">お知らせ管理</Link></li>
+        <li>お知らせ管理</li>
       </Breadcrumbs>
 
       <PageTitle
