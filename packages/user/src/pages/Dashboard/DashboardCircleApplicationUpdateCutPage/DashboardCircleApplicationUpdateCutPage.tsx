@@ -19,7 +19,6 @@ import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
 import useEvent from '../../../hooks/useEvent'
 import useFile from '../../../hooks/useFile'
-import useRole from '../../../hooks/useRole'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
@@ -33,7 +32,6 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
     uploadCircleCutFileAsync
   } = useApplication()
   const { getEventByIdAsync } = useEvent()
-  const { checkIsAdminByOrganizationId } = useRole()
   const {
     data: circleCutDataWithHook,
     openAsDataURL: openCircleCut
@@ -87,7 +85,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }, [checkIsAdminByOrganizationId, hashedAppId])
+  }, [hashedAppId])
 
   useEffect(() => {
     if (!circleCutFile) return

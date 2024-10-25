@@ -16,7 +16,6 @@ import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper
 import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
 import useEvent from '../../../hooks/useEvent'
-import useRole from '../../../hooks/useRole'
 import useValidate from '../../../hooks/useValidate'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
@@ -32,7 +31,6 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
   } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const validator = useValidate()
-  const { checkIsAdminByOrganizationId } = useRole()
   const { formatByDate } = useDayjs()
 
   const [appId, setAppId] = useState<string>()
@@ -100,7 +98,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }, [checkIsAdminByOrganizationId, hashedAppId])
+  }, [hashedAppId])
 
   return (
     <DashboardBaseLayout title="カタログ掲載情報編集" requireSystemRole={0}>
