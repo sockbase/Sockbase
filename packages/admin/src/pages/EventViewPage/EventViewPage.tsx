@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   MdEditCalendar,
   MdAssignmentTurnedIn,
@@ -28,20 +28,33 @@ import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 import type {
   SockbaseAccount,
   SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
   SockbaseApplicationMeta,
-  SockbaseEventDocument
+  SockbaseEventDocument,
+  SockbaseSpaceDocument
 } from 'sockbase'
 
 const EventViewPage: React.FC = () => {
   const { eventId } = useParams()
 
-  const { getEventByIdAsync } = useEvent()
-  const { getApplicationsByEventIdAsync } = useApplication()
+  const { getEventByIdAsync, getSpacesByEventIdAsync } = useEvent()
+  const {
+    getApplicationsByEventIdAsync,
+    getApplicationIdByHashIdAsync
+  } = useApplication()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
 
   const [event, setEvent] = useState<SockbaseEventDocument>()
   const [apps, setApps] = useState<Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
   const [userDataSet, setUserDataSet] = useState<Record<string, SockbaseAccount>>()
+  const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
+  const [appHashes, setAppHashes] = useState<SockbaseApplicationHashIdDocument[]>()
+
+  const getSpace = useCallback((appHashId: string) => {
+    const app = appHashes?.find(app => app.hashId === appHashId)
+    const spaceId = app?.spaceId
+    return spaces?.find(space => space.id === spaceId)
+  }, [spaces])
 
   useEffect(() => {
     if (!eventId) return
@@ -49,20 +62,28 @@ const EventViewPage: React.FC = () => {
     getEventByIdAsync(eventId)
       .then(setEvent)
       .catch(err => { throw err })
-
     getApplicationsByEventIdAsync(eventId)
       .then(setApps)
+      .catch(err => { throw err })
+    getSpacesByEventIdAsync(eventId)
+      .then(setSpaces)
       .catch(err => { throw err })
   }, [eventId])
 
   useEffect(() => {
     if (!eventId || !apps) return
+
     const userIds = [...new Set(apps.map(app => app.userId))]
     Promise.all(userIds.map(async userId => ({
       id: userId,
       data: await getUserDataByUserIdAndEventIdAsync(userId, eventId)
     })))
       .then(userDataSet => setUserDataSet(userDataSet.reduce((p, c) => ({ ...p, [c.id]: c.data }), {})))
+      .catch(err => { throw err })
+
+    const appHashIds = apps.map(app => app.hashId ?? '')
+    Promise.all(appHashIds.map(async hashId => await getApplicationIdByHashIdAsync(hashId)))
+      .then(setAppHashes)
       .catch(err => { throw err })
   }, [apps])
 
@@ -113,11 +134,11 @@ const EventViewPage: React.FC = () => {
           <tr>
             <th>#</th>
             <th>状態</th>
-            <th>ID</th>
             <th>配置</th>
             <th>サークル</th>
             <th>ペンネーム</th>
             <th>スペース</th>
+            <th>ID</th>
             <th>責任者</th>
           </tr>
         </thead>
@@ -127,18 +148,19 @@ const EventViewPage: React.FC = () => {
               <td colSpan={8}>読込中です</td>
             </tr>
           )}
-          {apps?.map((app, i) => (
-            <tr key={app.id}>
-              <td>{i + 1}</td>
-              <td><ApplicationStatusLabel status={app.meta.applicationStatus} /></td>
-              <td>{app.hashId ?? '- ! -'}</td>
-              <td>- TBD -</td>
-              <td><Link to={`/circles/${app.hashId}`}>{app.circle.name}</Link></td>
-              <td>{app.circle.penName}</td>
-              <td>{app.spaceId}</td>
-              <td>{userDataSet?.[app.userId].name ?? <BlinkField />}</td>
-            </tr>
-          ))}
+          {apps?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
+            .map((app, i) => (
+              <tr key={app.id}>
+                <td>{i + 1}</td>
+                <td><ApplicationStatusLabel status={app.meta.applicationStatus} /></td>
+                <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
+                <td><Link to={`/circles/${app.hashId}`}>{app.circle.name}</Link></td>
+                <td>{app.circle.penName}</td>
+                <td>{app.spaceId}</td>
+                <td>{app.hashId ?? '---'}</td>
+                <td>{userDataSet?.[app.userId].name ?? <BlinkField />}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </DefaultLayout>

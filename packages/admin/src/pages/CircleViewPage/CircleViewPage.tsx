@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MdCheck, MdClose, MdEdit, MdOutlineDeleteForever, MdPendingActions } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
+import styled from 'styled-components'
 import sockbaseShared from 'shared'
 import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
@@ -23,7 +24,8 @@ import type {
   SockbaseApplicationMeta,
   SockbaseAccount,
   SockbaseApplicationLinksDocument,
-  SockbaseApplicationStatus
+  SockbaseApplicationStatus,
+  SockbaseSpaceDocument
 } from 'sockbase'
 
 const CircleViewPage: React.FC = () => {
@@ -33,9 +35,13 @@ const CircleViewPage: React.FC = () => {
     getApplicationByIdAsync,
     getLinksByApplicationIdAsync,
     setApplicationStatusByIdAsync,
-    deleteApplicationAsync
+    deleteApplicationAsync,
+    getCircleCutURLByHashIdNullableAsync
   } = useApplication()
-  const { getEventByIdAsync } = useEvent()
+  const {
+    getEventByIdAsync,
+    getSpaceByIdNullableAsync
+  } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const { isSystemAdmin } = useRole()
 
@@ -44,6 +50,8 @@ const CircleViewPage: React.FC = () => {
   const [app, setApp] = useState<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [appLinks, setAppLinks] = useState<SockbaseApplicationLinksDocument | null>()
+  const [circleCutURL, setCircleCutURL] = useState<string | null>()
+  const [space, setSpace] = useState<SockbaseSpaceDocument | null>()
 
   const [isDeletedApplication, setIsDeletedApplication] = useState(false)
 
@@ -103,6 +111,17 @@ const CircleViewPage: React.FC = () => {
     getLinksByApplicationIdAsync(appHash.applicationId)
       .then(setAppLinks)
       .catch(err => { throw err })
+    getCircleCutURLByHashIdNullableAsync(appHash.hashId)
+      .then(setCircleCutURL)
+      .catch(err => { throw err })
+
+    if (appHash.spaceId) {
+      getSpaceByIdNullableAsync(appHash.spaceId)
+        .then(setSpace)
+        .catch(err => { throw err })
+    } else {
+      setSpace(null)
+    }
   }, [appHash])
 
   return (
@@ -152,11 +171,11 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>配置されたスペース</th>
-                <td>- TBD -</td>
+                <td>{space !== undefined ? space?.spaceName || '---' : <BlinkField />}</td>
               </tr>
               <tr>
                 <th>申し込み ID</th>
-                <td>{app ? app.hashId || '- ! -' : <BlinkField />}</td>
+                <td>{app ? app.hashId || '---' : <BlinkField />}</td>
               </tr>
             </tbody>
           </table>
@@ -167,7 +186,9 @@ const CircleViewPage: React.FC = () => {
             <tbody>
               <tr>
                 <th>サークルカット</th>
-                <td></td>
+                <td>
+                  {circleCutURL ? <CircleCutImage src={circleCutURL} /> : '未提出'}
+                </td>
               </tr>
               <tr>
                 <th>X</th>
@@ -291,3 +312,6 @@ const CircleViewPage: React.FC = () => {
 }
 
 export default CircleViewPage
+
+const CircleCutImage = styled.img`
+`
