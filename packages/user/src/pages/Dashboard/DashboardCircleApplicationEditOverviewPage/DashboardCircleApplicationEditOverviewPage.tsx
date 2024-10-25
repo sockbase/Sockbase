@@ -15,7 +15,6 @@ import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper
 import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
 import useEvent from '../../../hooks/useEvent'
-import useRole from '../../../hooks/useRole'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
@@ -35,7 +34,6 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
     setOverviewByApplicationIdAsync
   } = useApplication()
   const { getEventByIdAsync } = useEvent()
-  const { checkIsAdminByOrganizationId } = useRole()
   const { formatByDate } = useDayjs()
 
   const [appId, setAppId] = useState<string>()
@@ -75,7 +73,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
 
     fetchAsync()
       .catch(err => { throw err })
-  }, [checkIsAdminByOrganizationId, hashedAppId])
+  }, [hashedAppId])
 
   const errorCount = useMemo((): number => {
     const validators = [
