@@ -106,25 +106,25 @@ const EventViewPage: React.FC = () => {
 
       <FormSection>
         <FormItem $inlined>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdPrint />} label='配置短冊印刷' />
           </LinkButton>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdAssignmentTurnedIn />} label='配置管理' />
           </LinkButton>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdImage />} label='サークルカット一覧' />
           </LinkButton>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdBookOnline />} label='サークル通行証発券' />
           </LinkButton>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdListAlt />} label='Soleil' />
           </LinkButton>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdMail />} label='メール送信' />
           </LinkButton>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdCalendarViewMonth />} label='メタ情報参照' />
           </LinkButton>
           <AnchorButton href={`${envHelper.userAppURL}/events/${eventId}`} target="_blank">
