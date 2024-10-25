@@ -9,8 +9,7 @@ import {
   type SockbasePaymentDocument,
   type SockbaseTicketHashIdDocument,
   type SockbaseTicketUsedStatus,
-  type SockbaseTicketUserDocument,
-  type SockbaseApplicationStatus
+  type SockbaseTicketUserDocument
 } from 'sockbase'
 import FormButton from '../../../components/Form/Button'
 import FormItem from '../../../components/Form/FormItem'
@@ -28,7 +27,6 @@ import TicketAssignStatusLabel from '../../../components/Parts/StatusLabel/Ticke
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 import useDayjs from '../../../hooks/useDayjs'
 import usePayment from '../../../hooks/usePayment'
-import useRole from '../../../hooks/useRole'
 import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
@@ -46,13 +44,10 @@ const DashboardTicketDetailPage: React.FC = () => {
     getTicketUserByHashIdAsync,
     getTicketUsedStatusByIdAsync,
     assignTicketUserAsync,
-    unassignTicketUserAsync,
-    updateTicketApplicationStatusAsync,
-    deleteTicketAsync
+    unassignTicketUserAsync
   } = useStore()
   const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
   const { getPaymentAsync } = usePayment()
-  const { checkIsAdminByOrganizationId, isSystemAdmin } = useRole()
 
   const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument>()
   const [ticket, setTicket] = useState<SockbaseTicketDocument>()
@@ -62,8 +57,6 @@ const DashboardTicketDetailPage: React.FC = () => {
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus>()
-  const [isAdmin, setAdmin] = useState<boolean | null>()
-  const [ticketDeleted, setTicketDeleted] = useState(false)
 
   const [openAssignPanel, setOpenAssignPanel] = useState(false)
   const [isProgressForAssignMe, setProgressForAssignMe] = useState(false)
@@ -118,42 +111,6 @@ const DashboardTicketDetailPage: React.FC = () => {
       .finally(() => setProgressForUnassign(false))
   }, [ticketHash])
 
-  const handleChangeStatus = useCallback((status: SockbaseApplicationStatus) => {
-    if (!ticket?.id || !isAdmin) return
-    if (!confirm('ステータスを変更します。\nよろしいですか？')) return
-
-    updateTicketApplicationStatusAsync(ticket.id, status)
-      .then(() => {
-        alert('ステータスの変更に成功しました。')
-        setTicketMeta(s => (s && { ...s, applicationStatus: status }))
-      })
-      .catch(err => { throw err })
-  }, [ticket, isAdmin])
-
-  const handleDelete = useCallback(() => {
-    if (!hashedTicketId) return
-
-    const promptAppId = prompt(`この申し込みを削除するには ${hashedTicketId} と入力してください`)
-    if (promptAppId === null) {
-      return
-    } else if (promptAppId !== hashedTicketId) {
-      alert('入力が間違っています')
-      return
-    }
-
-    if (!confirm('※不可逆的操作です※\nこの申し込みを削除します。\nよろしいですか？')) return
-
-    deleteTicketAsync(hashedTicketId)
-      .then(() => {
-        setTicketDeleted(true)
-        alert('削除が完了しました')
-      })
-      .catch(err => {
-        alert('削除する際にエラーが発生しました')
-        throw err
-      })
-  }, [hashedTicketId])
-
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
       if (!hashedTicketId) return
@@ -204,11 +161,7 @@ const DashboardTicketDetailPage: React.FC = () => {
       if (!ticket?.id) return
 
       getStoreByIdAsync(ticket.storeId)
-        .then(fetchedStore => {
-          setStore(fetchedStore)
-          const fetchedIsAdmin = checkIsAdminByOrganizationId(fetchedStore._organization.id)
-          setAdmin(fetchedIsAdmin)
-        })
+        .then(setStore)
         .catch(err => { throw err })
 
       getUserDataByUserIdAndStoreIdOptionalAsync(ticket.userId, ticket.storeId)
@@ -218,7 +171,7 @@ const DashboardTicketDetailPage: React.FC = () => {
 
     fetchAsync()
       .catch(err => { throw err })
-  }, [ticket, checkIsAdminByOrganizationId])
+  }, [ticket])
 
   return (
     <DashboardBaseLayout title={ticket && store ? (pageTitle ?? '') : 'チケット詳細'}>
@@ -357,36 +310,6 @@ const DashboardTicketDetailPage: React.FC = () => {
               </LoadingCircleWrapper>
             </FormItem>
           </FormSection>}
-
-          {isAdmin !== undefined && isAdmin && <>
-            <h3>操作</h3>
-            <FormSection>
-              {ticketMeta?.applicationStatus !== 0 && <FormItem>
-                <FormButton
-                  color="default"
-                  onClick={() => handleChangeStatus(0)}>仮申し込み状態にする</FormButton>
-              </FormItem>}
-              {ticketMeta?.applicationStatus !== 2 && <FormItem>
-                <FormButton
-                  color="info"
-                  onClick={() => handleChangeStatus(2)}>申し込み確定状態にする</FormButton>
-              </FormItem>}
-              {ticketMeta?.applicationStatus !== 1 && <FormItem>
-                <FormButton
-                  color="danger"
-                  onClick={() => handleChangeStatus(1)}>キャンセル状態にする</FormButton>
-              </FormItem>}
-            </FormSection>
-          </>}
-
-          {isSystemAdmin && <>
-            <h2>システム管理操作</h2>
-            <FormSection>
-              <FormItem>
-                <FormButton color="danger" onClick={handleDelete} disabled={ticketDeleted}>申し込み削除</FormButton>
-              </FormItem>
-            </FormSection>
-          </>}
         </>
       </TwoColumnsLayout>
     </DashboardBaseLayout>

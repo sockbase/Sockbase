@@ -56,6 +56,10 @@ const EventViewPage: React.FC = () => {
     return spaces?.find(space => space.id === spaceId)
   }, [spaces])
 
+  const getSpaceType = useCallback((spaceId: string) => {
+    return event?.spaces?.find(s => s.id === spaceId)
+  }, [event])
+
   useEffect(() => {
     if (!eventId) return
 
@@ -156,7 +160,7 @@ const EventViewPage: React.FC = () => {
                 <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
                 <td><Link to={`/circles/${app.hashId}`}>{app.circle.name}</Link></td>
                 <td>{app.circle.penName}</td>
-                <td>{app.spaceId}</td>
+                <td>{getSpaceType(app.spaceId)?.name}</td>
                 <td>{app.hashId ?? '---'}</td>
                 <td>{userDataSet?.[app.userId].name ?? <BlinkField />}</td>
               </tr>

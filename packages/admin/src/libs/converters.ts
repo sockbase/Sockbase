@@ -9,6 +9,7 @@ import type {
   SockbaseInformationDocument,
   SockbaseInquiryDocument,
   SockbaseInquiryMetaDocument,
+  SockbasePaymentDocument,
   SockbaseSpaceDocument,
   SockbaseStoreDocument,
   SockbaseTicketDocument,
@@ -351,3 +352,29 @@ export const spaceConverter: FirestoreDataConverter<SockbaseSpaceDocument> = {
     }
   }
 }
+
+export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
+  {
+    toFirestore: (): DocumentData => ({}),
+    fromFirestore: (snapshot: QueryDocumentSnapshot): SockbasePaymentDocument => {
+      const payment = snapshot.data()
+      return {
+        userId: payment.userId,
+        paymentProductId: payment.paymentProductId,
+        paymentMethod: payment.paymentMethod,
+        paymentAmount: payment.paymentAmount,
+        bankTransferCode: payment.bankTransferCode,
+        applicationId: payment.applicationId,
+        ticketId: payment.ticketId,
+        id: snapshot.id,
+        paymentId: payment.paymentId,
+        status: payment.status,
+        createdAt: payment.createdAt
+          ? new Date(payment.createdAt.seconds * 1000)
+          : null,
+        updatedAt: payment.updatedAt
+          ? new Date(payment.updatedAt.seconds * 1000)
+          : null
+      }
+    }
+  }
