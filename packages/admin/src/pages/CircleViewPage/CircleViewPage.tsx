@@ -130,7 +130,7 @@ const CircleViewPage: React.FC = () => {
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
-        <li><Link to={`/events/${event?.id}`}>{event?.name}</Link></li>
+        <li><Link to={`/events/${event?.id}`}>{event?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
 
       <PageTitle

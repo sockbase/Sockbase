@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage/LoginPage'
 import StoreListPage from './pages/StoreListPage/StoreListPage'
 import StoreViewPage from './pages/StoreViewPage/StoreViewPage'
 import TicketTerminalPage from './pages/TicketTerminalPage/TicketTerminalPage'
+import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
 
 const Root: React.FC = () => {
   return (
@@ -53,6 +54,10 @@ const routes = createBrowserRouter([
       {
         path: 'tickets',
         children: [
+          {
+            path: ':hashId',
+            element: <TicketViewPage />
+          },
           {
             path: 'terminal',
             element: <TicketTerminalPage />
