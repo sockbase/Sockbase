@@ -1,4 +1,4 @@
-import type { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore'
+import { serverTimestamp, type DocumentData, type FirestoreDataConverter, type QueryDocumentSnapshot } from 'firebase/firestore'
 import type {
   SockbaseAccount,
   SockbaseApplicationDocument,
@@ -10,7 +10,12 @@ import type {
   SockbaseInquiryDocument,
   SockbaseInquiryMetaDocument,
   SockbaseSpaceDocument,
-  SockbaseStoreDocument
+  SockbaseStoreDocument,
+  SockbaseTicketDocument,
+  SockbaseTicketHashIdDocument,
+  SockbaseTicketMeta,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketUserDocument
 } from 'sockbase'
 
 export const accountConverter: FirestoreDataConverter<SockbaseAccount> = {
@@ -102,6 +107,87 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
       },
       types: store.types,
       isPublic: store.isPublic
+    }
+  }
+}
+
+export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketDocument => {
+    const data = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: data.userId,
+      storeId: data.storeId,
+      typeId: data.typeId,
+      paymentMethod: data.paymentMethod,
+      paymentProductId: data.paymentProductId,
+      createdAt: data.createdAt
+        ? new Date(data.createdAt.seconds * 1000)
+        : null,
+      updatedAt: data.updatedAt
+        ? new Date(data.updatedAt.seconds * 1000)
+        : null,
+      hashId: data.hashId,
+      createdUserId: data.createdUserId
+    }
+  }
+}
+
+export const ticketMetaConverter: FirestoreDataConverter<SockbaseTicketMeta> = {
+  toFirestore: (ticketMeta: SockbaseTicketMeta) => ({
+    applicationStatus: ticketMeta.applicationStatus
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketMeta => {
+    const data = snapshot.data()
+    return {
+      applicationStatus: data.applicationStatus
+    }
+  }
+}
+
+export const ticketUserConverter: FirestoreDataConverter<SockbaseTicketUserDocument> = {
+  toFirestore: (data: SockbaseTicketUserDocument) => ({
+    usableUserId: data.usableUserId
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketUserDocument => {
+    const data = snapshot.data()
+    return {
+      hashId: snapshot.id,
+      userId: data.userId,
+      storeId: data.storeId,
+      typeId: data.typeId,
+      usableUserId: data.usableUserId,
+      used: data.used,
+      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const ticketUsedStatusConverter: FirestoreDataConverter<SockbaseTicketUsedStatus> = {
+  toFirestore: (usedStatus: SockbaseTicketUsedStatus) => ({
+    used: usedStatus.used,
+    usedAt: serverTimestamp()
+  }),
+  fromFirestore: (
+    snapshot: QueryDocumentSnapshot
+  ): SockbaseTicketUsedStatus => {
+    const data = snapshot.data()
+    return {
+      used: data.used,
+      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const ticketHashIdConverter: FirestoreDataConverter<SockbaseTicketHashIdDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketHashIdDocument => {
+    const data = snapshot.data()
+    return {
+      hashId: data.hashId,
+      ticketId: data.ticketId,
+      paymentId: data.paymentId
     }
   }
 }
