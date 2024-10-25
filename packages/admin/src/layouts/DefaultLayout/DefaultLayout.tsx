@@ -1,8 +1,11 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
+import { MdClose, MdMenu } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
+import LogotypeSVG from '../../assets/logotype.svg'
 import useFirebase from '../../hooks/useFirebase'
 import useRole from '../../hooks/useRole'
+import useWindowDimension from '../../hooks/useWindowDimension'
 import AuthenticateProvider from '../../libs/AuthenticateProvider'
 import Root from '../Root'
 import Sidebar from './Sidebar'
@@ -19,6 +22,9 @@ const DefaultLayout: React.FC<Props> = (props) => {
   const navigate = useNavigate()
   const { user, logoutAsync } = useFirebase()
   const { commonRole, systemRole } = useRole()
+  const { isSmallDisplay } = useWindowDimension()
+
+  const [showMenu, setShowMenu] = useState(false)
 
   const handleLogout = useCallback(() => {
     logoutAsync()
@@ -39,11 +45,24 @@ const DefaultLayout: React.FC<Props> = (props) => {
       <Root title={props.title}>
         <Container>
           <SidebarWrap>
+            <HeaderWrap>
+              <BrandArea>
+                <BrandLogotype src={LogotypeSVG} alt="Logo" />
+              </BrandArea>
+              <MenuButtonArea>
+                {isSmallDisplay && (
+                  <MenuButton onClick={() => setShowMenu(!showMenu)}>
+                    {showMenu ? <MdClose /> : <MdMenu />}
+                  </MenuButton>
+                )}
+              </MenuButtonArea>
+            </HeaderWrap>
             <Sidebar
               user={user}
               logout={handleLogout}
               commonRole={commonRole}
-              systemRole={systemRole} />
+              systemRole={systemRole}
+              showMenu={isSmallDisplay === false || showMenu} />
           </SidebarWrap>
           <MainWrap>
             {props.children}
@@ -65,7 +84,41 @@ const Container = styled.div`
     grid-template-columns: 1fr;
   }
 `
-const SidebarWrap = styled.div``
+const SidebarWrap = styled.div`
+  background-color: var(--background-light-color);
+  color: var(--text-color);
+`
 const MainWrap = styled.div`
   padding: 20px;
+`
+const HeaderWrap = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 40px;
+  background-color: var(--background-gray-color);
+`
+const BrandArea = styled.div`
+  padding: 10px;
+  font-size: 0;
+`
+const BrandLogotype = styled.img`
+  height: 16px;
+`
+const MenuButtonArea = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0;
+`
+const MenuButton = styled.button`
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  svg {
+    width: 24px;
+    height: 24px;
+    color: var(--text-foreground-color);
+  }
 `

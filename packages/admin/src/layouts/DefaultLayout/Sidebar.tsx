@@ -1,11 +1,11 @@
 import { MdBadge, MdEditCalendar, MdHome, MdInbox, MdInfo, MdLogin, MdLogout, MdQrCodeScanner, MdStore } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import LogotypeSVG from '../../assets/logotype.svg'
 import type { User } from 'firebase/auth'
 import type { SockbaseRole } from 'sockbase'
 
 interface Props {
+  showMenu: boolean
   user: User | null | undefined
   commonRole: SockbaseRole | null | undefined
   systemRole: SockbaseRole | null | undefined
@@ -14,107 +14,95 @@ interface Props {
 
 const Sidebar: React.FC<Props> = (props) => {
   return (
-    <Container>
-      <BrandWrap>
-        <BrandLogotype src={LogotypeSVG} alt="Logo" />
-      </BrandWrap>
-      <MenuWrap>
-        {props.user === null && (
-          <MenuSection>
-            <MenuLinkItem to="/login">
-              <MenuIcon><MdLogin /></MenuIcon>
-              <MenuLabel>ログイン</MenuLabel>
-            </MenuLinkItem>
-          </MenuSection>
-        )}
-        {props.user && (
-          <>
+    props.showMenu
+      ? <Container>
+        <MenuWrap>
+          {props.user === null && (
             <MenuSection>
-              <MenuItemCard>
-                <MenuItemCardTitle>ログイン中ユーザ</MenuItemCardTitle>
-                <MenuItemCardContent>
-                  {props.user.email}
-                </MenuItemCardContent>
-              </MenuItemCard>
-              <MenuButtonItem onClick={props.logout}>
-                <MenuIcon><MdLogout /></MenuIcon>
-                <MenuLabel>ログアウト</MenuLabel>
-              </MenuButtonItem>
+              <MenuLinkItem to="/login">
+                <MenuIcon><MdLogin /></MenuIcon>
+                <MenuLabel>ログイン</MenuLabel>
+              </MenuLinkItem>
             </MenuSection>
-            {(props.commonRole ?? 0) >= 1 && (
-              <>
+          )}
+          {props.user && (
+            <>
+              <MenuSection>
+                <MenuItemCard>
+                  <MenuItemCardTitle>ログイン中ユーザ</MenuItemCardTitle>
+                  <MenuItemCardContent>
+                    {props.user.email}
+                  </MenuItemCardContent>
+                </MenuItemCard>
+                <MenuButtonItem onClick={props.logout}>
+                  <MenuIcon><MdLogout /></MenuIcon>
+                  <MenuLabel>ログアウト</MenuLabel>
+                </MenuButtonItem>
+              </MenuSection>
+              {(props.commonRole ?? 0) >= 1 && (
+                <>
+                  <MenuSection>
+                    <MenuItemRack>
+                      <MenuLinkItem to="/">
+                        <MenuIcon><MdHome /></MenuIcon>
+                        <MenuLabel>ホーム</MenuLabel>
+                      </MenuLinkItem>
+                      <MenuLinkItem to="/license">
+                        <MenuIcon><MdBadge /></MenuIcon>
+                        <MenuLabel>権限</MenuLabel>
+                      </MenuLinkItem>
+                    </MenuItemRack>
+                  </MenuSection>
+                  <MenuSection>
+                    <MenuSectionTitle>入場管理</MenuSectionTitle>
+                    <MenuItemRack>
+                      <MenuLinkItem to="/tickets/terminal">
+                        <MenuIcon><MdQrCodeScanner /></MenuIcon>
+                        <MenuLabel>チケット照会ターミナル</MenuLabel>
+                      </MenuLinkItem>
+                    </MenuItemRack>
+                  </MenuSection>
+                </>
+              )}
+              {(props.systemRole ?? 0) >= 2 && (<>
                 <MenuSection>
+                  <MenuSectionTitle>イベント管理</MenuSectionTitle>
                   <MenuItemRack>
-                    <MenuLinkItem to="/">
-                      <MenuIcon><MdHome /></MenuIcon>
-                      <MenuLabel>ホーム</MenuLabel>
+                    <MenuLinkItem to="/events">
+                      <MenuIcon><MdEditCalendar /></MenuIcon>
+                      <MenuLabel>イベント管理</MenuLabel>
                     </MenuLinkItem>
-                    <MenuLinkItem to="/license">
-                      <MenuIcon><MdBadge /></MenuIcon>
-                      <MenuLabel>権限</MenuLabel>
+                    <MenuLinkItem to="/stores">
+                      <MenuIcon><MdStore /></MenuIcon>
+                      <MenuLabel>チケットストア管理</MenuLabel>
                     </MenuLinkItem>
                   </MenuItemRack>
                 </MenuSection>
                 <MenuSection>
-                  <MenuSectionTitle>入場管理</MenuSectionTitle>
+                  <MenuSectionTitle>システム管理</MenuSectionTitle>
                   <MenuItemRack>
-                    <MenuLinkItem to="/tickets/terminal">
-                      <MenuIcon><MdQrCodeScanner /></MenuIcon>
-                      <MenuLabel>チケット照会ターミナル</MenuLabel>
+                    <MenuLinkItem to="/inquiries">
+                      <MenuIcon><MdInbox /></MenuIcon>
+                      <MenuLabel>問い合わせ管理</MenuLabel>
+                    </MenuLinkItem>
+                    <MenuLinkItem to="/informations">
+                      <MenuIcon><MdInfo /></MenuIcon>
+                      <MenuLabel>お知らせ管理</MenuLabel>
                     </MenuLinkItem>
                   </MenuItemRack>
                 </MenuSection>
-              </>
-            )}
-            {(props.systemRole ?? 0) >= 2 && (<>
-              <MenuSection>
-                <MenuSectionTitle>イベント管理</MenuSectionTitle>
-                <MenuItemRack>
-                  <MenuLinkItem to="/events">
-                    <MenuIcon><MdEditCalendar /></MenuIcon>
-                    <MenuLabel>イベント管理</MenuLabel>
-                  </MenuLinkItem>
-                  <MenuLinkItem to="/stores">
-                    <MenuIcon><MdStore /></MenuIcon>
-                    <MenuLabel>チケットストア管理</MenuLabel>
-                  </MenuLinkItem>
-                </MenuItemRack>
-              </MenuSection>
-              <MenuSection>
-                <MenuSectionTitle>システム管理</MenuSectionTitle>
-                <MenuItemRack>
-                  <MenuLinkItem to="/inquiries">
-                    <MenuIcon><MdInbox /></MenuIcon>
-                    <MenuLabel>問い合わせ管理</MenuLabel>
-                  </MenuLinkItem>
-                  <MenuLinkItem to="/informations">
-                    <MenuIcon><MdInfo /></MenuIcon>
-                    <MenuLabel>お知らせ管理</MenuLabel>
-                  </MenuLinkItem>
-                </MenuItemRack>
-              </MenuSection>
-            </>)}
-          </>
-        )}
-      </MenuWrap>
-    </Container>
+              </>)}
+            </>
+          )}
+        </MenuWrap>
+      </Container>
+      : <></>
   )
 }
 
 export default Sidebar
 
 const Container = styled.div`
-  min-height: 100%;
-  background-color: var(--background-light-color);
-  color: var(--text-color);
-`
-const BrandWrap = styled.div`
-  background-color: var(--background-gray-color);
-  padding: 10px;
-  font-size: 0;
-`
-const BrandLogotype = styled.img`
-  height: 16px;
 `
 const MenuWrap = styled.div`
   padding: 10px;
