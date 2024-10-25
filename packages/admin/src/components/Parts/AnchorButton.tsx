@@ -1,12 +1,11 @@
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import buttonStyle from '../Mixins/buttonStyle'
 
-const LinkButton = styled(Link)`
+const AnchorButton = styled.a`
   ${buttonStyle}
   display: inline-block;
   text-decoration: none;
   color: inherit;
 `
 
-export default LinkButton
+export default AnchorButton

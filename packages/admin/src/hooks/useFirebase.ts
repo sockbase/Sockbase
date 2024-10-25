@@ -3,7 +3,6 @@ import {
   type Auth,
   type User,
   type UserCredential,
-  type Unsubscribe,
   type IdTokenResult,
   getAuth as getFirebaseAuth,
   signInWithEmailAndPassword,
@@ -61,7 +60,7 @@ const useFirebase = (): IUseFirebase => {
   const [roles, setRoles] = useState<Record<string, SockbaseRole> | null>()
 
   const getAuth =
-    (): Auth => {
+    useCallback(() => {
       if (auth) {
         return auth
       }
@@ -71,18 +70,18 @@ const useFirebase = (): IUseFirebase => {
       setAuth(_auth)
 
       return _auth
-    }
+    }, [])
 
   const loginByEmailAsync =
-    async (email: string, password: string): Promise<UserCredential> => {
+    useCallback(async (email: string, password: string) => {
       const auth = getAuth()
       const credential = await signInWithEmailAndPassword(auth, email, password)
         .catch(err => { throw err })
       return credential
-    }
+    }, [])
 
   const logoutAsync =
-    async (): Promise<void> => {
+    useCallback(async () => {
       const auth = getAuth()
       await signOut(auth)
         .then(() => {
@@ -91,57 +90,61 @@ const useFirebase = (): IUseFirebase => {
           setRoles(null)
         })
         .catch(err => { throw err })
-    }
+    }, [])
 
   const createUserAsync =
-    async (email: string, password: string): Promise<User> => {
+    useCallback(async (email: string, password: string) => {
       const auth = getAuth()
       return await createUserWithEmailAndPassword(auth, email, password)
         .then((cred) => cred.user)
         .catch(err => { throw err })
-    }
+    }, [])
 
   const sendPasswordResetURLAsync =
-    async (email: string): Promise<void> => {
+    useCallback(async (email: string) => {
       const auth = getAuth()
       await sendPasswordResetEmail(auth, email)
         .catch(err => { throw err })
-    }
+    }, [])
 
   const sendVerifyMailAsync =
-    useCallback(async (): Promise<void> => {
+    useCallback(async () => {
       if (!user) return
       sendEmailVerification(user)
         .catch(err => { throw err })
     }, [user])
 
-  const verifyPasswordResetCodeAsync = async (code: string): Promise<void> => {
-    const auth = getAuth()
-    await verifyPasswordResetCode(auth, code)
-  }
+  const verifyPasswordResetCodeAsync =
+    useCallback(async (code: string) => {
+      const auth = getAuth()
+      await verifyPasswordResetCode(auth, code)
+    }, [])
 
-  const confirmPasswordResetAsync = async (code: string, password: string): Promise<void> => {
-    const auth = getAuth()
-    await confirmPasswordReset(auth, code, password)
-  }
+  const confirmPasswordResetAsync =
+    useCallback(async (code: string, password: string): Promise<void> => {
+      const auth = getAuth()
+      await confirmPasswordReset(auth, code, password)
+    }, [])
 
-  const applyActionCodeAsync = async (code: string): Promise<void> => {
-    const auth = getAuth()
-    await applyActionCode(auth, code)
-  }
+  const applyActionCodeAsync =
+    useCallback(async (code: string): Promise<void> => {
+      const auth = getAuth()
+      await applyActionCode(auth, code)
+    }, [])
 
-  const getFirestore = (): Firestore => getFirebaseFirestore()
+  const getFirestore = getFirebaseFirestore
 
-  const getStorage = (): FirebaseStorage => getFirebaseStorage()
+  const getStorage = getFirebaseStorage
 
-  const getFunctions = (): Functions => {
-    const app = getFirebaseApp()
-    return getFirebaseFunctions(app)
-  }
+  const getFunctions =
+    useCallback(() => {
+      const app = getFirebaseApp()
+      return getFirebaseFunctions(app)
+    }, [])
 
-  const getDatabase = (): Database => getFirebaseDatabase()
+  const getDatabase = getFirebaseDatabase
 
-  useEffect((): Unsubscribe => {
+  useEffect(() => {
     const auth = getAuth()
     const unSubscribe = onIdTokenChanged(auth, (user) => {
       setUser(user)

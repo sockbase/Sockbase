@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { MdAdd, MdEditCalendar } from 'react-icons/md'
+import { MdAdd, MdStore } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -42,7 +42,7 @@ const StoreListPage: React.FC = () => {
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
       <PageTitle
-        icon={<MdEditCalendar />}
+        icon={<MdStore />}
         title="チケットストア管理" />
 
       {isSystemAdmin && <FormSection>

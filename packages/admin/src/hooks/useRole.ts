@@ -58,7 +58,7 @@ const useRole = (): IUseRole => {
     }, [roles])
 
   const commonRole =
-    useMemo((): SockbaseRole | null | undefined => {
+    useMemo(() => {
       if (roles === undefined) return undefined
       if (roles === null) { return sockbaseShared.enumerations.user.permissionRoles.user }
 
@@ -67,7 +67,7 @@ const useRole = (): IUseRole => {
     }, [roles])
 
   const systemRole =
-    useMemo((): SockbaseRole | null | undefined => {
+    useMemo(() => {
       if (roles === undefined) return undefined
       if (roles === null) { return sockbaseShared.enumerations.user.permissionRoles.user }
 

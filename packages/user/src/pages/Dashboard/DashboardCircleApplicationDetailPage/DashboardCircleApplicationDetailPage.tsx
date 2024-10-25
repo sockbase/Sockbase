@@ -1,8 +1,6 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { MdBookmarkAdd, MdEdit, MdImage } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import sockbaseShared from 'shared'
-import FormButton from '../../../components/Form/Button'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import Alert from '../../../components/Parts/Alert'
@@ -18,7 +16,6 @@ import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
 import useEvent from '../../../hooks/useEvent'
 import usePayment from '../../../hooks/usePayment'
-import useRole from '../../../hooks/useRole'
 import useUserData from '../../../hooks/useUserData'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
@@ -28,7 +25,6 @@ import type {
   SockbaseAccount,
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
-  SockbaseApplicationStatus,
   SockbaseEvent,
   SockbaseApplicationLinksDocument,
   SockbaseSpaceDocument,
@@ -37,24 +33,21 @@ import type {
 } from 'sockbase'
 
 const DashboardCircleApplicationDetailPage: React.FC = () => {
+  const { hashedAppId } = useParams()
+
   const {
     getApplicationIdByHashedIdAsync,
     getApplicationByIdAsync,
     getCircleCutURLByHashedIdNullableAsync,
-    updateApplicationStatusByIdAsync,
     getLinksByApplicationIdOptionalAsync,
-    getOverviewByApplicationIdOptionalAsync,
-    deleteApplicationAsync
+    getOverviewByApplicationIdOptionalAsync
   } = useApplication()
   const { getPaymentIdByHashId, getPaymentAsync } = usePayment()
   const { getEventByIdAsync, getSpaceOptionalAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
-  const { checkIsAdminByOrganizationId, isSystemAdmin } = useRole()
   const { formatByDate } = useDayjs()
 
-  const { hashedAppId } = useParams()
   const [app, setApp] = useState<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>()
-  const [appId, setAppId] = useState<string>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
   const [event, setEvent] = useState<SockbaseEvent>()
   const [userData, setUserData] = useState<SockbaseAccount>()
@@ -62,8 +55,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   const [overview, setOverview] = useState<SockbaseApplicationOverviewDocument | null>()
   const [space, setSpace] = useState<SockbaseSpaceDocument | null>()
   const [circleCutURL, setCircleCutURL] = useState<string | null>()
-  const [isAdmin, setAdmin] = useState<boolean | null>()
-  const [applicationDeleted, setApplicationDeleted] = useState(false)
 
   const now = useMemo(() => new Date().getTime(), [])
 
@@ -82,47 +73,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
     const genreInfo = event.genres.filter(g => g.id === app.circle.genre)[0]
     return genreInfo.name
   }, [event, app])
-
-  const handleChangeStatus = useCallback((status: SockbaseApplicationStatus): void => {
-    if (!appId || !isAdmin) return
-    if (!confirm('ステータスを変更します。\nよろしいですか？')) return
-
-    updateApplicationStatusByIdAsync(appId, status)
-      .then(() => {
-        alert('ステータスの変更に成功しました。')
-        setApp(s => {
-          if (!s) return
-          return { ...s, meta: { ...s.meta, applicationStatus: status } }
-        })
-      })
-      .catch(err => {
-        throw err
-      })
-  }, [appId, isAdmin])
-
-  const handleDelete = useCallback(() => {
-    if (!hashedAppId) return
-
-    const promptAppId = prompt(`この申し込みを削除するには ${hashedAppId} と入力してください`)
-    if (promptAppId === null) {
-      return
-    } else if (promptAppId !== hashedAppId) {
-      alert('入力が間違っています')
-      return
-    }
-
-    if (!confirm('※不可逆的操作です※\nこの申し込みを削除します。\nよろしいですか？')) return
-
-    deleteApplicationAsync(hashedAppId)
-      .then(() => {
-        setApplicationDeleted(true)
-        alert('削除が完了しました')
-      })
-      .catch(err => {
-        alert('削除する際にエラーが発生しました')
-        throw err
-      })
-  }, [hashedAppId])
 
   useEffect(() => {
     const fetchApplicationAsync: () => Promise<void> =
@@ -155,7 +105,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
             .catch(err => { throw err })
         }
 
-        setAppId(fetchedAppHashDoc.applicationId)
         setApp(fetchedApp)
       }
     fetchApplicationAsync()
@@ -173,14 +122,11 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
         .catch(err => { throw err })
 
       const fetchedEvent = await getEventByIdAsync(app.eventId)
-      const fetchedIsAdmin = checkIsAdminByOrganizationId(fetchedEvent._organization.id)
-
       setEvent(fetchedEvent)
-      setAdmin(fetchedIsAdmin)
     }
     fetch()
       .catch(err => { throw err })
-  }, [app, checkIsAdminByOrganizationId])
+  }, [app])
 
   return (
     <DashboardBaseLayout title={title} requireSystemRole={0}>
@@ -368,16 +314,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               </LinkButton>
             </FormItem>
           </FormSection>}
-
-          {/* <h3>頒布物情報デジタル提出</h3>
-          <p>
-            入力されていません
-          </p>
-          <FormSection>
-            <FormItem>
-              <FormButton>頒布物情報の編集</FormButton>
-            </FormItem>
-          </FormSection> */}
         </>
         <>
           <h3>頒布物情報</h3>
@@ -451,39 +387,6 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
       <p>
         {app ? (app.remarks || '(空欄)') : <BlinkField />}
       </p>
-
-      {isAdmin !== undefined && isAdmin && app && <>
-        <h2>操作</h2>
-        <FormSection>
-          {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.provisional &&
-            <FormItem>
-              <FormButton
-                color="default"
-                onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.provisional)}>仮申し込み状態にする</FormButton>
-            </FormItem>}
-          {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.confirmed &&
-            <FormItem>
-              <FormButton
-                color="info"
-                onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.confirmed)}>申し込み確定状態にする</FormButton>
-            </FormItem>}
-          {app.meta.applicationStatus !== sockbaseShared.enumerations.application.status.canceled &&
-            <FormItem>
-              <FormButton
-                color="danger"
-                onClick={() => handleChangeStatus(sockbaseShared.enumerations.application.status.canceled)}>キャンセル状態にする</FormButton>
-            </FormItem>}
-        </FormSection>
-      </>}
-
-      {isSystemAdmin && <>
-        <h2>システム管理操作</h2>
-        <FormSection>
-          <FormItem>
-            <FormButton color="danger" onClick={handleDelete} disabled={applicationDeleted}>申し込み削除</FormButton>
-          </FormItem>
-        </FormSection>
-      </>}
     </DashboardBaseLayout>
   )
 }

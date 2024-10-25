@@ -13,7 +13,7 @@ const useStore = (): IUseStore => {
   const db = getFirestore()
 
   const getStoreByIdAsync =
-    useCallback(async (storeId: string): Promise<SockbaseStoreDocument> => {
+    useCallback(async (storeId: string) => {
       const storeRef = doc(db, 'stores', storeId)
         .withConverter(storeConverter)
 
@@ -26,7 +26,7 @@ const useStore = (): IUseStore => {
     }, [])
 
   const getStoresByOrganizationIdAsync =
-    useCallback(async (organizationId: string): Promise<SockbaseStoreDocument[]> => {
+    useCallback(async (organizationId: string) => {
       const storesRef = collection(db, 'stores')
         .withConverter(storeConverter)
       const storesQuery = query(

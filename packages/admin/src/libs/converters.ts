@@ -1,5 +1,40 @@
 import type { DocumentData, FirestoreDataConverter, QueryDocumentSnapshot } from 'firebase/firestore'
-import type { SockbaseEventDocument, SockbaseInformationDocument, SockbaseInquiryDocument, SockbaseInquiryMetaDocument, SockbaseStoreDocument } from 'sockbase'
+import type {
+  SockbaseAccount,
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationLinksDocument,
+  SockbaseApplicationMeta,
+  SockbaseEventDocument,
+  SockbaseInformationDocument,
+  SockbaseInquiryDocument,
+  SockbaseInquiryMetaDocument,
+  SockbaseStoreDocument
+} from 'sockbase'
+
+export const accountConverter: FirestoreDataConverter<SockbaseAccount> = {
+  toFirestore: (userData: SockbaseAccount): DocumentData => ({
+    name: userData.name,
+    email: userData.email,
+    birthday: userData.birthday,
+    postalCode: userData.postalCode,
+    address: userData.address,
+    telephone: userData.telephone,
+    gender: userData.gender
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseAccount => {
+    const data = snapshot.data()
+    return {
+      name: data.name,
+      email: data.email,
+      birthday: new Date(data.birthday).getTime(),
+      postalCode: data.postalCode,
+      address: data.address,
+      telephone: data.telephone,
+      gender: data.gender
+    }
+  }
+}
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
   toFirestore: (event: SockbaseEventDocument): DocumentData => ({
@@ -134,3 +169,79 @@ export const inquiryMetaConverter: FirestoreDataConverter<SockbaseInquiryMetaDoc
       }
     }
   }
+
+export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDocument> = {
+  toFirestore: (app: SockbaseApplicationDocument): DocumentData => ({}),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationDocument => {
+    const app = snapshot.data()
+    return {
+      id: snapshot.id,
+      hashId: app.hashId,
+      userId: app.userId,
+      eventId: app.eventId,
+      spaceId: app.spaceId,
+      circle: app.circle,
+      overview: app.overview,
+      unionCircleId: app.unionCircleId,
+      petitCode: app.petitCode,
+      paymentMethod: app.paymentMethod,
+      remarks: app.remarks,
+      createdAt: app.createdAt ? new Date(app.createdAt.seconds * 1000) : null,
+      updatedAt: app.updatedAt ? new Date(app.updatedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const applicationMetaConverter: FirestoreDataConverter<SockbaseApplicationMeta> = {
+  toFirestore: (meta: SockbaseApplicationMeta) => ({
+    applicationStatus: meta.applicationStatus
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationMeta => {
+    const meta = snapshot.data()
+    return {
+      applicationStatus: meta.applicationStatus
+    }
+  }
+}
+
+export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
+  toFirestore: (app: SockbaseApplicationHashIdDocument): DocumentData => ({
+    spaceId: app.spaceId
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationHashIdDocument => {
+    const hashDoc = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: hashDoc.userId,
+      applicationId: hashDoc.applicationId,
+      hashId: hashDoc.hashId,
+      paymentId: hashDoc.paymentId,
+      spaceId: hashDoc.spaceId,
+      organizationId: hashDoc.organizationId,
+      eventId: hashDoc.eventId
+    }
+  }
+}
+
+export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicationLinksDocument> = {
+  toFirestore: (links: SockbaseApplicationLinksDocument) => ({
+    userId: links.userId,
+    applicationId: links.applicationId,
+    twitterScreenName: links.twitterScreenName,
+    pixivUserId: links.pixivUserId,
+    websiteURL: links.websiteURL,
+    menuURL: links.menuURL
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationLinksDocument => {
+    const links = snapshot.data()
+    return {
+      id: snapshot.id,
+      userId: links.userId,
+      applicationId: links.applicationId,
+      twitterScreenName: links.twitterScreenName,
+      pixivUserId: links.pixivUserId,
+      websiteURL: links.websiteURL,
+      menuURL: links.menuURL
+    }
+  }
+}
