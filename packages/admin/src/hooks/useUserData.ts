@@ -5,6 +5,7 @@ import useFirebase from './useFirebase'
 import type { SockbaseAccount } from 'sockbase'
 
 interface IUseUserData {
+  getUserDataByUserIdAsync: (userId: string) => Promise<SockbaseAccount>
   getUserDataByUserIdAndEventIdAsync: (userId: string, eventId: string) => Promise<SockbaseAccount>
   getUserDataByUserIdAndStoreIdAsync: (userId: string, storeId: string) => Promise<SockbaseAccount>
 }
@@ -12,6 +13,17 @@ interface IUseUserData {
 const useUserData = (): IUseUserData => {
   const { getFirestore } = useFirebase()
   const db = getFirestore()
+
+  const getUserDataByUserIdAsync =
+    async (userId: string): Promise<SockbaseAccount> => {
+      const userRef = doc(db, 'users', userId)
+        .withConverter(accountConverter)
+      const userDoc = await getDoc(userRef)
+      if (!userDoc.exists()) {
+        throw new Error('user not found')
+      }
+      return userDoc.data()
+    }
 
   const getUserDataByUserIdAndEventIdAsync =
     useCallback(async (userId: string, eventId: string) => {
@@ -39,6 +51,7 @@ const useUserData = (): IUseUserData => {
     }, [])
 
   return {
+    getUserDataByUserIdAsync,
     getUserDataByUserIdAndEventIdAsync,
     getUserDataByUserIdAndStoreIdAsync
   }

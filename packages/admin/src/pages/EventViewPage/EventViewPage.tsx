@@ -121,7 +121,7 @@ const EventViewPage: React.FC = () => {
           <LinkButton to="/" disabled>
             <IconLabel icon={<MdListAlt />} label='Soleil' />
           </LinkButton>
-          <LinkButton to="/" disabled>
+          <LinkButton to={`/events/${eventId}/send-mail`}>
             <IconLabel icon={<MdMail />} label='メール送信' />
           </LinkButton>
           <LinkButton to="/" disabled>
