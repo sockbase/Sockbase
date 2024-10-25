@@ -22,7 +22,7 @@ const useInquiry = (): IUseInquiry => {
   const db = getFirestore()
 
   const getInquiries =
-    useCallback(async (): Promise<SockbaseInquiryDocument[]> => {
+    useCallback(async () => {
       const inquiriesRef = collection(db, '_inquiries')
         .withConverter(inquiryConverter)
 
@@ -33,7 +33,7 @@ const useInquiry = (): IUseInquiry => {
     }, [])
 
   const getInquiryMetaByInquiryIdAsync =
-    useCallback(async (inquiryId: string): Promise<SockbaseInquiryMetaDocument> => {
+    useCallback(async (inquiryId: string) => {
       const db = getFirestore()
       const inquiryMetaRef = doc(db, `/_inquiries/${inquiryId}/private/meta`)
         .withConverter(inquiryMetaConverter)

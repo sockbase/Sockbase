@@ -1,5 +1,6 @@
 import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
+import CircleViewPage from './pages/CircleViewPage/CircleViewPage'
 import EventListPage from './pages/EventListPage/EventListPage'
 import EventViewPage from './pages/EventViewPage/EventViewPage'
 import IndexPage from './pages/IndexPage/IndexPage'
@@ -68,6 +69,15 @@ const routes = createBrowserRouter([
           {
             path: ':eventId',
             element: <EventViewPage />
+          }
+        ]
+      },
+      {
+        path: 'circles',
+        children: [
+          {
+            path: ':hashId',
+            element: <CircleViewPage />
           }
         ]
       },

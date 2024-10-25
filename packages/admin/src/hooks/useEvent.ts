@@ -14,7 +14,7 @@ const useEvent = (): IUseEvent => {
   const db = getFirestore()
 
   const getEventByIdAsync =
-    useCallback(async (eventId: string): Promise<SockbaseEventDocument> => {
+    useCallback(async (eventId: string) => {
       const eventRef = doc(db, 'events', eventId)
         .withConverter(eventConverter)
 
@@ -27,7 +27,7 @@ const useEvent = (): IUseEvent => {
     }, [])
 
   const getEventsByOrganizationIdAsync =
-    useCallback(async (organizationId: string): Promise<SockbaseEventDocument[]> => {
+    useCallback(async (organizationId: string) => {
       const eventsRef = collection(db, 'events')
         .withConverter(eventConverter)
       const eventsQuery = query(

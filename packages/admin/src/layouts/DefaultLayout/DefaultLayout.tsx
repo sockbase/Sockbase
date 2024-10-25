@@ -59,7 +59,7 @@ export default DefaultLayout
 const Container = styled.div`
   height: 100%;
   display: grid;
-  grid-template-columns: 320px 1fr;
+  grid-template-columns: 280px 1fr;
   @media screen and (max-width: 840px) {
     grid-template-rows: auto 1fr;
     grid-template-columns: 1fr;
