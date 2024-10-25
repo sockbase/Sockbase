@@ -168,7 +168,7 @@ const DashboardEventApplicationListPage: React.FC = () => {
   }, [event])
 
   return (
-    <DashboardBaseLayout title={title} requireCommonRole={2}>
+    <DashboardBaseLayout title={title}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li>管理イベント</li>

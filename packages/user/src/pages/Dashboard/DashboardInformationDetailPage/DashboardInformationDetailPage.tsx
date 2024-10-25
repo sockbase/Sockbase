@@ -37,7 +37,7 @@ const DashboardInformationDetailPage: React.FC = () => {
   }, [informationId])
 
   return (
-    <DashboardBaseLayout title="お知らせ詳細" requireSystemRole={2}>
+    <DashboardBaseLayout title="お知らせ詳細">
       <Breadcrumbs>
         <li><Link to="/dashboard">ホーム</Link></li>
         <li>お知らせ管理</li>

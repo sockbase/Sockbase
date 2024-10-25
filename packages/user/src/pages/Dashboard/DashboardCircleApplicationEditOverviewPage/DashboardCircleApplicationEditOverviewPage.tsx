@@ -97,7 +97,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
   }, [appId, overview, errorCount, setOverviewByApplicationIdAsync])
 
   return (
-    <DashboardBaseLayout title="頒布物情報編集" requireSystemRole={0}>
+    <DashboardBaseLayout title="頒布物情報編集">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>

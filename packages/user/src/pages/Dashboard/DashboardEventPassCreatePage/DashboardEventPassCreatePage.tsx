@@ -99,7 +99,7 @@ const DashboardEventPassCreatePage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DashboardBaseLayout requireCommonRole={2} title="サークル通行証発券">
+    <DashboardBaseLayout title="サークル通行証発券">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li>管理イベント</li>

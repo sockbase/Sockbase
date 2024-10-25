@@ -60,7 +60,7 @@ const DashboardStreamTerminalPage: React.FC = () => {
   }, [isCopied])
 
   return (
-    <DashboardBaseLayout title="ストリームターミナル" requireCommonRole={2}>
+    <DashboardBaseLayout title="ストリームターミナル">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

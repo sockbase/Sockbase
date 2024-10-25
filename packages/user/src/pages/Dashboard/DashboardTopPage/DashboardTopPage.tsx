@@ -4,7 +4,6 @@ import {
   MdLocalActivity,
   MdMail,
   MdPayments,
-  MdQrCodeScanner,
   MdSettings,
   MdWallet
 } from 'react-icons/md'
@@ -13,15 +12,12 @@ import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import AnchorButton from '../../../components/Parts/AnchorButton'
 import TopCard from '../../../components/Parts/TopCard'
-import useRole from '../../../hooks/useRole'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 import InformationList from '../../IndexPage/InformationList'
 
 const DashboardTopPage: React.FC = () => {
-  const { commonRole } = useRole()
-
   return (
     <DashboardBaseLayout title="マイページ トップ">
       <PageTitle
@@ -72,17 +68,6 @@ const DashboardTopPage: React.FC = () => {
               title="マイページ設定"
               description="Sockbase に登録している情報を変更します。" />
           </CardContainer>
-
-          {!!commonRole && commonRole >= 1 && <>
-            <h2>イベント開催支援</h2>
-            <CardContainer>
-              <TopCard
-                to="/dashboard/tickets/terminal"
-                icon={<MdQrCodeScanner />}
-                title="チケット照会ターミナル"
-                description="チケットコードを用いて情報を表示し、使用ステータスを管理します。" />
-            </CardContainer>
-          </>}
         </>
         <>
           <InformationList />

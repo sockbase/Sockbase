@@ -94,7 +94,7 @@ const DashboardInquiryListPage: React.FC = () => {
   }, [])
 
   return (
-    <DashboardBaseLayout title="お問い合わせ一覧" requireSystemRole={2}>
+    <DashboardBaseLayout title="お問い合わせ一覧">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li>問い合わせ一覧</li>

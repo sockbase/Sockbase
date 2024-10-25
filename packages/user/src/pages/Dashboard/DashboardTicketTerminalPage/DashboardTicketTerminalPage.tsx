@@ -255,7 +255,7 @@ const DashboardTicketTerminalPage: React.FC = () => {
   }, [keyDownEvent])
 
   return (
-    <DashboardBaseLayout title="チケット照会ターミナル" requireCommonRole={1}>
+    <DashboardBaseLayout title="チケット照会ターミナル">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

@@ -18,7 +18,7 @@ const DashboardInformationCreatePage: React.FC = () => {
   }, [])
 
   return (
-    <DashboardBaseLayout title="お知らせ作成" requireSystemRole={2}>
+    <DashboardBaseLayout title="お知らせ作成">
       <Breadcrumbs>
         <li><Link to="/dashboard">ホーム</Link></li>
         <li>お知らせ管理</li>

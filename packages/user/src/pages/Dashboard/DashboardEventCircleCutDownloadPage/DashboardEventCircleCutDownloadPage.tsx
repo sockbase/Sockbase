@@ -151,7 +151,7 @@ const DashboardEventCircleCutDownloadPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DashboardBaseLayout title="サークルカット一覧" requireCommonRole={2}>
+    <DashboardBaseLayout title="サークルカット一覧">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li>管理イベント</li>

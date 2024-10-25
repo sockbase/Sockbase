@@ -103,7 +103,7 @@ const DashboardEventApplicationSoleilTSVExportPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DashboardBaseLayout title="Soleil データ出力" requireCommonRole={2}>
+    <DashboardBaseLayout title="Soleil データ出力">
       <Breadcrumbs>
         <li><Link to="/dashboard">ホーム</Link></li>
         <li>管理イベント</li>

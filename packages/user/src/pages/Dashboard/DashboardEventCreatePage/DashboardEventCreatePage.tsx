@@ -7,7 +7,7 @@ import StepContainer from './StepContainer/StepContainer'
 
 const DashboardEventCreatePage: React.FC = () => {
   return (
-    <DashboardBaseLayout title="イベント作成" requireSystemRole={2}>
+    <DashboardBaseLayout title="イベント作成">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li>管理イベント</li>
