@@ -47,7 +47,7 @@ const StoreListPage: React.FC = () => {
 
       {isSystemAdmin && <FormSection>
         <FormItem>
-          <LinkButton to="/events/create">
+          <LinkButton to="/events/create" disabled>
             <IconLabel icon={<MdAdd />} label='イベント作成' />
           </LinkButton>
         </FormItem>

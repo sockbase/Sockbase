@@ -1,6 +1,6 @@
 import { css } from 'styled-components'
 
-const buttonStyle = css`
+const buttonStyle = css<{ disabled?: boolean }>`
   padding: 5px 20px;
   border: 1px solid var(--border-color);
   border-radius: 5px;
@@ -16,9 +16,10 @@ const buttonStyle = css`
     background-color: var(--background-light2-color);
   }
 
-  &:disabled {
+  &[disabled] {
     background-color: var(--background-disabled-color);
     color: var(--text-disabled-color);
+    pointer-events: none;
   }
 `
 

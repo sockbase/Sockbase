@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   MdAddCircleOutline,
   MdDataset,
@@ -115,10 +115,10 @@ const StoreViewPage: React.FC = () => {
 
       <FormSection>
         <FormItem $inlined>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdAddCircleOutline />} label='チケット手動発券' />
           </LinkButton>
-          <LinkButton to="/">
+          <LinkButton to="/" disabled>
             <IconLabel icon={<MdDataset />} label='メタ情報参照' />
           </LinkButton>
           <AnchorButton href={`${envHelper.userAppURL}/stores/${storeId}`} target="_blank">
