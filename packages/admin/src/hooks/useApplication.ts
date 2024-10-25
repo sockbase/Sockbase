@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { collection, query, where, getDocs, doc, getDoc, setDoc, runTransaction } from 'firebase/firestore'
-import { deleteObject, ref } from 'firebase/storage'
+import { deleteObject, getDownloadURL, ref } from 'firebase/storage'
 import {
   applicationConverter,
   applicationHashIdConverter,
@@ -23,6 +23,7 @@ interface IUseApplication {
   getLinksByApplicationIdAsync: (appId: string) => Promise<SockbaseApplicationLinksDocument | null>
   setApplicationStatusByIdAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void>
   deleteApplicationAsync: (appHashId: string) => Promise<void>
+  getCircleCutURLByHashIdNullableAsync: (hashId: string) => Promise<string | null>
 }
 
 const useApplication = (): IUseApplication => {
@@ -148,13 +149,28 @@ const useApplication = (): IUseApplication => {
         })
     }, [])
 
+  const getCircleCutURLByHashIdAsync =
+    useCallback(async (hashedAppId: string): Promise<string> => {
+      const storage = getStorage()
+      const circleCutRef = ref(storage, `/circleCuts/${hashedAppId}`)
+      const circleCutURL = await getDownloadURL(circleCutRef)
+      return circleCutURL
+    }, [])
+
+  const getCircleCutURLByHashIdNullableAsync =
+    useCallback(async (hashId: string): Promise<string | null> => {
+      return await getCircleCutURLByHashIdAsync(hashId)
+        .catch(() => null)
+    }, [])
+
   return {
     getApplicationIdByHashIdAsync,
     getApplicationByIdAsync,
     getApplicationsByEventIdAsync,
     getLinksByApplicationIdAsync,
     setApplicationStatusByIdAsync,
-    deleteApplicationAsync
+    deleteApplicationAsync,
+    getCircleCutURLByHashIdNullableAsync
   }
 }
 

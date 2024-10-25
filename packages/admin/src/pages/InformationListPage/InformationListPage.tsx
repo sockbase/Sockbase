@@ -54,7 +54,7 @@ const InformationListPage: React.FC = () => {
             .map(i => <tr key={i.id}>
               <td>{formatByDate(i.updatedAt, 'YYYY年 M月 D日')}</td>
               <td><Link to={`/dashboard/informations/${i.id}`}>{i.title}</Link></td>
-              <td>{i.isPublished ? '公開' : '-'}</td>
+              <td>{i.isPublished ? '公開' : '---'}</td>
             </tr>)}
           {informations?.length === 0 && (
             <tr>

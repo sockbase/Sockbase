@@ -9,6 +9,7 @@ import type {
   SockbaseInformationDocument,
   SockbaseInquiryDocument,
   SockbaseInquiryMetaDocument,
+  SockbaseSpaceDocument,
   SockbaseStoreDocument
 } from 'sockbase'
 
@@ -242,6 +243,25 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
       pixivUserId: links.pixivUserId,
       websiteURL: links.websiteURL,
       menuURL: links.menuURL
+    }
+  }
+}
+
+export const spaceConverter: FirestoreDataConverter<SockbaseSpaceDocument> = {
+  toFirestore: (space: SockbaseSpaceDocument) => ({
+    eventId: space.eventId,
+    spaceGroupOrder: space.spaceGroupOrder,
+    spaceOrder: space.spaceOrder,
+    spaceName: space.spaceName
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseSpaceDocument => {
+    const space = snapshot.data()
+    return {
+      id: snapshot.id,
+      eventId: space.eventId,
+      spaceGroupOrder: space.spaceGroupOrder,
+      spaceOrder: space.spaceOrder,
+      spaceName: space.spaceName
     }
   }
 }
