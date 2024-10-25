@@ -6,6 +6,7 @@ import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import PageTitle from '../../components/Parts/PageTitle'
+import InquiryStatusLabel from '../../components/StatusLabel/InquiryStatusLabel'
 import useDayjs from '../../hooks/useDayjs'
 import useInquiry from '../../hooks/useInquiry'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
@@ -84,8 +85,9 @@ const InquiryListPage: React.FC = () => {
         <tbody>
           {filteredInquiries?.map((i) => (
             <tr key={i.id}>
+              <td><InquiryStatusLabel status={inquiryMetas?.[i.id]?.status ?? i.status} /></td>
               <td>{getInquiryType(i.inquiryType).name}</td>
-              <td>{i.id}</td>
+              <td><Link to={`/inquiries/${i.id}`}>{i.id}</Link></td>
               <td>{formatByDate(inquiryMetas?.[i.id]?.createdAt, 'YYYY/M/D H:mm')}</td>
             </tr>
           ))}

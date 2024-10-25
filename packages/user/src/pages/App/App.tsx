@@ -33,7 +33,6 @@ import DashboardEventPassCreatePage from '../Dashboard/DashboardEventPassCreateP
 import DashboardEventSpaceManagePage from '../Dashboard/DashboardEventSpaceManagePage/DashboardEventSpaceManagePage'
 import DashboardInformationCreatePage from '../Dashboard/DashboardInformationCreatePage/DashboardInformationCreatePage'
 import DashboardInformationDetailPage from '../Dashboard/DashboardInformationDetailPage/DashboardInformationDetailPage'
-import DashboardInquiryDetailPage from '../Dashboard/DashboardInquiryDetailPage/DashboardInquiryDetailPage'
 import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
 import DashboardMyTicketListPage from '../Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
@@ -131,10 +130,6 @@ const router = createBrowserRouter([
           }
         ]
       },
-      ...[
-        ...import.meta.env.DEV
-          ? []
-          : []],
       {
         path: 'dashboard',
         children: [
@@ -295,15 +290,6 @@ const router = createBrowserRouter([
           {
             path: 'payments',
             element: <DashboardPaymentListPage />
-          },
-          {
-            path: 'inquiries',
-            children: [
-              {
-                path: ':inquiryId',
-                element: <DashboardInquiryDetailPage />
-              }
-            ]
           },
           {
             path: 'informations',

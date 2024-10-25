@@ -2,10 +2,14 @@ import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from '
 import { HelmetProvider } from 'react-helmet-async'
 import CircleViewPage from './pages/CircleViewPage/CircleViewPage'
 import EventListPage from './pages/EventListPage/EventListPage'
+import EventSendMailPage from './pages/EventSendMailPage/EventSendMailPage'
 import EventViewPage from './pages/EventViewPage/EventViewPage'
 import IndexPage from './pages/IndexPage/IndexPage'
+import InformationCreatePage from './pages/InformationCreatePage/InformationCreatePage'
 import InformationListPage from './pages/InformationListPage/InformationListPage'
+import InformationViewPage from './pages/InformationViewPage/InformationViewPage'
 import InquiryListPage from './pages/InquiryListPage/InquiryListPage'
+import InquiryViewPage from './pages/InquiryViewPage/InquiryViewPage'
 import LicensePage from './pages/LicenseViewPage/LicenseViewPage'
 import LoginPage from './pages/LoginPage/LoginPage'
 import StoreListPage from './pages/StoreListPage/StoreListPage'
@@ -73,7 +77,16 @@ const routes = createBrowserRouter([
           },
           {
             path: ':eventId',
-            element: <EventViewPage />
+            children: [
+              {
+                index: true,
+                element: <EventViewPage />
+              },
+              {
+                path: 'send-mail',
+                element: <EventSendMailPage />
+              }
+            ]
           }
         ]
       },
@@ -88,11 +101,33 @@ const routes = createBrowserRouter([
       },
       {
         path: 'informations',
-        element: <InformationListPage />
+        children: [
+          {
+            index: true,
+            element: <InformationListPage />
+          },
+          {
+            path: 'create',
+            element: <InformationCreatePage />
+          },
+          {
+            path: ':informationId',
+            element: <InformationViewPage />
+          }
+        ]
       },
       {
         path: 'inquiries',
-        element: <InquiryListPage />
+        children: [
+          {
+            index: true,
+            element: <InquiryListPage />
+          },
+          {
+            path: ':inquiryId',
+            element: <InquiryViewPage />
+          }
+        ]
       }
     ]
   }
