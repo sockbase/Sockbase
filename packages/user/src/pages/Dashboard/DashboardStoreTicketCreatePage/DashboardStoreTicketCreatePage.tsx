@@ -107,7 +107,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
+    <DashboardBaseLayout title={pageTitle}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li>管理チケットストア</li>

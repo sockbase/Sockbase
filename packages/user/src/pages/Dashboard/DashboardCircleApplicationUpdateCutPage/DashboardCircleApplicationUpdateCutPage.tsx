@@ -38,7 +38,6 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
   } = useFile()
   const { formatByDate } = useDayjs()
 
-  // const [appId, setAppId] = useState<string>()
   const [app, setApp] = useState<SockbaseApplicationDocument>()
   const [event, setEvent] = useState<SockbaseEvent>()
 
@@ -78,7 +77,6 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
       const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
       const fetchedCircleCutURL = await getCircleCutURLByHashedIdNullableAsync(hashedAppId)
 
-      // setAppId(fetchedAppId.applicationId)
       setApp(fetchedApp)
       setEvent(fetchedEvent)
       setCurrentCircleCut(fetchedCircleCutURL)
@@ -98,7 +96,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
   }, [circleCutDataWithHook])
 
   return (
-    <DashboardBaseLayout title="サークルカット変更" requireSystemRole={0}>
+    <DashboardBaseLayout title="サークルカット変更">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>

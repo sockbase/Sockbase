@@ -27,7 +27,6 @@ interface IUseStore {
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<sockbase.SockbaseTicketUserDocument>
   getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<sockbase.SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<sockbase.SockbaseTicketUsedStatus>
-  updateTicketApplicationStatusAsync: (appId: string, status: sockbase.SockbaseApplicationStatus) => Promise<void>
   updateTicketUsedStatusByIdAsync: (ticketId: string, used: boolean) => Promise<void>
   getTicketsByUserIdAsync: (userId: string) => Promise<sockbase.SockbaseTicketDocument[]>
   getTicketsByStoreIdAsync: (storeId: string) => Promise<sockbase.SockbaseTicketDocument[]>
@@ -225,18 +224,6 @@ const useStore = (): IUseStore => {
       return ticketUsedStatus
     }
 
-  const updateTicketApplicationStatusAsync =
-    async (ticketId: string, status: sockbase.SockbaseApplicationStatus): Promise<void> => {
-      const db = getFirestore()
-      const ticketMetaRef = FirestoreDB.doc(db, `/_tickets/${ticketId}/private/meta`)
-        .withConverter(ticketMetaConverter)
-
-      await FirestoreDB.setDoc(
-        ticketMetaRef,
-        { applicationStatus: status },
-        { merge: true })
-    }
-
   const updateTicketUsedStatusByIdAsync =
     async (ticketId: string, used: boolean): Promise<void> => {
       const db = getFirestore()
@@ -374,7 +361,6 @@ const useStore = (): IUseStore => {
     getTicketUserByHashIdAsync,
     getTicketUserByHashIdOptionalAsync,
     getTicketUsedStatusByIdAsync,
-    updateTicketApplicationStatusAsync,
     updateTicketUsedStatusByIdAsync,
     getTicketsByUserIdAsync,
     getTicketsByStoreIdAsync,

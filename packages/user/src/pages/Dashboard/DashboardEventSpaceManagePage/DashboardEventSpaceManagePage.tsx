@@ -132,7 +132,7 @@ const DashboardEventSpaceManagePage: React.FC = () => {
   }, [eventId, spaceDataWithHook])
 
   return (
-    <DashboardBaseLayout title={pageTitle} requireCommonRole={2}>
+    <DashboardBaseLayout title={pageTitle}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li>管理イベント</li>

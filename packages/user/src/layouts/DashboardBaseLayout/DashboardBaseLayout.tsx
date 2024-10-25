@@ -1,13 +1,11 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { useAtom } from 'jotai'
-import { type SockbaseRole } from 'sockbase'
 import LogotypeSVG from '../../assets/logotype.svg'
 import isSlimAtom from '../../atoms/isSlimAtom'
 import FormButton from '../../components/Form/Button'
 import useFirebase from '../../hooks/useFirebase'
-import useRole from '../../hooks/useRole'
 import HeadHelper from '../../libs/Helmet'
 import RequiredLogin from '../../libs/RequiredLogin'
 import Sidebar from './Sidebar'
@@ -15,8 +13,6 @@ import Sidebar from './Sidebar'
 interface Props {
   children: React.ReactNode
   title: string
-  requireSystemRole?: SockbaseRole
-  requireCommonRole?: SockbaseRole
 }
 const DashboardBaseLayout: React.FC<Props> = (props) => {
   const {
@@ -24,7 +20,6 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
     logoutAsync,
     sendVerifyMailAsync
   } = useFirebase()
-  const { systemRole, commonRole } = useRole()
   const navigate = useNavigate()
 
   const [sentVerifyMail, setSentVerifyMail] = useState(false)
@@ -48,24 +43,10 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
       })
   }, [sendVerifyMailAsync])
 
-  const isValidRole = useMemo((): boolean => {
-    if (systemRole === undefined && commonRole === undefined) return false
-
-    if (!props.requireSystemRole && !props.requireCommonRole) {
-      return true
-    } else if (props.requireSystemRole) {
-      return (systemRole ?? 0) >= props.requireSystemRole
-    } else if (props.requireCommonRole) {
-      return (commonRole ?? 0) >= props.requireCommonRole
-    }
-
-    return false
-  }, [systemRole, props.requireSystemRole, props.requireCommonRole])
-
   return (
     <StyledLayout>
       <RequiredLogin />
-      {user && isValidRole && <>
+      {user && <>
         <HeadHelper title={props.title} />
         <StyledHeader>
           <Link to="/dashboard">

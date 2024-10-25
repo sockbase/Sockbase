@@ -88,7 +88,7 @@ const DashboardEventMailSendPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DashboardBaseLayout requireCommonRole={2} title="メール送信">
+    <DashboardBaseLayout title="メール送信">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li>管理イベント</li>

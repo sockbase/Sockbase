@@ -20,10 +20,8 @@ interface IUseApplication {
   getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
   submitApplicationAsync: (payload: sockbase.SockbaseApplicationPayload) => Promise<sockbase.SockbaseApplicationAddedResult>
-  deleteApplicationAsync: (appHashId: string) => Promise<void>
   uploadCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
   getApplicationMetaByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationMeta>
-  updateApplicationStatusByIdAsync: (appId: string, status: sockbase.SockbaseApplicationStatus) => Promise<void>
   getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
   getCircleCutURLByHashedIdNullableAsync: (hashedAppId: string) => Promise<string | null>
   getLinksByApplicationIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationLinksDocument | null>
@@ -171,66 +169,11 @@ const useApplication = (): IUseApplication => {
       return appResult.data
     }
 
-  const deleteApplicationAsync =
-    async (appHashId: string): Promise<void> => {
-      const appHash = await getApplicationIdByHashedIdAsync(appHashId)
-        .catch(err => { throw err })
-
-      const db = getFirestore()
-      const appOverviewRef = FirestoreDB.doc(db, `_applicationOverviews/${appHash.applicationId}`)
-      const appLinksRef = FirestoreDB.doc(db, `_applicationLinks/${appHash.applicationId}`)
-      const appMetaRef = FirestoreDB.doc(db, `_applications/${appHash.applicationId}/private/meta`)
-      const appRef = FirestoreDB.doc(db, `_applications/${appHash.applicationId}`)
-      const appHashRef = FirestoreDB.doc(db, `_applicationHashIds/${appHash.hashId}`)
-      const paymentRef = (appHash.paymentId && FirestoreDB.doc(db, `_payments/${appHash.paymentId}`)) || null
-
-      await FirestoreDB.runTransaction(db, async (transaction) => {
-        transaction.delete(appOverviewRef)
-        transaction.delete(appLinksRef)
-        transaction.delete(appMetaRef)
-        transaction.delete(appRef)
-        transaction.delete(appHashRef)
-
-        if (paymentRef) {
-          transaction.delete(paymentRef)
-        }
-      })
-        .catch(err => { throw err })
-
-      const storage = getStorage()
-      const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${appHash.hashId}`)
-      await FirebaseStorage.deleteObject(circleCutRef)
-        .catch((err: Error) => {
-          if (err.message.includes('storage/object-not-found')) {
-            console.error(err)
-            return
-          }
-          throw err
-        })
-    }
-
   const uploadCircleCutFileAsync =
     async (appHashId: string, circleCutFile: File): Promise<void> => {
       const storage = getStorage()
       const circleCutRef = FirebaseStorage.ref(storage, `circleCuts/${appHashId}`)
       await FirebaseStorage.uploadBytes(circleCutRef, circleCutFile)
-    }
-
-  const updateApplicationStatusByIdAsync =
-    async (appId: string, status: sockbase.SockbaseApplicationStatus): Promise<void> => {
-      const db = getFirestore()
-      const metaRef = FirestoreDB.doc(db, '_applications', appId, 'private', 'meta')
-        .withConverter(applicationMetaConverter)
-
-      FirestoreDB.setDoc(
-        metaRef,
-        {
-          applicationStatus: status
-        },
-        { merge: true }
-      ).catch((err) => {
-        throw err
-      })
     }
 
   const getCircleCutURLByHashedIdAsync =
@@ -345,10 +288,8 @@ const useApplication = (): IUseApplication => {
     getApplicationsByUserIdWithIdAsync,
     getApplicationsByEventIdAsync,
     submitApplicationAsync,
-    deleteApplicationAsync,
     uploadCircleCutFileAsync,
     getApplicationMetaByIdAsync,
-    updateApplicationStatusByIdAsync,
     getCircleCutURLByHashedIdAsync,
     getCircleCutURLByHashedIdNullableAsync,
     getLinksByApplicationIdAsync,

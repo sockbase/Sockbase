@@ -8,7 +8,6 @@ import {
   MdEditSquare,
   MdPayments,
   MdSettings,
-  MdQrCodeScanner,
   MdMail,
   MdWallet,
   MdArrowBackIosNew,
@@ -16,8 +15,6 @@ import {
 } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import sockbaseShared from 'shared'
-import useRole from '../../hooks/useRole'
 import useWindowDimension from '../../hooks/useWindowDimension'
 import type { User } from 'firebase/auth'
 import type { SockbaseRole } from 'sockbase'
@@ -88,19 +85,6 @@ const menu: MenuSection[] = [
         link: '/dashboard/settings'
       }
     ]
-  },
-  {
-    sectionKey: 'support',
-    sectionName: 'イベント開催支援',
-    requireCommonRole: sockbaseShared.enumerations.user.permissionRoles.staff,
-    items: [
-      {
-        key: 'terminal',
-        icon: <MdQrCodeScanner />,
-        text: 'チケット照会ターミナル',
-        link: '/dashboard/tickets/terminal'
-      }
-    ]
   }
 ]
 
@@ -112,7 +96,6 @@ interface Props {
 }
 const Sidebar: React.FC<Props> = (props) => {
   const { width } = useWindowDimension()
-  const { systemRole, commonRole } = useRole()
 
   const [isHideToggleMenu, setHideToggleMenu] = useState(false)
   const [isOpenMenu, setOpenMenu] = useState(false)
@@ -154,17 +137,11 @@ const Sidebar: React.FC<Props> = (props) => {
             </StyledMenu>
           </StyledSection>
           {menu
-            .filter(m =>
-              (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
-              (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
             .map(sec => <StyledSection key={sec.sectionKey} isSlim={isSlim}>
               {!isSlim && sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
               <StyledMenu>
                 {
                   sec.items
-                    .filter(m =>
-                      (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
-                      (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
                     .map(item =>
                       <StyledMenuItemLink key={item.key} to={item.link} onClick={() => setOpenMenu(false)}>
                         <StyledMenuItemIcon isSlim={isSlim} isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>

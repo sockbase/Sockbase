@@ -148,7 +148,7 @@ const DashboardEventApplicationPrintTanzakuPage: React.FC = () => {
   }, [apps])
 
   return (
-    <DashboardPrintLayout title="配置短冊印刷" requireCommonRole={2}>
+    <DashboardPrintLayout title="配置短冊印刷">
       <ControlContainer>
         <Breadcrumbs>
           <li><Link to="/dashboard">マイページ</Link></li>

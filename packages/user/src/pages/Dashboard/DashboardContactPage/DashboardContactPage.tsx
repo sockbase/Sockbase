@@ -7,7 +7,7 @@ import Contact from './Contact'
 
 const DashboardContactPage: React.FC = () => {
   return (
-    <DashboardBaseLayout title="お問い合わせ" requireSystemRole={0}>
+    <DashboardBaseLayout title="お問い合わせ">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>

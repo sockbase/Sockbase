@@ -129,7 +129,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   }, [app])
 
   return (
-    <DashboardBaseLayout title={title} requireSystemRole={0}>
+    <DashboardBaseLayout title={title}>
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
