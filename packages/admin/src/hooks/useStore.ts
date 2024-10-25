@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'
+import { collection, query, where, getDocs, doc, getDoc, setDoc, runTransaction } from 'firebase/firestore'
 import { storeConverter, ticketConverter, ticketHashIdConverter, ticketMetaConverter, ticketUsedStatusConverter, ticketUserConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseStoreDocument, SockbaseTicketDocument, SockbaseTicketHashIdDocument, SockbaseTicketMeta, SockbaseTicketUsedStatus, SockbaseTicketUserDocument } from 'sockbase'
+import type { SockbaseApplicationStatus, SockbaseStoreDocument, SockbaseTicketDocument, SockbaseTicketHashIdDocument, SockbaseTicketMeta, SockbaseTicketUsedStatus, SockbaseTicketUserDocument } from 'sockbase'
 
 interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
@@ -13,6 +13,8 @@ interface IUseStore {
   getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
+  setTicketApplicationStatusAsync: (ticketId: string, status: SockbaseApplicationStatus) => Promise<void>
+  deleteTicketAsync: (ticketHashId: string) => Promise<void>
 }
 
 const useStore = (): IUseStore => {
@@ -117,6 +119,45 @@ const useStore = (): IUseStore => {
       return ticketUsedStatus
     }, [])
 
+  const setTicketApplicationStatusAsync =
+    useCallback(async (ticketId: string, status: SockbaseApplicationStatus): Promise<void> => {
+      const db = getFirestore()
+      const ticketMetaRef = doc(db, `/_tickets/${ticketId}/private/meta`)
+        .withConverter(ticketMetaConverter)
+
+      await setDoc(
+        ticketMetaRef,
+        { applicationStatus: status },
+        { merge: true })
+    }, [])
+
+  const deleteTicketAsync =
+    useCallback(async (ticketHashId: string): Promise<void> => {
+      const ticketHash = await getTicketIdByHashIdAsync(ticketHashId)
+        .catch(err => { throw err })
+
+      const db = getFirestore()
+      const ticketMetaRef = doc(db, `_tickets/${ticketHash.ticketId}/private/meta`)
+      const ticketUsedStatusRef = doc(db, `_tickets/${ticketHash.ticketId}/private/usedStatus`)
+      const ticketRef = doc(db, `_tickets/${ticketHash.ticketId}`)
+      const ticketUserRef = doc(db, `_ticketUsers/${ticketHash.hashId}`)
+      const ticketHashRef = doc(db, `_ticketHashIds/${ticketHash.hashId}`)
+      const paymentRef = (ticketHash.paymentId && doc(db, `_payments/${ticketHash.paymentId}`)) || null
+
+      await runTransaction(db, async tx => {
+        tx.delete(ticketMetaRef)
+        tx.delete(ticketUsedStatusRef)
+        tx.delete(ticketRef)
+        tx.delete(ticketUserRef)
+        tx.delete(ticketHashRef)
+
+        if (paymentRef) {
+          tx.delete(paymentRef)
+        }
+      })
+        .catch(err => { throw err })
+    }, [])
+
   return {
     getStoreByIdAsync,
     getStoresByOrganizationIdAsync,
@@ -125,7 +166,9 @@ const useStore = (): IUseStore => {
     getTicketsByStoreIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
-    getTicketUsedStatusByIdAsync
+    getTicketUsedStatusByIdAsync,
+    setTicketApplicationStatusAsync,
+    deleteTicketAsync
   }
 }
 

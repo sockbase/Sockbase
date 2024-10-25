@@ -1,8 +1,19 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdCheck, MdClose, MdEdit, MdOutlineDeleteForever, MdPendingActions } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import sockbaseShared from 'shared'
+import {
+  type SockbaseApplicationHashIdDocument,
+  type SockbaseEventDocument,
+  type SockbaseApplicationDocument,
+  type SockbaseApplicationMeta,
+  type SockbaseAccount,
+  type SockbaseApplicationLinksDocument,
+  type SockbaseApplicationStatus,
+  type SockbaseSpaceDocument,
+  type SockbasePaymentDocument
+} from 'sockbase'
 import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -11,22 +22,14 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
+import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import TwoColumnLayout from '../../components/TwoColumnLayout'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
+import usePayment from '../../hooks/usePayment'
 import useRole from '../../hooks/useRole'
 import useUserData from '../../hooks/useUserData'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
-import type {
-  SockbaseApplicationHashIdDocument,
-  SockbaseEventDocument,
-  SockbaseApplicationDocument,
-  SockbaseApplicationMeta,
-  SockbaseAccount,
-  SockbaseApplicationLinksDocument,
-  SockbaseApplicationStatus,
-  SockbaseSpaceDocument
-} from 'sockbase'
 
 const CircleViewPage: React.FC = () => {
   const { hashId } = useParams()
@@ -42,6 +45,7 @@ const CircleViewPage: React.FC = () => {
     getEventByIdAsync,
     getSpaceByIdNullableAsync
   } = useEvent()
+  const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const { isSystemAdmin } = useRole()
 
@@ -52,8 +56,13 @@ const CircleViewPage: React.FC = () => {
   const [appLinks, setAppLinks] = useState<SockbaseApplicationLinksDocument | null>()
   const [circleCutURL, setCircleCutURL] = useState<string | null>()
   const [space, setSpace] = useState<SockbaseSpaceDocument | null>()
+  const [payment, setPayment] = useState<SockbasePaymentDocument>()
 
   const [isDeletedApplication, setIsDeletedApplication] = useState(false)
+
+  const spaceType = useMemo(() => {
+    return event?.spaces?.find(s => s.id === app?.spaceId)
+  }, [event, app])
 
   const handleSetApplicationStatus = useCallback((status: SockbaseApplicationStatus) => {
     if (!appHash) return
@@ -114,6 +123,9 @@ const CircleViewPage: React.FC = () => {
     getCircleCutURLByHashIdNullableAsync(appHash.hashId)
       .then(setCircleCutURL)
       .catch(err => { throw err })
+    getPaymentByIdAsync(appHash.paymentId)
+      .then(setPayment)
+      .catch(err => { throw err })
 
     if (appHash.spaceId) {
       getSpaceByIdNullableAsync(appHash.spaceId)
@@ -148,6 +160,12 @@ const CircleViewPage: React.FC = () => {
                 <td><ApplicationStatusLabel status={app?.meta.applicationStatus} /></td>
               </tr>
               <tr>
+                <th>お支払い状況</th>
+                <td>
+                  {(payment && <PaymentStatusLabel status={payment?.status} />) ?? <BlinkField />}
+                </td>
+              </tr>
+              <tr>
                 <th>サークル名</th>
                 <td>
                   <ruby>
@@ -167,7 +185,7 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>申し込んだスペース</th>
-                <td>{app?.spaceId ?? <BlinkField />}</td>
+                <td>{spaceType?.name ?? <BlinkField />}</td>
               </tr>
               <tr>
                 <th>配置されたスペース</th>
