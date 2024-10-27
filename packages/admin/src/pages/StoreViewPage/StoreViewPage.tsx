@@ -6,6 +6,7 @@ import {
   MdStore
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
+import FormCheck from '../../components/Form/FormCheck'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import AnchorButton from '../../components/Parts/AnchorButton'
@@ -130,6 +131,7 @@ const StoreViewPage: React.FC = () => {
       <table>
         <thead>
           <tr>
+            <th></th>
             <th>#</th>
             <th>申込</th>
             <th>割当</th>
@@ -150,6 +152,7 @@ const StoreViewPage: React.FC = () => {
           {tickets?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
             .map((ticket, index) => (
               <tr key={ticket.id}>
+                <td><FormCheck name={`select-${ticket.id}`} /></td>
                 <td>{index + 1}</td>
                 <td><ApplicationStatusLabel status={ticketMetas?.[ticket.id].applicationStatus} /></td>
                 <td>
