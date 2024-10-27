@@ -151,7 +151,7 @@ const EventViewPage: React.FC = () => {
         <tbody>
           {!apps && (
             <tr>
-              <td colSpan={8}>読込中です</td>
+              <td colSpan={9}>読込中です</td>
             </tr>
           )}
           {apps?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))

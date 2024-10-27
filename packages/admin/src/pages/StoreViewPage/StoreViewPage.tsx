@@ -146,7 +146,7 @@ const StoreViewPage: React.FC = () => {
         <tbody>
           {!tickets && (
             <tr>
-              <td colSpan={9}>読込中です…</td>
+              <td colSpan={10}>読込中です…</td>
             </tr>
           )}
           {tickets?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
