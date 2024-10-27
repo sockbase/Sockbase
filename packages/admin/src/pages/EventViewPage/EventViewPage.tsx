@@ -11,6 +11,7 @@ import {
   MdOpenInNew
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
+import FormCheck from '../../components/Form/FormCheck'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import AnchorButton from '../../components/Parts/AnchorButton'
@@ -136,6 +137,7 @@ const EventViewPage: React.FC = () => {
       <table>
         <thead>
           <tr>
+            <th></th>
             <th>#</th>
             <th>状態</th>
             <th>配置</th>
@@ -155,6 +157,7 @@ const EventViewPage: React.FC = () => {
           {apps?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
             .map((app, i) => (
               <tr key={app.id}>
+                <td><FormCheck name={`select-${app.id}`} /></td>
                 <td>{i + 1}</td>
                 <td><ApplicationStatusLabel status={app.meta.applicationStatus} /></td>
                 <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
