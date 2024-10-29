@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import {
   MdAssignmentTurnedIn,
-  MdBookOnline,
   MdCalendarViewMonth,
   MdEdit,
   MdEditCalendar,
@@ -187,9 +186,6 @@ const DashboardEventApplicationListPage: React.FC = () => {
           </LinkButton>
           <LinkButton to={`/dashboard/events/${eventId}/cuts`} color="default" inlined>
             <IconLabel label="サークルカット一覧" icon={<MdImage />} />
-          </LinkButton>
-          <LinkButton to={`/dashboard/events/${eventId}/create-passes`} color="default" inlined>
-            <IconLabel label="サークル通行証発券" icon={<MdBookOnline />} />
           </LinkButton>
         </FormItem>
       </FormSection>
