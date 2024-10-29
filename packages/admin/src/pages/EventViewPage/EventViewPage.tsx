@@ -107,7 +107,7 @@ const EventViewPage: React.FC = () => {
 
       <FormSection>
         <FormItem $inlined>
-          <LinkButton to="/" disabled>
+          <LinkButton to={`/events/${eventId}/print-tanzaku`}>
             <IconLabel icon={<MdPrint />} label='配置短冊印刷' />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/manage-spaces`}>

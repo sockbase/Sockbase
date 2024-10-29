@@ -8,6 +8,7 @@ import EventExportSoleilPage from './pages/EventExportSoleilTSVPage/EventExportS
 import EventListPage from './pages/EventListPage/EventListPage'
 import EventManageSpacePage from './pages/EventManageSpacePage/EventManageSpacePage'
 import EventMetaViewPage from './pages/EventMetaViewPage/EventMetaViewPage'
+import EventPrintTanzakuPage from './pages/EventPrintTanzakuPage/EventPrintTanzakuPage'
 import EventSendMailPage from './pages/EventSendMailPage/EventSendMailPage'
 import EventViewPage from './pages/EventViewPage/EventViewPage'
 import IndexPage from './pages/IndexPage/IndexPage'
@@ -135,6 +136,10 @@ const routes = createBrowserRouter([
               {
                 path: 'view-meta',
                 element: <EventMetaViewPage />
+              },
+              {
+                path: 'print-tanzaku',
+                element: <EventPrintTanzakuPage />
               }
             ]
           }
