@@ -18,11 +18,9 @@ interface IUseStore {
   getStoresByOrganizationIdAsync: (organizationId: string) => Promise<sockbase.SockbaseStoreDocument[]>
   createStoreAsync: (storeId: string, store: sockbase.SockbaseStore) => Promise<void>
   createTicketAsync: (ticket: sockbase.SockbaseTicket) => Promise<sockbase.SockbaseTicketAddedResult>
-  createTicketForAdminAsync: (storeId: string, createTicketData: { email: string, typeId: string }) => Promise<sockbase.SockbaseTicketCreatedResult>
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<sockbase.SockbaseTicketHashIdDocument>
   getTicketByIdAsync: (ticketId: string) => Promise<sockbase.SockbaseTicketDocument>
   getTicketByIdOptionalAsync: (ticketId: string) => Promise<sockbase.SockbaseTicketDocument | null>
-  deleteTicketAsync: (ticketHashId: string) => Promise<void>
   getTicketMetaByIdAsync: (ticketId: string) => Promise<sockbase.SockbaseTicketMeta>
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<sockbase.SockbaseTicketUserDocument>
   getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<sockbase.SockbaseTicketUserDocument | null>
@@ -100,18 +98,6 @@ const useStore = (): IUseStore => {
       return appResult.data
     }
 
-  const createTicketForAdminAsync =
-    async (storeId: string, createTicketData: { email: string, typeId: string }): Promise<sockbase.SockbaseTicketCreatedResult> => {
-      const funcstions = getFunctions()
-      const createTicketForAdminFunction = FirebaseFunctions.httpsCallable<
-        { storeId: string, createTicketData: { email: string, typeId: string } },
-        sockbase.SockbaseTicketCreatedResult
-      >(funcstions, 'store-createTicketForAdmin')
-
-      const ticketResult = await createTicketForAdminFunction({ storeId, createTicketData })
-      return ticketResult.data
-    }
-
   const getTicketIdByHashIdAsync =
     async (ticketHashId: string): Promise<sockbase.SockbaseTicketHashIdDocument> => {
       const db = getFirestore()
@@ -147,33 +133,6 @@ const useStore = (): IUseStore => {
           console.error(err)
           return null
         })
-
-  const deleteTicketAsync =
-    async (ticketHashId: string): Promise<void> => {
-      const ticketHash = await getTicketIdByHashIdAsync(ticketHashId)
-        .catch(err => { throw err })
-
-      const db = getFirestore()
-      const ticketMetaRef = FirestoreDB.doc(db, `_tickets/${ticketHash.ticketId}/private/meta`)
-      const ticketUsedStatusRef = FirestoreDB.doc(db, `_tickets/${ticketHash.ticketId}/private/usedStatus`)
-      const ticketRef = FirestoreDB.doc(db, `_tickets/${ticketHash.ticketId}`)
-      const ticketUserRef = FirestoreDB.doc(db, `_ticketUsers/${ticketHash.hashId}`)
-      const ticketHashRef = FirestoreDB.doc(db, `_ticketHashIds/${ticketHash.hashId}`)
-      const paymentRef = (ticketHash.paymentId && FirestoreDB.doc(db, `_payments/${ticketHash.paymentId}`)) || null
-
-      await FirestoreDB.runTransaction(db, async (transaction) => {
-        transaction.delete(ticketMetaRef)
-        transaction.delete(ticketUsedStatusRef)
-        transaction.delete(ticketRef)
-        transaction.delete(ticketUserRef)
-        transaction.delete(ticketHashRef)
-
-        if (paymentRef) {
-          transaction.delete(paymentRef)
-        }
-      })
-        .catch(err => { throw err })
-    }
 
   const getTicketMetaByIdAsync =
     async (ticketId: string): Promise<sockbase.SockbaseTicketMeta> => {
@@ -352,11 +311,9 @@ const useStore = (): IUseStore => {
     getStoresByOrganizationIdAsync,
     createStoreAsync,
     createTicketAsync,
-    createTicketForAdminAsync,
     getTicketIdByHashIdAsync,
     getTicketByIdAsync,
     getTicketByIdOptionalAsync,
-    deleteTicketAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
     getTicketUserByHashIdOptionalAsync,

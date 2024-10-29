@@ -116,7 +116,7 @@ const StoreViewPage: React.FC = () => {
 
       <FormSection>
         <FormItem $inlined>
-          <LinkButton to="/" disabled>
+          <LinkButton to={`/stores/${storeId}/create-tickets`}>
             <IconLabel icon={<MdAddCircleOutline />} label='チケット手動発券' />
           </LinkButton>
           <LinkButton to="/" disabled>

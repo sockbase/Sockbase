@@ -18,6 +18,7 @@ import LicensePage from './pages/LicenseViewPage/LicenseViewPage'
 import LoginPage from './pages/LoginPage/LoginPage'
 import StoreListPage from './pages/StoreListPage/StoreListPage'
 import StoreViewPage from './pages/StoreViewPage/StoreViewPage'
+import TicketCreatePage from './pages/TicketCreatePage/TicketCreatePage'
 import TicketTerminalPage from './pages/TicketTerminalPage/TicketTerminalPage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
 
@@ -55,7 +56,16 @@ const routes = createBrowserRouter([
           },
           {
             path: ':storeId',
-            element: <StoreViewPage />
+            children: [
+              {
+                index: true,
+                element: <StoreViewPage />
+              },
+              {
+                path: 'create-tickets',
+                element: <TicketCreatePage />
+              }
+            ]
           }
         ]
       },
