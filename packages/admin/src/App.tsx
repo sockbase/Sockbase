@@ -5,6 +5,7 @@ import EventCreatePassPage from './pages/EventCreatePassPage/EventCreatePassPage
 import EventDownloadCircleCutPage from './pages/EventDownloadCircleCutPage/EventDownloadCircleCutPage'
 import EventExportSoleilPage from './pages/EventExportSoleilTSVPage/EventExportSoleilTSVPage'
 import EventListPage from './pages/EventListPage/EventListPage'
+import EventManageSpacePage from './pages/EventManageSpacePage/EventManageSpacePage'
 import EventSendMailPage from './pages/EventSendMailPage/EventSendMailPage'
 import EventViewPage from './pages/EventViewPage/EventViewPage'
 import IndexPage from './pages/IndexPage/IndexPage'
@@ -100,6 +101,10 @@ const routes = createBrowserRouter([
               {
                 path: 'download-circlecuts',
                 element: <EventDownloadCircleCutPage />
+              },
+              {
+                path: 'manage-spaces',
+                element: <EventManageSpacePage />
               }
             ]
           }
