@@ -25,8 +25,7 @@ firebase target:apply hosting admin <Firebase Hosting アプリケーション�
 firebase target:apply hosting circlelist <Firebase Hosting アプリケーション名 (サークルリスト用)>
 ```
 
-ユーザアプリケーション・管理アプリケーション開発のため、開発用 SSL 証明書を作成する必要があります。
-
+ユーザアプリケーション・管理アプリケーションの開発には、開発用 SSL 証明書を作成する必要があります。  
 mkcert を使用して作成された証明書を `~/certs` に配置してください。  
 ファイル名は `localhost.pem` `localhost-key.pem` となるようにしてください。
 
