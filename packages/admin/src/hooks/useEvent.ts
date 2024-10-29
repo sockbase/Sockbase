@@ -1,8 +1,9 @@
 import { useCallback } from 'react'
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
 import { eventConverter, spaceConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
+import type { SockbaseCirclePassCreatedResult, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
@@ -10,11 +11,13 @@ interface IUseEvent {
   getSpaceByIdAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceByIdNullableAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
+  createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreatedResult>
 }
 
 const useEvent = (): IUseEvent => {
-  const { getFirestore } = useFirebase()
+  const { getFirestore, getFunctions } = useFirebase()
   const db = getFirestore()
+  const functions = getFunctions()
 
   const getEventByIdAsync =
     useCallback(async (eventId: string) => {
@@ -81,12 +84,22 @@ const useEvent = (): IUseEvent => {
       return queryDocs
     }, [])
 
+  const createPassesAsync =
+  useCallback(async (eventId: string) => {
+    const createPassesFunction = httpsCallable<string, SockbaseCirclePassCreatedResult>(
+      functions,
+      'event-createPasses')
+    const createResult = await createPassesFunction(eventId)
+    return createResult.data
+  }, [])
+
   return {
     getEventByIdAsync,
     getEventsByOrganizationIdAsync,
     getSpaceByIdAsync,
     getSpaceByIdNullableAsync,
-    getSpacesByEventIdAsync
+    getSpacesByEventIdAsync,
+    createPassesAsync
   }
 }
 

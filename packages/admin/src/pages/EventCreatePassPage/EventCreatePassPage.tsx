@@ -1,44 +1,42 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdBookOnline } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import Alert from '../../../components/Parts/Alert'
-import BlinkField from '../../../components/Parts/BlinkField'
-import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
-import IconLabel from '../../../components/Parts/IconLabel'
-import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
-import useApplication from '../../../hooks/useApplication'
-import useEvent from '../../../hooks/useEvent'
-import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
-import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
+import FormButton from '../../components/Form/FormButton'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import Alert from '../../components/Parts/Alert'
+import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import IconLabel from '../../components/Parts/IconLabel'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
+import PageTitle from '../../components/Parts/PageTitle'
+import TwoColumnLayout from '../../components/TwoColumnLayout'
+import useApplication from '../../hooks/useApplication'
+import useEvent from '../../hooks/useEvent'
+import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseCirclePassCreatedResult, SockbaseEvent } from 'sockbase'
 
-const DashboardEventPassCreatePage: React.FC = () => {
-  const { eventId } = useParams<{ eventId: string }>()
+const EventCreatePassPage: React.FC = () => {
+  const { eventId } = useParams()
   const {
     getEventByIdAsync,
     createPassesAsync
   } = useEvent()
   const {
-    getApplicationsByEventIdAsync,
-    getApplicationMetaByIdAsync
+    getApplicationsByEventIdAsync
   } = useApplication()
 
   const [event, setEvent] = useState<SockbaseEvent>()
-  const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
-  const [appMetas, setAppMetas] = useState<Record<string, SockbaseApplicationMeta>>()
+  const [apps, setApps] = useState<Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
 
   const [isProgress, setProgress] = useState(false)
   const [addedResult, setAddedResult] = useState<SockbaseCirclePassCreatedResult>()
 
   const getPassCount = useCallback((spaceId: string | null) => {
-    if (!event || !apps || !appMetas) return
+    if (!event || !apps) return
 
     const filteredApps = Object.values(apps)
-      .filter(a => appMetas[a.id].applicationStatus === 2)
+      .filter(a => a.meta.applicationStatus === 2)
       .filter(a => !spaceId || a.spaceId === spaceId)
 
     return {
@@ -50,7 +48,7 @@ const DashboardEventPassCreatePage: React.FC = () => {
         })
         .reduce((p, c) => p + c, 0)
     }
-  }, [event, apps, appMetas])
+  }, [event, apps])
 
   const totalPassCount = useMemo(() => getPassCount(null), [getPassCount])
 
@@ -79,37 +77,22 @@ const DashboardEventPassCreatePage: React.FC = () => {
       const fetchedApps = await getApplicationsByEventIdAsync(eventId)
         .catch(err => { throw err })
       setApps(fetchedApps)
-
-      const appIds = Object.keys(fetchedApps)
-      Promise.all(appIds.map(async id => ({
-        id,
-        data: await getApplicationMetaByIdAsync(id)
-      })))
-        .then(fetchedAppMetas => {
-          const mappedAppMetas = fetchedAppMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({
-            ...p,
-            [c.id]: c.data
-          }), {})
-          setAppMetas(mappedAppMetas)
-        })
-        .catch(err => { throw err })
     }
     fetchAsync()
       .catch(err => { throw err })
   }, [eventId])
 
   return (
-    <DashboardBaseLayout title="サークル通行証発券">
+    <DefaultLayout title="サークル通行証発券">
       <Breadcrumbs>
-        <li><Link to="/dashboard">マイページ</Link></li>
-        <li>管理イベント</li>
+        <li><Link to="/">ホーム</Link></li>
+        <li><Link to="/events">イベント一覧</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
-        <li><Link to={`/dashboard/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
+        <li><Link to={`/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title={event?.name}
-        description="サークル通行証発券"
+        title="サークル通行証発券"
         icon={<MdBookOnline />}
         isLoading={!event} />
 
@@ -117,7 +100,7 @@ const DashboardEventPassCreatePage: React.FC = () => {
         通行証の発券枚数を変更したい場合はシステム管理者までお問い合わせください。
       </p>
 
-      <TwoColumnsLayout>
+      <TwoColumnLayout>
         <>
           <table>
             <thead>
@@ -145,7 +128,7 @@ const DashboardEventPassCreatePage: React.FC = () => {
           <FormSection>
             <FormItem>
               <LoadingCircleWrapper isLoading={isProgress && addedResult === undefined} inlined>
-                <FormButton onClick={handleCreate} disabled={isProgress} inlined>
+                <FormButton onClick={handleCreate} disabled={isProgress}>
                   <IconLabel label="通行証発券" icon={<MdBookOnline />} />
                 </FormButton>
               </LoadingCircleWrapper>
@@ -159,9 +142,9 @@ const DashboardEventPassCreatePage: React.FC = () => {
         </>
         <>
         </>
-      </TwoColumnsLayout>
-    </DashboardBaseLayout>
+      </TwoColumnLayout>
+    </DefaultLayout>
   )
 }
 
-export default DashboardEventPassCreatePage
+export default EventCreatePassPage
