@@ -110,7 +110,7 @@ const EventViewPage: React.FC = () => {
           <LinkButton to="/" disabled>
             <IconLabel icon={<MdPrint />} label='配置短冊印刷' />
           </LinkButton>
-          <LinkButton to="/" disabled>
+          <LinkButton to={`/events/${eventId}/manage-spaces`}>
             <IconLabel icon={<MdAssignmentTurnedIn />} label='配置管理' />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/download-circlecuts`}>

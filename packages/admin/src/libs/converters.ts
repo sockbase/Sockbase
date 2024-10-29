@@ -11,6 +11,7 @@ import type {
   SockbaseInquiryMetaDocument,
   SockbasePaymentDocument,
   SockbaseSpaceDocument,
+  SockbaseSpaceHashDocument,
   SockbaseStoreDocument,
   SockbaseTicketDocument,
   SockbaseTicketHashIdDocument,
@@ -349,6 +350,19 @@ export const spaceConverter: FirestoreDataConverter<SockbaseSpaceDocument> = {
       spaceGroupOrder: space.spaceGroupOrder,
       spaceOrder: space.spaceOrder,
       spaceName: space.spaceName
+    }
+  }
+}
+
+export const spaceHashConverter: FirestoreDataConverter<SockbaseSpaceHashDocument> = {
+  toFirestore: (spaceHash: SockbaseSpaceHashDocument) => ({
+    eventId: spaceHash.eventId
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseSpaceHashDocument => {
+    const spaceHash = snapshot.data()
+    return {
+      id: snapshot.id,
+      eventId: spaceHash.eventId
     }
   }
 }

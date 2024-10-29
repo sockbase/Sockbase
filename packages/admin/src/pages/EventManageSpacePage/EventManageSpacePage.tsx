@@ -1,33 +1,31 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { MdAssignmentTurnedIn, MdCheck, MdDownload } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import FormInput from '../../../components/Form/Input'
-import FormLabel from '../../../components/Form/Label'
-import Alert from '../../../components/Parts/Alert'
-import BlinkField from '../../../components/Parts/BlinkField'
-import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
-import IconLabel from '../../../components/Parts/IconLabel'
-import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
-import useApplication from '../../../hooks/useApplication'
-import useDayjs from '../../../hooks/useDayjs'
-import useEvent from '../../../hooks/useEvent'
-import useFile from '../../../hooks/useFile'
-import useSpace from '../../../hooks/useSpace'
-import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
-import type { ImportedSpace } from '../../../@types'
-import type { SockbaseApplicationMeta, SockbaseApplicationDocument, SockbaseEvent, SockbaseSpaceDocument } from 'sockbase'
+import { type SockbaseApplicationDocument, type SockbaseSpaceDocument, type SockbaseApplicationMeta, type SockbaseEventDocument } from 'sockbase'
+import { type ImportedSpace } from '../../@types'
+import FormButton from '../../components/Form/FormButton'
+import FormInput from '../../components/Form/FormInput'
+import FormItem from '../../components/Form/FormItem'
+import FormLabel from '../../components/Form/FormLabel'
+import FormSection from '../../components/Form/FormSection'
+import Alert from '../../components/Parts/Alert'
+import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import IconLabel from '../../components/Parts/IconLabel'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
+import PageTitle from '../../components/Parts/PageTitle'
+import useApplication from '../../hooks/useApplication'
+import useDayjs from '../../hooks/useDayjs'
+import useEvent from '../../hooks/useEvent'
+import useFile from '../../hooks/useFile'
+import useSpace from '../../hooks/useSpace'
+import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
-const DashboardEventSpaceManagePage: React.FC = () => {
+const EventManageSpacePage: React.FC = () => {
   const { eventId } = useParams()
+
   const { getEventByIdAsync, getSpacesByEventIdAsync } = useEvent()
-  const {
-    getApplicationsByEventIdAsync,
-    getApplicationMetaByIdAsync
-  } = useApplication()
+  const { getApplicationsByEventIdAsync } = useApplication()
   const {
     downloadSpaceDataXLSX,
     readSpaceDataXLSXAsync,
@@ -39,10 +37,9 @@ const DashboardEventSpaceManagePage: React.FC = () => {
   } = useFile()
   const { formatByDate } = useDayjs()
 
-  const [event, setEvent] = useState<SockbaseEvent>()
+  const [event, setEvent] = useState<SockbaseEventDocument>()
   const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
-  const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
-  const [metas, setMetas] = useState<Record<string, SockbaseApplicationMeta>>()
+  const [apps, setApps] = useState<Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
 
   const [spaceDataFile, setSpaceDataFile] = useState<File | null>()
   const [loadErrorMessage, setLoadErrorMessage] = useState<string | null>()
@@ -50,19 +47,13 @@ const DashboardEventSpaceManagePage: React.FC = () => {
   const [spaceImportResult, setSpaceImportResult] = useState<{ eventId: string, spaces: ImportedSpace[] } | null>()
   const [isProgress, setProgress] = useState(false)
 
-  const pageTitle = useMemo(() => {
-    if (!event) return ''
-    return `${event.name} 配置管理`
-  }, [event])
-
   const handleDownload = useCallback(() => {
-    if (!eventId || !event || !spaces || !apps || !metas) return
-    downloadSpaceDataXLSX(eventId, event, apps, metas)
-  }, [eventId, event, spaces, apps, metas])
+    if (!eventId || !event || !spaces || !apps) return
+    downloadSpaceDataXLSX(eventId, event, apps)
+  }, [eventId, event, spaces, apps])
 
   const getAppByHashId = useCallback((appHashId: string) => {
-    if (!apps) return
-    return Object.values(apps).filter(a => a.hashId === appHashId)[0]
+    return apps?.find(a => a.hashId === appHashId)
   }, [apps])
 
   const handleUpdate = useCallback(() => {
@@ -80,37 +71,15 @@ const DashboardEventSpaceManagePage: React.FC = () => {
   }, [eventId, spaceImportResult])
 
   useEffect(() => {
-    const fetchAsync = async (): Promise<void> => {
-      if (!eventId) return
-
-      getEventByIdAsync(eventId)
-        .then(fetchedEvent => setEvent(fetchedEvent))
-        .catch(err => { throw err })
-
-      getSpacesByEventIdAsync(eventId)
-        .then(fetchedSpaces => setSpaces(fetchedSpaces))
-        .catch(err => { throw err })
-
-      const fetchedApps = await getApplicationsByEventIdAsync(eventId)
-        .catch(err => { throw err })
-      setApps(fetchedApps)
-
-      const appIds = Object.keys(fetchedApps)
-
-      Promise.all(appIds.map(async id => ({
-        id,
-        data: await getApplicationMetaByIdAsync(id)
-      })))
-        .then(fetchedMetas => {
-          const mappedMetas = fetchedMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({
-            ...p,
-            [c.id]: c.data
-          }), {})
-          setMetas(mappedMetas)
-        })
-        .catch(err => { throw err })
-    }
-    fetchAsync()
+    if (!eventId) return
+    getEventByIdAsync(eventId)
+      .then(fetchedEvent => setEvent(fetchedEvent))
+      .catch(err => { throw err })
+    getSpacesByEventIdAsync(eventId)
+      .then(fetchedSpaces => setSpaces(fetchedSpaces))
+      .catch(err => { throw err })
+    getApplicationsByEventIdAsync(eventId)
+      .then(setApps)
       .catch(err => { throw err })
   }, [eventId])
 
@@ -132,23 +101,21 @@ const DashboardEventSpaceManagePage: React.FC = () => {
   }, [eventId, spaceDataWithHook])
 
   return (
-    <DashboardBaseLayout title={pageTitle}>
+    <DefaultLayout title="配置管理">
       <Breadcrumbs>
-        <li><Link to="/dashboard">マイページ</Link></li>
-        <li>管理イベント</li>
+        <li><Link to="/">ホーム</Link></li>
+        <li><Link to="/events">イベント一覧</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
-        <li><Link to={`/dashboard/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
+        <li><Link to={`/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title={event?.name}
-        description="配置管理"
         icon={<MdAssignmentTurnedIn />}
-        isLoading={!event} />
+        title="配置管理" />
 
       <FormSection>
-        <FormItem inlined>
-          <FormButton inlined color="default" onClick={handleDownload}>
+        <FormItem>
+          <FormButton color="default" onClick={handleDownload}>
             <IconLabel label="配置データダウンロード" icon={<MdDownload />} />
           </FormButton>
         </FormItem>
@@ -204,8 +171,7 @@ const DashboardEventSpaceManagePage: React.FC = () => {
           <LoadingCircleWrapper isLoading={isProgress} inlined>
             <FormButton
               disabled={!spaceImportResult || isProgress}
-              onClick={handleUpdate}
-              inlined>
+              onClick={handleUpdate}>
               <IconLabel label="配置データを適用する" icon={<MdCheck />} />
             </FormButton>
           </LoadingCircleWrapper>
@@ -213,9 +179,8 @@ const DashboardEventSpaceManagePage: React.FC = () => {
       </FormSection>
 
       {updateErrorMessage && <Alert type="error" title="エラーが発生しました">{updateErrorMessage}</Alert>}
-
-    </DashboardBaseLayout>
+    </DefaultLayout>
   )
 }
 
-export default DashboardEventSpaceManagePage
+export default EventManageSpacePage

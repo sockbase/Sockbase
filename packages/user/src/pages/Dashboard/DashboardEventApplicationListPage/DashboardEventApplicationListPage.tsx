@@ -2,9 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import {
   MdAssignmentTurnedIn,
   MdCalendarViewMonth,
-  MdEdit,
   MdEditCalendar,
-  MdImage,
   MdPrint
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
@@ -184,19 +182,9 @@ const DashboardEventApplicationListPage: React.FC = () => {
           <LinkButton to={`/dashboard/events/${eventId}/spaces`} color="default" inlined>
             <IconLabel label="配置管理" icon={<MdAssignmentTurnedIn />} />
           </LinkButton>
-          <LinkButton to={`/dashboard/events/${eventId}/cuts`} color="default" inlined>
-            <IconLabel label="サークルカット一覧" icon={<MdImage />} />
-          </LinkButton>
-        </FormItem>
-      </FormSection>
-      <FormSection>
-        <FormItem inlined>
           <LinkButton to={`/dashboard/events/${eventId}/info`} color="default" inlined>
             <IconLabel label="メタ情報参照" icon={<MdCalendarViewMonth />} />
           </LinkButton>
-          <AnchorButton href={`/events/${eventId}`} color="default" inlined target="_blank">
-            <IconLabel label="申し込みページを開く" icon={<MdEdit />} />
-          </AnchorButton>
         </FormItem>
       </FormSection>
 
