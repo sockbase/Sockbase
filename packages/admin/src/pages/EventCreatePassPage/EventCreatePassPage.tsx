@@ -83,7 +83,7 @@ const EventCreatePassPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DefaultLayout title="サークル通行証発券">
+    <DefaultLayout title="サークル通行証発券" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>

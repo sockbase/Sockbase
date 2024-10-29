@@ -4,12 +4,51 @@ import styled, { css } from 'styled-components'
 import type { User } from 'firebase/auth'
 import type { SockbaseRole } from 'sockbase'
 
+const menuLinks = [
+  {
+    sectionName: null,
+    requireCommonRole: 1,
+    requireSystemRole: null,
+    items: [
+      { to: '/', icon: <MdHome />, label: 'ホーム' },
+      { to: '/license', icon: <MdBadge />, label: '権限' }
+    ]
+  },
+  {
+    sectionName: '入場管理',
+    requireCommonRole: 1,
+    requireSystemRole: null,
+    items: [
+      { to: '/tickets/terminal', icon: <MdQrCodeScanner />, label: 'チケット照会ターミナル' }
+    ]
+  },
+  {
+    sectionName: 'イベント管理',
+    requireCommonRole: 2,
+    requireSystemRole: null,
+    items: [
+      { to: '/events', icon: <MdEditCalendar />, label: 'イベント管理' },
+      { to: '/stores', icon: <MdStore />, label: 'チケットストア管理' }
+    ]
+  },
+  {
+    sectionName: 'システム管理',
+    requireCommonRole: null,
+    requireSystemRole: 2,
+    items: [
+      { to: '/inquiries', icon: <MdInbox />, label: '問い合わせ管理' },
+      { to: '/informations', icon: <MdInfo />, label: 'お知らせ管理' }
+    ]
+  }
+]
+
 interface Props {
   showMenu: boolean
   user: User | null | undefined
   commonRole: SockbaseRole | null | undefined
   systemRole: SockbaseRole | null | undefined
   logout: () => void
+  closeMenu: () => void
 }
 
 const Sidebar: React.FC<Props> = (props) => {
@@ -39,59 +78,25 @@ const Sidebar: React.FC<Props> = (props) => {
                   <MenuLabel>ログアウト</MenuLabel>
                 </MenuButtonItem>
               </MenuSection>
-              {(props.commonRole ?? 0) >= 1 && (
-                <>
-                  <MenuSection>
+              {menuLinks
+                .filter(menuLink =>
+                  (menuLink.requireCommonRole === null || (props.commonRole ?? 0) >= menuLink.requireCommonRole) &&
+                  (menuLink.requireSystemRole === null || (props.systemRole ?? 0) >= menuLink.requireSystemRole))
+                .map((menuLink, index) => (
+                  <MenuSection key={index}>
+                    {menuLink.sectionName && (
+                      <MenuSectionTitle>{menuLink.sectionName}</MenuSectionTitle>
+                    )}
                     <MenuItemRack>
-                      <MenuLinkItem to="/">
-                        <MenuIcon><MdHome /></MenuIcon>
-                        <MenuLabel>ホーム</MenuLabel>
-                      </MenuLinkItem>
-                      <MenuLinkItem to="/license">
-                        <MenuIcon><MdBadge /></MenuIcon>
-                        <MenuLabel>権限</MenuLabel>
-                      </MenuLinkItem>
+                      {menuLink.items.map((item, index) => (
+                        <MenuLinkItem key={index} to={item.to} onClick={props.closeMenu}>
+                          <MenuIcon>{item.icon}</MenuIcon>
+                          <MenuLabel>{item.label}</MenuLabel>
+                        </MenuLinkItem>
+                      ))}
                     </MenuItemRack>
                   </MenuSection>
-                  <MenuSection>
-                    <MenuSectionTitle>入場管理</MenuSectionTitle>
-                    <MenuItemRack>
-                      <MenuLinkItem to="/tickets/terminal">
-                        <MenuIcon><MdQrCodeScanner /></MenuIcon>
-                        <MenuLabel>チケット照会ターミナル</MenuLabel>
-                      </MenuLinkItem>
-                    </MenuItemRack>
-                  </MenuSection>
-                </>
-              )}
-              {(props.systemRole ?? 0) >= 2 && (<>
-                <MenuSection>
-                  <MenuSectionTitle>イベント管理</MenuSectionTitle>
-                  <MenuItemRack>
-                    <MenuLinkItem to="/events">
-                      <MenuIcon><MdEditCalendar /></MenuIcon>
-                      <MenuLabel>イベント管理</MenuLabel>
-                    </MenuLinkItem>
-                    <MenuLinkItem to="/stores">
-                      <MenuIcon><MdStore /></MenuIcon>
-                      <MenuLabel>チケットストア管理</MenuLabel>
-                    </MenuLinkItem>
-                  </MenuItemRack>
-                </MenuSection>
-                <MenuSection>
-                  <MenuSectionTitle>システム管理</MenuSectionTitle>
-                  <MenuItemRack>
-                    <MenuLinkItem to="/inquiries">
-                      <MenuIcon><MdInbox /></MenuIcon>
-                      <MenuLabel>問い合わせ管理</MenuLabel>
-                    </MenuLinkItem>
-                    <MenuLinkItem to="/informations">
-                      <MenuIcon><MdInfo /></MenuIcon>
-                      <MenuLabel>お知らせ管理</MenuLabel>
-                    </MenuLinkItem>
-                  </MenuItemRack>
-                </MenuSection>
-              </>)}
+                ))}
             </>
           )}
         </MenuWrap>

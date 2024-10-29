@@ -169,7 +169,7 @@ const TicketViewPage: React.FC = () => {
   }, [ticketUser])
 
   return (
-    <DefaultLayout title={pageTitle ?? 'チケット情報照会'}>
+    <DefaultLayout title={pageTitle ?? 'チケット情報照会'} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/stores">チケットストア一覧</Link></li>

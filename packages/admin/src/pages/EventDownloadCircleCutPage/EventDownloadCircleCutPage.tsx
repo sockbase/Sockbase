@@ -145,7 +145,7 @@ const EventDownloadCircleCutPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DefaultLayout title="サークルカットダウンロード">
+    <DefaultLayout title="サークルカットダウンロード" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>

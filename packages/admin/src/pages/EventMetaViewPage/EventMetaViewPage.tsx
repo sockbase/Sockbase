@@ -25,7 +25,7 @@ const EventMetaViewPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DefaultLayout title="イベントメタ情報">
+    <DefaultLayout title="イベントメタ情報" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
