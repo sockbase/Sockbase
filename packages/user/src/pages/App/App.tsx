@@ -28,7 +28,6 @@ import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/Dash
 import DashboardSettingPage from '../Dashboard/DashboardSettingPage/DashboardSettingPage'
 import DashboardTicketDetailPage from '../Dashboard/DashboardTicketDetailPage/DashboardTicketDetailPage'
 import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/DashboardTicketListPage'
-import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
 import DashboardTopPage from '../Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from '../IndexPage/IndexPage'
 import InformationDetailPage from '../InformationDetailPage/InformationDetailPage'
@@ -103,10 +102,6 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path: 'assign-tickets',
-        element: <TicketAssignPage />
-      },
-      {
         path: 'tickets',
         children: [
           {
@@ -114,6 +109,10 @@ const router = createBrowserRouter([
             element: <TicketViewPage />
           }
         ]
+      },
+      {
+        path: 'assign-tickets',
+        element: <TicketAssignPage />
       },
       {
         path: 'dashboard',
@@ -180,10 +179,6 @@ const router = createBrowserRouter([
               {
                 path: ':hashId',
                 element: <DashboardTicketDetailPage />
-              },
-              {
-                path: 'terminal',
-                element: <DashboardTicketTerminalPage />
               }
             ]
           },
