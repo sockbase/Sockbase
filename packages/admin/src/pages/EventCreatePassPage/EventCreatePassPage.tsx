@@ -35,7 +35,7 @@ const EventCreatePassPage: React.FC = () => {
   const getPassCount = useCallback((spaceId: string | null) => {
     if (!event || !apps) return
 
-    const filteredApps = Object.values(apps)
+    const filteredApps = apps
       .filter(a => a.meta.applicationStatus === 2)
       .filter(a => !spaceId || a.spaceId === spaceId)
 
