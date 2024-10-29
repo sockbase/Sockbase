@@ -33,12 +33,12 @@ import type {
 } from 'sockbase'
 
 const DashboardCircleApplicationDetailPage: React.FC = () => {
-  const { hashedAppId } = useParams()
+  const { hashId } = useParams()
 
   const {
-    getApplicationIdByHashedIdAsync,
+    getApplicationIdByHashIdAsync,
     getApplicationByIdAsync,
-    getCircleCutURLByHashedIdNullableAsync,
+    getCircleCutURLByHashIdNullableAsync,
     getLinksByApplicationIdOptionalAsync,
     getOverviewByApplicationIdOptionalAsync
   } = useApplication()
@@ -77,17 +77,17 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   useEffect(() => {
     const fetchApplicationAsync: () => Promise<void> =
       async () => {
-        if (!hashedAppId) return
+        if (!hashId) return
 
-        const fetchedAppHashDoc = await getApplicationIdByHashedIdAsync(hashedAppId)
+        const fetchedAppHashDoc = await getApplicationIdByHashIdAsync(hashId)
         const fetchedApp = await getApplicationByIdAsync(fetchedAppHashDoc.applicationId)
 
-        const fetchedPaymentId = await getPaymentIdByHashId(hashedAppId)
+        const fetchedPaymentId = await getPaymentIdByHashId(hashId)
         getPaymentAsync(fetchedPaymentId)
           .then(fetchedPayment => setPayment(fetchedPayment))
           .catch(err => { throw err })
 
-        getCircleCutURLByHashedIdNullableAsync(hashedAppId)
+        getCircleCutURLByHashIdNullableAsync(hashId)
           .then(fetchedCircleCutURL => setCircleCutURL(fetchedCircleCutURL))
           .catch(err => { throw err })
 
@@ -111,7 +111,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
       .catch(err => {
         throw err
       })
-  }, [hashedAppId])
+  }, [hashId])
 
   useEffect(() => {
     const fetch = async (): Promise<void> => {
@@ -147,12 +147,12 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
       </Alert>}
 
       {circleCutURL === null && event && <Alert type="warning" title="サークルカットを提出してください">
-        サークルカットは <Link to={`/dashboard/applications/${hashedAppId}/cut`}>サークルカットを変更</Link> から提出できます。
+        サークルカットは <Link to={`/dashboard/applications/${hashId}/cut`}>サークルカットを変更</Link> から提出できます。
       </Alert>}
 
       {!links && event &&
         <Alert type="warning" title="カタログ掲載情報を入力してください">
-          カタログ掲載情報は <Link to={`/dashboard/applications/${hashedAppId}/links`}>こちら</Link> から入力できます。
+          カタログ掲載情報は <Link to={`/dashboard/applications/${hashId}/links`}>こちら</Link> から入力できます。
         </Alert>}
 
       {links && event && event.schedules.catalogInformationFixedAt > now &&
@@ -265,7 +265,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
                       <CircleCutImage src={circleCutURL} />
                     </a>
                     : circleCutURL === null
-                      ? <Link to={`/dashboard/applications/${hashedAppId}/cut`}>サークルカットを提出</Link>
+                      ? <Link to={`/dashboard/applications/${hashId}/cut`}>サークルカットを提出</Link>
                       : <></>}
                 </td>
               </tr>
@@ -304,12 +304,12 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
             </tbody>
           </table>
 
-          {links !== undefined && hashedAppId && <FormSection>
+          {links !== undefined && hashId && <FormSection>
             <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/cut`} color='default' inlined={true}>
+              <LinkButton to={`/dashboard/applications/${hashId}/cut`} color='default' inlined={true}>
                 <IconLabel label="サークルカットを差し替える" icon={<MdImage />} />
               </LinkButton>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/links`} color={links ? 'default' : undefined} inlined={true}>
+              <LinkButton to={`/dashboard/applications/${hashId}/links`} color={links ? 'default' : undefined} inlined={true}>
                 <IconLabel label={`カタログ掲載情報を${links ? '編集' : '入力'}する`} icon={<MdBookmarkAdd />} />
               </LinkButton>
             </FormItem>
@@ -339,9 +339,9 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               </tr>
             </tbody>
           </table>
-          {links !== undefined && hashedAppId && <FormSection>
+          {links !== undefined && hashId && <FormSection>
             <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashedAppId}/overview`} color='default' inlined={true}>
+              <LinkButton to={`/dashboard/applications/${hashId}/overview`} color='default' inlined={true}>
                 <IconLabel label="頒布物情報を編集する" icon={<MdEdit />} />
               </LinkButton>
             </FormItem>

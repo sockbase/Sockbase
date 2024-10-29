@@ -22,9 +22,9 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardCircleApplicationEditLinksPage: React.FC = () => {
-  const { hashedAppId } = useParams<{ hashedAppId: string }>()
+  const { hashId } = useParams<{ hashId: string }>()
   const {
-    getApplicationIdByHashedIdAsync,
+    getApplicationIdByHashIdAsync,
     getApplicationByIdAsync,
     getLinksByApplicationIdOptionalAsync,
     setLinksByApplicationIdAsync
@@ -76,9 +76,9 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
-      if (!hashedAppId) return
+      if (!hashId) return
 
-      const fetchedAppId = await getApplicationIdByHashedIdAsync(hashedAppId)
+      const fetchedAppId = await getApplicationIdByHashIdAsync(hashId)
       const fetchedApp = await getApplicationByIdAsync(fetchedAppId.applicationId)
       const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
 
@@ -98,7 +98,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }, [hashedAppId])
+  }, [hashId])
 
   return (
     <DashboardBaseLayout title="カタログ掲載情報編集">
@@ -107,7 +107,7 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
         <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
         <li>{event?.name ?? <BlinkField />}</li>
         <li>
-          {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
+          {(hashId && app && <Link to={`/dashboard/applications/${hashId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
       <PageTitle title={app?.circle.name} description="カタログ掲載情報編集" icon={<MdBookmarkAdd />} isLoading={!app} />

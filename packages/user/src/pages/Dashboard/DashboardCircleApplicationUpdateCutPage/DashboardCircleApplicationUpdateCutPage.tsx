@@ -24,11 +24,11 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
-  const { hashedAppId } = useParams<{ hashedAppId: string }>()
+  const { hashId } = useParams<{ hashId: string }>()
   const {
-    getApplicationIdByHashedIdAsync,
+    getApplicationIdByHashIdAsync,
     getApplicationByIdAsync,
-    getCircleCutURLByHashedIdNullableAsync,
+    getCircleCutURLByHashIdNullableAsync,
     uploadCircleCutFileAsync
   } = useApplication()
   const { getEventByIdAsync } = useEvent()
@@ -50,11 +50,11 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
   const now = useMemo(() => new Date().getTime(), [])
 
   const handleSubmit = useCallback(() => {
-    if (!hashedAppId || !circleCutFile) return
+    if (!hashId || !circleCutFile) return
 
     setProgress(true)
 
-    uploadCircleCutFileAsync(hashedAppId, circleCutFile)
+    uploadCircleCutFileAsync(hashId, circleCutFile)
       .then(() => {
         alert('サークルカットの変更が完了しました')
         setCurrentCircleCut(circleCutDataWithHook)
@@ -66,16 +66,16 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
         throw err
       })
       .finally(() => setProgress(false))
-  }, [hashedAppId, circleCutFile, circleCutDataWithHook])
+  }, [hashId, circleCutFile, circleCutDataWithHook])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
-      if (!hashedAppId) return
+      if (!hashId) return
 
-      const fetchedAppId = await getApplicationIdByHashedIdAsync(hashedAppId)
+      const fetchedAppId = await getApplicationIdByHashIdAsync(hashId)
       const fetchedApp = await getApplicationByIdAsync(fetchedAppId.applicationId)
       const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
-      const fetchedCircleCutURL = await getCircleCutURLByHashedIdNullableAsync(hashedAppId)
+      const fetchedCircleCutURL = await getCircleCutURLByHashIdNullableAsync(hashId)
 
       setApp(fetchedApp)
       setEvent(fetchedEvent)
@@ -83,7 +83,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
     }
     fetchAsync()
       .catch(err => { throw err })
-  }, [hashedAppId])
+  }, [hashId])
 
   useEffect(() => {
     if (!circleCutFile) return
@@ -102,7 +102,7 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
         <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
         <li>{event?.name ?? <BlinkField />}</li>
         <li>
-          {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
+          {(hashId && app && <Link to={`/dashboard/applications/${hashId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
       <PageTitle title={app?.circle.name} description="サークルカット変更" icon={<MdPhoto />} isLoading={!app} />

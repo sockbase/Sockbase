@@ -13,7 +13,7 @@ import useFirebase from './useFirebase'
 import type * as sockbase from 'sockbase'
 
 interface IUseApplication {
-  getApplicationIdByHashedIdAsync: (hashedAppId: string) => Promise<sockbase.SockbaseApplicationHashIdDocument>
+  getApplicationIdByHashIdAsync: (hashId: string) => Promise<sockbase.SockbaseApplicationHashIdDocument>
   getApplicationByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationDocument & { meta: sockbase.SockbaseApplicationMeta }>
   getApplicationByIdOptionalAsync: (appId: string) => Promise<sockbase.SockbaseApplicationDocument & { meta: sockbase.SockbaseApplicationMeta } | null>
   getApplicationsByUserIdAsync: (userId: string) => Promise<sockbase.SockbaseApplicationDocument[]>
@@ -22,8 +22,8 @@ interface IUseApplication {
   submitApplicationAsync: (payload: sockbase.SockbaseApplicationPayload) => Promise<sockbase.SockbaseApplicationAddedResult>
   uploadCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
   getApplicationMetaByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationMeta>
-  getCircleCutURLByHashedIdAsync: (hashedAppId: string) => Promise<string>
-  getCircleCutURLByHashedIdNullableAsync: (hashedAppId: string) => Promise<string | null>
+  getCircleCutURLByHashIdAsync: (hashId: string) => Promise<string>
+  getCircleCutURLByHashIdNullableAsync: (hashId: string) => Promise<string | null>
   getLinksByApplicationIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationLinksDocument | null>
   getLinksByApplicationIdOptionalAsync: (appId: string) => Promise<sockbase.SockbaseApplicationLinksDocument | null>
   setLinksByApplicationIdAsync: (appId: string, links: sockbase.SockbaseApplicationLinks) => Promise<void>
@@ -35,11 +35,11 @@ interface IUseApplication {
 const useApplication = (): IUseApplication => {
   const { user, getFirestore, getStorage, getFunctions } = useFirebase()
 
-  const getApplicationIdByHashedIdAsync = async (
-    hashedAppId: string
+  const getApplicationIdByHashIdAsync = async (
+    hashId: string
   ): Promise<sockbase.SockbaseApplicationHashIdDocument> => {
     const db = getFirestore()
-    const hashIdMVRef = FirestoreDB.doc(db, '_applicationHashIds', hashedAppId)
+    const hashIdMVRef = FirestoreDB.doc(db, '_applicationHashIds', hashId)
       .withConverter(applicationHashIdConverter)
 
     const hashIdMVDoc = await FirestoreDB.getDoc(hashIdMVRef)
@@ -176,20 +176,20 @@ const useApplication = (): IUseApplication => {
       await FirebaseStorage.uploadBytes(circleCutRef, circleCutFile)
     }
 
-  const getCircleCutURLByHashedIdAsync =
-    async (hashedAppId: string): Promise<string> => {
+  const getCircleCutURLByHashIdAsync =
+    async (hashId: string): Promise<string> => {
       const storage = getStorage()
       const circleCutRef = FirebaseStorage.ref(
         storage,
-        `/circleCuts/${hashedAppId}`
+        `/circleCuts/${hashId}`
       )
       const circleCutURL = await FirebaseStorage.getDownloadURL(circleCutRef)
       return circleCutURL
     }
 
-  const getCircleCutURLByHashedIdNullableAsync =
+  const getCircleCutURLByHashIdNullableAsync =
   async (hashId: string): Promise<string | null> =>
-    await getCircleCutURLByHashedIdAsync(hashId)
+    await getCircleCutURLByHashIdAsync(hashId)
       .catch(err => {
         console.error(err)
         return null
@@ -281,7 +281,7 @@ const useApplication = (): IUseApplication => {
     }, [user])
 
   return {
-    getApplicationIdByHashedIdAsync,
+    getApplicationIdByHashIdAsync,
     getApplicationByIdAsync,
     getApplicationByIdOptionalAsync,
     getApplicationsByUserIdAsync,
@@ -290,8 +290,8 @@ const useApplication = (): IUseApplication => {
     submitApplicationAsync,
     uploadCircleCutFileAsync,
     getApplicationMetaByIdAsync,
-    getCircleCutURLByHashedIdAsync,
-    getCircleCutURLByHashedIdNullableAsync,
+    getCircleCutURLByHashIdAsync,
+    getCircleCutURLByHashIdNullableAsync,
     getLinksByApplicationIdAsync,
     getLinksByApplicationIdOptionalAsync,
     setLinksByApplicationIdAsync,
