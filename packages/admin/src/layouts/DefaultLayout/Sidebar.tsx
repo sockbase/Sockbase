@@ -27,14 +27,6 @@ const menuLinks = [
     ]
   },
   {
-    sectionName: '入場管理',
-    requireCommonRole: 1,
-    requireSystemRole: null,
-    items: [
-      { to: '/tickets/terminal', icon: <MdQrCodeScanner />, label: 'チケット照会ターミナル' }
-    ]
-  },
-  {
     sectionName: 'イベント管理',
     requireCommonRole: 2,
     requireSystemRole: null,
@@ -52,6 +44,14 @@ const menuLinks = [
       { to: '/informations', icon: <MdInfo />, label: 'お知らせ管理' },
       { to: '/users', icon: <MdManageAccounts />, label: 'ユーザ管理' },
       { to: '/organizations', icon: <MdGroup />, label: '組織管理' }
+    ]
+  },
+  {
+    sectionName: '入場管理',
+    requireCommonRole: 1,
+    requireSystemRole: null,
+    items: [
+      { to: '/tickets/terminal', icon: <MdQrCodeScanner />, label: 'チケット照会ターミナル' }
     ]
   }
 ]
