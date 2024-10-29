@@ -102,7 +102,7 @@ const StoreViewPage: React.FC = () => {
   }, [tickets, ticketUsers])
 
   return (
-    <DefaultLayout title={store?.name ?? 'チケットストア情報'} requireSystemRole={2}>
+    <DefaultLayout title={store?.name ?? 'チケットストア情報'} requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/stores">チケットストア一覧</Link></li>

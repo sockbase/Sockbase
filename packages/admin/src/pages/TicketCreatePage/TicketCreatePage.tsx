@@ -97,7 +97,7 @@ const TicketCreatePage: React.FC = () => {
   }, [storeId])
 
   return (
-    <DefaultLayout title="チケット作成">
+    <DefaultLayout title="チケット作成" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/stores">チケットストア一覧</Link></li>

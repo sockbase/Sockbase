@@ -24,7 +24,7 @@ const DefaultLayout: React.FC<Props> = (props) => {
   const { commonRole, systemRole } = useRole()
   const { isSmallDisplay } = useWindowDimension()
 
-  const [showMenu, setShowMenu] = useState(false)
+  const [showMenu, setIsShowMenu] = useState(false)
 
   const handleLogout = useCallback(() => {
     logoutAsync()
@@ -44,26 +44,29 @@ const DefaultLayout: React.FC<Props> = (props) => {
       requireCommonRole={props.requireCommonRole}>
       <Root title={props.title}>
         <Container>
-          <SidebarWrap>
+          <SidebarContainer>
             <HeaderWrap>
               <BrandArea>
                 <BrandLogotype src={LogotypeSVG} alt="Logo" />
               </BrandArea>
               <MenuButtonArea>
                 {isSmallDisplay && (
-                  <MenuButton onClick={() => setShowMenu(!showMenu)}>
+                  <MenuButton onClick={() => setIsShowMenu(!showMenu)}>
                     {showMenu ? <MdClose /> : <MdMenu />}
                   </MenuButton>
                 )}
               </MenuButtonArea>
             </HeaderWrap>
-            <Sidebar
-              user={user}
-              logout={handleLogout}
-              commonRole={commonRole}
-              systemRole={systemRole}
-              showMenu={isSmallDisplay === false || showMenu} />
-          </SidebarWrap>
+            <MenuWrap>
+              <Sidebar
+                user={user}
+                logout={handleLogout}
+                commonRole={commonRole}
+                systemRole={systemRole}
+                showMenu={isSmallDisplay === false || showMenu}
+                closeMenu={() => setIsShowMenu(false)}/>
+            </MenuWrap>
+          </SidebarContainer>
           <MainWrap>
             {props.children}
           </MainWrap>
@@ -84,17 +87,26 @@ const Container = styled.div`
     grid-template-columns: 1fr;
   }
 `
-const SidebarWrap = styled.div`
+const SidebarContainer = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  overflow-y: hidden;
   background-color: var(--background-light-color);
   color: var(--text-color);
 `
 const MainWrap = styled.div`
   padding: 20px;
+  height: 100%;
+  overflow-y: auto;
 `
 const HeaderWrap = styled.div`
   display: grid;
   grid-template-columns: 1fr 40px;
   background-color: var(--background-gray-color);
+`
+const MenuWrap = styled.div`
+  overflow-y: auto;
 `
 const BrandArea = styled.div`
   padding: 10px;

@@ -101,7 +101,7 @@ const EventManageSpacePage: React.FC = () => {
   }, [eventId, spaceDataWithHook])
 
   return (
-    <DefaultLayout title="配置管理">
+    <DefaultLayout title="配置管理" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>

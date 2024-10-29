@@ -22,7 +22,7 @@ const EventPrintTanzakuPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DefaultLayout title="配置短冊印刷">
+    <DefaultLayout title="配置短冊印刷" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>

@@ -7,7 +7,7 @@ import StepContainer from './StepContainer/StepContainer'
 
 const StoreCreatePage: React.FC = () => {
   return (
-    <DefaultLayout title="チケットストア作成">
+    <DefaultLayout title="チケットストア作成" requireSystemRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">チケットストア一覧</Link></li>

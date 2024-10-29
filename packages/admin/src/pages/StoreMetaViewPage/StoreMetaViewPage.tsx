@@ -25,7 +25,7 @@ const StoreMetaViewPage: React.FC = () => {
   }, [storeId])
 
   return (
-    <DefaultLayout title="チケットストアメタ情報">
+    <DefaultLayout title="チケットストアメタ情報" requireCommonRole={2}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/stores">チケットストア一覧</Link></li>
