@@ -12,7 +12,7 @@
 
 | | |
 | - | - |
-| node | 18 |
+| node | 20 |
 
 #### 共通
 
@@ -20,26 +20,64 @@
 git clone https://github.com/sockbase/Sockbase.git Sockbase
 yarn install
 firebase use <Firebase環境名>
+firebase target:apply hosting user <Firebase Hosting アプリケーション名 (ユーザアプリケーション用)>
+firebase target:apply hosting admin <Firebase Hosting アプリケーション名 (管理アプリケーション用)>
+firebase target:apply hosting circlelist <Firebase Hosting アプリケーション名 (サークルリスト用)>
 ```
 
-#### クライアント
+ユーザアプリケーション・管理アプリケーション開発のため、開発用 SSL 証明書を作成する必要があります。
+
+mkcert を使用して作成された証明書を `~/certs` に配置してください。  
+ファイル名は `localhost.pem` `localhost-key.pem` となるようにしてください。
+
+#### ユーザアプリケーション (user)
 
 ```bash
-cd packages/client
+yarn workspace user install
 ```
 
-#### Cloud Funcitons
+#### 管理アプリケーション (admin)
 
 ```bash
-cd packages/functions
+yarn workspace admin install
+```
+
+#### Cloud Functions
+
+```bash
+yarn workspace functions install
+```
+
+#### サークルリスト
+
+```bash
+yarn workspace circlelist install
 ```
 
 ### 開発
 
-#### クライアント
+#### ユーザアプリケーション (user)
+
+- 作業ディレクトリ: packages/user 以下
+
 ```bash
-cd packages/client
-yarn dev
+yarn workspace user dev
+```
+
+#### 管理アプリケーション (admin)
+
+- 作業ディレクトリ: packages/admin 以下
+
+```bash
+yarn workspace admin dev
+```
+
+#### サークルリスト
+
+- 作業ディレクトリ: packages/circlelist 以下
+
+```bash
+yarn workspace circlelist dev
 ```
 
 ### デプロイ
@@ -56,7 +94,9 @@ firebase deploy
 
 | サービス | ID |
 | - | - |
-| クライアント(Hosting) | hosting |
+| ユーザアプリケーション | hosting:user |
+| 管理アプリケーション | hosting:admin |
+| サークルリスト | hosting:circlelist |
 | Cloud Functions | functions |
 | Firestoreルール | firestore |
 | Firebase Storageルール | storage |
