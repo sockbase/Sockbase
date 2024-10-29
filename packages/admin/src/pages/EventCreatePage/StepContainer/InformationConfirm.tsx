@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react'
-import FormButton from '../../../../components/Form/Button'
-import FormItem from '../../../../components/Form/FormItem'
-import FormSection from '../../../../components/Form/FormSection'
-import EventInfo from '../../../../components/Parts/EventInfo'
+import FormButton from '../../../components/Form/FormButton'
+import FormItem from '../../../components/Form/FormItem'
+import FormSection from '../../../components/Form/FormSection'
+import EventInfo from '../../../components/Parts/EventInfo'
 import type { SockbaseEvent } from 'sockbase'
 
 interface Props {
@@ -36,9 +36,9 @@ const InformationConfirm: React.FC<Props> = (props) => {
         eyecatchData={props.eyecatchData} />
 
       <FormSection>
-        <FormItem inlined>
-          <FormButton onClick={handleCreate} disabled={isProcess} inlined>作成する</FormButton>
-          <FormButton onClick={props.prevStep} color="default" disabled={isProcess} inlined>修正する</FormButton>
+        <FormItem>
+          <FormButton onClick={handleCreate} disabled={isProcess}>作成する</FormButton>
+          <FormButton onClick={props.prevStep} color="default" disabled={isProcess}>修正する</FormButton>
         </FormItem>
       </FormSection>
     </>

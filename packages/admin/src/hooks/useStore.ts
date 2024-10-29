@@ -3,7 +3,7 @@ import { collection, query, where, getDocs, doc, getDoc, setDoc, runTransaction 
 import { httpsCallable } from 'firebase/functions'
 import { storeConverter, ticketConverter, ticketHashIdConverter, ticketMetaConverter, ticketUsedStatusConverter, ticketUserConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseApplicationStatus, SockbaseStoreDocument, SockbaseTicketCreatedResult, SockbaseTicketDocument, SockbaseTicketHashIdDocument, SockbaseTicketMeta, SockbaseTicketUsedStatus, SockbaseTicketUserDocument } from 'sockbase'
+import type { SockbaseApplicationStatus, SockbaseStore, SockbaseStoreDocument, SockbaseTicketCreatedResult, SockbaseTicketDocument, SockbaseTicketHashIdDocument, SockbaseTicketMeta, SockbaseTicketUsedStatus, SockbaseTicketUserDocument } from 'sockbase'
 
 interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
@@ -17,6 +17,7 @@ interface IUseStore {
   setTicketApplicationStatusAsync: (ticketId: string, status: SockbaseApplicationStatus) => Promise<void>
   createTicketForAdminAsync: (storeId: string, createTicketData: { email: string, typeId: string }) => Promise<SockbaseTicketCreatedResult>
   deleteTicketAsync: (ticketHashId: string) => Promise<void>
+  createStoreAsync: (storeId: string, store: SockbaseStore) => Promise<void>
 }
 
 const useStore = (): IUseStore => {
@@ -123,7 +124,7 @@ const useStore = (): IUseStore => {
     }, [])
 
   const setTicketApplicationStatusAsync =
-    useCallback(async (ticketId: string, status: SockbaseApplicationStatus): Promise<void> => {
+    useCallback(async (ticketId: string, status: SockbaseApplicationStatus) => {
       const db = getFirestore()
       const ticketMetaRef = doc(db, `/_tickets/${ticketId}/private/meta`)
         .withConverter(ticketMetaConverter)
@@ -146,7 +147,7 @@ const useStore = (): IUseStore => {
     }, [])
 
   const deleteTicketAsync =
-    useCallback(async (ticketHashId: string): Promise<void> => {
+    useCallback(async (ticketHashId: string) => {
       const ticketHash = await getTicketIdByHashIdAsync(ticketHashId)
         .catch(err => { throw err })
 
@@ -172,6 +173,15 @@ const useStore = (): IUseStore => {
         .catch(err => { throw err })
     }, [])
 
+  const createStoreAsync =
+    useCallback(async (storeId: string, store: SockbaseStore) => {
+      const db = getFirestore()
+      const storeRef = doc(db, `/stores/${storeId}`)
+        .withConverter(storeConverter)
+      await setDoc(storeRef, store)
+        .catch(err => { throw err })
+    }, [])
+
   return {
     getStoreByIdAsync,
     getStoresByOrganizationIdAsync,
@@ -183,7 +193,8 @@ const useStore = (): IUseStore => {
     getTicketUsedStatusByIdAsync,
     setTicketApplicationStatusAsync,
     createTicketForAdminAsync,
-    deleteTicketAsync
+    deleteTicketAsync,
+    createStoreAsync
   }
 }
 

@@ -125,7 +125,7 @@ const EventViewPage: React.FC = () => {
           <LinkButton to={`/events/${eventId}/send-mails`}>
             <IconLabel icon={<MdMail />} label='メール送信' />
           </LinkButton>
-          <LinkButton to="/" disabled>
+          <LinkButton to={`/events/${eventId}/view-meta`}>
             <IconLabel icon={<MdCalendarViewMonth />} label='メタ情報参照' />
           </LinkButton>
           <AnchorButton href={`${envHelper.userAppURL}/events/${eventId}`} target="_blank">

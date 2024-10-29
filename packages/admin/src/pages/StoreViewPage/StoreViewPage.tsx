@@ -119,7 +119,7 @@ const StoreViewPage: React.FC = () => {
           <LinkButton to={`/stores/${storeId}/create-tickets`}>
             <IconLabel icon={<MdAddCircleOutline />} label='チケット手動発券' />
           </LinkButton>
-          <LinkButton to="/" disabled>
+          <LinkButton to={`/stores/${storeId}/view-meta`}>
             <IconLabel icon={<MdDataset />} label='メタ情報参照' />
           </LinkButton>
           <AnchorButton href={`${envHelper.userAppURL}/stores/${storeId}`} target="_blank">

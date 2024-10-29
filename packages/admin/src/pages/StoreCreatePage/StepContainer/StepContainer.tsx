@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { type SockbaseStore } from 'sockbase'
-import useStore from '../../../../hooks/useStore'
+import useStore from '../../../hooks/useStore'
 import Complete from './Complete'
 import InformationConfirm from './InformationConfirm'
 import InformationInput from './InformationInput'

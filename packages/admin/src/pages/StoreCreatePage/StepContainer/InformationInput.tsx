@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { type SockbaseStoreType, type SockbaseStore, type SockbaseStoreDocument } from 'sockbase'
-import FormButton from '../../../../components/Form/Button'
-import FormCheckbox from '../../../../components/Form/Checkbox'
-import FormItem from '../../../../components/Form/FormItem'
-import FormSection from '../../../../components/Form/FormSection'
-import FormInput from '../../../../components/Form/Input'
-import FormLabel from '../../../../components/Form/Label'
-import FormTextarea from '../../../../components/Form/Textarea'
-import useDayjs from '../../../../hooks/useDayjs'
+import FormButton from '../../../components/Form/FormButton'
+import FormCheckbox from '../../../components/Form/FormCheckbox'
+import FormInput from '../../../components/Form/FormInput'
+import FormItem from '../../../components/Form/FormItem'
+import FormLabel from '../../../components/Form/FormLabel'
+import FormSection from '../../../components/Form/FormSection'
+import FormTextarea from '../../../components/Parts/FormTextarea'
+import useDayjs from '../../../hooks/useDayjs'
 
 interface Props {
   storeId: string | null | undefined
@@ -309,7 +309,7 @@ const InformationInput: React.FC<Props> = (props) => {
               onChange={e => setStorePackageJSON(e.target.value)}/>
           </FormItem>
           <FormItem>
-            <FormButton onClick={handleImportStorePackage} inlined disabled={!storePackageJSON}>インポート</FormButton>
+            <FormButton onClick={handleImportStorePackage} disabled={!storePackageJSON}>インポート</FormButton>
           </FormItem>
         </FormSection>
       </details>
@@ -640,8 +640,8 @@ const InformationInput: React.FC<Props> = (props) => {
       </FormSection>
 
       <FormSection>
-        <FormItem>
-          <FormButton inlined onClick={handleConfirm}>内容確認</FormButton>
+        <FormItem $inlined>
+          <FormButton onClick={handleConfirm}>内容確認</FormButton>
         </FormItem>
       </FormSection>
     </>

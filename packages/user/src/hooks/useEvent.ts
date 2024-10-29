@@ -6,11 +6,7 @@ import {
   spaceConverter
 } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type {
-  SockbaseEvent,
-  SockbaseEventDocument,
-  SockbaseSpaceDocument
-} from 'sockbase'
+import type { SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
@@ -19,8 +15,6 @@ interface IUseEvent {
   getSpaceAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceOptionalAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
-  createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
-  uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
 }
 
 const useEvent = (): IUseEvent => {
@@ -109,31 +103,13 @@ const useEvent = (): IUseEvent => {
       return queryDocs
     }
 
-  const createEventAsync =
-    async (eventId: string, event: SockbaseEvent): Promise<void> => {
-      const db = getFirestore()
-      const eventRef = FirestoreDB.doc(db, `/events/${eventId}`)
-        .withConverter(eventConverter)
-      await FirestoreDB.setDoc(eventRef, event)
-        .catch(err => { throw err })
-    }
-
-  const uploadEventEyecatchAsync =
-    async (eventId: string, eyecatchFile: File): Promise<void> => {
-      const storage = getStorage()
-      const eyecatchRef = FirebaseStorage.ref(storage, `events/${eventId}/eyecatch.jpg`)
-      await FirebaseStorage.uploadBytes(eyecatchRef, eyecatchFile)
-    }
-
   return {
     getEventByIdAsync,
     getEventsByOrganizationIdAsync,
     getEventEyecatchAsync,
     getSpaceAsync,
     getSpaceOptionalAsync,
-    getSpacesByEventIdAsync,
-    createEventAsync,
-    uploadEventEyecatchAsync
+    getSpacesByEventIdAsync
   }
 }
 

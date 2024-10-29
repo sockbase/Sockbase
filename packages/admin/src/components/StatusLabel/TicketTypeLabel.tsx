@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 import BlinkField from '../Parts/BlinkField'
-import type { SockbaseStoreDocument } from 'sockbase'
+import type { SockbaseStore } from 'sockbase'
 
 interface Props {
-  store: SockbaseStoreDocument | undefined
+  store: SockbaseStore | null | undefined
   typeId: string | undefined
 }
 

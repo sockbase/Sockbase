@@ -16,7 +16,6 @@ interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<sockbase.SockbaseStoreDocument>
   getStoreByIdOptionalAsync: (storeId: string) => Promise<sockbase.SockbaseStoreDocument | null>
   getStoresByOrganizationIdAsync: (organizationId: string) => Promise<sockbase.SockbaseStoreDocument[]>
-  createStoreAsync: (storeId: string, store: sockbase.SockbaseStore) => Promise<void>
   createTicketAsync: (ticket: sockbase.SockbaseTicket) => Promise<sockbase.SockbaseTicketAddedResult>
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<sockbase.SockbaseTicketHashIdDocument>
   getTicketByIdAsync: (ticketId: string) => Promise<sockbase.SockbaseTicketDocument>
@@ -75,15 +74,6 @@ const useStore = (): IUseStore => {
         .filter(doc => doc.exists())
         .map(doc => doc.data())
       return queryDocs
-    }
-
-  const createStoreAsync =
-    async (storeId: string, store: sockbase.SockbaseStore): Promise<void> => {
-      const db = getFirestore()
-      const storeRef = FirestoreDB.doc(db, `/stores/${storeId}`)
-        .withConverter(storeConverter)
-      await FirestoreDB.setDoc(storeRef, store)
-        .catch(err => { throw err })
     }
 
   const createTicketAsync =
@@ -309,7 +299,6 @@ const useStore = (): IUseStore => {
     getStoreByIdAsync,
     getStoreByIdOptionalAsync,
     getStoresByOrganizationIdAsync,
-    createStoreAsync,
     createTicketAsync,
     getTicketIdByHashIdAsync,
     getTicketByIdAsync,

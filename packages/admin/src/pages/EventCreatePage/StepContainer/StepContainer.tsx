@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import useEvent from '../../../../hooks/useEvent'
+import useEvent from '../../../hooks/useEvent'
 import Complete from './Complete'
 import InformationConfirm from './InformationConfirm'
 import InformationImport from './InformationInput'
