@@ -1,13 +1,15 @@
 import { useCallback } from 'react'
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, setDoc, deleteDoc } from 'firebase/firestore'
 import { organizationConverter, organizationManagerConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseOrganizationDocument, SockbaseOrganizationManagerDocument } from 'sockbase'
+import type { SockbaseOrganizationDocument, SockbaseOrganizationManagerDocument, SockbaseRole } from 'sockbase'
 
 interface IUseOrganization {
   getOrganizationsAsync: () => Promise<SockbaseOrganizationDocument[]>
   getOrganizationByIdAsync: (organizationId: string) => Promise<SockbaseOrganizationDocument>
   getManagersByOrganizationIdAsync: (organizationId: string) => Promise<SockbaseOrganizationManagerDocument[]>
+  setManagerAsync: (organizationId: string, userId: string, role: SockbaseRole) => Promise<void>
+  removeManagerAsync: (organizationId: string, userId: string) => Promise<void>
 }
 
 const useOrganization = (): IUseOrganization => {
@@ -39,10 +41,23 @@ const useOrganization = (): IUseOrganization => {
     return orgDoc.docs.map(doc => doc.data())
   }, [])
 
+  const setManagerAsync = useCallback(async (organizationId: string, userId: string, role: SockbaseRole) => {
+    const orgManagersRef = doc(db, 'organizations', organizationId, 'users', userId)
+      .withConverter(organizationManagerConverter)
+    await setDoc(orgManagersRef, { role }, { merge: true })
+  }, [])
+
+  const removeManagerAsync = useCallback(async (organizationId: string, userId: string) => {
+    const orgManagersRef = doc(db, 'organizations', organizationId, 'users', userId)
+    await deleteDoc(orgManagersRef)
+  }, [])
+
   return {
     getOrganizationsAsync,
     getOrganizationByIdAsync,
-    getManagersByOrganizationIdAsync
+    getManagersByOrganizationIdAsync,
+    setManagerAsync,
+    removeManagerAsync
   }
 }
 
