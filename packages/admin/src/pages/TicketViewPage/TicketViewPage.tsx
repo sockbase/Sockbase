@@ -18,6 +18,7 @@ import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
@@ -242,7 +243,7 @@ const TicketViewPage: React.FC = () => {
             <tbody>
               <tr>
                 <th>ID</th>
-                <td>{ticket?.hashId}</td>
+                <td>{ticket?.hashId} <CopyToClipboard content={ticket?.hashId} /></td>
               </tr>
             </tbody>
           </table>

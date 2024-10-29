@@ -19,6 +19,7 @@ import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
@@ -192,8 +193,16 @@ const CircleViewPage: React.FC = () => {
                 <td>{space !== undefined ? space?.spaceName || '---' : <BlinkField />}</td>
               </tr>
               <tr>
-                <th>申し込み ID</th>
-                <td>{app ? app.hashId || '---' : <BlinkField />}</td>
+                <th>ID</th>
+                <td>
+                  {
+                    app
+                      ? <>
+                        {app.hashId} <CopyToClipboard content={app.hashId} />
+                      </>
+                      : <BlinkField />
+                  }
+                </td>
               </tr>
             </tbody>
           </table>

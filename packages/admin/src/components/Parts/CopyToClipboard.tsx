@@ -4,23 +4,21 @@ import styled from 'styled-components'
 import useClipboard from '../../hooks/useClipboard'
 
 interface Props {
-  content: string
+  content: string | null | undefined
 }
 const CopyToClipboard: React.FC<Props> = (props) => {
   const [isCopied, setCopied] = useState(false)
   const { copyToClipboardAsync } = useClipboard()
 
-  const copyToClipboard = useCallback((): void => {
+  const copyToClipboard = useCallback(() => {
+    if (!props.content) return
     copyToClipboardAsync(props.content)
       .then(() => setCopied(true))
-      .catch(err => {
-        throw err
-      })
+      .catch(err => { throw err })
   }, [props.content])
 
   useEffect(() => {
     if (!isCopied) return
-
     const cancelarationToken = setTimeout(() => setCopied(false), 1000)
     return () => clearTimeout(cancelarationToken)
   }, [isCopied])
