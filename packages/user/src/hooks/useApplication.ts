@@ -10,26 +10,36 @@ import {
   overviewConverter
 } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type * as sockbase from 'sockbase'
+import type {
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationDocument,
+  SockbaseApplicationMeta,
+  SockbaseApplicationPayload,
+  SockbaseApplicationAddedResult,
+  SockbaseApplicationLinksDocument,
+  SockbaseApplicationLinks,
+  SockbaseApplicationOverviewDocument,
+  SockbaseApplicationOverview
+} from 'sockbase'
 
 interface IUseApplication {
-  getApplicationIdByHashIdAsync: (hashId: string) => Promise<sockbase.SockbaseApplicationHashIdDocument>
-  getApplicationByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationDocument & { meta: sockbase.SockbaseApplicationMeta }>
-  getApplicationByIdOptionalAsync: (appId: string) => Promise<sockbase.SockbaseApplicationDocument & { meta: sockbase.SockbaseApplicationMeta } | null>
-  getApplicationsByUserIdAsync: (userId: string) => Promise<sockbase.SockbaseApplicationDocument[]>
-  getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
-  getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, sockbase.SockbaseApplicationDocument>>
-  submitApplicationAsync: (payload: sockbase.SockbaseApplicationPayload) => Promise<sockbase.SockbaseApplicationAddedResult>
+  getApplicationIdByHashIdAsync: (hashId: string) => Promise<SockbaseApplicationHashIdDocument>
+  getApplicationByIdAsync: (appId: string) => Promise<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
+  getApplicationByIdOptionalAsync: (appId: string) => Promise<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta } | null>
+  getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
+  getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, SockbaseApplicationDocument>>
+  getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, SockbaseApplicationDocument>>
+  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationAddedResult>
   uploadCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
-  getApplicationMetaByIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationMeta>
+  getApplicationMetaByIdAsync: (appId: string) => Promise<SockbaseApplicationMeta>
   getCircleCutURLByHashIdAsync: (hashId: string) => Promise<string>
   getCircleCutURLByHashIdNullableAsync: (hashId: string) => Promise<string | null>
-  getLinksByApplicationIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationLinksDocument | null>
-  getLinksByApplicationIdOptionalAsync: (appId: string) => Promise<sockbase.SockbaseApplicationLinksDocument | null>
-  setLinksByApplicationIdAsync: (appId: string, links: sockbase.SockbaseApplicationLinks) => Promise<void>
-  getOverviewByApplicationIdAsync: (appId: string) => Promise<sockbase.SockbaseApplicationOverviewDocument | null>
-  getOverviewByApplicationIdOptionalAsync: (appId: string) => Promise<sockbase.SockbaseApplicationOverviewDocument | null>
-  setOverviewByApplicationIdAsync: (appId: string, overview: sockbase.SockbaseApplicationOverview) => Promise<void>
+  getLinksByApplicationIdAsync: (appId: string) => Promise<SockbaseApplicationLinksDocument | null>
+  getLinksByApplicationIdOptionalAsync: (appId: string) => Promise<SockbaseApplicationLinksDocument | null>
+  setLinksByApplicationIdAsync: (appId: string, links: SockbaseApplicationLinks) => Promise<void>
+  getOverviewByApplicationIdAsync: (appId: string) => Promise<SockbaseApplicationOverviewDocument | null>
+  getOverviewByApplicationIdOptionalAsync: (appId: string) => Promise<SockbaseApplicationOverviewDocument | null>
+  setOverviewByApplicationIdAsync: (appId: string, overview: SockbaseApplicationOverview) => Promise<void>
 }
 
 const useApplication = (): IUseApplication => {
@@ -37,7 +47,7 @@ const useApplication = (): IUseApplication => {
 
   const getApplicationIdByHashIdAsync = async (
     hashId: string
-  ): Promise<sockbase.SockbaseApplicationHashIdDocument> => {
+  ): Promise<SockbaseApplicationHashIdDocument> => {
     const db = getFirestore()
     const hashIdMVRef = FirestoreDB.doc(db, '_applicationHashIds', hashId)
       .withConverter(applicationHashIdConverter)
@@ -50,7 +60,7 @@ const useApplication = (): IUseApplication => {
   }
 
   const getApplicationByIdAsync =
-    async (appId: string): Promise<sockbase.SockbaseApplicationDocument & { meta: sockbase.SockbaseApplicationMeta }> => {
+    async (appId: string): Promise<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }> => {
       const db = getFirestore()
       const appRef = FirestoreDB.doc(db, '_applications', appId)
         .withConverter(applicationConverter)
@@ -73,7 +83,7 @@ const useApplication = (): IUseApplication => {
     }
 
   const getApplicationByIdOptionalAsync =
-    async (appId: string): Promise<(sockbase.SockbaseApplicationDocument & { meta: sockbase.SockbaseApplicationMeta }) | null> =>
+    async (appId: string): Promise<(SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }) | null> =>
       await getApplicationByIdAsync(appId)
         .catch(err => {
           console.error(err)
@@ -81,7 +91,7 @@ const useApplication = (): IUseApplication => {
         })
 
   const getApplicationsByUserIdAsync =
-    async (userId: string): Promise<sockbase.SockbaseApplicationDocument[]> => {
+    async (userId: string): Promise<SockbaseApplicationDocument[]> => {
       const db = getFirestore()
       const appsRef = FirestoreDB.collection(db, '_applications')
         .withConverter(applicationConverter)
@@ -98,7 +108,7 @@ const useApplication = (): IUseApplication => {
     }
 
   const getApplicationsByUserIdWithIdAsync =
-    async (userId: string): Promise<Record<string, sockbase.SockbaseApplicationDocument>> => {
+    async (userId: string): Promise<Record<string, SockbaseApplicationDocument>> => {
       const db = getFirestore()
       const appsRef = FirestoreDB.collection(db, '_applications')
         .withConverter(applicationConverter)
@@ -109,7 +119,7 @@ const useApplication = (): IUseApplication => {
       const querySnapshot = await FirestoreDB.getDocs(appsQuery)
       const queryDocs = querySnapshot.docs
         .filter((doc) => doc.exists())
-        .reduce<Record<string, sockbase.SockbaseApplicationDocument>>(
+        .reduce<Record<string, SockbaseApplicationDocument>>(
         (p, c) => ({ ...p, [c.id]: c.data() }),
         {}
       )
@@ -118,7 +128,7 @@ const useApplication = (): IUseApplication => {
     }
 
   const getApplicationsByEventIdAsync =
-    async (eventId: string): Promise<Record<string, sockbase.SockbaseApplicationDocument>> => {
+    async (eventId: string): Promise<Record<string, SockbaseApplicationDocument>> => {
       const db = getFirestore()
       const appHashesRef = FirestoreDB.collection(db, '_applicationHashIds').withConverter(
         applicationHashIdConverter
@@ -136,7 +146,7 @@ const useApplication = (): IUseApplication => {
           id: appHash.applicationId,
           data: await getApplicationByIdAsync(appHash.applicationId)
         })))
-        .then(fetchedApps => fetchedApps.reduce<Record<string, sockbase.SockbaseApplicationDocument>>((p, c) => ({
+        .then(fetchedApps => fetchedApps.reduce<Record<string, SockbaseApplicationDocument>>((p, c) => ({
           ...p,
           [c.id]: c.data
         }), {}))
@@ -145,7 +155,7 @@ const useApplication = (): IUseApplication => {
     }
 
   const getApplicationMetaByIdAsync =
-    async (appId: string): Promise<sockbase.SockbaseApplicationMeta> => {
+    async (appId: string): Promise<SockbaseApplicationMeta> => {
       const db = getFirestore()
       const metaRef = FirestoreDB.doc(db, '_applications', appId, 'private', 'meta')
         .withConverter(applicationMetaConverter)
@@ -158,11 +168,11 @@ const useApplication = (): IUseApplication => {
     }
 
   const submitApplicationAsync =
-    async (payload: sockbase.SockbaseApplicationPayload): Promise<sockbase.SockbaseApplicationAddedResult> => {
+    async (payload: SockbaseApplicationPayload): Promise<SockbaseApplicationAddedResult> => {
       const functions = getFunctions()
       const createApplicationFunction = FirebaseFunctions.httpsCallable<
-        sockbase.SockbaseApplicationPayload,
-        sockbase.SockbaseApplicationAddedResult
+        SockbaseApplicationPayload,
+        SockbaseApplicationAddedResult
       >(functions, 'application-createApplication')
 
       const appResult = await createApplicationFunction(payload)
@@ -196,7 +206,7 @@ const useApplication = (): IUseApplication => {
       })
 
   const getLinksByApplicationIdAsync =
-    async (appId: string): Promise<sockbase.SockbaseApplicationLinksDocument | null> => {
+    async (appId: string): Promise<SockbaseApplicationLinksDocument | null> => {
       const db = getFirestore()
       const linksDoc = FirestoreDB.doc(
         db,
@@ -213,18 +223,18 @@ const useApplication = (): IUseApplication => {
     }
 
   const getLinksByApplicationIdOptionalAsync =
-    async (appId: string): Promise<sockbase.SockbaseApplicationLinksDocument | null> =>
+    async (appId: string): Promise<SockbaseApplicationLinksDocument | null> =>
       await getLinksByApplicationIdAsync(appId).catch(() => null)
 
   const setLinksByApplicationIdAsync =
-    useCallback(async (appId: string, links: sockbase.SockbaseApplicationLinks): Promise<void> => {
+    useCallback(async (appId: string, links: SockbaseApplicationLinks): Promise<void> => {
       if (!user) return
 
       const db = getFirestore()
       const linksRef = FirestoreDB.doc(db, '_applicationLinks', appId)
         .withConverter(applicationLinksConverter)
 
-      const linksDoc: sockbase.SockbaseApplicationLinksDocument = {
+      const linksDoc: SockbaseApplicationLinksDocument = {
         ...links,
         id: '',
         applicationId: appId,
@@ -237,7 +247,7 @@ const useApplication = (): IUseApplication => {
     }, [user])
 
   const getOverviewByApplicationIdAsync =
-    async (appId: string): Promise<sockbase.SockbaseApplicationOverviewDocument | null> => {
+    async (appId: string): Promise<SockbaseApplicationOverviewDocument | null> => {
       const db = getFirestore()
       const overviewDoc = FirestoreDB.doc(db, '_applicationOverviews', appId)
         .withConverter(overviewConverter)
@@ -251,7 +261,7 @@ const useApplication = (): IUseApplication => {
     }
 
   const getOverviewByApplicationIdOptionalAsync =
-    async (appId: string): Promise<sockbase.SockbaseApplicationOverviewDocument | null> =>
+    async (appId: string): Promise<SockbaseApplicationOverviewDocument | null> =>
       await getOverviewByApplicationIdAsync(appId)
         .then((fetchedOverview) => fetchedOverview)
         .catch(err => {
@@ -260,14 +270,14 @@ const useApplication = (): IUseApplication => {
         })
 
   const setOverviewByApplicationIdAsync =
-    useCallback(async (appId: string, overview: sockbase.SockbaseApplicationOverview) => {
+    useCallback(async (appId: string, overview: SockbaseApplicationOverview) => {
       if (!user) return
 
       const db = getFirestore()
       const overviewRef = FirestoreDB.doc(db, '_applicationOverviews', appId)
         .withConverter(overviewConverter)
 
-      const overviewDoc: sockbase.SockbaseApplicationOverviewDocument = {
+      const overviewDoc: SockbaseApplicationOverviewDocument = {
         ...overview,
         id: '',
         applicationId: appId,
