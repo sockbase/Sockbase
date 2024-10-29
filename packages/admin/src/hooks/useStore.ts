@@ -13,11 +13,13 @@ interface IUseStore {
   getTicketsByStoreIdAsync: (storeId: string) => Promise<SockbaseTicketDocument[]>
   getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
+  getTicketUserByHashIdNullableAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
   setTicketApplicationStatusAsync: (ticketId: string, status: SockbaseApplicationStatus) => Promise<void>
   createTicketForAdminAsync: (storeId: string, createTicketData: { email: string, typeId: string }) => Promise<SockbaseTicketCreatedResult>
   deleteTicketAsync: (ticketHashId: string) => Promise<void>
   createStoreAsync: (storeId: string, store: SockbaseStore) => Promise<void>
+  updateTicketUsedStatusByIdAsync: (ticketId: string, used: boolean) => Promise<void>
 }
 
 const useStore = (): IUseStore => {
@@ -110,6 +112,12 @@ const useStore = (): IUseStore => {
       return ticketUser
     }, [])
 
+  const getTicketUserByHashIdNullableAsync =
+    useCallback(async (ticketHashId: string) => {
+      return await getTicketUserByHashIdAsync(ticketHashId)
+        .catch(() => null)
+    }, [])
+
   const getTicketUsedStatusByIdAsync =
     useCallback(async (ticketId: string): Promise<SockbaseTicketUsedStatus> => {
       const db = getFirestore()
@@ -182,6 +190,19 @@ const useStore = (): IUseStore => {
         .catch(err => { throw err })
     }, [])
 
+  const updateTicketUsedStatusByIdAsync =
+    useCallback(async (ticketId: string, used: boolean) => {
+      const db = getFirestore()
+      const ticketUsedStatusRef = doc(db, `/_tickets/${ticketId}/private/usedStatus`)
+        .withConverter(ticketUsedStatusConverter)
+
+      await setDoc(
+        ticketUsedStatusRef,
+        { used },
+        { merge: true })
+        .catch((err) => { throw err })
+    }, [])
+
   return {
     getStoreByIdAsync,
     getStoresByOrganizationIdAsync,
@@ -190,11 +211,13 @@ const useStore = (): IUseStore => {
     getTicketsByStoreIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
+    getTicketUserByHashIdNullableAsync,
     getTicketUsedStatusByIdAsync,
     setTicketApplicationStatusAsync,
     createTicketForAdminAsync,
     deleteTicketAsync,
-    createStoreAsync
+    createStoreAsync,
+    updateTicketUsedStatusByIdAsync
   }
 }
 
