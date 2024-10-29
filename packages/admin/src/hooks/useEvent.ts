@@ -1,9 +1,10 @@
 import { useCallback } from 'react'
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore'
+import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
+import { ref, uploadBytes } from 'firebase/storage'
 import { eventConverter, spaceConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseCirclePassCreatedResult, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
+import type { SockbaseCirclePassCreatedResult, SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
@@ -12,12 +13,15 @@ interface IUseEvent {
   getSpaceByIdNullableAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
   createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreatedResult>
+  createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
+  uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
 }
 
 const useEvent = (): IUseEvent => {
-  const { getFirestore, getFunctions } = useFirebase()
+  const { getFirestore, getFunctions, getStorage } = useFirebase()
   const db = getFirestore()
   const functions = getFunctions()
+  const storage = getStorage()
 
   const getEventByIdAsync =
     useCallback(async (eventId: string) => {
@@ -93,13 +97,29 @@ const useEvent = (): IUseEvent => {
     return createResult.data
   }, [])
 
+  const createEventAsync =
+    useCallback(async (eventId: string, event: SockbaseEvent): Promise<void> => {
+      const eventRef = doc(db, `/events/${eventId}`)
+        .withConverter(eventConverter)
+      await setDoc(eventRef, event)
+        .catch(err => { throw err })
+    }, [])
+
+  const uploadEventEyecatchAsync =
+    useCallback(async (eventId: string, eyecatchFile: File): Promise<void> => {
+      const eyecatchRef = ref(storage, `events/${eventId}/eyecatch.jpg`)
+      await uploadBytes(eyecatchRef, eyecatchFile)
+    }, [])
+
   return {
     getEventByIdAsync,
     getEventsByOrganizationIdAsync,
     getSpaceByIdAsync,
     getSpaceByIdNullableAsync,
     getSpacesByEventIdAsync,
-    createPassesAsync
+    createPassesAsync,
+    createEventAsync,
+    uploadEventEyecatchAsync
   }
 }
 

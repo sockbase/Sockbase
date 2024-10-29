@@ -1,11 +1,13 @@
 import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import CircleViewPage from './pages/CircleViewPage/CircleViewPage'
+import EventCreatePage from './pages/EventCreatePage/EventCreatePage'
 import EventCreatePassPage from './pages/EventCreatePassPage/EventCreatePassPage'
 import EventDownloadCircleCutPage from './pages/EventDownloadCircleCutPage/EventDownloadCircleCutPage'
 import EventExportSoleilPage from './pages/EventExportSoleilTSVPage/EventExportSoleilTSVPage'
 import EventListPage from './pages/EventListPage/EventListPage'
 import EventManageSpacePage from './pages/EventManageSpacePage/EventManageSpacePage'
+import EventMetaViewPage from './pages/EventMetaViewPage/EventMetaViewPage'
 import EventSendMailPage from './pages/EventSendMailPage/EventSendMailPage'
 import EventViewPage from './pages/EventViewPage/EventViewPage'
 import IndexPage from './pages/IndexPage/IndexPage'
@@ -16,7 +18,9 @@ import InquiryListPage from './pages/InquiryListPage/InquiryListPage'
 import InquiryViewPage from './pages/InquiryViewPage/InquiryViewPage'
 import LicensePage from './pages/LicenseViewPage/LicenseViewPage'
 import LoginPage from './pages/LoginPage/LoginPage'
+import StoreCreatePage from './pages/StoreCreatePage/StoreCreatePage'
 import StoreListPage from './pages/StoreListPage/StoreListPage'
+import StoreMetaViewPage from './pages/StoreMetaViewPage/StoreMetaViewPage'
 import StoreViewPage from './pages/StoreViewPage/StoreViewPage'
 import TicketCreatePage from './pages/TicketCreatePage/TicketCreatePage'
 import TicketTerminalPage from './pages/TicketTerminalPage/TicketTerminalPage'
@@ -55,6 +59,10 @@ const routes = createBrowserRouter([
             element: <StoreListPage />
           },
           {
+            path: 'create',
+            element: <StoreCreatePage />
+          },
+          {
             path: ':storeId',
             children: [
               {
@@ -64,6 +72,10 @@ const routes = createBrowserRouter([
               {
                 path: 'create-tickets',
                 element: <TicketCreatePage />
+              },
+              {
+                path: 'view-meta',
+                element: <StoreMetaViewPage />
               }
             ]
           }
@@ -73,12 +85,12 @@ const routes = createBrowserRouter([
         path: 'tickets',
         children: [
           {
-            path: ':hashId',
-            element: <TicketViewPage />
-          },
-          {
             path: 'terminal',
             element: <TicketTerminalPage />
+          },
+          {
+            path: ':hashId',
+            element: <TicketViewPage />
           }
         ]
       },
@@ -88,6 +100,10 @@ const routes = createBrowserRouter([
           {
             index: true,
             element: <EventListPage />
+          },
+          {
+            path: 'create',
+            element: <EventCreatePage />
           },
           {
             path: ':eventId',
@@ -115,6 +131,10 @@ const routes = createBrowserRouter([
               {
                 path: 'manage-spaces',
                 element: <EventManageSpacePage />
+              },
+              {
+                path: 'view-meta',
+                element: <EventMetaViewPage />
               }
             ]
           }

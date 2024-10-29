@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
-import FormButton from '../../../../components/Form/Button'
-import FormCheckbox from '../../../../components/Form/Checkbox'
-import FormItem from '../../../../components/Form/FormItem'
-import FormSection from '../../../../components/Form/FormSection'
-import FormInput from '../../../../components/Form/Input'
-import FormLabel from '../../../../components/Form/Label'
-import FormTextarea from '../../../../components/Form/Textarea'
-import EyecatchPreview from '../../../../components/Parts/EyecatchPreview'
-import useDayjs from '../../../../hooks/useDayjs'
-import useFile from '../../../../hooks/useFile'
+import FormButton from '../../../components/Form/FormButton'
+import FormCheckbox from '../../../components/Form/FormCheckbox'
+import FormInput from '../../../components/Form/FormInput'
+import FormItem from '../../../components/Form/FormItem'
+import FormLabel from '../../../components/Form/FormLabel'
+import FormSection from '../../../components/Form/FormSection'
+import EyecatchPreview from '../../../components/Parts/EyecatchPreview'
+import FormTextarea from '../../../components/Parts/FormTextarea'
+import useDayjs from '../../../hooks/useDayjs'
+import useFile from '../../../hooks/useFile'
 import type { SockbaseEvent, SockbaseEventDocument, SockbaseEventSpace } from 'sockbase'
 
 interface Props {
@@ -382,7 +382,7 @@ const InformationImport: React.FC<Props> = (props) => {
               onChange={e => setEventPackageJSON(e.target.value)}/>
           </FormItem>
           <FormItem>
-            <FormButton onClick={handleImportEventPackage} inlined disabled={!eventPackageJSON}>インポート</FormButton>
+            <FormButton onClick={handleImportEventPackage} disabled={!eventPackageJSON}>インポート</FormButton>
           </FormItem>
         </FormSection>
       </details>
@@ -761,7 +761,7 @@ const InformationImport: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <FormButton inlined onClick={handleConfirm}>内容確認</FormButton>
+          <FormButton onClick={handleConfirm}>内容確認</FormButton>
         </FormItem>
       </FormSection>
     </>

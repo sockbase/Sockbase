@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react'
-import FormButton from '../../../../components/Form/Button'
-import FormItem from '../../../../components/Form/FormItem'
-import FormSection from '../../../../components/Form/FormSection'
-import StoreInfo from '../../../../components/Parts/StoreInfo'
+import FormButton from '../../../components/Form/FormButton'
+import FormItem from '../../../components/Form/FormItem'
+import FormSection from '../../../components/Form/FormSection'
+import StoreInfo from '../../../components/Parts/StoreInfo'
 import type { SockbaseStore } from 'sockbase'
 
 interface Props {
@@ -34,9 +34,9 @@ const InformationConfirm: React.FC<Props> = (props) => {
         store={props.store} />
 
       <FormSection>
-        <FormItem inlined>
-          <FormButton onClick={handleCreate} disabled={isProcess} inlined>作成する</FormButton>
-          <FormButton onClick={props.prevStep} color="default" disabled={isProcess} inlined>修正する</FormButton>
+        <FormItem $inlined>
+          <FormButton onClick={handleCreate} disabled={isProcess}>作成する</FormButton>
+          <FormButton onClick={props.prevStep} color="default" disabled={isProcess}>修正する</FormButton>
         </FormItem>
       </FormSection>
     </>

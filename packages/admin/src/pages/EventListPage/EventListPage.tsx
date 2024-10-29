@@ -41,13 +41,14 @@ const EventListPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
+
       <PageTitle
         icon={<MdEditCalendar />}
         title="イベント管理" />
 
       {isSystemAdmin && <FormSection>
         <FormItem>
-          <LinkButton to="/events/create" disabled>
+          <LinkButton to="/events/create">
             <IconLabel icon={<MdAdd />} label='イベント作成' />
           </LinkButton>
         </FormItem>

@@ -3,6 +3,8 @@ import styled from 'styled-components'
 const FormTextarea = styled.textarea`
   display: block;
   width: 100%;
+  min-height: 10rem;
+
   padding: 5px;
   font-size: 1rem;
   background-color: var(--background-color);
@@ -15,7 +17,6 @@ const FormTextarea = styled.textarea`
     outline: none;
     border: 1px solid var(--text-color);
   }
-
 `
 
 export default FormTextarea

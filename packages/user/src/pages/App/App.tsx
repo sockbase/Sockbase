@@ -24,13 +24,10 @@ import DashboardCircleApplicationUpdateCutPage from '../Dashboard/DashboardCircl
 import DashboardContactPage from '../Dashboard/DashboardContactPage/DashboardContactPage'
 import DashboardEventApplicationListPage from '../Dashboard/DashboardEventApplicationListPage/DashboardEventApplicationListPage'
 import DashboardEventApplicationPrintTanzakuPage from '../Dashboard/DashboardEventApplicationPrintTanzakuPage/DashboardEventApplicationPrintTanzakuPage'
-import DashboardEventCreatePage from '../Dashboard/DashboardEventCreatePage/DashboardEventCreatePage'
-import DashboardEventMetaViewPage from '../Dashboard/DashboardEventMetaViewPage/DashboardEventMetaViewPage'
 import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
 import DashboardMyTicketListPage from '../Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
 import DashboardSettingPage from '../Dashboard/DashboardSettingPage/DashboardSettingPage'
-import DashboardStoreCreatePage from '../Dashboard/DashboardStoreCreatePage/DashboardStoreCreatePage'
 import DashboardStoreMetaViewPage from '../Dashboard/DashboardStoreMetaViewPage/DashboardStoreMetaViewPage'
 import DashboardStoreTicketListPage from '../Dashboard/DashboardStoreTicketListPage/DashboardStoreTicketListPage'
 import DashboardTicketDetailPage from '../Dashboard/DashboardTicketDetailPage/DashboardTicketDetailPage'
@@ -151,19 +148,11 @@ const router = createBrowserRouter([
             path: 'events',
             children: [
               {
-                path: 'create',
-                element: <DashboardEventCreatePage />
-              },
-              {
                 path: ':eventId',
                 children: [
                   {
                     index: true,
                     element: <DashboardEventApplicationListPage />
-                  },
-                  {
-                    path: 'info',
-                    element: <DashboardEventMetaViewPage />
                   },
                   {
                     path: 'tanzaku',
@@ -223,10 +212,6 @@ const router = createBrowserRouter([
           {
             path: 'stores',
             children: [
-              {
-                path: 'create',
-                element: <DashboardStoreCreatePage />
-              },
               {
                 path: ':storeId',
                 children: [
