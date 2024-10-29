@@ -22,14 +22,10 @@ import DashboardCircleApplicationEditOverviewPage from '../Dashboard/DashboardCi
 import DashboardCircleApplicationListPage from '../Dashboard/DashboardCircleApplicationListPage/DashboardCircleApplicationListPage'
 import DashboardCircleApplicationUpdateCutPage from '../Dashboard/DashboardCircleApplicationUpdateCutPage/DashboardCircleApplicationUpdateCutPage'
 import DashboardContactPage from '../Dashboard/DashboardContactPage/DashboardContactPage'
-import DashboardEventApplicationListPage from '../Dashboard/DashboardEventApplicationListPage/DashboardEventApplicationListPage'
-import DashboardEventApplicationPrintTanzakuPage from '../Dashboard/DashboardEventApplicationPrintTanzakuPage/DashboardEventApplicationPrintTanzakuPage'
 import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
 import DashboardMyTicketListPage from '../Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
 import DashboardSettingPage from '../Dashboard/DashboardSettingPage/DashboardSettingPage'
-import DashboardStoreMetaViewPage from '../Dashboard/DashboardStoreMetaViewPage/DashboardStoreMetaViewPage'
-import DashboardStoreTicketListPage from '../Dashboard/DashboardStoreTicketListPage/DashboardStoreTicketListPage'
 import DashboardTicketDetailPage from '../Dashboard/DashboardTicketDetailPage/DashboardTicketDetailPage'
 import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/DashboardTicketListPage'
 import DashboardTicketTerminalPage from '../Dashboard/DashboardTicketTerminalPage/DashboardTicketTerminalPage'
@@ -145,24 +141,6 @@ const router = createBrowserRouter([
             ]
           },
           {
-            path: 'events',
-            children: [
-              {
-                path: ':eventId',
-                children: [
-                  {
-                    index: true,
-                    element: <DashboardEventApplicationListPage />
-                  },
-                  {
-                    path: 'tanzaku',
-                    element: <DashboardEventApplicationPrintTanzakuPage />
-                  }
-                ]
-              }
-            ]
-          },
-          {
             path: 'applications',
             children: [
               {
@@ -170,7 +148,7 @@ const router = createBrowserRouter([
                 element: <DashboardCircleApplicationListPage />
               },
               {
-                path: ':hashedAppId',
+                path: ':hashId',
                 children: [
                   {
                     index: true,
@@ -200,30 +178,12 @@ const router = createBrowserRouter([
                 element: <DashboardTicketListPage />
               },
               {
-                path: ':hashedTicketId',
+                path: ':hashId',
                 element: <DashboardTicketDetailPage />
               },
               {
                 path: 'terminal',
                 element: <DashboardTicketTerminalPage />
-              }
-            ]
-          },
-          {
-            path: 'stores',
-            children: [
-              {
-                path: ':storeId',
-                children: [
-                  {
-                    index: true,
-                    element: <DashboardStoreTicketListPage />
-                  },
-                  {
-                    path: 'info',
-                    element: <DashboardStoreMetaViewPage />
-                  }
-                ]
               }
             ]
           },
@@ -235,7 +195,7 @@ const router = createBrowserRouter([
                 element: <DashboardMyTicketListPage />
               },
               {
-                path: ':hashedTicketId',
+                path: ':hashId',
                 element: <DashboardMyTicketDetailPage />
               }
             ]

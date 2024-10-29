@@ -25,10 +25,10 @@ import type {
 } from 'sockbase'
 
 const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
-  const { hashedAppId } = useParams<{ hashedAppId: string }>()
+  const { hashId } = useParams<{ hashId: string }>()
 
   const {
-    getApplicationIdByHashedIdAsync,
+    getApplicationIdByHashIdAsync,
     getApplicationByIdAsync,
     getOverviewByApplicationIdOptionalAsync,
     setOverviewByApplicationIdAsync
@@ -46,9 +46,9 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
-      if (!hashedAppId) return
+      if (!hashId) return
 
-      const fetchedAppHashDoc = await getApplicationIdByHashedIdAsync(hashedAppId)
+      const fetchedAppHashDoc = await getApplicationIdByHashIdAsync(hashId)
       const fetchedApp = await getApplicationByIdAsync(fetchedAppHashDoc.applicationId)
       const fetchedEvent = await getEventByIdAsync(fetchedApp.eventId)
 
@@ -73,7 +73,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
 
     fetchAsync()
       .catch(err => { throw err })
-  }, [hashedAppId])
+  }, [hashId])
 
   const errorCount = useMemo((): number => {
     const validators = [
@@ -103,7 +103,7 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
         <li><Link to="/dashboard/applications">サークル申し込み履歴</Link></li>
         <li>{event?.name ?? <BlinkField />}</li>
         <li>
-          {(hashedAppId && app && <Link to={`/dashboard/applications/${hashedAppId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
+          {(hashId && app && <Link to={`/dashboard/applications/${hashId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
       <PageTitle title={app?.circle.name} description="頒布物情報編集" icon={<MdEdit />} isLoading={!app} />

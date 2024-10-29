@@ -150,9 +150,9 @@ const useApplication = (): IUseApplication => {
     }, [])
 
   const getCircleCutURLByHashIdAsync =
-    useCallback(async (hashedAppId: string): Promise<string> => {
+    useCallback(async (hashId: string): Promise<string> => {
       const storage = getStorage()
-      const circleCutRef = ref(storage, `/circleCuts/${hashedAppId}`)
+      const circleCutRef = ref(storage, `/circleCuts/${hashId}`)
       const circleCutURL = await getDownloadURL(circleCutRef)
       return circleCutURL
     }, [])

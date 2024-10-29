@@ -22,7 +22,7 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardMyTicketDetailPage: React.FC = () => {
-  const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
+  const { hashId } = useParams()
   const { user } = useFirebase()
   const { formatByDate } = useDayjs()
   const {
@@ -43,16 +43,16 @@ const DashboardMyTicketDetailPage: React.FC = () => {
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
-      if (!hashedTicketId) return
+      if (!hashId) return
 
-      getTicketUserByHashIdOptionalAsync(hashedTicketId)
+      getTicketUserByHashIdOptionalAsync(hashId)
         .then(fetchedTicketUser => setTicketUser(fetchedTicketUser))
         .catch(err => { throw err })
     }
 
     fetchAsync()
       .catch(err => { throw err })
-  }, [hashedTicketId])
+  }, [hashId])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -78,7 +78,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
       {user && ticketUser?.userId === user.uid && !ticketUser.usableUserId &&
         <Alert type="warning" title="チケットの割り当てが完了していません">
           購入したチケットを使用するためには、まずチケットの割り当てを行う必要があります。<br />
-          <Link to={`/dashboard/tickets/${hashedTicketId}`}>こちら</Link> から割り当てを行ってください。
+          <Link to={`/dashboard/tickets/${hashId}`}>こちら</Link> から割り当てを行ってください。
         </Alert>}
       {ticketUser === null || (ticketUser && user && (ticketUser.userId !== user.uid && ticketUser.usableUserId !== user.uid) &&
         <Alert type="error" title="チケットの取得に失敗しました">
@@ -113,7 +113,7 @@ const DashboardMyTicketDetailPage: React.FC = () => {
               <tbody>
                 <tr>
                   <th>チケット ID</th>
-                  <td>{hashedTicketId} <CopyToClipboard content={hashedTicketId ?? ''} /></td>
+                  <td>{hashId} <CopyToClipboard content={hashId ?? ''} /></td>
                 </tr>
               </tbody>
             </table>

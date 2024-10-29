@@ -34,7 +34,7 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
 const DashboardTicketDetailPage: React.FC = () => {
-  const { hashedTicketId } = useParams<{ hashedTicketId: string }>()
+  const { hashId } = useParams()
   const { formatByDate } = useDayjs()
   const {
     getTicketIdByHashIdAsync,
@@ -113,20 +113,20 @@ const DashboardTicketDetailPage: React.FC = () => {
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
-      if (!hashedTicketId) return
+      if (!hashId) return
 
-      getTicketIdByHashIdAsync(hashedTicketId)
+      getTicketIdByHashIdAsync(hashId)
         .then(fetchedTicketHash => setTicketHash(fetchedTicketHash))
         .catch(err => { throw err })
 
-      getTicketUserByHashIdAsync(hashedTicketId)
+      getTicketUserByHashIdAsync(hashId)
         .then(fetchedTicketUser => setTicketUser(fetchedTicketUser))
         .catch(err => { throw err })
     }
 
     fetchAsync()
       .catch(err => { throw err })
-  }, [hashedTicketId])
+  }, [hashId])
 
   useEffect(() => {
     const fetchAsync = async (): Promise<void> => {
@@ -250,7 +250,7 @@ const DashboardTicketDetailPage: React.FC = () => {
             <tbody>
               <tr>
                 <th>チケット ID</th>
-                <td>{hashedTicketId} <CopyToClipboard content={hashedTicketId ?? ''} /></td>
+                <td>{hashId} <CopyToClipboard content={hashId ?? ''} /></td>
               </tr>
               <tr>
                 <th>申し込み日時</th>
@@ -261,11 +261,11 @@ const DashboardTicketDetailPage: React.FC = () => {
         </>
 
         <>
-          {hashedTicketId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && !ticketUsedStatus?.used && <>
+          {hashId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && !ticketUsedStatus?.used && <>
             <h3>チケットを表示</h3>
             <FormSection>
               <FormItem>
-                <LinkButton to={`/tickets/${hashedTicketId}`}><IconLabel label="チケットを表示する" icon={<MdOpenInNew />} /></LinkButton>
+                <LinkButton to={`/tickets/${hashId}`}><IconLabel label="チケットを表示する" icon={<MdOpenInNew />} /></LinkButton>
               </FormItem>
             </FormSection>
           </>}
