@@ -24,10 +24,8 @@ import DashboardCircleApplicationUpdateCutPage from '../Dashboard/DashboardCircl
 import DashboardContactPage from '../Dashboard/DashboardContactPage/DashboardContactPage'
 import DashboardEventApplicationListPage from '../Dashboard/DashboardEventApplicationListPage/DashboardEventApplicationListPage'
 import DashboardEventApplicationPrintTanzakuPage from '../Dashboard/DashboardEventApplicationPrintTanzakuPage/DashboardEventApplicationPrintTanzakuPage'
-import DashboardEventApplicationSoleilTSVExportPage from '../Dashboard/DashboardEventApplicationSoleilTSVExportPage/DashboardEventSoleilTSVExportPage'
 import DashboardEventCircleCutDownloadPage from '../Dashboard/DashboardEventCircleCutDownloadPage/DashboardEventCircleCutDownloadPage'
 import DashboardEventCreatePage from '../Dashboard/DashboardEventCreatePage/DashboardEventCreatePage'
-import DashboardEventMailSendPage from '../Dashboard/DashboardEventMailSendPage/DashboardEventMailSendPage'
 import DashboardEventMetaViewPage from '../Dashboard/DashboardEventMetaViewPage/DashboardEventMetaViewPage'
 import DashboardEventPassCreatePage from '../Dashboard/DashboardEventPassCreatePage/DashboardEventPassCreatePage'
 import DashboardEventSpaceManagePage from '../Dashboard/DashboardEventSpaceManagePage/DashboardEventSpaceManagePage'
@@ -186,16 +184,8 @@ const router = createBrowserRouter([
                     element: <DashboardEventCircleCutDownloadPage />
                   },
                   {
-                    path: 'send-mails',
-                    element: <DashboardEventMailSendPage />
-                  },
-                  {
                     path: 'create-passes',
                     element: <DashboardEventPassCreatePage />
-                  },
-                  {
-                    path: 'soleil',
-                    element: <DashboardEventApplicationSoleilTSVExportPage />
                   }
                 ]
               }
