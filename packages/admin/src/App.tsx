@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from '
 import { HelmetProvider } from 'react-helmet-async'
 import CircleViewPage from './pages/CircleViewPage/CircleViewPage'
 import EventCreatePassPage from './pages/EventCreatePassPage/EventCreatePassPage'
+import EventDownloadCircleCutPage from './pages/EventDownloadCircleCutPage/EventDownloadCircleCutPage'
 import EventExportSoleilPage from './pages/EventExportSoleilTSVPage/EventExportSoleilTSVPage'
 import EventListPage from './pages/EventListPage/EventListPage'
 import EventSendMailPage from './pages/EventSendMailPage/EventSendMailPage'
@@ -95,6 +96,10 @@ const routes = createBrowserRouter([
               {
                 path: 'create-passes',
                 element: <EventCreatePassPage />
+              },
+              {
+                path: 'download-circlecuts',
+                element: <EventDownloadCircleCutPage />
               }
             ]
           }
