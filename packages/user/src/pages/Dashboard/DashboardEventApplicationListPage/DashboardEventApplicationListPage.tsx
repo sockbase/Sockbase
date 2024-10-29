@@ -6,8 +6,6 @@ import {
   MdEdit,
   MdEditCalendar,
   MdImage,
-  MdListAlt,
-  MdMail,
   MdPrint
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
@@ -192,12 +190,6 @@ const DashboardEventApplicationListPage: React.FC = () => {
           </LinkButton>
           <LinkButton to={`/dashboard/events/${eventId}/create-passes`} color="default" inlined>
             <IconLabel label="サークル通行証発券" icon={<MdBookOnline />} />
-          </LinkButton>
-          <LinkButton to={`/dashboard/events/${eventId}/soleil`} color="default" inlined>
-            <IconLabel label="Soleil" icon={<MdListAlt />} />
-          </LinkButton>
-          <LinkButton to={`/dashboard/events/${eventId}/send-mails`} color="default" inlined>
-            <IconLabel label="メール送信" icon={<MdMail />} />
           </LinkButton>
         </FormItem>
       </FormSection>

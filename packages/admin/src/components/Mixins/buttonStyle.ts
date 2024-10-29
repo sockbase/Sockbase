@@ -6,7 +6,7 @@ const buttonStyle = css<{ disabled?: boolean }>`
   border-radius: 5px;
   background-color: inherit;
   font: inherit;
-  color: var(--text-foreground-color);
+  color: var(--text-color);
   background-color: var(--background-color);
   cursor: pointer;
   user-select: none;

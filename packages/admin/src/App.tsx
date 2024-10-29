@@ -1,6 +1,7 @@
 import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import CircleViewPage from './pages/CircleViewPage/CircleViewPage'
+import EventExportSoleilPage from './pages/EventExportSoleilTSVPage/EventExportSoleilTSVPage'
 import EventListPage from './pages/EventListPage/EventListPage'
 import EventSendMailPage from './pages/EventSendMailPage/EventSendMailPage'
 import EventViewPage from './pages/EventViewPage/EventViewPage'
@@ -85,6 +86,10 @@ const routes = createBrowserRouter([
               {
                 path: 'send-mail',
                 element: <EventSendMailPage />
+              },
+              {
+                path: 'export-soleil',
+                element: <EventExportSoleilPage />
               }
             ]
           }

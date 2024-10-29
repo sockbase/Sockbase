@@ -1,45 +1,46 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdDownload, MdListAlt } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import FormButton from '../../../components/Form/Button'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import FormTextarea from '../../../components/Form/Textarea'
-import BlinkField from '../../../components/Parts/BlinkField'
-import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
-import IconLabel from '../../../components/Parts/IconLabel'
-import useApplication from '../../../hooks/useApplication'
-import useEvent from '../../../hooks/useEvent'
-import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
-import type { SockbaseApplicationDocument, SockbaseApplicationHashIdDocument, SockbaseApplicationMeta, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
+import FormButton from '../../components/Form/FormButton'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
+import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import FormTextarea from '../../components/Parts/FormTextarea'
+import IconLabel from '../../components/Parts/IconLabel'
+import PageTitle from '../../components/Parts/PageTitle'
+import useApplication from '../../hooks/useApplication'
+import useEvent from '../../hooks/useEvent'
+import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
+import type {
+  SockbaseApplicationDocument,
+  SockbaseApplicationHashIdDocument,
+  SockbaseApplicationMeta,
+  SockbaseEventDocument,
+  SockbaseSpaceDocument
+} from 'sockbase'
 
-const DashboardEventApplicationSoleilTSVExportPage: React.FC = () => {
-  const { eventId } = useParams<{ eventId: string }>()
+const EventExportSoleilPage: React.FC = () => {
+  const { eventId } = useParams()
   const {
     getEventByIdAsync,
     getSpacesByEventIdAsync
   } = useEvent()
   const {
     getApplicationsByEventIdAsync,
-    getApplicationMetaByIdAsync,
-    getApplicationIdByHashedIdAsync
+    getApplicationIdByHashIdAsync
   } = useApplication()
 
   const [event, setEvent] = useState<SockbaseEventDocument>()
-  const [apps, setApps] = useState<Record<string, SockbaseApplicationDocument>>()
+  const [apps, setApps] = useState<Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
   const [appHashes, setAppHashes] = useState<SockbaseApplicationHashIdDocument[]>()
-  const [appMetas, setAppMetas] = useState<Record<string, SockbaseApplicationMeta>>()
   const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
 
   const soleilTSV = useMemo(() => {
-    if (!eventId || !apps || !appMetas || !spaces || !appHashes) return
+    if (!eventId || !apps || !spaces || !appHashes) return
 
     const filteredApps = Object.values(apps)
-      .filter(a => {
-        const meta = appMetas[a.id]
-        return meta.applicationStatus === 2
-      })
+      .filter(a => a.meta.applicationStatus === 2)
 
     const tsv = spaces.map((s, i) => {
       const appHashBySpace = appHashes.find(i => i.spaceId === s.id)
@@ -49,7 +50,7 @@ const DashboardEventApplicationSoleilTSVExportPage: React.FC = () => {
     })
 
     return tsv.join('\n')
-  }, [eventId, apps, appMetas, spaces, appHashes])
+  }, [eventId, apps, spaces, appHashes])
 
   const downloadTSV = useCallback(() => {
     if (!soleilTSV) return
@@ -79,21 +80,10 @@ const DashboardEventApplicationSoleilTSVExportPage: React.FC = () => {
         .catch(err => { throw err })
       setApps(fetchedApps)
 
-      const appIds = Object.keys(fetchedApps)
-      Promise.all(appIds.map(async appId => ({
-        id: appId,
-        data: await getApplicationMetaByIdAsync(appId)
-      })))
-        .then(fetchedAppMetas => {
-          const mappedAppMetas = fetchedAppMetas.reduce<Record<string, SockbaseApplicationMeta>>((p, c) => ({ ...p, [c.id]: c.data }), {})
-          setAppMetas(mappedAppMetas)
-        })
-        .catch(err => { throw err })
-
       const appHashIds = Object.values(fetchedApps)
         .filter(a => a.hashId)
         .map(a => a.hashId ?? '')
-      Promise.all(appHashIds.map(async hashId => await getApplicationIdByHashedIdAsync(hashId)))
+      Promise.all(appHashIds.map(async hashId => await getApplicationIdByHashIdAsync(hashId)))
         .then(fetchedAppHashes => setAppHashes(fetchedAppHashes))
         .catch(err => { throw err })
     }
@@ -103,34 +93,32 @@ const DashboardEventApplicationSoleilTSVExportPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DashboardBaseLayout title="Soleil データ出力">
+    <DefaultLayout title="Soleil 出力">
       <Breadcrumbs>
-        <li><Link to="/dashboard">ホーム</Link></li>
-        <li>管理イベント</li>
+        <li><Link to="/">ホーム</Link></li>
+        <li><Link to="/events">イベント一覧</Link></li>
         <li>{event?._organization.name ?? <BlinkField />}</li>
-        <li><Link to={`/dashboard/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
+        <li><Link to={`/events/${eventId}`}>{event?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title={event?.name}
-        description='Soleil データ出力'
-        icon={<MdListAlt />}
-        isLoading={!event} />
+        title="Soleil 出力"
+        icon={<MdListAlt />} />
 
       <FormSection>
         <FormItem>
           <FormTextarea value={soleilTSV} />
         </FormItem>
-        <FormItem inlined>
-          <FormButton onClick={downloadTSV} inlined>
+        <FormItem>
+          <FormButton onClick={downloadTSV}>
             <IconLabel
               icon={<MdDownload />}
               label="ダウンロード" />
           </FormButton>
         </FormItem>
       </FormSection>
-    </DashboardBaseLayout>
+    </DefaultLayout>
   )
 }
 
-export default DashboardEventApplicationSoleilTSVExportPage
+export default EventExportSoleilPage
