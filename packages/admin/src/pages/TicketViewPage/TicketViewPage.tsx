@@ -42,7 +42,8 @@ const TicketViewPage: React.FC = () => {
     getTicketUsedStatusByIdAsync,
     getTicketUserByHashIdAsync,
     setTicketApplicationStatusAsync,
-    deleteTicketAsync
+    deleteTicketAsync,
+    updateTicketUsedStatusByIdAsync
   } = useStore()
   const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
@@ -103,6 +104,16 @@ const TicketViewPage: React.FC = () => {
         throw err
       })
   }, [hashId])
+
+  const handleSetTicketUsed = useCallback((used: boolean) => {
+    if (!ticketHash) return
+    updateTicketUsedStatusByIdAsync(ticketHash?.ticketId, used)
+      .then(() => {
+        setTicketUsed(s => s && ({ ...s, used }))
+        alert('使用状況を変更しました')
+      })
+      .catch(err => { throw err })
+  }, [ticketHash])
 
   useEffect(() => {
     if (!hashId) return
@@ -259,6 +270,17 @@ const TicketViewPage: React.FC = () => {
               )}
             </FormItem>
           </FormSection>
+          {ticketUsed && (
+            <FormSection>
+              <FormItem>
+                <FormButton onClick={() => handleSetTicketUsed(!ticketUsed.used)}>
+                  <IconLabel
+                    icon={ticketUsed.used ? <MdPendingActions /> : <MdCheck />}
+                    label={ticketUsed.used ? '未使用にする' : '使用済みにする'} />
+                </FormButton>
+              </FormItem>
+            </FormSection>
+          )}
         </>
         {isSystemAdmin && (
           <>
