@@ -1,4 +1,16 @@
-import { MdBadge, MdEditCalendar, MdHome, MdInbox, MdInfo, MdLogin, MdLogout, MdQrCodeScanner, MdStore } from 'react-icons/md'
+import {
+  MdBadge,
+  MdEditCalendar,
+  MdGroup,
+  MdHome,
+  MdInbox,
+  MdInfo,
+  MdLogin,
+  MdLogout,
+  MdManageAccounts,
+  MdQrCodeScanner,
+  MdStore
+} from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import type { User } from 'firebase/auth'
@@ -37,7 +49,9 @@ const menuLinks = [
     requireSystemRole: 2,
     items: [
       { to: '/inquiries', icon: <MdInbox />, label: '問い合わせ管理' },
-      { to: '/informations', icon: <MdInfo />, label: 'お知らせ管理' }
+      { to: '/informations', icon: <MdInfo />, label: 'お知らせ管理' },
+      { to: '/users', icon: <MdManageAccounts />, label: 'ユーザ管理' },
+      { to: '/organizations', icon: <MdGroup />, label: '組織管理' }
     ]
   }
 ]

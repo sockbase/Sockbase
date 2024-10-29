@@ -42,6 +42,15 @@ service cloud.firestore {
     	allow read: if request.auth.uid == userId || isSystemAdmin(request.auth.uid);
       allow write: if request.auth.uid == userId;
     }
+
+    match /organizations/{organizationId} {
+      allow read: if isOrganizationAdmin(request.auth.uid, organizationId) || isSystemAdmin(request.auth.uid);
+
+      match /users/{userId} {
+        allow read: if isOrganizationAdmin(request.auth.uid, organizationId) || isSystemAdmin(request.auth.uid);
+        allow write: if isSystemAdmin(request.auth.uid);
+      }
+    }
     
     match /stores/{storeId} {
       allow read: if resource.data.isPublic

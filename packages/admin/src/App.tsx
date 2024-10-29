@@ -19,6 +19,8 @@ import InquiryListPage from './pages/InquiryListPage/InquiryListPage'
 import InquiryViewPage from './pages/InquiryViewPage/InquiryViewPage'
 import LicensePage from './pages/LicenseViewPage/LicenseViewPage'
 import LoginPage from './pages/LoginPage/LoginPage'
+import OrganizationListPage from './pages/OrganizationListPage/OrganizationListPage'
+import OrganizationViewPage from './pages/OrganizationViewPage/OrganizationViewPage'
 import StoreCreatePage from './pages/StoreCreatePage/StoreCreatePage'
 import StoreListPage from './pages/StoreListPage/StoreListPage'
 import StoreMetaViewPage from './pages/StoreMetaViewPage/StoreMetaViewPage'
@@ -26,6 +28,7 @@ import StoreViewPage from './pages/StoreViewPage/StoreViewPage'
 import TicketCreatePage from './pages/TicketCreatePage/TicketCreatePage'
 import TicketTerminalPage from './pages/TicketTerminalPage/TicketTerminalPage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
+import UserListPage from './pages/UserListPage/UserListPage'
 
 const Root: React.FC = () => {
   return (
@@ -181,6 +184,28 @@ const routes = createBrowserRouter([
           {
             path: ':inquiryId',
             element: <InquiryViewPage />
+          }
+        ]
+      },
+      {
+        path: 'users',
+        children: [
+          {
+            index: true,
+            element: <UserListPage />
+          }
+        ]
+      },
+      {
+        path: 'organizations',
+        children: [
+          {
+            index: true,
+            element: <OrganizationListPage />
+          },
+          {
+            path: ':organizationId',
+            element: <OrganizationViewPage />
           }
         ]
       }
