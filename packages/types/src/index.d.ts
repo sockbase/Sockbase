@@ -132,14 +132,26 @@ export interface SockbaseOrganization {
   contactUrl: string
 }
 
+export type SockbaseOrganizationDocument = SockbaseOrganization & {
+  id: string
+}
+
 /**
  * 組織設定
  */
-export type SockbaseOrganizationWithMeta = SockbaseOrganization & {
+export type SockbaseOrganizationWithMeta = SockbaseOrganizationDocument & {
   config: {
     discordWebhookURL: string
     discordRoleId: string
   }
+}
+
+export interface SockbaseOrganizationManager {
+  role: SockbaseRole
+}
+
+export type SockbaseOrganizationManagerDocument = SockbaseOrganizationManager & {
+  userId: string
 }
 
 /**

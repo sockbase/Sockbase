@@ -1,6 +1,7 @@
 import { serverTimestamp, type DocumentData, type FirestoreDataConverter, type QueryDocumentSnapshot } from 'firebase/firestore'
 import type {
   SockbaseAccount,
+  SockbaseAccountDocument,
   SockbaseApplicationDocument,
   SockbaseApplicationHashIdDocument,
   SockbaseApplicationLinksDocument,
@@ -9,6 +10,8 @@ import type {
   SockbaseInformationDocument,
   SockbaseInquiryDocument,
   SockbaseInquiryMetaDocument,
+  SockbaseOrganizationDocument,
+  SockbaseOrganizationManagerDocument,
   SockbasePaymentDocument,
   SockbaseSpaceDocument,
   SockbaseSpaceHashDocument,
@@ -40,6 +43,57 @@ export const accountConverter: FirestoreDataConverter<SockbaseAccount> = {
       address: data.address,
       telephone: data.telephone,
       gender: data.gender
+    }
+  }
+}
+
+export const accountDocumentConverter: FirestoreDataConverter<SockbaseAccountDocument> = {
+  toFirestore: (userData: SockbaseAccountDocument): DocumentData => ({
+    name: userData.name,
+    email: userData.email,
+    birthday: userData.birthday,
+    postalCode: userData.postalCode,
+    address: userData.address,
+    telephone: userData.telephone,
+    gender: userData.gender
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseAccountDocument => {
+    const data = snapshot.data()
+    return {
+      id: snapshot.id,
+      name: data.name,
+      email: data.email,
+      birthday: new Date(data.birthday).getTime(),
+      postalCode: data.postalCode,
+      address: data.address,
+      telephone: data.telephone,
+      gender: data.gender
+    }
+  }
+}
+
+export const organizationConverter: FirestoreDataConverter<SockbaseOrganizationDocument> = {
+  toFirestore: (organization: SockbaseOrganizationDocument): DocumentData => ({
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseOrganizationDocument => {
+    const organization = snapshot.data()
+    return {
+      id: snapshot.id,
+      name: organization.name,
+      contactUrl: organization.contactUrl
+    }
+  }
+}
+
+export const organizationManagerConverter: FirestoreDataConverter<SockbaseOrganizationManagerDocument> = {
+  toFirestore: (manager: SockbaseOrganizationManagerDocument): DocumentData => ({
+    role: manager.role
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseOrganizationManagerDocument => {
+    const manager = snapshot.data()
+    return {
+      userId: snapshot.id,
+      role: manager.role
     }
   }
 }
