@@ -63,14 +63,14 @@ const DashboardTicketTerminalPage: React.FC = () => {
 
   const [ticketHashId, setTicketHashId] = useState('')
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
-  const [store, setStore] = useState<SockbaseStoreDocument | null>()
-  const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument | null>()
-  const [usedStatus, setUsedStatus] = useState<SockbaseTicketUsedStatus | null>()
-  const [ticket, setTicket] = useState<SockbaseTicketDocument | null>()
-  const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta | null>()
+  const [store, setStore] = useState<SockbaseStoreDocument>()
+  const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument>()
+  const [usedStatus, setUsedStatus] = useState<SockbaseTicketUsedStatus>()
+  const [ticket, setTicket] = useState<SockbaseTicketDocument>()
+  const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
-  const [ownerUser, setOwnerUser] = useState<SockbaseAccount | null>()
-  const [usableUser, setUsableUser] = useState<SockbaseAccount | null>()
+  const [ownerUser, setOwnerUser] = useState<SockbaseAccount>()
+  const [usableUser, setUsableUser] = useState<SockbaseAccount>()
 
   const [isProgressForUsedStatus, setProgressForUsedStatus] = useState(false)
   const [usedStatusError, setUsedStatusError] = useState<string | null>()
@@ -87,38 +87,35 @@ const DashboardTicketTerminalPage: React.FC = () => {
   const canUseTicket = useMemo(() => {
     if (ticketMeta?.applicationStatus !== 2) return false
     if (!ticketUser?.usableUserId) return false
-    if (type?.productInfo && payment?.status !== 1) return false
+    if (payment && payment.status !== 1) return false
     return true
   }, [ticketMeta, ticketUser, type, payment])
 
   const searchTicketAsync = useCallback(async (hashId: string): Promise<void> => {
     const fetchAsync = async (): Promise<void> => {
-      setUsedStatusError(null)
-      setStore(null)
-      setTicketHash(null)
-      setUsedStatus(null)
-      setTicketMeta(null)
-      setTicket(null)
-      setPayment(null)
-      setOwnerUser(null)
-      setUsableUser(null)
+      setUsedStatusError(undefined)
+      setStore(undefined)
+      setTicketHash(undefined)
+      setUsedStatus(undefined)
+      setTicketMeta(undefined)
+      setTicket(undefined)
+      setPayment(undefined)
+      setOwnerUser(undefined)
+      setUsableUser(undefined)
 
       const fetchedTicketUser = await getTicketUserByHashIdOptionalAsync(hashId)
       setTicketUser(fetchedTicketUser)
 
       if (!fetchedTicketUser) return
-
       getStoreByIdAsync(fetchedTicketUser.storeId)
-        .then(fetchedStore => setStore(fetchedStore))
+        .then(setStore)
         .catch(err => { throw err })
-
       getTicketIdByHashIdAsync(fetchedTicketUser.hashId)
-        .then(fetchedHash => setTicketHash(fetchedHash))
+        .then(setTicketHash)
         .catch(err => { throw err })
-
       if (fetchedTicketUser.usableUserId) {
         getUserDataByUserIdAndStoreIdAsync(fetchedTicketUser.usableUserId, fetchedTicketUser.storeId)
-          .then(fetchedUser => setUsableUser(fetchedUser))
+          .then(setUsableUser)
           .catch(err => { throw err })
       }
     }
@@ -212,8 +209,10 @@ const DashboardTicketTerminalPage: React.FC = () => {
 
     if (ticketHash.paymentId) {
       getPaymentAsync(ticketHash.paymentId)
-        .then(fetchedPayment => setPayment(fetchedPayment))
+        .then(setPayment)
         .catch(err => { throw err })
+    } else {
+      setPayment(null)
     }
   }, [ticketHash])
 
@@ -313,16 +312,14 @@ const DashboardTicketTerminalPage: React.FC = () => {
 
         <>
           <h2>チケット情報</h2>
-          {ticketMeta && type && (
-            (ticketMeta.applicationStatus !== 2 || !ticketUser?.usableUserId || (type.productInfo && payment?.status !== 1)) && (
-              <Alert type="warning" title="このチケットは使用できません。">
-                <ul>
-                  {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。</li>}
-                  {!ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。</li>}
-                  {type.productInfo && payment?.status !== 1 && <li>支払いが完了していません。</li>}
-                </ul>
-              </Alert>
-            )
+          {ticketMeta && type && !canUseTicket && (
+            <Alert type="warning" title="このチケットは使用できません。">
+              <ul>
+                {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。管理者に問い合わせてください。</li>}
+                {!ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。自身で使用する場合はチケット画面の「チケットを有効化する」を選択してください。</li>}
+                {payment && payment.status !== 1 && <li>支払いが完了していません。管理者に問い合わせてください。</li>}
+              </ul>
+            </Alert>
           )}
 
           {usedStatus && (
@@ -396,15 +393,16 @@ const DashboardTicketTerminalPage: React.FC = () => {
                     : <BlinkField />}
                 </td>
               </tr>
-              {type?.productInfo &&
-                  <tr>
-                    <th>決済状況</th>
-                    <td>
-                      {payment
-                        ? <PaymentStatusLabel payment={payment} />
-                        : <BlinkField />}
-                    </td>
-                  </tr>}
+              <tr>
+                <th>決済状況</th>
+                <td>
+                  {payment !== undefined
+                    ? payment !== null
+                      ? <PaymentStatusLabel payment={payment} />
+                      : '支払い不要'
+                    : <BlinkField />}
+                </td>
+              </tr>
               <tr>
                 <th>申し込み日時</th>
                 <td>
