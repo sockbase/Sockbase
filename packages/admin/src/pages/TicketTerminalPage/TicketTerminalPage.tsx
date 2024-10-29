@@ -103,7 +103,6 @@ const TicketTerminalPage: React.FC = () => {
       getTicketIdByHashIdAsync(fetchedTicketUser.hashId)
         .then(setTicketHash)
         .catch(err => { throw err })
-
       if (fetchedTicketUser.usableUserId) {
         getUserDataByUserIdAndStoreIdAsync(fetchedTicketUser.usableUserId, fetchedTicketUser.storeId)
           .then(setUsableUser)
@@ -306,16 +305,14 @@ const TicketTerminalPage: React.FC = () => {
 
         <>
           <h2>チケット情報</h2>
-          {ticketMeta && type && (
-            (ticketMeta.applicationStatus !== 2 || !ticketUser?.usableUserId || (payment && payment.status !== 1)) && (
-              <Alert type="warning" title="このチケットは使用できません。">
-                <ul>
-                  {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。管理者に問い合わせてください。</li>}
-                  {!ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。自身で使用する場合は「チケットを有効化する」を押してください。</li>}
-                  {payment && payment.status !== 1 && <li>支払いが完了していません。管理者に問い合わせてください。</li>}
-                </ul>
-              </Alert>
-            )
+          {ticketMeta && type && !canUseTicket && (
+            <Alert type="warning" title="このチケットは使用できません。">
+              <ul>
+                {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。管理者に問い合わせてください。</li>}
+                {!ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。自身で使用する場合は「チケットを有効化する」を押してください。</li>}
+                {payment && payment.status !== 1 && <li>支払いが完了していません。管理者に問い合わせてください。</li>}
+              </ul>
+            </Alert>
           )}
 
           {usedStatus && (
@@ -338,10 +335,9 @@ const TicketTerminalPage: React.FC = () => {
             </FormSection>
           )}
 
-          {usedStatusError && (
-            <Alert type="error" title="エラーが発生しました">
-              {usedStatusError}
-            </Alert>
+          {usedStatusError && (<Alert type="error" title="エラーが発生しました">
+            {usedStatusError}
+          </Alert>
           )}
 
           <table>
