@@ -1,61 +1,68 @@
-import { useEffect, useMemo, useState } from 'react'
-import { MdStore } from 'react-icons/md'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MdWallet } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import FormButton from '../../../components/Form/Button'
-import FormCheckbox from '../../../components/Form/Checkbox'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
-import FormHelp from '../../../components/Form/Help'
-import FormInput from '../../../components/Form/Input'
-import FormLabel from '../../../components/Form/Label'
-import FormSelect from '../../../components/Form/Select'
-import Alert from '../../../components/Parts/Alert'
-import BlinkField from '../../../components/Parts/BlinkField'
-import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
-import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
-import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
-import useDayjs from '../../../hooks/useDayjs'
-import useFirebaseError from '../../../hooks/useFirebaseError'
-import useStore from '../../../hooks/useStore'
-import useValidate from '../../../hooks/useValidate'
-import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
-import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
-import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
-import type { SockbaseTicketCreatedResult, SockbaseStoreDocument, SockbaseStoreType } from 'sockbase'
+import FormButton from '../../components/Form/FormButton'
+import FormCheckbox from '../../components/Form/FormCheckbox'
+import FormHelp from '../../components/Form/FormHelp'
+import FormInput from '../../components/Form/FormInput'
+import FormItem from '../../components/Form/FormItem'
+import FormLabel from '../../components/Form/FormLabel'
+import FormSection from '../../components/Form/FormSection'
+import FormSelect from '../../components/Form/FormSelect'
+import Alert from '../../components/Parts/Alert'
+import BlinkField from '../../components/Parts/BlinkField'
+import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import CopyToClipboard from '../../components/Parts/CopyToClipboard'
+import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
+import PageTitle from '../../components/Parts/PageTitle'
+import TwoColumnLayout from '../../components/TwoColumnLayout'
+import envHelper from '../../helpers/envHelper'
+import useDayjs from '../../hooks/useDayjs'
+import useFirebaseError from '../../hooks/useFirebaseError'
+import useStore from '../../hooks/useStore'
+import useValidate from '../../hooks/useValidate'
+import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
+import type { SockbaseStoreDocument, SockbaseTicketCreatedResult } from 'sockbase'
 
-const DashboardStoreTicketCreatePage: React.FC = () => {
-  const { storeId } = useParams<{ storeId: string }>()
-
+const TicketCreatePage: React.FC = () => {
+  const { storeId } = useParams()
   const { getStoreByIdAsync, createTicketForAdminAsync } = useStore()
   const validator = useValidate()
   const { formatByDate } = useDayjs()
   const { localize } = useFirebaseError()
 
   const [store, setStore] = useState<SockbaseStoreDocument>()
+
   const [createdTickets, setCreatedTickets] = useState<SockbaseTicketCreatedResult[]>([])
   const [createTicketData, setCreateTicketData] = useState({
     email: '',
     typeId: ''
   })
-  const [isClearEmail, setClearEmail] = useState(false)
+
+  const [isClearEmail, setIsClearEmail] = useState(false)
 
   const [isProgress, setProgress] = useState(false)
   const [error, setError] = useState<string | null>()
 
-  const onInitialize = (): void => {
-    const fetchAsync = async (): Promise<void> => {
-      if (!storeId) return
+  const errorCount = useMemo(() => {
+    const validators = [
+      validator.isEmail(createTicketData.email),
+      !validator.isEmpty(createTicketData.typeId)
+    ]
+    return validators
+      .filter(v => !v)
+      .length
+  }, [createTicketData])
 
-      getStoreByIdAsync(storeId)
-        .then(fetchedStore => setStore(fetchedStore))
-        .catch(err => { throw err })
-    }
-    fetchAsync()
-      .catch(err => { throw err })
-  }
-  useEffect(onInitialize, [storeId])
+  const getType = useCallback((typeId: string) => {
+    return store?.types.find(t => t.id === typeId)
+  }, [])
 
-  const createTicket = (): void => {
+  const getAssignURL = useCallback((hashId: string) => {
+    return hashId && `${envHelper.userAppURL}/assign-tickets?thi=${hashId}`
+  }, [])
+
+  const createTicket = useCallback(() => {
     if (!storeId || !createTicketData.email || !createTicketData.typeId) return
 
     const typeName = getType(createTicketData.typeId)?.name
@@ -80,42 +87,29 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
         throw err
       })
       .finally(() => setProgress(false))
-  }
+  }, [])
 
-  const pageTitle = useMemo(() => {
-    if (!store) return ''
-    return `${store.name} チケット作成`
-  }, [store])
-
-  const errorCount = useMemo(() => {
-    const validators = [
-      validator.isEmail(createTicketData.email),
-      !validator.isEmpty(createTicketData.typeId)
-    ]
-    return validators
-      .filter(v => !v)
-      .length
-  }, [createTicketData])
-
-  const getAssignURL = (hashId: string): string =>
-    hashId && `${location.protocol}//${location.host}/assign-tickets?thi=${hashId}`
-
-  const getType = (typeId: string): SockbaseStoreType | undefined => {
-    if (!store) return
-    return store.types
-      .filter(t => t.id === typeId)[0]
-  }
+  useEffect(() => {
+    if (!storeId) return
+    getStoreByIdAsync(storeId)
+      .then(setStore)
+      .catch(err => { throw err })
+  }, [storeId])
 
   return (
-    <DashboardBaseLayout title={pageTitle}>
+    <DefaultLayout title="チケット作成">
       <Breadcrumbs>
-        <li><Link to="/dashboard">マイページ</Link></li>
-        <li>管理チケットストア</li>
-        <li><Link to={`/dashboard/stores/${storeId}`}>{store?.name ?? <BlinkField />}</Link></li>
+        <li><Link to="/">ホーム</Link></li>
+        <li><Link to="/stores">チケットストア一覧</Link></li>
+        <li>{store?._organization.name ?? <BlinkField />}</li>
+        <li><Link to={`/stores/${store?.id}`}>{store?.name ?? <BlinkField />}</Link></li>
       </Breadcrumbs>
-      <PageTitle title={store?.name} icon={<MdStore />} description={'チケット作成'} isLoading={!store} />
 
-      <TwoColumnsLayout>
+      <PageTitle
+        icon={<MdWallet />}
+        title="チケット作成" />
+
+      <TwoColumnLayout>
         <>
           <h2>チケット作成</h2>
           <FormSection>
@@ -124,8 +118,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
               <FormInput
                 placeholder="sumire@sockbase.net"
                 onChange={e => setCreateTicketData(s => ({ ...s, email: e.target.value }))}
-                value={createTicketData.email}
-                hasError={!!createTicketData.email && !validator.isEmail(createTicketData.email)} />
+                value={createTicketData.email} />
               <FormHelp>ユーザが存在する必要があります</FormHelp>
             </FormItem>
             <FormItem>
@@ -150,8 +143,8 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
 
           <FormSection>
             <FormItem>
-              <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
-                <FormButton onClick={createTicket} inlined={true} disabled={isProgress || errorCount > 0}>確認して登録</FormButton>
+              <LoadingCircleWrapper isLoading={isProgress}>
+                <FormButton onClick={createTicket} disabled={isProgress || errorCount > 0}>確認して登録</FormButton>
               </LoadingCircleWrapper>
             </FormItem>
             <FormItem>
@@ -159,8 +152,7 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
                 name="isClearEmail"
                 label="追加後メールアドレスを空欄にする"
                 checked={isClearEmail}
-                onChange={c => setClearEmail(c)}
-                inlined={true} />
+                onChange={c => setIsClearEmail(c)} />
             </FormItem>
           </FormSection>
         </>
@@ -197,9 +189,9 @@ const DashboardStoreTicketCreatePage: React.FC = () => {
             </tbody>
           </table>
         </>
-      </TwoColumnsLayout>
-    </DashboardBaseLayout>
+      </TwoColumnLayout>
+    </DefaultLayout>
   )
 }
 
-export default DashboardStoreTicketCreatePage
+export default TicketCreatePage

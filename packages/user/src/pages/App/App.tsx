@@ -24,18 +24,14 @@ import DashboardCircleApplicationUpdateCutPage from '../Dashboard/DashboardCircl
 import DashboardContactPage from '../Dashboard/DashboardContactPage/DashboardContactPage'
 import DashboardEventApplicationListPage from '../Dashboard/DashboardEventApplicationListPage/DashboardEventApplicationListPage'
 import DashboardEventApplicationPrintTanzakuPage from '../Dashboard/DashboardEventApplicationPrintTanzakuPage/DashboardEventApplicationPrintTanzakuPage'
-import DashboardEventCircleCutDownloadPage from '../Dashboard/DashboardEventCircleCutDownloadPage/DashboardEventCircleCutDownloadPage'
 import DashboardEventCreatePage from '../Dashboard/DashboardEventCreatePage/DashboardEventCreatePage'
 import DashboardEventMetaViewPage from '../Dashboard/DashboardEventMetaViewPage/DashboardEventMetaViewPage'
-import DashboardInformationCreatePage from '../Dashboard/DashboardInformationCreatePage/DashboardInformationCreatePage'
-import DashboardInformationDetailPage from '../Dashboard/DashboardInformationDetailPage/DashboardInformationDetailPage'
 import DashboardMyTicketDetailPage from '../Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
 import DashboardMyTicketListPage from '../Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardPaymentListPage from '../Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
 import DashboardSettingPage from '../Dashboard/DashboardSettingPage/DashboardSettingPage'
 import DashboardStoreCreatePage from '../Dashboard/DashboardStoreCreatePage/DashboardStoreCreatePage'
 import DashboardStoreMetaViewPage from '../Dashboard/DashboardStoreMetaViewPage/DashboardStoreMetaViewPage'
-import DashboardStoreTicketCreatePage from '../Dashboard/DashboardStoreTicketCreatePage/DashboardStoreTicketCreatePage'
 import DashboardStoreTicketListPage from '../Dashboard/DashboardStoreTicketListPage/DashboardStoreTicketListPage'
 import DashboardTicketDetailPage from '../Dashboard/DashboardTicketDetailPage/DashboardTicketDetailPage'
 import DashboardTicketListPage from '../Dashboard/DashboardTicketListPage/DashboardTicketListPage'
@@ -172,10 +168,6 @@ const router = createBrowserRouter([
                   {
                     path: 'tanzaku',
                     element: <DashboardEventApplicationPrintTanzakuPage />
-                  },
-                  {
-                    path: 'cuts',
-                    element: <DashboardEventCircleCutDownloadPage />
                   }
                 ]
               }
@@ -243,10 +235,6 @@ const router = createBrowserRouter([
                     element: <DashboardStoreTicketListPage />
                   },
                   {
-                    path: 'create',
-                    element: <DashboardStoreTicketCreatePage />
-                  },
-                  {
                     path: 'info',
                     element: <DashboardStoreMetaViewPage />
                   }
@@ -270,19 +258,6 @@ const router = createBrowserRouter([
           {
             path: 'payments',
             element: <DashboardPaymentListPage />
-          },
-          {
-            path: 'informations',
-            children: [
-              {
-                path: 'create',
-                element: <DashboardInformationCreatePage />
-              },
-              {
-                path: ':informationId',
-                element: <DashboardInformationDetailPage />
-              }
-            ]
           }
         ]
       }
