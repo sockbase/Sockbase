@@ -335,9 +335,10 @@ const TicketTerminalPage: React.FC = () => {
             </FormSection>
           )}
 
-          {usedStatusError && (<Alert type="error" title="エラーが発生しました">
-            {usedStatusError}
-          </Alert>
+          {usedStatusError && (
+            <Alert type="error" title="エラーが発生しました">
+              {usedStatusError}
+            </Alert>
           )}
 
           <table>
