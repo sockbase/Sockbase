@@ -1,4 +1,4 @@
-## Sockbase Main-repository
+## Sockbase
 
 ### 環境構築
 
@@ -26,7 +26,7 @@ firebase target:apply hosting circlelist <Firebase Hosting アプリケーショ
 ```
 
 ユーザアプリケーション・管理アプリケーションの開発には、開発用 SSL 証明書を作成する必要があります。  
-mkcert を使用して作成された証明書を `~/certs` に配置してください。  
+mkcert を使用して作成した証明書を `~/certs` に配置してください。  
 ファイル名は `localhost.pem` `localhost-key.pem` となるようにしてください。
 
 #### ユーザアプリケーション (user)
