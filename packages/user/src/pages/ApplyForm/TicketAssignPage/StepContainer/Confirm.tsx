@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { MdArrowBack, MdCheck } from 'react-icons/md'
-import FormButton from '../../../../components/Form/Button'
+import FormButton from '../../../../components/Form/FormButton'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'

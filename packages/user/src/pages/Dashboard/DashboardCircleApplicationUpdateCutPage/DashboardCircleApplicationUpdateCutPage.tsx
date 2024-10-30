@@ -5,11 +5,11 @@ import {
   type SockbaseApplicationDocument,
   type SockbaseEvent
 } from 'sockbase'
-import FormButton from '../../../components/Form/Button'
+import FormButton from '../../../components/Form/FormButton'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
-import FormInput from '../../../components/Form/Input'
-import FormLabel from '../../../components/Form/Label'
+import FormInput from '../../../components/Form/FormInput'
+import FormLabel from '../../../components/Form/FormLabel'
 import Alert from '../../../components/Parts/Alert'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
