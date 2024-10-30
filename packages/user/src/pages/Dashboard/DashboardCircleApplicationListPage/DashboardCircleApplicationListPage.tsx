@@ -71,13 +71,13 @@ const DashboardCircleApplicationListPage: React.FC = () => {
   useEffect(onChangeLoggedInStatus, [user])
 
   return (
-    <DashboardBaseLayout title="申し込んだイベント">
+    <DashboardBaseLayout title="申込済みイベント">
       <Breadcrumbs>
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
         icon={<MdCollectionsBookmark />}
-        title="サークル申し込み履歴"
+        title="申込済みイベント"
         description="今までに申し込んだイベントの一覧を表示中" />
 
       {apps && events && metas

@@ -147,7 +147,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
       </Alert>}
 
       {circleCutURL === null && event && <Alert type="warning" title="サークルカットを提出してください">
-        サークルカットは <Link to={`/dashboard/applications/${hashId}/cut`}>サークルカットを変更</Link> から提出できます。
+        サークルカットは <Link to={`/dashboard/applications/${hashId}/cut`}>こちら</Link> から提出できます。
       </Alert>}
 
       {!links && event &&
@@ -367,7 +367,7 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
           </table>
         </>
         <>
-          <h3>申込み責任者情報</h3>
+          <h3>申し込み責任者情報</h3>
           <table>
             <tbody>
               <tr>

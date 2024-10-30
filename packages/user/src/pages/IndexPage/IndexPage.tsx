@@ -56,9 +56,7 @@ const IndexPage: React.FC = () => {
       {user === undefined
         ? <Loading text='認証情報' />
         : user !== null
-          ? <p>
-            {user.email} としてログイン中です
-          </p>
+          ? <Alert type='info' title={`${user.email} としてログイン中です`} />
           : <Login
             email={email}
             password={password}

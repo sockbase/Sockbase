@@ -41,6 +41,8 @@ const TicketCard: React.FC<Props> = (props) => {
 export default TicketCard
 
 const Container = styled(Link)`
+  background-color: var(--background-light-color);
+  border-radius: 5px;
   &:hover {
     text-decoration: none;
   }
@@ -52,16 +54,37 @@ const Header = styled.div<{ color: string }>`
   border-radius: 5px 5px 0 0;
 `
 const Content = styled.div`
-  background-color: var(--background-light-color);
   color: var(--text-color);
   padding: 10px;
 `
 const Footer = styled.div`
   color: initial;
   padding: 10px;
-  background-color: var(--background-dark-color);
+  border-top: 1px dashed var(--outline-color);
   border-bottom: 2px solid var(--shadow-color);
   border-radius: 0 0 5px 5px;
+
+  position: relative;
+
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--background-color);
+  }
+
+  &::before {
+    top: -5px;
+    right: -5px;
+  }
+  &::after {
+    top: -5px;
+    left: -5px;
+  }
 `
 const UsedStatus = styled.div`
   color: var(--text-color);

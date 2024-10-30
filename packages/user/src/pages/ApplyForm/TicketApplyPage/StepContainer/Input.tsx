@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MdArrowBack, MdArrowForward } from 'react-icons/md'
 import sockbaseShared from 'shared'
 import FormButton from '../../../../components/Form/Button'
 import FormCheckbox from '../../../../components/Form/Checkbox'
@@ -7,6 +8,7 @@ import FormSection from '../../../../components/Form/FormSection'
 import FormLabel from '../../../../components/Form/Label'
 import FormRadio from '../../../../components/Form/Radio'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import UserDataForm from '../../../../components/UserDataForm'
 import useValidate from '../../../../hooks/useValidate'
 import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket } from 'sockbase'
@@ -96,7 +98,7 @@ const Input: React.FC<Props> = (props) => {
           <FormButton
             color="default"
             onClick={props.prevStep}>
-              申し込み説明画面へ戻る
+            <IconLabel icon={<MdArrowBack />} label="申し込み説明画面へ戻る" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -192,7 +194,7 @@ const Input: React.FC<Props> = (props) => {
         <FormButton
           disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
-            入力内容確認画面へ進む
+          <IconLabel icon={<MdArrowForward />} label="入力内容確認画面へ進む" />
         </FormButton>
       </FormSection>
     </>

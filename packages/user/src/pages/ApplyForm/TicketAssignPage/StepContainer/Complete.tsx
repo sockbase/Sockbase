@@ -1,6 +1,8 @@
+import { MdBookOnline, MdInfo } from 'react-icons/md'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import LinkButton from '../../../../components/Parts/LinkButton'
 import type { SockbaseStoreDocument, SockbaseStoreType } from 'sockbase'
 
@@ -34,7 +36,7 @@ const Complete: React.FC<Props> = (props) => {
         <FormItem>
           <LinkButton
             to={`/dashboard/mytickets/${props.ticketHashId}`}>
-            チケット情報を確認する
+            <IconLabel icon={<MdInfo />} label="チケット情報を確認する" />
           </LinkButton>
         </FormItem>
         <FormItem>
@@ -43,7 +45,7 @@ const Complete: React.FC<Props> = (props) => {
             target="_blank"
             rel="noreferrer"
             color="default">
-            チケット画面を開く
+            <IconLabel icon={<MdBookOnline />} label="チケット画面を開く" />
           </AnchorButton>
         </FormItem>
       </FormSection>

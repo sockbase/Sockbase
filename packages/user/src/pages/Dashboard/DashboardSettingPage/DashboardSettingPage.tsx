@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MdSettings } from 'react-icons/md'
+import { MdSave, MdSend, MdSettings } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import FormButton from '../../../components/Form/Button'
 import FormItem from '../../../components/Form/FormItem'
@@ -9,6 +9,7 @@ import FormLabel from '../../../components/Form/Label'
 import FormSelect from '../../../components/Form/Select'
 import Alert from '../../../components/Parts/Alert'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import IconLabel from '../../../components/Parts/IconLabel'
 import Loading from '../../../components/Parts/Loading'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import useDayjs from '../../../hooks/useDayjs'
@@ -210,7 +211,9 @@ const DashboardSettingPage: React.FC = () => {
                   <FormButton
                     inlined={true}
                     disabled={isProgress || errorCount !== 0}
-                    onClick={handleUpdate}>情報を更新する</FormButton>
+                    onClick={handleUpdate}>
+                    <IconLabel icon={<MdSave />} label="情報を更新する" />
+                  </FormButton>
                 </LoadingCircleWrapper>
               </FormItem>
             </FormSection>
@@ -220,7 +223,13 @@ const DashboardSettingPage: React.FC = () => {
             <h3>パスワードリセット</h3>
             <FormSection>
               <FormItem>
-                <FormButton onClick={handleClickPasswordReset} disabled={sentPasswordResetUrl}>パスワードリセットリンクを送付</FormButton>
+                <FormButton
+                  onClick={handleClickPasswordReset}
+                  disabled={sentPasswordResetUrl}
+                  color="default"
+                  inlined>
+                  <IconLabel icon={<MdSend />} label="パスワードリセットリンクを送付" />
+                </FormButton>
               </FormItem>
             </FormSection>
             {sentPasswordResetUrl && <p>
@@ -230,8 +239,7 @@ const DashboardSettingPage: React.FC = () => {
 
             <h3>アカウント削除</h3>
             <p>
-              アカウント削除は現在準備中です。<br />
-              削除を希望される方は「お問い合わせ」よりご連絡ください。
+              アカウント削除を希望される方は <Link to="/contact">お問い合わせ</Link> よりご連絡ください。
             </p>
           </>
         </TwoColumnsLayout>

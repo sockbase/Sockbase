@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react'
+import { MdArrowBack, MdArrowForward } from 'react-icons/md'
 import FormButton from '../../../../components/Form/Button'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrapper'
 import ProgressBar from '../../../../components/Parts/ProgressBar'
 import UserDataView from '../../../../components/UserDataView'
@@ -187,7 +189,7 @@ const Confirm: React.FC<Props> = (props) => {
           <FormButton color="default"
             onClick={() => props.prevStep()}
             disabled={isProgress}>
-              修正する
+            <IconLabel icon={<MdArrowBack />} label="修正する" />
           </FormButton>
         </FormItem>
         <FormItem>
@@ -195,7 +197,7 @@ const Confirm: React.FC<Props> = (props) => {
             <FormButton
               onClick={handleSubmit}
               disabled={isProgress}>
-                決済に進む (申し込み情報送信)
+              <IconLabel icon={<MdArrowForward />} label="決済に進む (申し込み情報送信)" />
             </FormButton>
           </LoadingCircleWrapper>
         </FormItem>

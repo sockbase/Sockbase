@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { MdSend } from 'react-icons/md'
 import FormButton from '../../../components/Form/Button'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
@@ -8,6 +9,7 @@ import FormLabel from '../../../components/Form/Label'
 import FormSelect from '../../../components/Form/Select'
 import FormTextarea from '../../../components/Form/Textarea'
 import Alert from '../../../components/Parts/Alert'
+import IconLabel from '../../../components/Parts/IconLabel'
 import Loading from '../../../components/Parts/Loading'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import inquiryHelper from '../../../helpers/inquiryHelper'
@@ -143,7 +145,9 @@ const Contact: React.FC = () => {
                   <FormButton
                     inlined={true}
                     onClick={handleSubmit}
-                    disabled={isProgress || isSuccess || errorCount !== 0}>送信</FormButton>
+                    disabled={isProgress || isSuccess || errorCount !== 0}>
+                    <IconLabel icon={<MdSend />} label="送信する" />
+                  </FormButton>
                 </LoadingCircleWrapper>
               </FormItem>
             </FormSection>

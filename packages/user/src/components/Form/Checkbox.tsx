@@ -29,7 +29,9 @@ const StyledCheckbox = styled.input.attrs({ type: 'checkbox' })`
 const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   display: inline-block;
   width: 100%;
-  padding: 10px;
+
+  min-height: 2.5em;
+  padding: 5px 10px;
   
   ${props => props.inlined && `
     width: auto;
@@ -37,7 +39,7 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   `}
 
   padding-left: 44px;
-  border: 2px solid var(--outline-color);
+  border: 1px solid var(--outline-color);
   border-radius: 5px;
   color: var(--text-color);
 
@@ -53,34 +55,34 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   &::before {
     position: absolute;
     content: '';
-    top: calc(50% - 12px);
-    left: 10px;
+    top: calc(50% - 9px);
+    left: 12px;
     width: 16px;
     height: 16px;
     border-radius: 5px;
-    border: 3px solid var(--outline-color);
+    border: 1px solid var(--outline-color);
   }
 
   &::after {
     position: absolute;
     content: '';
     transform: rotate(-45deg);
-    top: calc(50% - 6px);
+    top: calc(50% - 4px);
     left: 16px;
     width: 8px;
     height: 4px;
-    border-left: 3px solid var(--text-foreground-color);
-    border-bottom: 3px solid var(--text-foreground-color);
+    border-left: 2px solid var(--text-foreground-color);
+    border-bottom: 2px solid var(--text-foreground-color);
     opacity: 0;
   }
 
   input:checked + & {
-    border: 2px solid var(--primary-brand-color);
+    border: 1px solid var(--primary-brand-color);
     background-color: var(--primary-brand-color);
     color: var(--text-foreground-color);
     font-weight: bold;
     &::before {
-      border: 3px solid var(--text-foreground-color);
+      border: 1px solid var(--text-foreground-color);
     }
     &::after {
       opacity: 1;
@@ -88,12 +90,12 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   }
 
   input:disabled + & {
-    border: 2px solid var(--outline-color);
+    border: 1px solid var(--outline-color);
     background-color: var(--background-disabled-color);
     color: var(--text-disabled-color);
     cursor: not-allowed;
     &::before {
-      border: 3px solid var(--outline-color);
+      border: 1px solid var(--outline-color);
     }
   }
 

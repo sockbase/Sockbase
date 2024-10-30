@@ -4,23 +4,23 @@ const FormTextarea = styled.textarea<{ hasError?: boolean }>`
   display: block;
   width: 100%;
   padding: 10px;
-  border: 2px solid var(--outline-color);
-  border-radius: 5px 5px 0 0;
+  border: 1px solid var(--outline-color);
+  border-radius: 5px;
   background-color: var(--background-color);
   color: var(--text-color);
   
   resize: vertical;
-  min-height: 50px;
+  min-height: 7.5rem;
 
   transition: border 0.1s linear;
 
   &:focus {
-    border: 2px solid var(--primary-brand-color);
+    border: 1px solid var(--primary-brand-color);
     outline: none;
   }
 
-  &:last-child {
-  border-radius: 5px;
+  &:not(:last-child) {
+    border-radius: 5px 5px 0 0;
   }
   
   ${props => props.hasError && {

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { MdArrowForward } from 'react-icons/md'
 import FormButton from '../../../../components/Form/Button'
 import FormCheckbox from '../../../../components/Form/Checkbox'
 import FormItem from '../../../../components/Form/FormItem'
@@ -6,6 +7,7 @@ import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
 import CopyToClipboard from '../../../../components/Parts/CopyToClipboard'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import useDayjs from '../../../../hooks/useDayjs'
 import type { User } from 'firebase/auth'
 import type {
@@ -134,8 +136,11 @@ const Payment: React.FC<Props> = (props) => {
       </>}
       <FormSection>
         <FormItem>
-          <FormButton color='default' onClick={props.nextStep} disabled={!checkedPayment}>
-            次へ進む
+          <FormButton
+            color='default'
+            onClick={props.nextStep}
+            disabled={!checkedPayment}>
+            <IconLabel icon={<MdArrowForward />} label="次へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>

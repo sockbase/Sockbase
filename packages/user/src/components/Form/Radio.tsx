@@ -44,9 +44,10 @@ const StyledRadio = styled.input.attrs({ type: 'radio' })`
 const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
   display: block;
 
-  padding: 10px;
+  min-height: 2.5em;
+  padding: 5px 10px;
   padding-left: 44px;
-  border: 2px solid var(--outline-color);
+  border: 1px solid var(--outline-color);
   border-radius: 5px;
 
   cursor: pointer;
@@ -57,25 +58,25 @@ const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
   position: relative;
 
   ${props => props.hasError && {
-    border: '2px solid #ff2222 !important',
+    border: '1px solid #ff2222 !important',
     boxShadow: '0 2px 5px #ff222288 !important'
   }}
 
   &::before {
     position: absolute;
     content: '';
-    top: calc(50% - 10px);
-    left: 10px;
+    top: calc(50% - 9px);
+    left: 12px;
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    border: 3px solid var(--outline-color);
+    border: 1px solid var(--outline-color);
   }
 
   &::after {
     position: absolute;
     content: '';
-    top: calc(50% - 4px);
+    top: calc(50% - 5px);
     left: 16px;
     width: 10px;
     height: 10px;
@@ -85,12 +86,12 @@ const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
   }
 
   input:checked + & {
-    border: 2px solid var(--primary-brand-color);
+    border: 1px solid var(--primary-brand-color);
     background-color: var(--primary-brand-color);
     color: var(--text-foreground-color);
     font-weight: bold;
     &::before {
-      border: 3px solid var(--text-foreground-color);
+      border: 1px solid var(--text-foreground-color);
     }
     &::after {
       opacity: 1;

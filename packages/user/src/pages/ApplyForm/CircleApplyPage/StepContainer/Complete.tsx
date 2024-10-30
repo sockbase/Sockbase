@@ -1,6 +1,8 @@
+import { MdInfo, MdWeb } from 'react-icons/md'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import LinkButton from '../../../../components/Parts/LinkButton'
 import useDayjs from '../../../../hooks/useDayjs'
 import type { SockbaseApplicationAddedResult, SockbaseEventDocument } from 'sockbase'
@@ -28,12 +30,12 @@ const Complete: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <LinkButton to={`/dashboard/applications/${props.addedResult?.hashId}`}>
-            申し込み内容を確認する
+            <IconLabel icon={<MdInfo />} label="申し込み内容を確認する" />
           </LinkButton>
         </FormItem>
         <FormItem>
           <AnchorButton color="default" href={props.event?.websiteURL}>
-            イベントサイトへ戻る
+            <IconLabel icon={<MdWeb />} label="イベントサイトへ戻る" />
           </AnchorButton>
         </FormItem>
       </FormSection>

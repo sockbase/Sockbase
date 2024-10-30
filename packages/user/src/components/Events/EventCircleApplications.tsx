@@ -76,7 +76,7 @@ const EventCircleApplications: React.FC<Props> = (props) => {
   return (
     <>
       <p>
-        総申込みサークル数 (キャンセル除く): {circleCount ?? '-'} 件
+        総申し込みサークル数 (キャンセル除く): {circleCount ?? '-'} 件
       </p>
 
       <table>

@@ -9,7 +9,6 @@ import {
   getFirebaseApp,
   initializeAppCheck
 } from './libs/FirebaseApp'
-import './main.css'
 import ActionPage from './pages/ActionPage/ActionPage'
 import CircleApplyPage from './pages/ApplyForm/CircleApplyPage/CircleApplyPage'
 import TicketApplyPage from './pages/ApplyForm/TicketApplyPage/TicketApplyPage'
@@ -34,8 +33,6 @@ import PasswordResetPage from './pages/PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from './pages/Static/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/Static/TermsOfServicePage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
-import GlobalStyle from './styles/GlobalStyle'
-import ResetStyle from './styles/ResetStyle'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -212,8 +209,6 @@ const router = createBrowserRouter([
 const App: React.FC = () => {
   return (
     <HelmetProvider>
-      <ResetStyle />
-      <GlobalStyle />
       <RouterProvider router={router} />
     </HelmetProvider>
   )
