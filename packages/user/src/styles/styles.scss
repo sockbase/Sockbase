@@ -23,8 +23,13 @@ html, body {
   font-family: sans-serif;
   height: 100vh;
   height: 100dvh;
+  
   background-color: var(--body-background-color);
   color: var(--text-color);
+
+  @media screen and (max-width: 840px) {
+    font-size: 14px;
+  }
 }
 
 input, select, textarea {

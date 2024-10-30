@@ -242,11 +242,15 @@ const MenuItemLink = styled(Link)`
 `
 const MenuItemIcon = styled.span<{ isSlim: boolean }>`
   padding: 10px;
-  font-size: 24px;
   
   display: flex;
   align-items: center;
   justify-content: center;
+
+  svg {
+    width: 1.5em;
+    height: 1.5em;
+  }
 
   ${prpos => prpos.isSlim && `
     border-radius: 5px;
