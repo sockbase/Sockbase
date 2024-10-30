@@ -3,6 +3,7 @@ import {
   MdHome,
   MdLocalActivity,
   MdMail,
+  MdOpenInNew,
   MdPayments,
   MdSettings,
   MdWallet
@@ -11,6 +12,8 @@ import styled from 'styled-components'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import AnchorButton from '../../../components/Parts/AnchorButton'
+import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import IconLabel from '../../../components/Parts/IconLabel'
 import TopCard from '../../../components/Parts/TopCard'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
@@ -20,6 +23,10 @@ import InformationList from '../../IndexPage/InformationList'
 const DashboardTopPage: React.FC = () => {
   return (
     <DashboardBaseLayout title="マイページ トップ">
+      <Breadcrumbs>
+        <li>マイページ</li>
+      </Breadcrumbs>
+
       <PageTitle
         icon={<MdHome />}
         title="ホーム"
@@ -41,12 +48,12 @@ const DashboardTopPage: React.FC = () => {
             <TopCard
               to="/dashboard/tickets"
               icon={<MdWallet />}
-              title="チケット申し込み履歴"
+              title="購入済みチケット"
               description="今までに申し込んだチケット履歴を表示します。" />
             <TopCard
               to="/dashboard/applications"
               icon={<MdCollectionsBookmark />}
-              title="サークル申し込み履歴"
+              title="申込済みイベント"
               description="今までに申し込んだサークル参加履歴を表示します。" />
             <TopCard
               to="/dashboard/payments"
@@ -74,8 +81,12 @@ const DashboardTopPage: React.FC = () => {
           <h2>法令に基づく表記</h2>
           <FormSection>
             <FormItem inlined>
-              <AnchorButton href="/tos" target="_blank" color="default" inlined>利用規約・特商法に基づく表記</AnchorButton>
-              <AnchorButton href="/privacy-policy" target="_blank" color="default" inlined>プライバシーポリシー</AnchorButton>
+              <AnchorButton href="/tos" target="_blank" color="default" inlined>
+                <IconLabel icon={<MdOpenInNew />} label='利用規約・特商法に基づく表記' />
+              </AnchorButton>
+              <AnchorButton href="/privacy-policy" target="_blank" color="default" inlined>
+                <IconLabel icon={<MdOpenInNew />} label='プライバシーポリシー' />
+              </AnchorButton>
             </FormItem>
           </FormSection>
         </>

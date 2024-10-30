@@ -104,7 +104,7 @@ const StyledContainer = styled.section<{ isSlim: boolean }>`
       gridTemplateColumns: 'auto 1fr'
     }
     : {
-      gridTemplateColumns: '20% 1fr'
+      gridTemplateColumns: '280px 1fr'
     }}
     
   @media screen and (max-width: 840px) {
@@ -131,7 +131,6 @@ const StyledSidebar = styled.nav`
   grid-column: 1;
 `
 const StyledWrapMain = styled.main`
-  padding: 20px;
   overflow-y: auto;
   @media screen and (max-width: 840px) {
     padding: 0;

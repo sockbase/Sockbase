@@ -33,7 +33,6 @@ const Layout = styled.section`
 `
 const Container = styled.main`
   margin: 40px 25%;
-  justify-items: start;
 
   @media screen and (max-width: 840px) {
     margin: 0;

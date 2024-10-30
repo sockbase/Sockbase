@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { MdLogin, MdQuestionMark } from 'react-icons/md'
 import useFirebase from '../hooks/useFirebase'
 import useFirebaseError from '../hooks/useFirebaseError'
 import useValidate from '../hooks/useValidate'
@@ -8,6 +9,7 @@ import FormSection from './Form/FormSection'
 import FormInput from './Form/Input'
 import FormLabel from './Form/Label'
 import Alert from './Parts/Alert'
+import IconLabel from './Parts/IconLabel'
 import LinkButton from './Parts/LinkButton'
 
 const LoginForm: React.FC = () => {
@@ -65,7 +67,7 @@ const LoginForm: React.FC = () => {
           <FormButton
             onClick={handleLogin}
             disabled={isProgress || errorCount > 0}>
-              ログイン
+            <IconLabel icon={<MdLogin />} label="ログイン" />
           </FormButton>
         </FormItem>
         <FormItem>
@@ -73,7 +75,7 @@ const LoginForm: React.FC = () => {
             color="default"
             to="/reset-password"
             disabled={isProgress}>
-              パスワードを忘れた場合
+            <IconLabel icon={<MdQuestionMark />} label="パスワードを忘れた場合" />
           </LinkButton>
         </FormItem>
         {error && <FormItem>

@@ -21,7 +21,7 @@ import type { SockbaseRole } from 'sockbase'
 
 interface MenuSection {
   sectionKey: string
-  sectionName: string
+  sectionName: string | null
   items: MenuItem[]
   requireSystemRole?: SockbaseRole
   requireCommonRole?: SockbaseRole
@@ -38,13 +38,13 @@ interface MenuItem {
 }
 const menu: MenuSection[] = [
   {
-    sectionKey: 'mypage',
-    sectionName: 'マイページ',
+    sectionKey: 'home',
+    sectionName: null,
     items: [
       {
         key: 'mypageHome',
         icon: <MdHome />,
-        text: 'マイページホーム',
+        text: 'ホーム',
         link: '/dashboard'
       },
       {
@@ -53,17 +53,23 @@ const menu: MenuSection[] = [
         text: 'マイチケット',
         link: '/dashboard/mytickets',
         isImportant: true
-      },
+      }
+    ]
+  },
+  {
+    sectionKey: 'history',
+    sectionName: '申し込み履歴',
+    items: [
       {
         key: 'ticketList',
         icon: <MdWallet />,
-        text: '購入済みチケット一覧',
+        text: '購入済みチケット',
         link: '/dashboard/tickets'
       },
       {
         key: 'circleHistories',
         icon: <MdEditSquare />,
-        text: 'サークル申し込み履歴',
+        text: '申込済みイベント',
         link: '/dashboard/applications'
       },
       {
@@ -71,18 +77,24 @@ const menu: MenuSection[] = [
         icon: <MdPayments />,
         text: '決済履歴',
         link: '/dashboard/payments'
+      }
+    ]
+  },
+  {
+    sectionKey: 'settings',
+    sectionName: '設定',
+    items: [
+      {
+        key: 'settings',
+        icon: <MdSettings />,
+        text: 'マイページ設定',
+        link: '/dashboard/settings'
       },
       {
         key: 'contact',
         icon: <MdMail />,
         text: 'お問い合わせ',
         link: '/dashboard/contact'
-      },
-      {
-        key: 'settings',
-        icon: <MdSettings />,
-        text: 'マイページ設定',
-        link: '/dashboard/settings'
       }
     ]
   }
@@ -128,14 +140,6 @@ const Sidebar: React.FC<Props> = (props) => {
             <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
             <StyledStatePanelContent>{props.user.email}</StyledStatePanelContent>
           </StyledStatePanel>}
-          <StyledSection isSlim={isSlim}>
-            <StyledMenu>
-              <StyledMenuItem onClick={props.logout}>
-                <StyledMenuItemIcon isSlim={isSlim}><MdLogout /></StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>ログアウト</StyledMenuItemText>}
-              </StyledMenuItem>
-            </StyledMenu>
-          </StyledSection>
           {menu
             .map(sec => <StyledSection key={sec.sectionKey} isSlim={isSlim}>
               {!isSlim && sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
@@ -151,6 +155,14 @@ const Sidebar: React.FC<Props> = (props) => {
                 }
               </StyledMenu>
             </StyledSection>)}
+          <StyledSection isSlim={isSlim}>
+            <StyledMenu>
+              <StyledMenuItem onClick={props.logout}>
+                <StyledMenuItemIcon isSlim={isSlim}><MdLogout /></StyledMenuItemIcon>
+                {!isSlim && <StyledMenuItemText>ログアウト</StyledMenuItemText>}
+              </StyledMenuItem>
+            </StyledMenu>
+          </StyledSection>
           {isHideToggleMenu && <StyledSection isSlim={isSlim}>
             <StyledMenu>
               <StyledMenuItem onClick={() => props.setSlim(!props.isSlim)}>
@@ -177,17 +189,10 @@ const StyledSection = styled.section<{ isSlim: boolean }>`
     margin-bottom: 0;
   }
 `
-const StyledSectionHeader = styled.h2`
-  display: block;
-  margin: 0;
+const StyledSectionHeader = styled.div`
   margin-bottom: 5px;
-  padding: 0;
-  border-bottom: none;
-  font-size: 1em;
-  color: var(--text-color);
-  &::after {
-    display: none;
-  }
+  font-size: 0.8em;
+  color: var(--text-light-color);
 `
 const StyledMenu = styled.section`
 `
@@ -214,7 +219,7 @@ const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boo
   padding: 10px;
   border-radius: 5px 0 0 5px;
   border-right: none;
-  color: var(--text-foreground-color);
+  color: var(--text-color);
   text-align: center;
   font-size: 24px;
   
@@ -228,10 +233,11 @@ const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boo
     }
     : props.isImportant
       ? {
-        backgroundColor: 'var(--danger-color)'
+        backgroundColor: 'var(--danger-color)',
+        color: 'var(--text-foreground-color)'
       }
       : {
-        backgroundColor: 'var(--primary-brand-color)'
+        backgroundColor: 'var(--background-light-color)'
       }}
 
   ${prpos => prpos.isSlim && {
@@ -240,7 +246,7 @@ const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boo
 `
 const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
   padding: 10px;
-  background-color: var(--background-light-color);
+  background-color: var(--background-light2-color);
   border-radius: 0 5px 5px 0;
   border-left: none;
 
@@ -251,18 +257,14 @@ const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boo
     ${props => props.isDisabled
     ? {
       backgroundColor: 'var(--background-disabled-color)',
-      border: '2px solid var(--text-disabled-color)',
       color: 'var(--text-disabled-color)'
     }
     : props.isImportant
       ? {
-        backgroundColor: 'var(--background-light-color)',
-        border: '2px solid var(--danger-color)',
         color: 'var(--danger-color)',
         fontWeight: 'bold'
       }
       : {
-        border: '2px solid var(--primary-brand-color)',
         color: 'var(--text-color)'
       }}
   }
@@ -270,10 +272,9 @@ const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boo
 const StyledStatePanel = styled.div`
   padding: 10px;
   border-radius: 5px;
-  background-color: var(--primary-brand-color);
-  color: var(--text-foreground-color);
+  background-color: var(--background-light2-color);
 
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   &:last-child {
     margin-bottom: 0;
   }

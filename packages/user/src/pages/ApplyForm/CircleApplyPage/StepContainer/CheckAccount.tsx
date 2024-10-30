@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react'
+import { MdArrowForward, MdLogout } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import dummyEyecatchImage from '../../../../assets/dummy-eyecatch.jpg'
@@ -7,6 +8,7 @@ import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import LoginForm from '../../../../components/LoginForm'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import type { User } from 'firebase/auth'
 import type { SockbaseApplicationDocument, SockbaseEventDocument } from 'sockbase'
 
@@ -68,7 +70,9 @@ const CheckAccount: React.FC<Props> = (props) => {
         <Alert type="info" title="別のアカウントで申し込みを行うには、ログアウトしてください。" />
         <FormSection>
           <FormItem>
-            <FormButton color="default" onClick={handleLogout}>ログアウト</FormButton>
+            <FormButton color="default" onClick={handleLogout}>
+              <IconLabel icon={<MdLogout />} label="ログアウト" />
+            </FormButton>
           </FormItem>
         </FormSection>
       </>}
@@ -76,7 +80,7 @@ const CheckAccount: React.FC<Props> = (props) => {
       {(!props.user || appliedApp === null) && <FormSection>
         <FormItem>
           <FormButton onClick={props.nextStep}>
-            申し込み説明画面へ進む
+            <IconLabel icon={<MdArrowForward />} label="申し込み説明画面へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>}

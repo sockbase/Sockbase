@@ -1,7 +1,9 @@
+import { MdArrowBack, MdArrowForward } from 'react-icons/md'
 import FormButton from '../../../../components/Form/Button'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import useDayjs from '../../../../hooks/useDayjs'
 import type { SockbaseEventDocument } from 'sockbase'
 
@@ -20,7 +22,7 @@ const Introduction: React.FC<Props> = (props) => {
           <FormButton
             color="default"
             onClick={props.prevStep}>
-            アカウント確認画面へ戻る
+            <IconLabel icon={<MdArrowBack />} label="アカウント確認画面へ戻る" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -191,7 +193,7 @@ const Introduction: React.FC<Props> = (props) => {
         <FormItem>
           <FormButton
             onClick={props.nextStep}>
-            申し込みへ進む
+            <IconLabel icon={<MdArrowForward />} label="情報入力画面へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>

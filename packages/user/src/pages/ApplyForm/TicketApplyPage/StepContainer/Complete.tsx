@@ -1,6 +1,8 @@
+import { MdInfo } from 'react-icons/md'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import type { SockbaseTicketAddedResult } from 'sockbase'
 
 interface Props {
@@ -43,7 +45,7 @@ const Complete: React.FC<Props> = (props) => {
             href={`/dashboard/tickets/${props.addedResult?.hashId}`}
             target="_blank"
             rel="noreferrer">
-              チケット情報ページを開く
+            <IconLabel icon={<MdInfo />} label="チケット情報ページを開く" />
           </AnchorButton>
         </FormItem>
       </FormSection>
