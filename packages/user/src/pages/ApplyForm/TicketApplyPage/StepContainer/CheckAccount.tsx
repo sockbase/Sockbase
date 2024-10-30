@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { MdArrowForward, MdLogout } from 'react-icons/md'
-import FormButton from '../../../../components/Form/Button'
+import FormButton from '../../../../components/Form/FormButton'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import LoginForm from '../../../../components/LoginForm'

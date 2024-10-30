@@ -11,10 +11,10 @@ import {
   type SockbaseTicketUsedStatus,
   type SockbaseTicketUserDocument
 } from 'sockbase'
-import FormButton from '../../../components/Form/Button'
+import FormButton from '../../../components/Form/FormButton'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
-import FormTextarea from '../../../components/Form/Textarea'
+import FormTextarea from '../../../components/Form/FormTextarea'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
