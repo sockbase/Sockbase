@@ -65,6 +65,10 @@ const CircleViewPage: React.FC = () => {
     return event?.spaces?.find(s => s.id === app?.spaceId)
   }, [event, app])
 
+  const genreType = useMemo(() => {
+    return event?.genres.find(g => g.id === app?.circle.genre)
+  }, [event, app])
+
   const handleSetApplicationStatus = useCallback((status: SockbaseApplicationStatus) => {
     if (!appHash) return
     if (!confirm(`申し込み状態を ${sockbaseShared.constants.application.statusText[status]} に変更します。\nよろしいですか？`)) return
@@ -248,7 +252,7 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>頒布物のジャンル</th>
-                <td>{app?.circle.genre ?? <BlinkField />}</td>
+                <td>{genreType?.name ?? <BlinkField />}</td>
               </tr>
               <tr>
                 <th>頒布物概要</th>

@@ -19,6 +19,8 @@
   --info-color: #1f6ec7;
   --white-color: #ffffff;
   --pending-color: #a0a0a0;
+  --blink-keyframe-1: #c0c0c0;
+  --blink-keyframe-2: #d8d8d8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -42,5 +44,7 @@
     --success-color: #379637;
     --info-color: #1f6ec7;
     --pending-color: #606060;
+    --blink-keyframe-1: #323030;
+    --blink-keyframe-2: #403d3d;
   }
 }
