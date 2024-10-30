@@ -12,7 +12,7 @@ const FormInput = styled.input`
   border-radius: 5px;
   font: inherit;
   font-size: 16px;
-  background-color: var(--background-color);
+  background-color: var(--inputfield-background-color);
   color: var(--text-color);
 
   border: 1px solid var(--border-color);
@@ -23,8 +23,8 @@ const FormInput = styled.input`
   }
 
   &:disabled {
-    background-color: var(--background-disabled-color);
-    color: var(--text-disabled-color);
+    background-color: var(--disabled-background-color);
+    color: var(--disabled-text-color);
   }
 `
 

@@ -12,9 +12,16 @@ const FormSelect = styled.select`
   border-radius: 5px;
   font: inherit;
   font-size: 16px;
-  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  background-color: var(--inputfield-background-color);
   color: var(--text-color);
 
+  transition: border 0.1s linear;
+  
+  &:focus {
+    outline: none;
+    border: 1px solid var(--text-color);
+  }
 `
 
 export default FormSelect

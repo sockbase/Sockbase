@@ -7,18 +7,22 @@ const buttonStyle = css<{ disabled?: boolean }>`
   background-color: inherit;
   font: inherit;
   color: var(--text-color);
-  background-color: var(--background-color);
+  background-color: var(--inputfield-background-color);
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.1s;
+  transition: border 0.2s, background-color 0.1s;
+
+  &:hover {
+    border: 1px solid var(--text-color);
+  }
 
   &:active {
-    background-color: var(--background-light2-color);
+    background-color: var(--brand-background-active-color);
   }
 
   &[disabled] {
-    background-color: var(--background-disabled-color);
-    color: var(--text-disabled-color);
+    background-color: var(--disabled-background-color);
+    color: var(--disabled-text-color);
     pointer-events: none;
   }
 `

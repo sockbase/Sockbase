@@ -42,7 +42,7 @@ const CheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
     width: 16px;
     height: 16px;
     border-radius: 5px;
-    border: 2px solid var(--outline-color);
+    border: 2px solid var(--border-color);
   }
 
   &::after {
@@ -53,14 +53,14 @@ const CheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
     left: 15px;
     width: 8px;
     height: 4px;
-    border-left: 2px solid var(--text-foreground-color);
-    border-bottom: 2px solid var(--text-foreground-color);
+    border-left: 2px solid var(--text-color);
+    border-bottom: 2px solid var(--text-color);
     opacity: 0;
   }
 
   input:checked + & {
     &::before {
-      border: 2px solid var(--text-foreground-color);
+      border: 2px solid var(--text-color);
     }
     &::after {
       opacity: 1;
@@ -68,12 +68,11 @@ const CheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   }
 
   input:disabled + & {
-    border: 1px solid var(--outline-color);
-    background-color: var(--background-disabled-color);
-    color: var(--text-disabled-color);
+    background-color: var(--disabled-background-color);
+    color: var(--disabled-text-color);
     cursor: not-allowed;
     &::before {
-      border: 2px solid var(--outline-color);
+      border: 2px solid var(--disabled-text-color);
     }
   }
 

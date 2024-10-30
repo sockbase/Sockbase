@@ -6,7 +6,7 @@ import FormInput from '../../../components/Form/FormInput'
 import FormItem from '../../../components/Form/FormItem'
 import FormLabel from '../../../components/Form/FormLabel'
 import FormSection from '../../../components/Form/FormSection'
-import FormTextarea from '../../../components/Parts/FormTextarea'
+import FormTextarea from '../../../components/Form/FormTextarea'
 import useDayjs from '../../../hooks/useDayjs'
 
 interface Props {

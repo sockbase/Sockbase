@@ -7,7 +7,7 @@ const FormTextarea = styled.textarea`
 
   padding: 5px;
   font-size: 1rem;
-  background-color: var(--background-color);
+  background-color: var(--inputfield-background-color);
   color: var(--text-color);
   border-radius: 5px;
 

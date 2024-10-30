@@ -50,6 +50,7 @@ const Container = styled.label<{ used: boolean | undefined }>`
   display: inline-block;
   padding: 2px 4px;
   border-radius: 5px;
+  background-color: var(--inputfield-background-color);
   ${props => {
     switch (props.used) {
       case false:

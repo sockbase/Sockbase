@@ -33,4 +33,5 @@ const Container = styled.label<{ color: string }>`
   padding: 2px 8px;
   border-radius: 5px;
   border: 1px solid ${props => props.color};
+  background-color: var(--inputfield-background-color);
 `

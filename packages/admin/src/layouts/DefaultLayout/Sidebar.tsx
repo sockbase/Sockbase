@@ -150,7 +150,7 @@ const menuItemStyle = css`
   transition: background-color 0.1s;
 
   &:hover {
-    background-color: var(--background-light2-color);
+    background-color: var(--brand-background-active-color);
   }
 `
 const MenuLinkItem = styled(Link)`

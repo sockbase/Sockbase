@@ -21,7 +21,7 @@ const CheckboxLabel = styled.label`
   display: block;
   width: 16px;
   height: 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--outline-color);
   border-radius: 2px;
   cursor: pointer;
   position: relative;
@@ -31,8 +31,8 @@ const CheckboxLabel = styled.label`
     display: block;
     width: 7px;
     height: 3px;
-    border-left: 2px solid var(--text-foreground-color);
-    border-bottom: 2px solid var(--text-foreground-color);
+    border-left: 2px solid var(--text-color);
+    border-bottom: 2px solid var(--text-color);
     position: absolute;
     top: calc(50% - 4px);
     left: calc(50% - 4px);
@@ -41,7 +41,7 @@ const CheckboxLabel = styled.label`
   }
 
   ${Checkbox}:checked + & {
-    border: 1px solid var(--text-foreground-color);
+    border: 1px solid var(--text-color);
     &:before {
       opacity: 1;
     }

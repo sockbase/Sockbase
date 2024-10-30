@@ -55,6 +55,7 @@ const Container = styled.label<{ status: SockbaseInquiryStatus | undefined }>`
   display: inline-block;
   padding: 2px 4px;
   border-radius: 5px;
+  background-color: var(--inputfield-background-color);
   ${props => {
     switch (props.status) {
       case 0:
