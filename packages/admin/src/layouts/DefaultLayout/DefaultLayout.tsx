@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { MdClose, MdMenu } from 'react-icons/md'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import LogotypeSVG from '../../assets/logotype.svg'
 import useFirebase from '../../hooks/useFirebase'
@@ -47,7 +47,7 @@ const DefaultLayout: React.FC<Props> = (props) => {
           <SidebarContainer>
             <HeaderWrap>
               <BrandArea>
-                <BrandLogotype src={LogotypeSVG} alt="Logo" />
+                <Link to="/"><BrandLogotype src={LogotypeSVG} alt="Logo" /></Link>
               </BrandArea>
               <MenuButtonArea>
                 {isSmallDisplay && (
@@ -102,9 +102,12 @@ const MainWrap = styled.div`
 `
 const HeaderWrap = styled.div`
   display: grid;
-  grid-template-columns: 1fr 40px;
+  grid-template-columns: 1fr 36px;
   background-color: var(--brand-background-color);
   border-left: 24px solid var(--brand-color);
+  @media screen and (max-width: 840px) {
+    border-left: none;
+  }
 `
 const MenuWrap = styled.div`
   overflow-y: auto;
@@ -121,6 +124,10 @@ const MenuButtonArea = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 0;
+
+  @media screen and (max-width: 840px) {
+    background-color: var(--brand-color);
+  }
 `
 const MenuButton = styled.button`
   background: none;
@@ -132,6 +139,6 @@ const MenuButton = styled.button`
   svg {
     width: 24px;
     height: 24px;
-    color: var(--text-foreground-color);
+    color: var(--white-color);
   }
 `

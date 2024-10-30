@@ -19,7 +19,7 @@ const Complete: React.FC<Props> = (props) => {
       <h2>チケットストアの作成が完了しました</h2>
       <FormSection>
         <FormItem $inlined>
-          <LinkButton to={`/dashboard/stores/${props.storeId}`}>チケットストア管理画面を開く</LinkButton>
+          <LinkButton to={`/stores/${props.storeId}`}>チケットストア管理画面を開く</LinkButton>
           <FormButton onClick={handleInitialize} color="default">新しいチケットストアを作成する</FormButton>
         </FormItem>
       </FormSection>

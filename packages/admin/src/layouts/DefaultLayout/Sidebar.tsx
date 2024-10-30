@@ -144,7 +144,7 @@ const MenuItemRack = styled.div`
 const menuItemStyle = css`
   padding: 5px;
   display: grid;
-  grid-template-columns: 24px 1fr;
+  grid-template-columns: 1.5em 1fr;
   gap: 5px;
   cursor: pointer;
   transition: background-color 0.1s;
@@ -173,8 +173,8 @@ const MenuIcon = styled.div`
   justify-content: center;
   align-items: center;
   svg {
-    width: 24px;
-    height: 24px;
+    width: 1.5em;
+    height: 1.5em;
   }
 `
 const MenuLabel = styled.div``
