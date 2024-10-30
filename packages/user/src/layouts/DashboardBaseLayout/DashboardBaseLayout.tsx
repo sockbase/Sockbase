@@ -57,10 +57,7 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
           {!user.emailVerified && <AlertArea>
             <Alert>
               メールアドレスの確認が必要です
-              <Button
-                onClick={handleSendVerifyMail}
-                inlined={true}
-                disabled={sentVerifyMail}>確認メール送信</Button>
+              <Button onClick={handleSendVerifyMail} disabled={sentVerifyMail}>確認メール送信</Button>
             </Alert>
           </AlertArea>}
           <SidebarArea>
@@ -163,6 +160,7 @@ const Button = styled(FormButton)`
   }
   &:disabled{
     background-color: #00000080;
+    color: #000000;
     pointer-events: none;
   }
 `
