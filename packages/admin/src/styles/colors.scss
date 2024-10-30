@@ -1,20 +1,20 @@
 :root {
-  --brand-color: #ea6183;
+  --brand-color: #b14963;
   --body-background-color: #f0f0f0;
   --panel-background-color: #e8e8e8;
-  --brand-background-color: #282020;
-  --brand-background-active-color: #e8e0e0;
+  --brand-background-color: #242020;
+  --brand-background-active-color: #e4e0e0;
   --inputfield-background-color: #fcfcfc;
-  --text-color: #282020;
-  --text-foreground-color: #282020;
-  --text-light-color: #888080;
-  --link-color: #282020;
-  --border-color: #e8e0e0;
+  --text-color: #242020;
+  --text-foreground-color: #242020;
+  --text-light-color: #848080;
+  --link-color: #242020;
+  --border-color: #e4e0e0;
   --outline-color: #908888;
   --disabled-background-color: #d0d0d0;
   --disabled-text-color: #a0a0a0;
   --warning-color: #f0a000;
-  --error-color: #dc4d40;
+  --danger-color: #d63526;
   --success-color: #379637;
   --info-color: #1f6ec7;
   --white-color: #ffffff;
@@ -23,7 +23,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --brand-color: #ea6183;
+    --brand-color: #b14963;
     --body-background-color: #222020;
     --panel-background-color: #2a2828;
     --brand-background-color: #121010;
@@ -34,11 +34,11 @@
     --text-light-color: #888080;
     --link-color: #d8d0d0;
     --border-color: #343030;
-    --outline-color: #908888;
+    --outline-color: #c8c0c0;
     --disabled-background-color: #404040;
     --disabled-text-color: #606060;
     --warning-color: #f0a000;
-    --error-color: #dc4d40;
+    --danger-color: #d63526;
     --success-color: #379637;
     --info-color: #1f6ec7;
     --pending-color: #606060;
