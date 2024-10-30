@@ -1,6 +1,3 @@
-import {
-  serverTimestamp
-} from 'firebase/firestore'
 import type {
   DocumentData,
   FirestoreDataConverter,
@@ -53,9 +50,7 @@ export const accountConverter: FirestoreDataConverter<SockbaseAccount> = {
 }
 
 export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
-  toFirestore: (app: SockbaseApplicationHashIdDocument): DocumentData => ({
-    spaceId: app.spaceId
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationHashIdDocument => {
     const hashDoc = snapshot.data()
     return {
@@ -72,7 +67,7 @@ export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicat
 }
 
 export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDocument> = {
-  toFirestore: (app: SockbaseApplicationDocument): DocumentData => ({}),
+  toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationDocument => {
     const app = snapshot.data()
     return {
@@ -94,9 +89,7 @@ export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDoc
 }
 
 export const applicationMetaConverter: FirestoreDataConverter<SockbaseApplicationMeta> = {
-  toFirestore: (meta: SockbaseApplicationMeta) => ({
-    applicationStatus: meta.applicationStatus
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationMeta => {
     const meta = snapshot.data()
     return {
@@ -130,7 +123,7 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
 
 export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
   {
-    toFirestore: (): DocumentData => ({}),
+    toFirestore: () => ({}),
     fromFirestore: (snapshot: QueryDocumentSnapshot): SockbasePaymentDocument => {
       const payment = snapshot.data()
       return {
@@ -155,20 +148,7 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
   }
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
-  toFirestore: (event: SockbaseEventDocument): DocumentData => ({
-    name: event.name,
-    websiteURL: event.websiteURL,
-    venue: event.venue,
-    descriptions: event.descriptions,
-    rules: event.rules,
-    spaces: event.spaces,
-    genres: event.genres,
-    schedules: event.schedules,
-    passConfig: event.passConfig,
-    _organization: event._organization,
-    permissions: event.permissions,
-    isPublic: event.isPublic
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseEventDocument => {
     const event = snapshot.data() as SockbaseEventDocument
     return {
@@ -191,12 +171,7 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
 }
 
 export const spaceConverter: FirestoreDataConverter<SockbaseSpaceDocument> = {
-  toFirestore: (space: SockbaseSpaceDocument) => ({
-    eventId: space.eventId,
-    spaceGroupOrder: space.spaceGroupOrder,
-    spaceOrder: space.spaceOrder,
-    spaceName: space.spaceName
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseSpaceDocument => {
     const space = snapshot.data()
     return {
@@ -210,9 +185,7 @@ export const spaceConverter: FirestoreDataConverter<SockbaseSpaceDocument> = {
 }
 
 export const spaceHashConverter: FirestoreDataConverter<SockbaseSpaceHashDocument> = {
-  toFirestore: (spaceHash: SockbaseSpaceHashDocument) => ({
-    eventId: spaceHash.eventId
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseSpaceHashDocument => {
     const spaceHash = snapshot.data()
     return {
@@ -242,18 +215,7 @@ export const overviewConverter: FirestoreDataConverter<SockbaseApplicationOvervi
 }
 
 export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
-  toFirestore: (store: SockbaseStoreDocument): DocumentData => ({
-    name: store.name,
-    websiteURL: store.websiteURL,
-    venue: store.venue,
-    descriptions: store.descriptions,
-    rules: store.rules,
-    schedules: store.schedules,
-    _organization: store._organization,
-    permissions: store.permissions,
-    types: store.types,
-    isPublic: store.isPublic
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseStoreDocument => {
     const store = snapshot.data()
     return {
@@ -300,9 +262,7 @@ export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
 }
 
 export const ticketMetaConverter: FirestoreDataConverter<SockbaseTicketMeta> = {
-  toFirestore: (ticketMeta: SockbaseTicketMeta) => ({
-    applicationStatus: ticketMeta.applicationStatus
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (
     snapshot: QueryDocumentSnapshot
   ): SockbaseTicketMeta => {
@@ -334,10 +294,7 @@ export const ticketUserConverter: FirestoreDataConverter<SockbaseTicketUserDocum
 }
 
 export const ticketUsedStatusConverter: FirestoreDataConverter<SockbaseTicketUsedStatus> = {
-  toFirestore: (usedStatus: SockbaseTicketUsedStatus) => ({
-    used: usedStatus.used,
-    usedAt: serverTimestamp()
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (
     snapshot: QueryDocumentSnapshot
   ): SockbaseTicketUsedStatus => {
@@ -392,9 +349,7 @@ export const inquiryConverter: FirestoreDataConverter<SockbaseInquiryDocument> =
 
 export const inquiryMetaConverter: FirestoreDataConverter<SockbaseInquiryMetaDocument> =
   {
-    toFirestore: (meta: SockbaseInquiryMetaDocument) => ({
-      status: meta.status
-    }),
+    toFirestore: () => ({}),
     fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseInquiryMetaDocument => {
       const meta = snapshot.data()
       return {
@@ -410,12 +365,7 @@ export const inquiryMetaConverter: FirestoreDataConverter<SockbaseInquiryMetaDoc
   }
 
 export const informationConverter: FirestoreDataConverter<SockbaseInformationDocument> = {
-  toFirestore: (info: SockbaseInformationDocument) => ({
-    title: info.title,
-    body: info.body,
-    updatedAt: info.updatedAt,
-    isPublished: info.isPublished
-  }),
+  toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseInformationDocument => {
     const info = snapshot.data()
     return {
