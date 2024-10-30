@@ -304,16 +304,18 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
             </tbody>
           </table>
 
-          {links !== undefined && hashId && <FormSection>
-            <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashId}/cut`} color='default' inlined={true}>
-                <IconLabel label="サークルカットを差し替える" icon={<MdImage />} />
-              </LinkButton>
-              <LinkButton to={`/dashboard/applications/${hashId}/links`} color={links ? 'default' : undefined} inlined={true}>
-                <IconLabel label={`カタログ掲載情報を${links ? '編集' : '入力'}する`} icon={<MdBookmarkAdd />} />
-              </LinkButton>
-            </FormItem>
-          </FormSection>}
+          {links !== undefined && hashId && (
+            <FormSection>
+              <FormItem $inlined>
+                <LinkButton to={`/dashboard/applications/${hashId}/cut`}>
+                  <IconLabel label="サークルカットを差し替える" icon={<MdImage />} />
+                </LinkButton>
+                <LinkButton to={`/dashboard/applications/${hashId}/links`} color={(!links && 'primary') || undefined}>
+                  <IconLabel label={`カタログ掲載情報を${links ? '編集' : '入力'}する`} icon={<MdBookmarkAdd />} />
+                </LinkButton>
+              </FormItem>
+            </FormSection>
+          )}
         </>
         <>
           <h3>頒布物情報</h3>
@@ -339,13 +341,15 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
               </tr>
             </tbody>
           </table>
-          {links !== undefined && hashId && <FormSection>
-            <FormItem inlined={true}>
-              <LinkButton to={`/dashboard/applications/${hashId}/overview`} color='default' inlined={true}>
-                <IconLabel label="頒布物情報を編集する" icon={<MdEdit />} />
-              </LinkButton>
-            </FormItem>
-          </FormSection>}
+          {links !== undefined && hashId && (
+            <FormSection>
+              <FormItem>
+                <LinkButton to={`/dashboard/applications/${hashId}/overview`}>
+                  <IconLabel label="頒布物情報を編集する" icon={<MdEdit />} />
+                </LinkButton>
+              </FormItem>
+            </FormSection>
+          )}
         </>
         <>
           <h3>隣接配置 (合体) 希望</h3>

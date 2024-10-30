@@ -42,6 +42,7 @@ const Complete: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <AnchorButton
+            color="primary"
             href={`/dashboard/tickets/${props.addedResult?.hashId}`}
             target="_blank"
             rel="noreferrer">

@@ -12,15 +12,14 @@ import {
   type SockbaseTicketUserDocument
 } from 'sockbase'
 import FormButton from '../../../components/Form/FormButton'
+import FormInput from '../../../components/Form/FormInput'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
-import FormTextarea from '../../../components/Form/FormTextarea'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
 import IconLabel from '../../../components/Parts/IconLabel'
 import LinkButton from '../../../components/Parts/LinkButton'
-import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
 import TicketAssignStatusLabel from '../../../components/Parts/StatusLabel/TicketAssignStatusLabel'
@@ -277,20 +276,20 @@ const DashboardTicketDetailPage: React.FC = () => {
               このチケットを使う人を選択してください。
             </p>
             <FormSection>
-              <FormItem>
-                <LoadingCircleWrapper isLoading={isProgressForAssignMe}>
-                  <FormButton onClick={handleAssignMe} disabled={isProgressForAssignMe}><IconLabel label="自分で使う" icon={<MdAccountCircle />} /></FormButton>
-                </LoadingCircleWrapper>
-              </FormItem>
-              <FormItem>
-                <FormButton color="default" onClick={() => setOpenAssignPanel(s => !s)}><IconLabel label="他の方へ割り当てる" icon={<MdOutlineSupervisorAccount />} /></FormButton>
+              <FormItem $inlined>
+                <FormButton color="primary" onClick={handleAssignMe} disabled={isProgressForAssignMe}>
+                  <IconLabel label="自分で使う" icon={<MdAccountCircle />} />
+                </FormButton>
+                <FormButton onClick={() => setOpenAssignPanel(s => !s)}>
+                  <IconLabel label="他の方へ割り当てる" icon={<MdOutlineSupervisorAccount />} />
+                </FormButton>
               </FormItem>
               {openAssignPanel && <>
                 <FormItem>
                   チケットを渡したい方へ以下の URL を送付してください。
                 </FormItem>
                 <FormItem>
-                  <FormTextarea disabled>{assignURL}</FormTextarea>
+                  <FormInput value={assignURL} />
                 </FormItem>
                 <FormItem>
                   リンクをコピー <CopyToClipboard content={assignURL} />
@@ -299,17 +298,22 @@ const DashboardTicketDetailPage: React.FC = () => {
             </FormSection>
           </>}
 
-          {ticketUser?.usableUserId && ticket && !ticketUsedStatus?.used && <FormSection>
-            <h3>チケット割り当てを解除</h3>
-            <FormItem>
+          {ticketUser?.usableUserId && ticket && !ticketUsedStatus?.used && (
+            <FormSection>
+              <h3>チケット割り当てを解除</h3>
+              <FormItem>
               このチケットは{ticketUser.usableUserId === ticket.userId ? 'あなた' : '他の方'}に割り当てられています。
-            </FormItem>
-            <FormItem>
-              <LoadingCircleWrapper isLoading={isProgressForUnassign}>
-                <FormButton color="danger" onClick={handleUnassign} disabled={isProgressForUnassign}><IconLabel label="チケットの割り当てを解除する" icon={<MdLinkOff />} /></FormButton>
-              </LoadingCircleWrapper>
-            </FormItem>
-          </FormSection>}
+              </FormItem>
+              <FormItem>
+                <FormButton
+                  color="danger"
+                  onClick={handleUnassign}
+                  disabled={isProgressForUnassign}>
+                  <IconLabel label="チケットの割り当てを解除する" icon={<MdLinkOff />} />
+                </FormButton>
+              </FormItem>
+            </FormSection>
+          )}
         </>
       </TwoColumnsLayout>
     </DashboardBaseLayout>

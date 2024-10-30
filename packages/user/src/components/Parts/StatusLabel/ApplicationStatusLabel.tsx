@@ -14,7 +14,7 @@ const ApplicationStatusLabel: React.FC<Props> = (props) => {
     } else if (props.status === 1) {
       return <IconLabel label="キャンセル済み" icon={<MdClose />} />
     } else if (props.status === 2) {
-      return <IconLabel label="申し込み確定" icon={<MdCheck />} />
+      return <IconLabel label="確定" icon={<MdCheck />} />
     }
   }, [props.status])
 
@@ -32,6 +32,8 @@ const Container = styled.label<{ status: SockbaseApplicationStatus }>`
   padding: 2px 5px;
   border-radius: 5px;
 
+  color: var(--white-color);
+  
   ${p => {
     if (p.status === 0) {
       return 'background-color: var(--pending-color);'
@@ -41,6 +43,4 @@ const Container = styled.label<{ status: SockbaseApplicationStatus }>`
       return 'background-color: var(--success-color);'
     }
   }};
-
-  color: var(--text-foreground-color);
 `

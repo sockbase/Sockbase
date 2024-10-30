@@ -44,17 +44,17 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
   }, [sendVerifyMailAsync])
 
   return (
-    <StyledLayout>
+    <Container>
       <RequiredLogin />
       {user && <>
         <HeadHelper title={props.title} />
-        <StyledHeader>
+        <HeaderWrap>
           <Link to="/dashboard">
             <Logotype src={LogotypeSVG} alt="Sockbase Logotype" />
           </Link>
-        </StyledHeader>
-        <StyledContainer isSlim={isSlim}>
-          {!user.emailVerified && <StyledWrapAlert>
+        </HeaderWrap>
+        <MainWrap isSlim={isSlim}>
+          {!user.emailVerified && <AlertArea>
             <Alert>
               メールアドレスの確認が必要です
               <Button
@@ -62,38 +62,36 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
                 inlined={true}
                 disabled={sentVerifyMail}>確認メール送信</Button>
             </Alert>
-          </StyledWrapAlert>}
-          <StyledSidebar>
+          </AlertArea>}
+          <SidebarArea>
             <Sidebar
               logout={handleLogout}
               user={user}
               isSlim={isSlim}
               setSlim={setSlim} />
-          </StyledSidebar>
-          <StyledWrapMain>
-            <StyledMain>{props.children}</StyledMain>
-          </StyledWrapMain>
-        </StyledContainer>
+          </SidebarArea>
+          <MainArea>
+            <Main>{props.children}</Main>
+          </MainArea>
+        </MainWrap>
       </>}
-    </StyledLayout>
+    </Container>
   )
 }
 
 export default DashboardBaseLayout
 
-const StyledLayout = styled.section`
+const Container = styled.section`
   display: grid;
   height: 100%;
   grid-template-rows: auto 1fr;
   overflow: hidden;
-  background-color: var(--background-body-color);
-  color: var(--text-color);
 `
-const StyledHeader = styled.header`
+const HeaderWrap = styled.header`
   padding: 10px;
-  background-color: var(--primary-brand-color);
+  background-color: var(--brand-color);
 `
-const StyledContainer = styled.section<{ isSlim: boolean }>`
+const MainWrap = styled.section<{ isSlim: boolean }>`
   display: grid;
   height: 100%;
   overflow-y: hidden;
@@ -112,7 +110,7 @@ const StyledContainer = styled.section<{ isSlim: boolean }>`
     overflow-y: auto;
   }
 `
-const StyledWrapAlert = styled.section`
+const AlertArea = styled.section`
   grid-row: 1;
   grid-column: 2;
 `
@@ -123,14 +121,14 @@ const Alert = styled.div`
   color: #000000;
   box-shadow: 0 2px 5px #00000040;
 `
-const StyledSidebar = styled.nav`
+const SidebarArea = styled.nav`
   padding: 10px;
-  background-color: var(--primary-brand-light-color);
+  background-color: var(--panel-background-color);
   overflow-y: auto;
   grid-row: 1 / 3;
   grid-column: 1;
 `
-const StyledWrapMain = styled.main`
+const MainArea = styled.main`
   overflow-y: auto;
   @media screen and (max-width: 840px) {
     padding: 0;
@@ -139,11 +137,10 @@ const StyledWrapMain = styled.main`
   grid-row: 2;
   grid-column: 2;
 `
-const StyledMain = styled.div`
+const Main = styled.div`
   min-height: 100%;
   padding: 20px;
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
-  background-color: var(--background-color);
 `
 const Logotype = styled.img`
   height: 16px;

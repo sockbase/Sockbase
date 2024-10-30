@@ -69,9 +69,7 @@ const Input: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton
-            color="default"
-            onClick={props.prevStep}>
+          <FormButton onClick={props.prevStep}>
             <IconLabel icon={<MdArrowBack />} label="アカウント確認画面へ戻る" />
           </FormButton>
         </FormItem>
@@ -126,6 +124,7 @@ const Input: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormButton
+          color="primary"
           disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
           <IconLabel icon={<MdArrowForward />} label="確認画面へ進む" />

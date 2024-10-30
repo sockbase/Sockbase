@@ -4,16 +4,16 @@ const FormSelect = styled.select<{ hasError?: boolean }>`
   width: 100%;
   min-height: 2.5em;
   padding: 0 10px;
-  border: 1px solid var(--outline-color);
+  border: 1px solid var(--border-color);
   border-radius: 5px;
-  background-color: var(--background-color);
+  background-color: var(--inputfield-background-color);
   color: var(--text-color);
 
   transition: background-color 0.1s linear,
               border 0.1s linear;
 
   &:focus {
-    border: 1px solid var(--primary-brand-color);
+    border: 1px solid var(--primary-color);
     outline: none;
   }
 

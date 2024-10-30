@@ -14,46 +14,51 @@ interface Props {
 const FormRadio: React.FC<Props> = (props) => {
   return (
     <>
-      {props.values.map(opt => <StyledRadioItem key={`${props.name}-${opt.value}`}>
-        <StyledRadio
+      {props.values.map(opt => <RadioItem key={`${props.name}-${opt.value}`}>
+        <Radio
           name={props.name}
           id={`${props.name}-${opt.value}`}
           value={opt.value}
           onChange={e => props.onChange(e.target.value)}
           checked={props.value === opt.value}
           defaultChecked={opt.checked} />
-        <StyledRadioLabel
+        <RadioLabel
           htmlFor={`${props.name}-${opt.value}`}
-          hasError={props.hasError}>{opt.text}</StyledRadioLabel>
-      </StyledRadioItem>)}
+          hasError={props.hasError}>{opt.text}</RadioLabel>
+      </RadioItem>)}
     </>
   )
 }
 
-const StyledRadioItem = styled.div`
+const RadioItem = styled.div`
   margin-bottom: 5px;
   &:last-child {
     margin-bottom: 0;
   }
 `
 
-const StyledRadio = styled.input.attrs({ type: 'radio' })`
+const Radio = styled.input.attrs({ type: 'radio' })`
   display: none;
 `
 
-const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
+const RadioLabel = styled.label<{ hasError?: boolean }>`
   display: block;
-
   min-height: 2.5em;
   padding: 5px 10px;
   padding-left: 44px;
-  border: 1px solid var(--outline-color);
+  border: 1px solid var(--border-color);
   border-radius: 5px;
+
+  background-color: var(--inputfield-background-color);
 
   cursor: pointer;
   transition: background-color 0.1s linear,
               border 0.1s linear,
               opacity 0.1s linear;
+
+  &:hover {
+    border: 1px solid var(--primary-color);
+  }
 
   position: relative;
 
@@ -81,17 +86,16 @@ const StyledRadioLabel = styled.label<{ hasError?: boolean }>`
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background-color: var(--text-foreground-color);
+    background-color: var(--white-color);
     opacity: 0;
   }
 
   input:checked + & {
-    border: 1px solid var(--primary-brand-color);
-    background-color: var(--primary-brand-color);
-    color: var(--text-foreground-color);
+    background-color: var(--primary-color);
+    color: var(--white-color);
     font-weight: bold;
     &::before {
-      border: 1px solid var(--text-foreground-color);
+      border: 1px solid var(--white-color);
     }
     &::after {
       opacity: 1;

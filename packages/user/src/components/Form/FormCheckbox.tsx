@@ -11,22 +11,22 @@ interface Props {
 const FormCheckbox: React.FC<Props> = (props) => {
   return (
     <>
-      <StyledCheckbox
+      <Checkbox
         name={props.name}
         id={`${props.name}`}
         onChange={e => props.onChange(e.target.checked)}
         checked={props.checked}
         disabled={props.disabled} />
-      <StyledCheckboxLabel htmlFor={props.name} inlined={props.inlined}>{props.label}</StyledCheckboxLabel>
+      <CheckboxLabel htmlFor={props.name} inlined={props.inlined}>{props.label}</CheckboxLabel>
     </>
   )
 }
 
-const StyledCheckbox = styled.input.attrs({ type: 'checkbox' })`
+const Checkbox = styled.input.attrs({ type: 'checkbox' })`
   display: none;
 `
 
-const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
+const CheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   display: inline-block;
   width: 100%;
 
@@ -39,9 +39,10 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   `}
 
   padding-left: 44px;
-  border: 1px solid var(--outline-color);
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   color: var(--text-color);
+  background-color: var(--inputfield-background-color);
 
   cursor: pointer;
   user-select: none;
@@ -71,18 +72,18 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
     left: 16px;
     width: 8px;
     height: 4px;
-    border-left: 2px solid var(--text-foreground-color);
-    border-bottom: 2px solid var(--text-foreground-color);
+    border-left: 2px solid var(--white-color);
+    border-bottom: 2px solid var(--white-color);
     opacity: 0;
   }
 
   input:checked + & {
-    border: 1px solid var(--primary-brand-color);
-    background-color: var(--primary-brand-color);
-    color: var(--text-foreground-color);
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color);
+    color: var(--white-color);
     font-weight: bold;
     &::before {
-      border: 1px solid var(--text-foreground-color);
+      border: 1px solid var(--white-color);
     }
     &::after {
       opacity: 1;
@@ -90,10 +91,9 @@ const StyledCheckboxLabel = styled.label<{ inlined: boolean | undefined }>`
   }
 
   input:disabled + & {
-    border: 1px solid var(--outline-color);
-    background-color: var(--background-disabled-color);
-    color: var(--text-disabled-color);
-    cursor: not-allowed;
+    background-color: var(--disabled-background-color);
+    color: var(--disabled-text-color);
+    cursor: auto;
     &::before {
       border: 1px solid var(--outline-color);
     }

@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 
-const FormHelp = styled.label<{ hasError?: boolean }>`
+const FormHelp = styled.div<{ hasError?: boolean }>`
   display: block;
   margin-top: -1px;
   padding: 5px;
-  background-color: var(--background-light-color);
-  border: 1px solid var(--outline-color);
+  background-color: var(--panel-background-color);
+  border: 1px solid var(--border-color);
   border-radius: 0 0 5px 5px;
 
   font-size: 0.8em;
@@ -14,9 +14,9 @@ const FormHelp = styled.label<{ hasError?: boolean }>`
               border 0.1s linear;
 
   *:focus + & {
-    background-color: var(--primary-brand-color);
-    border: 1px solid var(--primary-brand-color);
-    color: var(--text-foreground-color);
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    color: var(--white-color);
   }
 
   ${props => props.hasError && `

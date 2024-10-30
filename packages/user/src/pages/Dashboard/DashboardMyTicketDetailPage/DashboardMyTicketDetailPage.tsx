@@ -88,11 +88,17 @@ const DashboardMyTicketDetailPage: React.FC = () => {
       {user && ticketUser?.usableUserId &&
         <TwoColumnsLayout>
           <>
-            {ticketUser.hashId && !ticketUser.used && <FormSection>
-              <FormItem>
-                <LinkButton to={`/tickets/${ticketUser.hashId}`}><IconLabel label="チケットを表示する" icon={<MdOpenInNew />} /></LinkButton>
-              </FormItem>
-            </FormSection>}
+            {ticketUser.hashId && !ticketUser.used && (
+              <FormSection>
+                <FormItem>
+                  <LinkButton
+                    to={`/tickets/${ticketUser.hashId}`}
+                    color="primary">
+                    <IconLabel label="チケットを表示する" icon={<MdOpenInNew />} />
+                  </LinkButton>
+                </FormItem>
+              </FormSection>
+            )}
 
             <h3>ステータス</h3>
             <table>
@@ -117,11 +123,15 @@ const DashboardMyTicketDetailPage: React.FC = () => {
                 </tr>
               </tbody>
             </table>
-            {ticketUser.userId === ticketUser.usableUserId && <FormSection>
-              <FormItem>
-                <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`} color="default"><IconLabel label="チケットを管理する" icon={<MdTune />} /></LinkButton>
-              </FormItem>
-            </FormSection>}
+            {ticketUser.userId === ticketUser.usableUserId && (
+              <FormSection>
+                <FormItem>
+                  <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`}>
+                    <IconLabel label="チケットを管理する" icon={<MdTune />} />
+                  </LinkButton>
+                </FormItem>
+              </FormSection>
+            )}
           </>
           <>
           </>

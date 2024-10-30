@@ -25,18 +25,17 @@ export default TopCard
 const Card = styled(Link)`
   display: grid;
   grid-template-rows: auto 1fr;
-  color: inherit;
-  &:hover {
-    text-decoration: none;
-  }
+  text-decoration: none;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
 `
 const CardHeader = styled.div<{ important: boolean | undefined }>`
   padding: 10px;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 5px;
-  background-color: ${props => props.important ? 'var(--primary-brand-color)' : 'var(--background-dark-color)'};
-  border-radius: 5px 5px 0 0;
+  background-color: ${props => props.important ? 'var(--danger-color)' : 'var(--default-color)'};
+  border-radius: 4px 4px 0 0;
 `
 const CardIcon = styled.div<{ important: boolean | undefined }>`
   display: flex;
@@ -45,17 +44,14 @@ const CardIcon = styled.div<{ important: boolean | undefined }>`
   svg {
     width: 24px;
     height: 24px;
-  color: ${props => props.important ? 'var(--text-foreground-color)' : 'var(--text-color)'};
+    color: ${props => props.important ? 'var(--white-color)' : 'var(--text-color)'};
   }
 `
 const CardTitle = styled.div<{ important: boolean | undefined }>`
   font-weight: bold;
-  color: ${props => props.important ? 'var(--text-foreground-color)' : 'var(--text-color)'};
+  color: ${props => props.important ? 'var(--white-color)' : 'var(--text-color)'};
 `
 const CardDescription = styled.div`
   padding: 10px;
-  border-radius: 0 0 5px 5px;
-  background-color: var(--background-light-color);
-  color: var(--text-color);
-  border-bottom: 2px solid var(--shadow-color);
+  background-color: var(--panel-background-color);
 `

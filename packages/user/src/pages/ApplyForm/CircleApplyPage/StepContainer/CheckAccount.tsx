@@ -70,7 +70,7 @@ const CheckAccount: React.FC<Props> = (props) => {
         <Alert type="info" title="別のアカウントで申し込みを行うには、ログアウトしてください。" />
         <FormSection>
           <FormItem>
-            <FormButton color="default" onClick={handleLogout}>
+            <FormButton onClick={handleLogout}>
               <IconLabel icon={<MdLogout />} label="ログアウト" />
             </FormButton>
           </FormItem>
@@ -79,7 +79,7 @@ const CheckAccount: React.FC<Props> = (props) => {
 
       {(!props.user || appliedApp === null) && <FormSection>
         <FormItem>
-          <FormButton onClick={props.nextStep}>
+          <FormButton onClick={props.nextStep} color="primary">
             <IconLabel icon={<MdArrowForward />} label="申し込み説明画面へ進む" />
           </FormButton>
         </FormItem>

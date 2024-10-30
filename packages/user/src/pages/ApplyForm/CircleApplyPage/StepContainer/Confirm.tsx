@@ -186,15 +186,18 @@ const Confirm: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormItem>
-          <FormButton color="default"
+          <FormButton
             onClick={() => props.prevStep()}
             disabled={isProgress}>
             <IconLabel icon={<MdArrowBack />} label="修正する" />
           </FormButton>
         </FormItem>
+      </FormSection>
+      <FormSection>
         <FormItem>
-          <LoadingCircleWrapper isLoading={isProgress}>
+          <LoadingCircleWrapper isLoading={isProgress} inlined>
             <FormButton
+              color="primary"
               onClick={handleSubmit}
               disabled={isProgress}>
               <IconLabel icon={<MdArrowForward />} label="決済に進む (申し込み情報送信)" />

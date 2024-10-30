@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MdBookOnline } from 'react-icons/md'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import LinkButton from '../../../../components/Parts/LinkButton'
 import CheckAccount from '../../TicketApplyPage/StepContainer/CheckAccount'
 import Complete from './Complete'
@@ -107,11 +109,15 @@ const StepContainer: React.FC<Props> = (props) => {
         <Alert type="error" title="受け取り済みのチケットです">
           このチケットは既に受け取り済みです。
         </Alert>
-        {props.user?.uid === props.ticketUser.usableUserId && <FormSection>
-          <FormItem>
-            <LinkButton to={`/tickets/${props.ticketHashId}`}>チケットを開く</LinkButton>
-          </FormItem>
-        </FormSection>}
+        {props.user?.uid === props.ticketUser.usableUserId && (
+          <FormSection>
+            <FormItem>
+              <LinkButton color="primary" to={`/tickets/${props.ticketHashId}`}>
+                <IconLabel icon={<MdBookOnline />} label="チケットを開く" />
+              </LinkButton>
+            </FormItem>
+          </FormSection>
+        )}
       </>}
 
       {!props.ticketUser.usableUserId && <>

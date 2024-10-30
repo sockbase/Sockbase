@@ -1,19 +1,16 @@
 import styled from 'styled-components'
 
-const FormItem = styled.fieldset<{ inlined?: boolean }>`
-  ${props => props.inlined && ({
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '10px'
-  })}
+const FormItem = styled.div<{ $inlined?: boolean }>`
   margin-bottom: 10px;
   &:last-child {
     margin-bottom: 0;
   }
-
-  @media screen and (max-width: 840px) {
-    flex-flow: column;
-  }
+  ${props => props.$inlined && {
+    display: 'flex',
+    flexFlow: 'row',
+    flexWrap: 'wrap',
+    gap: '5px'
+  }}
 `
 
 export default FormItem

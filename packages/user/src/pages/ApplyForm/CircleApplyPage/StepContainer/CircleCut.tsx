@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { MdArrowForward, MdUpload } from 'react-icons/md'
 import FormButton from '../../../../components/Form/FormButton'
 import FormCheckbox from '../../../../components/Form/FormCheckbox'
-import FormItem from '../../../../components/Form/FormItem'
-import FormSection from '../../../../components/Form/FormSection'
 import FormInput from '../../../../components/Form/FormInput'
+import FormItem from '../../../../components/Form/FormItem'
 import FormLabel from '../../../../components/Form/FormLabel'
+import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
 import CircleCutImage from '../../../../components/Parts/CircleCutImage'
 import IconLabel from '../../../../components/Parts/IconLabel'
@@ -101,8 +101,9 @@ const CircleCut: React.FC<Props> = (props) => {
         </FormItem>}
         <FormItem>
           <FormButton
+            color="primary"
             onClick={uploadCircleCut}
-            disabled={isProgress || isLaterUpload}>
+            disabled={!circleCutData || isProgress || isLaterUpload}>
             <IconLabel icon={<MdUpload />} label="アップロードする" />
           </FormButton>
         </FormItem>
@@ -121,6 +122,7 @@ const CircleCut: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormButton
+            color="primary"
             onClick={props.nextStep}
             disabled={!isUploaded && !isLaterUpload}>
             <IconLabel icon={<MdArrowForward />} label="次へ進む" />

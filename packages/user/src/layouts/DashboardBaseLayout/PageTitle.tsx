@@ -10,28 +10,28 @@ interface Props {
 
 const PageTitle: React.FC<Props> = (props) => {
   return (
-    <StyledPageTitleContainer>
-      <StyledIcon>{props.icon}</StyledIcon>
-      <StyledTitle>
+    <Container>
+      <Icon>{props.icon}</Icon>
+      <Title>
         {!props.isLoading
           ? props.title
           : <BlinkField />}
-      </StyledTitle>
-      <StyledDescription>{props.description}</StyledDescription>
-    </StyledPageTitleContainer>
+      </Title>
+      <Description>{props.description}</Description>
+    </Container>
   )
 }
 
-const StyledPageTitleContainer = styled.header`
+const Container = styled.header`
   display: grid;
   padding-bottom: 20px;
   margin-bottom: 20px;
-  border-bottom: 1px solid var(--title-border-color);
+  border-bottom: 1px solid var(--border-color);
 
   grid-template-columns: 64px 1fr;
   grid-template-rows: auto auto;
 `
-const StyledIcon = styled.div`
+const Icon = styled.div`
   grid-row: 1 / 3;
 
   font-size: 48px;
@@ -40,13 +40,13 @@ const StyledIcon = styled.div`
   justify-content: center;
   color: var(--primary-brand-color);
 `
-const StyledTitle = styled.div`
+const Title = styled.div`
   grid-column: 2;
   font-size: 1.5em;
   font-weight: bold;
   color: var(--text-color);
 `
-const StyledDescription = styled.div`
+const Description = styled.div`
   grid-column: 2;
   grid-row: 2;
   color: var(--text-light-color);

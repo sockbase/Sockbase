@@ -29,6 +29,8 @@ const Container = styled.label<{ status: boolean }>`
   padding: 2px 5px;
   border-radius: 5px;
 
+  color: var(--white-color);
+
   ${p => {
     if (p.status) {
       return 'background-color: var(--success-color);'
@@ -36,6 +38,4 @@ const Container = styled.label<{ status: boolean }>`
       return 'background-color: var(--danger-color);'
     }
   }};
-
-  color: var(--text-foreground-color);
 `

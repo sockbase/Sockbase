@@ -4,9 +4,9 @@ const FormTextarea = styled.textarea<{ hasError?: boolean }>`
   display: block;
   width: 100%;
   padding: 10px;
-  border: 1px solid var(--outline-color);
+  border: 1px solid var(--border-color);
   border-radius: 5px;
-  background-color: var(--background-color);
+  background-color: var(--inputfield-background-color);
   color: var(--text-color);
   
   resize: vertical;
@@ -15,7 +15,7 @@ const FormTextarea = styled.textarea<{ hasError?: boolean }>`
   transition: border 0.1s linear;
 
   &:focus {
-    border: 1px solid var(--primary-brand-color);
+    border: 1px solid var(--primary-color);
     outline: none;
   }
 
@@ -29,8 +29,8 @@ const FormTextarea = styled.textarea<{ hasError?: boolean }>`
   }}
   
   &:disabled {
-    background-color: var(--background-disabled-color);
-    color: var(--text-disabled-color);
+    background-color: var(--disabled-background-color);
+    color: var(--disabled-text-color);
   }
 `
 

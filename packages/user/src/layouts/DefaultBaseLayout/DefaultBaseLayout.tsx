@@ -26,10 +26,8 @@ export default DefaultBaseLayout
 const Layout = styled.section`
   display: grid;
   min-height: 100%;
-  /* grid-template-rows: auto 1fr auto; */
   grid-template-rows: 1fr auto;
-  background-color: var(--background-body-color);
-  color: var(--text-color);
+  background-color: var(--panel-background-color);
 `
 const Container = styled.main`
   margin: 40px 25%;
@@ -38,11 +36,9 @@ const Container = styled.main`
     margin: 0;
   }
 `
-
 const Wrapper = styled.div`
   padding: 40px;
-  background-color: var(--background-color);
-
+  background-color: var(--body-background-color);
   @media screen and (max-width: 840px) {
     padding: 20px;
   }
