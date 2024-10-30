@@ -34,7 +34,7 @@ const Container = styled.header`
 const Icon = styled.div`
   grid-row: 1 / 3;
 
-  font-size: 48px;
+  font-size: 3em;
   display: flex;
   align-items: center;
   justify-content: center;

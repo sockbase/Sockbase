@@ -43,8 +43,8 @@ const CardIcon = styled.div<{ important: boolean | undefined }>`
   align-items: center;
   justify-content: center;
   svg {
-    width: 24px;
-    height: 24px;
+    width: 1.5em;
+    height: 1.5em;
     color: ${props => props.important ? 'var(--white-color)' : 'var(--text-color)'};
   }
 `
