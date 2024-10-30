@@ -161,10 +161,10 @@ const EventViewPage: React.FC = () => {
                 <td>{i + 1}</td>
                 <td><ApplicationStatusLabel status={app.meta.applicationStatus} /></td>
                 <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
-                <td><Link to={`/circles/${app.hashId}`}>{app.circle.name}</Link></td>
+                <td>{app.circle.name}</td>
                 <td>{app.circle.penName}</td>
                 <td>{getSpaceType(app.spaceId)?.name}</td>
-                <td>{app.hashId ?? '---'}</td>
+                <td><Link to={`/circles/${app.hashId}`}>{app.hashId ?? '---'}</Link></td>
                 <td>{userDataSet?.[app.userId].name ?? <BlinkField />}</td>
               </tr>
             ))}
