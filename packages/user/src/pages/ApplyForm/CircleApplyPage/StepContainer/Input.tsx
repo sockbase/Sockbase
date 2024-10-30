@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MdArrowBack, MdArrowForward } from 'react-icons/md'
+import { MdArrowBack, MdArrowForward, MdFileOpen } from 'react-icons/md'
 import sockbaseShared from 'shared'
 import FormButton from '../../../../components/Form/FormButton'
 import FormCheckbox from '../../../../components/Form/FormCheckbox'
@@ -85,7 +85,7 @@ const Input: React.FC<Props> = (props) => {
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
   const [isAgreed, setAgreed] = useState(false)
 
-  const [pastAppId, setPastAppId] = useState<string>()
+  const [pastAppId, setPastAppId] = useState('')
   const [isAppliedPastApp, setAppliedPastApp] = useState(false)
 
   const spaceIds = useMemo(() => props.event.spaces.map(s => s.id), [props.event])
@@ -202,6 +202,7 @@ const Input: React.FC<Props> = (props) => {
     }
 
     setAppliedPastApp(true)
+    setPastAppId('')
   }, [pastAppId, props.pastApps, props.pastAppLinks, props.pastEvents])
 
   useEffect(() => {
@@ -252,8 +253,8 @@ const Input: React.FC<Props> = (props) => {
             <FormButton
               color="primary"
               onClick={handleApplyPastApp}
-              disabled={pastAppId === undefined}>
-                引用する
+              disabled={pastAppId === ''}>
+              <IconLabel icon={<MdFileOpen />} label="引用する" />
             </FormButton>
           </FormItem>
         </FormSection>
@@ -345,7 +346,7 @@ const Input: React.FC<Props> = (props) => {
       </FormSection>
       <FormSection>
         <FormItem>
-          <FormLabel>頒布物のジャンル</FormLabel>
+          <FormLabel>配置希望ジャンル</FormLabel>
           <FormSelect
             value={app.circle.genre}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}
@@ -353,9 +354,6 @@ const Input: React.FC<Props> = (props) => {
             <option value="">選択してください</option>
             {props.event.genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
           </FormSelect>
-          <FormHelp hasError={isAppliedPastApp && !app.circle.genre}>
-            頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
-          </FormHelp>
         </FormItem>
       </FormSection>
       <FormSection>
