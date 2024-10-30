@@ -10,9 +10,9 @@ import FormInput from '../../components/Form/FormInput'
 import FormItem from '../../components/Form/FormItem'
 import FormLabel from '../../components/Form/FormLabel'
 import FormSection from '../../components/Form/FormSection'
+import FormTextarea from '../../components/Form/FormTextarea'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import FormTextarea from '../../components/Parts/FormTextarea'
 import IconLabel from '../../components/Parts/IconLabel'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 import PageTitle from '../../components/Parts/PageTitle'
@@ -182,5 +182,5 @@ const SendPreview = styled.pre`
   margin-bottom: 20px;
   padding: 20px;
   border-radius: 5px;
-  background-color: var(--background-dark-color);
+  background-color: var(--panel-background-color);
 `

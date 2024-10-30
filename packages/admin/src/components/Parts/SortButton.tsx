@@ -17,12 +17,12 @@ const SortButton: React.FC<Props> = (props) => {
 
 const Text = styled.span<{ active: boolean }>`
   border-bottom: 2px dotted ${props => props.active
-    ? 'var(--primary-brand-color);'
-    : 'var(--text-color);'};
+    ? 'var(--text-color);'
+    : 'var(--text-light-color);'};
   cursor: pointer;
   ${props => props.active
-    ? 'color: var(--primary-brand-color);'
-    : 'color: var(--text-color);'}
+    ? 'color: var(--text-color);'
+    : 'color: var(--text-light-color);'}
 `
 
 export default SortButton

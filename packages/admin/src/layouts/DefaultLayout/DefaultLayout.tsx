@@ -92,7 +92,7 @@ const SidebarContainer = styled.div`
   grid-template-rows: auto 1fr;
   height: 100%;
   overflow-y: hidden;
-  background-color: var(--background-light-color);
+  background-color: var(--panel-background-color);
   color: var(--text-color);
 `
 const MainWrap = styled.div`
@@ -103,7 +103,8 @@ const MainWrap = styled.div`
 const HeaderWrap = styled.div`
   display: grid;
   grid-template-columns: 1fr 40px;
-  background-color: var(--background-gray-color);
+  background-color: var(--brand-background-color);
+  border-bottom: 2px solid var(--brand-color);
 `
 const MenuWrap = styled.div`
   overflow-y: auto;

@@ -50,7 +50,7 @@ const LoadingCircle = styled.span`
   width: 24px;
   height: 24px;
   border: 3px solid #ffffffcc;
-  border-right: 3px solid var(--primary-brand-color);
+  border-right: 3px solid var(--text-color);
   border-radius: 50%;
 
   transform: rotate(-90deg);

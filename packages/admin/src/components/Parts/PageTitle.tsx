@@ -24,7 +24,7 @@ const Container = styled.header`
   display: grid;
   padding-bottom: 10px;
   margin-bottom: 20px;
-  border-bottom: 1px solid var(--title-border-color);
+  border-bottom: 1px solid var(--border-color);
   grid-template-columns: 32px 1fr;
   grid-template-rows: auto auto;
   gap: 5px;
@@ -36,7 +36,7 @@ const PageIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text-light-color);
+  color: var(--text-color);
 `
 const Title = styled.div`
   grid-column: 2;
