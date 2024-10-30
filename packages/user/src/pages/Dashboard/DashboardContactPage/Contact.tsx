@@ -143,9 +143,9 @@ const Contact: React.FC = () => {
               <FormItem>
                 <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
                   <FormButton
-                    inlined={true}
                     onClick={handleSubmit}
-                    disabled={isProgress || isSuccess || errorCount !== 0}>
+                    disabled={isProgress || isSuccess || errorCount !== 0}
+                    color="primary">
                     <IconLabel icon={<MdSend />} label="送信する" />
                   </FormButton>
                 </LoadingCircleWrapper>

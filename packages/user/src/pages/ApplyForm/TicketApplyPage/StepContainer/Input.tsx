@@ -4,9 +4,9 @@ import sockbaseShared from 'shared'
 import FormButton from '../../../../components/Form/FormButton'
 import FormCheckbox from '../../../../components/Form/FormCheckbox'
 import FormItem from '../../../../components/Form/FormItem'
-import FormSection from '../../../../components/Form/FormSection'
 import FormLabel from '../../../../components/Form/FormLabel'
 import FormRadio from '../../../../components/Form/FormRadio'
+import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
 import IconLabel from '../../../../components/Parts/IconLabel'
 import UserDataForm from '../../../../components/UserDataForm'
@@ -95,9 +95,7 @@ const Input: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton
-            color="default"
-            onClick={props.prevStep}>
+          <FormButton onClick={props.prevStep}>
             <IconLabel icon={<MdArrowBack />} label="申し込み説明画面へ戻る" />
           </FormButton>
         </FormItem>
@@ -192,6 +190,7 @@ const Input: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormButton
+          color="primary"
           disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
           <IconLabel icon={<MdArrowForward />} label="入力内容確認画面へ進む" />

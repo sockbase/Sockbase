@@ -21,6 +21,8 @@
   --pending-color: #a0a0a0;
   --blink-keyframe-1: #c0c0c0;
   --blink-keyframe-2: #d8d8d8;
+  --scroll-thumb-color: #c0c0c0;
+  --scroll-thumb-active-color: #d8d8d8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -46,5 +48,7 @@
     --pending-color: #606060;
     --blink-keyframe-1: #323030;
     --blink-keyframe-2: #403d3d;
+    --scroll-thumb-color: #303030;
+    --scroll-thumb-active-color: #383838;
   }
 }

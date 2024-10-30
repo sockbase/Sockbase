@@ -8,6 +8,8 @@ const CircleCutImage = styled.img`
   
   max-width: 100%;
   max-height: 256px;
+
+  background-color: #ffffff;
 `
 
 export default CircleCutImage

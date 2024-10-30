@@ -33,18 +33,13 @@ const Complete: React.FC<Props> = (props) => {
 
       <h2>関連リンク</h2>
       <FormSection>
-        <FormItem>
+        <FormItem $inlined>
           <LinkButton
+            color="primary"
             to={`/dashboard/mytickets/${props.ticketHashId}`}>
             <IconLabel icon={<MdInfo />} label="チケット情報を確認する" />
           </LinkButton>
-        </FormItem>
-        <FormItem>
-          <AnchorButton
-            href={`/tickets/${props.ticketHashId}`}
-            target="_blank"
-            rel="noreferrer"
-            color="default">
+          <AnchorButton href={`/tickets/${props.ticketHashId}`} target="_blank">
             <IconLabel icon={<MdBookOnline />} label="チケット画面を開く" />
           </AnchorButton>
         </FormItem>

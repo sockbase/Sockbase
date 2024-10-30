@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdSave, MdSend, MdSettings } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import FormButton from '../../../components/Form/FormButton'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
 import FormInput from '../../../components/Form/FormInput'
+import FormItem from '../../../components/Form/FormItem'
 import FormLabel from '../../../components/Form/FormLabel'
+import FormSection from '../../../components/Form/FormSection'
 import FormSelect from '../../../components/Form/FormSelect'
 import Alert from '../../../components/Parts/Alert'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
@@ -209,9 +209,9 @@ const DashboardSettingPage: React.FC = () => {
               <FormItem>
                 <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
                   <FormButton
-                    inlined={true}
                     disabled={isProgress || errorCount !== 0}
-                    onClick={handleUpdate}>
+                    onClick={handleUpdate}
+                    color="primary">
                     <IconLabel icon={<MdSave />} label="情報を更新する" />
                   </FormButton>
                 </LoadingCircleWrapper>
@@ -225,9 +225,7 @@ const DashboardSettingPage: React.FC = () => {
               <FormItem>
                 <FormButton
                   onClick={handleClickPasswordReset}
-                  disabled={sentPasswordResetUrl}
-                  color="default"
-                  inlined>
+                  disabled={sentPasswordResetUrl}>
                   <IconLabel icon={<MdSend />} label="パスワードリセットリンクを送付" />
                 </FormButton>
               </FormItem>

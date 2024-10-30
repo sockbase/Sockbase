@@ -137,7 +137,7 @@ const Payment: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormButton
-            color='default'
+            color="primary"
             onClick={props.nextStep}
             disabled={!checkedPayment}>
             <IconLabel icon={<MdArrowForward />} label="次へ進む" />

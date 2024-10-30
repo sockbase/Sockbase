@@ -62,29 +62,29 @@ const DashboardTopPage: React.FC = () => {
               description="Sockbase を通して申し込んだサークル参加・チケットの決済履歴を表示します。" />
           </CardContainer>
 
-          <h2>サポート・設定</h2>
+          <h2>設定・サポート</h2>
           <CardContainer>
-            <TopCard
-              to="/dashboard/contact"
-              icon={<MdMail />}
-              title="お問い合わせ"
-              description="Sockbase 運営チームによるサポートが必要な場合は、こちらからお問い合わせください。" />
             <TopCard
               to="/dashboard/settings"
               icon={<MdSettings />}
               title="マイページ設定"
               description="Sockbase に登録している情報を変更します。" />
+            <TopCard
+              to="/dashboard/contact"
+              icon={<MdMail />}
+              title="お問い合わせ"
+              description="Sockbase 運営チームによるサポートが必要な場合は、こちらからお問い合わせください。" />
           </CardContainer>
         </>
         <>
           <InformationList />
           <h2>法令に基づく表記</h2>
           <FormSection>
-            <FormItem inlined>
-              <AnchorButton href="/tos" target="_blank" color="default" inlined>
+            <FormItem $inlined>
+              <AnchorButton href="/tos" target="_blank">
                 <IconLabel icon={<MdOpenInNew />} label='利用規約・特商法に基づく表記' />
               </AnchorButton>
-              <AnchorButton href="/privacy-policy" target="_blank" color="default" inlined>
+              <AnchorButton href="/privacy-policy" target="_blank">
                 <IconLabel icon={<MdOpenInNew />} label='プライバシーポリシー' />
               </AnchorButton>
             </FormItem>
@@ -106,9 +106,4 @@ const CardContainer = styled.section`
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
-
-  @media screen and (max-width: 840px) {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
 `

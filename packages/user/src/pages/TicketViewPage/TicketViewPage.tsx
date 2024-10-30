@@ -63,5 +63,4 @@ const LoadingContainer = styled.div`
   @media screen and (max-width: 840px) {
     padding: 20px;
   }
-  background-color: var(--background-color);
 `

@@ -28,13 +28,13 @@ const Complete: React.FC<Props> = (props) => {
       </p>
 
       <FormSection>
-        <FormItem>
-          <LinkButton to={`/dashboard/applications/${props.addedResult?.hashId}`}>
+        <FormItem $inlined>
+          <LinkButton
+            color="primary"
+            to={`/dashboard/applications/${props.addedResult?.hashId}`}>
             <IconLabel icon={<MdInfo />} label="申し込み内容を確認する" />
           </LinkButton>
-        </FormItem>
-        <FormItem>
-          <AnchorButton color="default" href={props.event?.websiteURL}>
+          <AnchorButton href={props.event?.websiteURL}>
             <IconLabel icon={<MdWeb />} label="イベントサイトへ戻る" />
           </AnchorButton>
         </FormItem>

@@ -229,9 +229,7 @@ const Input: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton
-            color="default"
-            onClick={props.prevStep}>
+          <FormButton onClick={props.prevStep}>
             <IconLabel icon={<MdArrowBack />} label="申し込み説明画面へ戻る" />
           </FormButton>
         </FormItem>
@@ -250,11 +248,11 @@ const Input: React.FC<Props> = (props) => {
                 <option key={a.id} value={a.id}>{a.circle.name} ({props.pastEvents?.[a.eventId].name})</option>)}
             </FormSelect>
           </FormItem>
-          <FormItem inlined>
+          <FormItem>
             <FormButton
+              color="primary"
               onClick={handleApplyPastApp}
-              disabled={pastAppId === undefined}
-              inlined>
+              disabled={pastAppId === undefined}>
                 引用する
             </FormButton>
           </FormItem>
@@ -540,6 +538,7 @@ const Input: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormButton
+          color="primary"
           disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
           <IconLabel icon={<MdArrowForward />} label="入力内容確認画面へ進む" />

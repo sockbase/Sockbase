@@ -6,14 +6,15 @@ import {
   type SockbaseEvent
 } from 'sockbase'
 import FormButton from '../../../components/Form/FormButton'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
 import FormInput from '../../../components/Form/FormInput'
+import FormItem from '../../../components/Form/FormItem'
 import FormLabel from '../../../components/Form/FormLabel'
+import FormSection from '../../../components/Form/FormSection'
 import Alert from '../../../components/Parts/Alert'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import CircleCutImage from '../../../components/Parts/CircleCutImage'
+import IconLabel from '../../../components/Parts/IconLabel'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
@@ -138,7 +139,12 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
             </FormItem>}
             <FormItem>
               <LoadingCircleWrapper isLoading={isProgress}>
-                <FormButton onClick={handleSubmit} disabled={!circleCutData || isProgress}>更新</FormButton>
+                <FormButton
+                  color='primary'
+                  onClick={handleSubmit}
+                  disabled={!circleCutData || isProgress}>
+                  <IconLabel icon={<MdPhoto />} label='サークルカットを変更する' />
+                </FormButton>
               </LoadingCircleWrapper>
             </FormItem>
           </FormSection>

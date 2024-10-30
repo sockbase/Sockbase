@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MdBookmarkAdd } from 'react-icons/md'
+import { MdBookmarkAdd, MdEdit } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import { type SockbaseApplicationLinks, type SockbaseApplicationDocument, type SockbaseEvent } from 'sockbase'
 import FormButton from '../../../components/Form/FormButton'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
 import FormHelp from '../../../components/Form/FormHelp'
 import FormInput from '../../../components/Form/FormInput'
+import FormItem from '../../../components/Form/FormItem'
 import FormLabel from '../../../components/Form/FormLabel'
+import FormSection from '../../../components/Form/FormSection'
 import Alert from '../../../components/Parts/Alert'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import IconLabel from '../../../components/Parts/IconLabel'
 import Loading from '../../../components/Parts/Loading'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import useApplication from '../../../hooks/useApplication'
@@ -181,9 +182,11 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
               <FormItem>
                 <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
                   <FormButton
-                    inlined={true}
+                    color='primary'
                     disabled={isProgress || errorCount !== 0}
-                    onClick={handleSubmit}>情報を更新する</FormButton>
+                    onClick={handleSubmit}>
+                    <IconLabel icon={<MdEdit />} label="情報を更新する" />
+                  </FormButton>
                 </LoadingCircleWrapper>
               </FormItem>
             </FormSection>

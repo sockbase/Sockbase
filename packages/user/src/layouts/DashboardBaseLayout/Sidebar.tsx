@@ -19,20 +19,20 @@ import useWindowDimension from '../../hooks/useWindowDimension'
 import type { User } from 'firebase/auth'
 import type { SockbaseRole } from 'sockbase'
 
-interface MenuSection {
-  sectionKey: string
-  sectionName: string | null
-  items: MenuItem[]
-  requireSystemRole?: SockbaseRole
-  requireCommonRole?: SockbaseRole
-}
-interface MenuItem {
+interface MenuItemType {
   key: string
   icon: React.ReactNode
   text: string
   link: string
   isImportant?: boolean
   isDisabled?: boolean
+  requireSystemRole?: SockbaseRole
+  requireCommonRole?: SockbaseRole
+}
+interface MenuSection {
+  sectionKey: string
+  sectionName: string | null
+  items: MenuItemType[]
   requireSystemRole?: SockbaseRole
   requireCommonRole?: SockbaseRole
 }
@@ -82,7 +82,7 @@ const menu: MenuSection[] = [
   },
   {
     sectionKey: 'settings',
-    sectionName: '設定',
+    sectionName: '設定・サポート',
     items: [
       {
         key: 'settings',
@@ -117,69 +117,78 @@ const Sidebar: React.FC<Props> = (props) => {
   useEffect(() => setHideToggleMenu(width > 840), [width])
 
   return (
-    <StyledSidebarContainer>
-      {!isHideToggleMenu && <StyledSection isSlim={isSlim}>
-        <StyledMenu>
+    <Container>
+      {!isHideToggleMenu && <Section isSlim={isSlim}>
+        <Menu>
           {
             !isOpenMenu
-              ? <StyledMenuItem onClick={() => setOpenMenu(true)}>
-                <StyledMenuItemIcon isSlim={isSlim}><MdMenu /></StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>メニュー</StyledMenuItemText>}
-              </StyledMenuItem>
-              : <StyledMenuItem onClick={() => setOpenMenu(false)}>
-                <StyledMenuItemIcon isSlim={isSlim}><MdClose /></StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>閉じる</StyledMenuItemText>}
-              </StyledMenuItem>
+              ? <MenuItem onClick={() => setOpenMenu(true)}>
+                <MenuItemIcon isSlim={isSlim}><MdMenu /></MenuItemIcon>
+                {!isSlim && <MenuItemText>メニュー</MenuItemText>}
+              </MenuItem>
+              : <MenuItem onClick={() => setOpenMenu(false)}>
+                <MenuItemIcon isSlim={isSlim}><MdClose /></MenuItemIcon>
+                {!isSlim && <MenuItemText>閉じる</MenuItemText>}
+              </MenuItem>
           }
-        </StyledMenu>
-      </StyledSection>}
+        </Menu>
+      </Section>}
       {
         (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) &&
         <>
-          {!isSlim && <StyledStatePanel>
-            <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
-            <StyledStatePanelContent>{props.user.email}</StyledStatePanelContent>
-          </StyledStatePanel>}
+          {!isSlim && <StatePanel>
+            <StatePanelTitle>ログイン中ユーザー</StatePanelTitle>
+            <StatePanelContent>{props.user.email}</StatePanelContent>
+          </StatePanel>}
           {menu
-            .map(sec => <StyledSection key={sec.sectionKey} isSlim={isSlim}>
-              {!isSlim && sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
-              <StyledMenu>
+            .map(sec => <Section key={sec.sectionKey} isSlim={isSlim}>
+              {!isSlim && sec.sectionName && <SectionHeader>{sec.sectionName}</SectionHeader>}
+              <Menu>
                 {
                   sec.items
                     .map(item =>
-                      <StyledMenuItemLink key={item.key} to={item.link} onClick={() => setOpenMenu(false)}>
-                        <StyledMenuItemIcon isSlim={isSlim} isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
-                        {!isSlim && <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>}
-                      </StyledMenuItemLink>
+                      <MenuItemLink
+                        key={item.key}
+                        to={item.link}
+                        onClick={() => setOpenMenu(false)}
+                        $isImportant={item.isImportant}
+                        $isDisabled={item.isDisabled}>
+                        <MenuItemIcon isSlim={isSlim}>{item.icon}</MenuItemIcon>
+                        {!isSlim && (
+                          <MenuItemText isDisabled={item.isDisabled}>
+                            {item.text}
+                          </MenuItemText>
+                        )}
+                      </MenuItemLink>
                     )
                 }
-              </StyledMenu>
-            </StyledSection>)}
-          <StyledSection isSlim={isSlim}>
-            <StyledMenu>
-              <StyledMenuItem onClick={props.logout}>
-                <StyledMenuItemIcon isSlim={isSlim}><MdLogout /></StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>ログアウト</StyledMenuItemText>}
-              </StyledMenuItem>
-            </StyledMenu>
-          </StyledSection>
-          {isHideToggleMenu && <StyledSection isSlim={isSlim}>
-            <StyledMenu>
-              <StyledMenuItem onClick={() => props.setSlim(!props.isSlim)}>
-                <StyledMenuItemIcon isSlim={isSlim}>
+              </Menu>
+            </Section>)}
+          <Section isSlim={isSlim}>
+            <Menu>
+              <MenuItem onClick={props.logout}>
+                <MenuItemIcon isSlim={isSlim}><MdLogout /></MenuItemIcon>
+                {!isSlim && <MenuItemText>ログアウト</MenuItemText>}
+              </MenuItem>
+            </Menu>
+          </Section>
+          {isHideToggleMenu && <Section isSlim={isSlim}>
+            <Menu>
+              <MenuItem onClick={() => props.setSlim(!props.isSlim)}>
+                <MenuItemIcon isSlim={isSlim}>
                   {isSlim ? <MdArrowForwardIos /> : <MdArrowBackIosNew />}
-                </StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>メニュー最小化</StyledMenuItemText>}
-              </StyledMenuItem>
-            </StyledMenu>
-          </StyledSection>}
+                </MenuItemIcon>
+                {!isSlim && <MenuItemText>メニュー最小化</MenuItemText>}
+              </MenuItem>
+            </Menu>
+          </Section>}
         </>}
-    </StyledSidebarContainer >
+    </Container >
   )
 }
 
-const StyledSidebarContainer = styled.nav``
-const StyledSection = styled.section<{ isSlim: boolean }>`
+const Container = styled.nav``
+const Section = styled.section<{ isSlim: boolean }>`
   margin-bottom: 10px;
   ${props => props.isSlim && {
     marginBottom: '15px'
@@ -189,100 +198,78 @@ const StyledSection = styled.section<{ isSlim: boolean }>`
     margin-bottom: 0;
   }
 `
-const StyledSectionHeader = styled.div`
+const SectionHeader = styled.div`
   margin-bottom: 5px;
   font-size: 0.8em;
   color: var(--text-light-color);
 `
-const StyledMenu = styled.section`
+const Menu = styled.section`
 `
-const styledMenuItemStyle = css`
-  display: grid;
-  grid-template-columns: 48px 1fr;
+const MenuItemStyle = css<{ $isDisabled?: boolean, $isImportant?: boolean }>`
   margin-bottom: 5px;
   &:last-child {
     margin-bottom: 0;
   }
-  &:hover {
-    text-decoration: none;
-  }
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  text-decoration: none;
   cursor: pointer;
-`
+  background-color: var(--sidebar-menu-item-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
 
-const StyledMenuItem = styled.span`
-  ${styledMenuItemStyle}
+  transition: border 0.2s;
+
+  &:hover {
+    border: 1px solid var(--brand-color);
+  }
+
+  ${props => props.$isDisabled && `
+    background-color: var(--disabled-background-color);
+    color: var(--disabled-text-color);
+  `}
+
+  ${props => props.$isImportant && `
+    color: var(--danger-color);
+    font-weight: bold;
+  `}
 `
-const StyledMenuItemLink = styled(Link)`
-  ${styledMenuItemStyle}
+const MenuItem = styled.span`
+  ${MenuItemStyle}
 `
-const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boolean, isSlim: boolean }>`
+const MenuItemLink = styled(Link)`
+  ${MenuItemStyle}
+`
+const MenuItemIcon = styled.span<{ isSlim: boolean }>`
   padding: 10px;
-  border-radius: 5px 0 0 5px;
-  border-right: none;
-  color: var(--text-color);
-  text-align: center;
   font-size: 24px;
   
   display: flex;
   align-items: center;
   justify-content: center;
 
-  ${props => props.isDisabled
-    ? {
-      backgroundColor: 'var(--text-disabled-color)'
-    }
-    : props.isImportant
-      ? {
-        backgroundColor: 'var(--danger-color)',
-        color: 'var(--text-foreground-color)'
-      }
-      : {
-        backgroundColor: 'var(--background-light-color)'
-      }}
-
-  ${prpos => prpos.isSlim && {
-    borderRadius: '5px'
-  }}
+  ${prpos => prpos.isSlim && `
+    border-radius: 5px;
+  `}
 `
-const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
-  padding: 10px;
-  background-color: var(--background-light2-color);
-  border-radius: 0 5px 5px 0;
-  border-left: none;
-
-  // Webkitで閲読済みリンクに意図しない枠線が入る対策
-  // https://stackoverflow.com/questions/11207857/border-appearing-the-text-color-of-an-anchor-on-google-chrome
-  &,
-  *:visited & {
-    ${props => props.isDisabled
-    ? {
-      backgroundColor: 'var(--background-disabled-color)',
-      color: 'var(--text-disabled-color)'
-    }
-    : props.isImportant
-      ? {
-        color: 'var(--danger-color)',
-        fontWeight: 'bold'
-      }
-      : {
-        color: 'var(--text-color)'
-      }}
-  }
+const MenuItemText = styled.span<{ isDisabled?: boolean }>`
+  padding: 10px 0;
 `
-const StyledStatePanel = styled.div`
+const StatePanel = styled.div`
   padding: 10px;
   border-radius: 5px;
-  background-color: var(--background-light2-color);
+  background-color: var(--sidebar-menu-item-background-color);
+  border: 1px solid var(--outline-color);
 
   margin-bottom: 10px;
   &:last-child {
     margin-bottom: 0;
   }
 `
-const StyledStatePanelTitle = styled.div`
+const StatePanelTitle = styled.div`
   font-size: 0.9em;
 `
-const StyledStatePanelContent = styled.div`
+const StatePanelContent = styled.div`
   font-weight: bold;
 `
 export default Sidebar

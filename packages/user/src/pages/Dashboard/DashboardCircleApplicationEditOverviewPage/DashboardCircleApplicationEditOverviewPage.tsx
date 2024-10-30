@@ -10,6 +10,7 @@ import FormTextarea from '../../../components/Form/FormTextarea'
 import Alert from '../../../components/Parts/Alert'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import IconLabel from '../../../components/Parts/IconLabel'
 import Loading from '../../../components/Parts/Loading'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import useApplication from '../../../hooks/useApplication'
@@ -170,11 +171,13 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
 
             <FormSection>
               <FormItem>
-                <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
+                <LoadingCircleWrapper isLoading={isProgress} inlined>
                   <FormButton
-                    inlined={true}
+                    color="primary"
                     disabled={isProgress || errorCount !== 0}
-                    onClick={handleSubmit}>情報を更新する</FormButton>
+                    onClick={handleSubmit}>
+                    <IconLabel icon={<MdEdit />} label="情報を更新する" />
+                  </FormButton>
                 </LoadingCircleWrapper>
               </FormItem>
             </FormSection>

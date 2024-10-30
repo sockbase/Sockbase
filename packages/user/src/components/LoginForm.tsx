@@ -4,10 +4,10 @@ import useFirebase from '../hooks/useFirebase'
 import useFirebaseError from '../hooks/useFirebaseError'
 import useValidate from '../hooks/useValidate'
 import FormButton from './Form/FormButton'
-import FormItem from './Form/FormItem'
-import FormSection from './Form/FormSection'
 import FormInput from './Form/FormInput'
+import FormItem from './Form/FormItem'
 import FormLabel from './Form/FormLabel'
+import FormSection from './Form/FormSection'
 import Alert from './Parts/Alert'
 import IconLabel from './Parts/IconLabel'
 import LinkButton from './Parts/LinkButton'
@@ -63,16 +63,14 @@ const LoginForm: React.FC = () => {
         </FormItem>
       </FormSection>
       <FormSection>
-        <FormItem>
+        <FormItem $inlined>
           <FormButton
+            color="primary"
             onClick={handleLogin}
             disabled={isProgress || errorCount > 0}>
             <IconLabel icon={<MdLogin />} label="ログイン" />
           </FormButton>
-        </FormItem>
-        <FormItem>
           <LinkButton
-            color="default"
             to="/reset-password"
             disabled={isProgress}>
             <IconLabel icon={<MdQuestionMark />} label="パスワードを忘れた場合" />
