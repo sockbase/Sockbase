@@ -25,14 +25,14 @@ const Container = styled.header`
   padding-bottom: 10px;
   margin-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
-  grid-template-columns: 32px 1fr;
+  grid-template-columns: 2em 1fr;
   grid-template-rows: auto auto;
   gap: 5px;
 `
 const PageIcon = styled.div`
   grid-row: 1 / 3;
 
-  font-size: 32px;
+  font-size: 2em;
   display: flex;
   align-items: center;
   justify-content: center;

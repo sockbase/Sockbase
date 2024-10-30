@@ -23,9 +23,14 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  font-size: 16px;
 
   background-color: var(--body-background-color);
   color: var(--text-color);
+
+  @media screen and (max-width: 840px) {
+    font-size: 14px;
+  }
 }
 
 #root {
