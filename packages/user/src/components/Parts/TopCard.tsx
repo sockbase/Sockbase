@@ -28,6 +28,7 @@ const Card = styled(Link)`
   text-decoration: none;
   border: 1px solid var(--border-color);
   border-radius: 5px;
+  background-color: var(--panel-background-color);
 `
 const CardHeader = styled.div<{ important: boolean | undefined }>`
   padding: 10px;
@@ -53,5 +54,4 @@ const CardTitle = styled.div<{ important: boolean | undefined }>`
 `
 const CardDescription = styled.div`
   padding: 10px;
-  background-color: var(--panel-background-color);
 `
