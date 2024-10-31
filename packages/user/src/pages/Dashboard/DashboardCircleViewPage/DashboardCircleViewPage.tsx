@@ -32,7 +32,7 @@ import type {
   SockbaseApplicationOverviewDocument
 } from 'sockbase'
 
-const DashboardCircleApplicationDetailPage: React.FC = () => {
+const DashboardCircleViewPage: React.FC = () => {
   const { hashId } = useParams()
 
   const {
@@ -395,4 +395,4 @@ const DashboardCircleApplicationDetailPage: React.FC = () => {
   )
 }
 
-export default DashboardCircleApplicationDetailPage
+export default DashboardCircleViewPage

@@ -24,7 +24,7 @@ import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardB
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
-const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
+const DashboardCircleUpdateCutPage: React.FC = () => {
   const { hashId } = useParams<{ hashId: string }>()
   const {
     getApplicationIdByHashIdAsync,
@@ -159,4 +159,4 @@ const DashboardCircleApplicationUpdateCutPage: React.FC = () => {
   )
 }
 
-export default DashboardCircleApplicationUpdateCutPage
+export default DashboardCircleUpdateCutPage

@@ -22,7 +22,7 @@ import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardB
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
-const DashboardCircleApplicationEditLinksPage: React.FC = () => {
+const DashboardCircleEditLinksPage: React.FC = () => {
   const { hashId } = useParams<{ hashId: string }>()
   const {
     getApplicationIdByHashIdAsync,
@@ -198,4 +198,4 @@ const DashboardCircleApplicationEditLinksPage: React.FC = () => {
   )
 }
 
-export default DashboardCircleApplicationEditLinksPage
+export default DashboardCircleEditLinksPage

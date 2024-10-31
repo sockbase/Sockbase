@@ -21,7 +21,7 @@ import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardB
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
-const DashboardMyTicketDetailPage: React.FC = () => {
+const DashboardMyTicketViewPage: React.FC = () => {
   const { hashId } = useParams()
   const { user } = useFirebase()
   const { formatByDate } = useDayjs()
@@ -140,4 +140,4 @@ const DashboardMyTicketDetailPage: React.FC = () => {
   )
 }
 
-export default DashboardMyTicketDetailPage
+export default DashboardMyTicketViewPage

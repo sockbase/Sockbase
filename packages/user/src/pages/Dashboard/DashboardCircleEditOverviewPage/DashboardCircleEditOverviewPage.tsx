@@ -25,7 +25,7 @@ import type {
   SockbaseEvent
 } from 'sockbase'
 
-const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
+const DashboardCircleEditOverviewPage: React.FC = () => {
   const { hashId } = useParams<{ hashId: string }>()
 
   const {
@@ -188,4 +188,4 @@ const DashboardCircleApplicationEditOverviewPage: React.FC = () => {
   )
 }
 
-export default DashboardCircleApplicationEditOverviewPage
+export default DashboardCircleEditOverviewPage
