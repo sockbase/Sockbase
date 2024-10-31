@@ -480,6 +480,12 @@ export interface SockbasePayment {
   bankTransferCode: string
   applicationId: string | null
   ticketId: string | null
+  paymentResult: SockbasePaymentResult | null
+}
+
+export interface SockbasePaymentResult {
+  cardBrand: string | null
+  receiptURL: string | null
 }
 
 /**
