@@ -13,7 +13,6 @@ import {
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
-import FormCheck from '../../components/Form/FormCheck'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import AnchorButton from '../../components/Parts/AnchorButton'
@@ -170,7 +169,6 @@ const EventViewPage: React.FC = () => {
       <table>
         <thead>
           <tr>
-            <th></th>
             <th>#</th>
             <th>状態</th>
             <th>決済</th>
@@ -191,7 +189,6 @@ const EventViewPage: React.FC = () => {
           {apps?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
             .map((app, i) => (
               <tr key={app.id}>
-                <td><FormCheck name={`select-${app.id}`} /></td>
                 <td>{i + 1}</td>
                 <td>
                   <ApplicationStatusLabel
