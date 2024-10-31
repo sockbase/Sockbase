@@ -23,12 +23,15 @@ import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 import PageTitle from '../../components/Parts/PageTitle'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
+import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import envHelper from '../../helpers/envHelper'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
+import usePayment from '../../hooks/usePayment'
 import useUserData from '../../hooks/useUserData'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 import type {
+  SockbasePaymentDocument,
   SockbaseAccount,
   SockbaseApplicationDocument,
   SockbaseApplicationHashIdDocument,
@@ -45,6 +48,7 @@ const EventViewPage: React.FC = () => {
     getApplicationsByEventIdAsync,
     getApplicationIdByHashIdAsync
   } = useApplication()
+  const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
 
   const [event, setEvent] = useState<SockbaseEventDocument>()
@@ -52,6 +56,7 @@ const EventViewPage: React.FC = () => {
   const [userDataSet, setUserDataSet] = useState<Record<string, SockbaseAccount>>()
   const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
   const [appHashes, setAppHashes] = useState<SockbaseApplicationHashIdDocument[]>()
+  const [payments, setPayments] = useState<Record<string, SockbasePaymentDocument>>()
 
   const getSpace = useCallback((appHashId: string) => {
     const app = appHashes?.find(app => app.hashId === appHashId)
@@ -96,10 +101,21 @@ const EventViewPage: React.FC = () => {
       .catch(err => { throw err })
 
     const appHashIds = apps.map(app => app.hashId ?? '')
-    Promise.all(appHashIds.map(async hashId => await getApplicationIdByHashIdAsync(hashId)))
+    Promise.all(appHashIds.map(getApplicationIdByHashIdAsync))
       .then(setAppHashes)
       .catch(err => { throw err })
   }, [apps])
+
+  useEffect(() => {
+    if (!appHashes) return
+    const paymentIds = appHashes.map(h => ({ id: h.applicationId, paymentId: h.paymentId }))
+    Promise.all(paymentIds.map(async p => ({
+      id: p.id,
+      data: await getPaymentByIdAsync(p.paymentId)
+    })))
+      .then(fetchedPayments => setPayments(fetchedPayments.reduce((p, c) => ({ ...p, [c.id]: c.data }), {})))
+      .catch(err => { throw err })
+  }, [appHashes])
 
   return (
     <DefaultLayout title={event?.name ?? 'イベント情報'} requireCommonRole={2}>
@@ -157,6 +173,7 @@ const EventViewPage: React.FC = () => {
             <th></th>
             <th>#</th>
             <th>状態</th>
+            <th>決済</th>
             <th>配置</th>
             <th>サークル</th>
             <th>ペンネーム</th>
@@ -177,6 +194,7 @@ const EventViewPage: React.FC = () => {
                 <td><FormCheck name={`select-${app.id}`} /></td>
                 <td>{i + 1}</td>
                 <td><ApplicationStatusLabel status={app.meta.applicationStatus} /></td>
+                <td><PaymentStatusLabel status={payments?.[app.id].status} /></td>
                 <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
                 <td>{app.circle.name}</td>
                 <td>{app.circle.penName}</td>

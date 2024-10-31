@@ -18,15 +18,26 @@ import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 import PageTitle from '../../components/Parts/PageTitle'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
+import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import TicketAssignStatusLabel from '../../components/StatusLabel/TicketAssignStatusLabel'
 import TicketTypeLabel from '../../components/StatusLabel/TicketTypeLabel'
 import TicketUsedStatusLabel from '../../components/StatusLabel/TicketUsedStatusLabel'
 import envHelper from '../../helpers/envHelper'
 import useDayjs from '../../hooks/useDayjs'
+import usePayment from '../../hooks/usePayment'
 import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
-import type { SockbaseAccount, SockbaseStoreDocument, SockbaseTicketDocument, SockbaseTicketMeta, SockbaseTicketUsedStatus, SockbaseTicketUser } from 'sockbase'
+import type {
+  SockbaseAccount,
+  SockbasePaymentDocument,
+  SockbaseStoreDocument,
+  SockbaseTicketDocument,
+  SockbaseTicketHashIdDocument,
+  SockbaseTicketMeta,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketUser
+} from 'sockbase'
 
 const StoreViewPage: React.FC = () => {
   const { storeId } = useParams()
@@ -37,16 +48,20 @@ const StoreViewPage: React.FC = () => {
     getTicketsByStoreIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
-    getTicketUsedStatusByIdAsync
+    getTicketUsedStatusByIdAsync,
+    getTicketIdByHashIdAsync
   } = useStore()
+  const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
 
   const [store, setStore] = useState<SockbaseStoreDocument>()
   const [tickets, setTickets] = useState<SockbaseTicketDocument[]>()
   const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
+  const [ticketHashes, setTicketHashes] = useState<SockbaseTicketHashIdDocument[]>()
   const [ticketUsers, setTicketUsers] = useState<Record<string, SockbaseTicketUser>>()
   const [ticketUsedStatuses, setTicketUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [userDataSet, setUserDataSet] = useState<Record<string, SockbaseAccount>>()
+  const [payments, setPayments] = useState<Record<string, SockbasePaymentDocument | null>>()
 
   const handleRefresh = useCallback((storeId: string) => {
     setTickets(undefined)
@@ -88,6 +103,9 @@ const StoreViewPage: React.FC = () => {
       .catch(err => { throw err })
 
     const ticketHashIds = tickets.map(ticket => ticket.hashId ?? '')
+    Promise.all(ticketHashIds.map(getTicketIdByHashIdAsync))
+      .then(setTicketHashes)
+      .catch(err => { throw err })
     Promise.all(ticketHashIds.map(async hashId => ({
       hashId,
       data: await getTicketUserByHashIdAsync(hashId)
@@ -109,6 +127,17 @@ const StoreViewPage: React.FC = () => {
       .then(userDataSet => setUserDataSet(userDataSet.reduce((p, c) => ({ ...p, [c.userId]: c.data }), {})))
       .catch(err => { throw err })
   }, [tickets, ticketUsers])
+
+  useEffect(() => {
+    if (!ticketHashes) return
+    const paymentIds = ticketHashes.map(h => ({ id: h.ticketId, paymentId: h.paymentId }))
+    Promise.all(paymentIds.map(async p => ({
+      id: p.id,
+      data: p.paymentId ? await getPaymentByIdAsync(p.paymentId) : null
+    })))
+      .then(fetchedPayments => setPayments(fetchedPayments.reduce((p, c) => ({ ...p, [c.id]: c.data }), {})))
+      .catch(err => { throw err })
+  }, [ticketHashes])
 
   return (
     <DefaultLayout title={store?.name ?? 'チケットストア情報'} requireCommonRole={2}>
@@ -151,6 +180,7 @@ const StoreViewPage: React.FC = () => {
             <th></th>
             <th>#</th>
             <th>申込</th>
+            <th>決済</th>
             <th>割当</th>
             <th>使用</th>
             <th>種別</th>
@@ -172,6 +202,7 @@ const StoreViewPage: React.FC = () => {
                 <td><FormCheck name={`select-${ticket.id}`} /></td>
                 <td>{index + 1}</td>
                 <td><ApplicationStatusLabel status={ticketMetas?.[ticket.id].applicationStatus} /></td>
+                <td>{payments ? payments[ticket.id] !== null ? <PaymentStatusLabel status={payments[ticket.id]?.status} /> : '不要' : <BlinkField />}</td>
                 <td>
                   {ticket.hashId
                     ? <TicketAssignStatusLabel usableUserId={ticketUsers?.[ticket.hashId].usableUserId} />
