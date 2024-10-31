@@ -201,15 +201,35 @@ const StoreViewPage: React.FC = () => {
               <tr key={ticket.id}>
                 <td><FormCheck name={`select-${ticket.id}`} /></td>
                 <td>{index + 1}</td>
-                <td><ApplicationStatusLabel status={ticketMetas?.[ticket.id].applicationStatus} /></td>
-                <td>{payments ? payments[ticket.id] !== null ? <PaymentStatusLabel status={payments[ticket.id]?.status} /> : '不要' : <BlinkField />}</td>
                 <td>
-                  {ticket.hashId
-                    ? <TicketAssignStatusLabel usableUserId={ticketUsers?.[ticket.hashId].usableUserId} />
+                  <ApplicationStatusLabel
+                    status={ticketMetas?.[ticket.id].applicationStatus}
+                    isOnlyIcon={true} />
+                </td>
+                <td>
+                  {payments
+                    ? payments[ticket.id] !== null
+                      ? <PaymentStatusLabel
+                        status={payments[ticket.id]?.status}
+                        isOnlyIcon={true} />
+                      : '不要'
                     : <BlinkField />}
                 </td>
-                <td><TicketUsedStatusLabel used={ticketUsedStatuses?.[ticket.id].used} /></td>
-                <td><TicketTypeLabel store={store} typeId={ticket.typeId} /></td>
+                <td>
+                  {ticket.hashId
+                    ? <TicketAssignStatusLabel
+                      usableUserId={ticketUsers?.[ticket.hashId].usableUserId}
+                      isOnlyIcon={true} />
+                    : <BlinkField />}
+                </td>
+                <td>
+                  <TicketUsedStatusLabel
+                    used={ticketUsedStatuses?.[ticket.id].used}
+                    isOnlyIcon={true} />
+                </td>
+                <td>
+                  <TicketTypeLabel store={store} typeId={ticket.typeId} />
+                </td>
                 <td>{userDataSet?.[ticket.userId].name}</td>
                 <td>
                   {ticket.hashId && ticketUsers && userDataSet
@@ -217,7 +237,7 @@ const StoreViewPage: React.FC = () => {
                     : <BlinkField />}
                 </td>
                 <td><Link to={`/tickets/${ticket.hashId}`}>{ticket.hashId ?? '---'}</Link></td>
-                <td>{formatByDate(ticket.createdAt)}</td>
+                <td>{formatByDate(ticket.createdAt, 'M/D H:m')}</td>
               </tr>
             ))}
         </tbody>

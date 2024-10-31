@@ -3,12 +3,13 @@ import styled from 'styled-components'
 interface Props {
   icon: JSX.Element
   label: string
+  isOnlyIcon?: boolean
 }
 const IconLabel: React.FC<Props> = (props) => {
   return (
     <Container>
       <Icon>{props.icon}</Icon>
-      <Label>{props.label}</Label>
+      {!props.isOnlyIcon && <Label>{props.label}</Label>}
     </Container>
   )
 }

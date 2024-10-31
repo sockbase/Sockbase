@@ -7,6 +7,7 @@ import type { SockbaseApplicationStatus } from 'sockbase'
 
 interface Props {
   status: SockbaseApplicationStatus | undefined
+  isOnlyIcon?: boolean
 }
 
 const ApplicationStatusLabel: React.FC<Props> = (props) => {
@@ -40,7 +41,10 @@ const ApplicationStatusLabel: React.FC<Props> = (props) => {
     props.status !== undefined
       ? (
         <Container status={props.status}>
-          <IconLabel icon={iconElement} label={labelText} />
+          <IconLabel
+            icon={iconElement}
+            label={labelText}
+            isOnlyIcon={props.isOnlyIcon} />
         </Container>
       )
       : (

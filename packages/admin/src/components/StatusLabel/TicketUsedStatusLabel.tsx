@@ -6,6 +6,7 @@ import IconLabel from '../Parts/IconLabel'
 
 interface Props {
   used: boolean | undefined
+  isOnlyIcon?: boolean
 }
 
 const TicketUsedStatusLabel: React.FC<Props> = (props) => {
@@ -35,7 +36,10 @@ const TicketUsedStatusLabel: React.FC<Props> = (props) => {
     props.used !== undefined
       ? (
         <Container used={props.used}>
-          <IconLabel icon={iconElement} label={labelText} />
+          <IconLabel
+            icon={iconElement}
+            label={labelText}
+            isOnlyIcon={props.isOnlyIcon} />
         </Container>
       )
       : (

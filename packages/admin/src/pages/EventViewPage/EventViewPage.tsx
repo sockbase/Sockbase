@@ -193,8 +193,16 @@ const EventViewPage: React.FC = () => {
               <tr key={app.id}>
                 <td><FormCheck name={`select-${app.id}`} /></td>
                 <td>{i + 1}</td>
-                <td><ApplicationStatusLabel status={app.meta.applicationStatus} /></td>
-                <td><PaymentStatusLabel status={payments?.[app.id].status} /></td>
+                <td>
+                  <ApplicationStatusLabel
+                    status={app.meta.applicationStatus}
+                    isOnlyIcon={true} />
+                </td>
+                <td>
+                  <PaymentStatusLabel
+                    status={payments?.[app.id].status}
+                    isOnlyIcon={true} />
+                </td>
                 <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
                 <td>{app.circle.name}</td>
                 <td>{app.circle.penName}</td>
