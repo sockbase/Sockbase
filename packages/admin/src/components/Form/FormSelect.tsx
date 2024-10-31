@@ -22,6 +22,11 @@ const FormSelect = styled.select`
     outline: none;
     border: 1px solid var(--text-color);
   }
+
+  &:disabled {
+    background-color: var(--disabled-background-color);
+    color: var(--disabled-text-color);
+  }
 `
 
 export default FormSelect
