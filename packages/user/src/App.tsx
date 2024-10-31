@@ -19,20 +19,20 @@ import DashboardCircleListPage from './pages/Dashboard/DashboardCircleListPage/D
 import DashboardCircleUpdateCutPage from './pages/Dashboard/DashboardCircleUpdateCutPage/DashboardCircleUpdateCutPage'
 import DashboardCircleViewPage from './pages/Dashboard/DashboardCircleViewPage/DashboardCircleViewPage'
 import DashboardContactPage from './pages/Dashboard/DashboardContactPage/DashboardContactPage'
-import DashboardMyTicketViewPage from './pages/Dashboard/DashboardMyTicketViewPage/DashboardMyTicketViewPage'
 import DashboardMyTicketListPage from './pages/Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
+import DashboardMyTicketViewPage from './pages/Dashboard/DashboardMyTicketViewPage/DashboardMyTicketViewPage'
 import DashboardPaymentListPage from './pages/Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
 import DashboardSettingPage from './pages/Dashboard/DashboardSettingPage/DashboardSettingPage'
 import DashboardTicketListPage from './pages/Dashboard/DashboardTicketListPage/DashboardTicketListPage'
 import DashboardTicketViewPage from './pages/Dashboard/DashboardTicketViewPage/DashboardTicketViewPage'
 import DashboardTopPage from './pages/Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from './pages/IndexPage/IndexPage'
+import InformationViewPage from './pages/InformationViewPage/InformationViewPage'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
 import PasswordResetPage from './pages/PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from './pages/Static/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/Static/TermsOfServicePage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
-import InformationViewPage from './pages/InformationViewPage/InformationViewPage'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -194,7 +194,12 @@ const router = createBrowserRouter([
           },
           {
             path: 'payments',
-            element: <DashboardPaymentListPage />
+            children: [
+              {
+                index: true,
+                element: <DashboardPaymentListPage />
+              }
+            ]
           }
         ]
       }
