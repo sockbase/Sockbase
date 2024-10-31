@@ -142,7 +142,8 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
           : null,
         updatedAt: payment.updatedAt
           ? new Date(payment.updatedAt.seconds * 1000)
-          : null
+          : null,
+        paymentResult: payment.paymentResult ?? null
       }
     }
   }
