@@ -10,7 +10,10 @@ import { Link, useParams } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
 import FormCheck from '../../components/Form/FormCheck'
 import FormItem from '../../components/Form/FormItem'
+import FormLabel from '../../components/Form/FormLabel'
 import FormSection from '../../components/Form/FormSection'
+import FormSelect from '../../components/Form/FormSelect'
+import ActiveTR from '../../components/Parts/ActiveTR'
 import AnchorButton from '../../components/Parts/AnchorButton'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
@@ -49,7 +52,8 @@ const StoreViewPage: React.FC = () => {
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
     getTicketUsedStatusByIdAsync,
-    getTicketIdByHashIdAsync
+    getTicketIdByHashIdAsync,
+    setTicketApplicationStatusAsync
   } = useStore()
   const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
@@ -62,6 +66,25 @@ const StoreViewPage: React.FC = () => {
   const [ticketUsedStatuses, setTicketUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [userDataSet, setUserDataSet] = useState<Record<string, SockbaseAccount>>()
   const [payments, setPayments] = useState<Record<string, SockbasePaymentDocument | null>>()
+
+  const [selectedTicketIds, setSelectedTicketIds] = useState<string[]>([])
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  const handleSelectTicket = useCallback((ticketId: string, isAdd: boolean) => {
+    if (isAdd) {
+      setSelectedTicketIds(s => ([...s, ticketId]))
+    } else {
+      setSelectedTicketIds(s => s.filter(id => id !== ticketId))
+    }
+  }, [])
+
+  const handleSelectAllTicket = useCallback((isAdd: boolean) => {
+    if (isAdd) {
+      setSelectedTicketIds(tickets?.map(t => t.id) ?? [])
+    } else {
+      setSelectedTicketIds([])
+    }
+  }, [tickets])
 
   const handleRefresh = useCallback((storeId: string) => {
     setTickets(undefined)
@@ -139,6 +162,36 @@ const StoreViewPage: React.FC = () => {
       .catch(err => { throw err })
   }, [ticketHashes])
 
+  const handleBulkChangeStatus = useCallback((statusText: string) => {
+    if (!selectedTicketIds.length) return
+    if (!confirm('選択したチケットの申し込みステータスを変更します。\nよろしいですか？')) return
+
+    const sanitizedStatus = parseInt(statusText)
+    switch (sanitizedStatus) {
+      case 0:
+      case 1:
+      case 2:
+        break
+      default:
+        return
+    }
+
+    setIsProcessing(true)
+    Promise.all(selectedTicketIds.map(async id => await setTicketApplicationStatusAsync(id, sanitizedStatus)))
+      .then(() => {
+        setTicketMetas(s => {
+          if (!s) return
+          return selectedTicketIds.reduce((acc, id) => {
+            acc[id] = { ...s[id], applicationStatus: sanitizedStatus }
+            return acc
+          }, { ...s })
+        })
+        alert('変更しました')
+      })
+      .catch(err => { throw err })
+      .finally(() => setIsProcessing(false))
+  }, [selectedTicketIds])
+
   return (
     <DefaultLayout title={store?.name ?? 'チケットストア情報'} requireCommonRole={2}>
       <Breadcrumbs>
@@ -174,10 +227,30 @@ const StoreViewPage: React.FC = () => {
         </FormItem>
       </FormSection>
 
+      <FormSection>
+        <FormItem>
+          <FormLabel>申し込みステータスを変更</FormLabel>
+          <FormSelect
+            value=""
+            onChange={e => handleBulkChangeStatus(e.target.value)}
+            disabled={!selectedTicketIds.length || isProcessing}>
+            <option value=''>操作を選択</option>
+            <option value='0'>確認待ちに変更</option>
+            <option value='1'>キャンセルに変更</option>
+            <option value='2'>確定に変更</option>
+          </FormSelect>
+        </FormItem>
+      </FormSection>
+
       <table>
         <thead>
           <tr>
-            <th></th>
+            <th>
+              <FormCheck
+                name='select-all'
+                checked={selectedTicketIds.length === tickets?.length}
+                onChange={handleSelectAllTicket} />
+            </th>
             <th>#</th>
             <th>申込</th>
             <th>決済</th>
@@ -198,8 +271,13 @@ const StoreViewPage: React.FC = () => {
           )}
           {tickets?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
             .map((ticket, index) => (
-              <tr key={ticket.id}>
-                <td><FormCheck name={`select-${ticket.id}`} /></td>
+              <ActiveTR key={ticket.id} active={selectedTicketIds.includes(ticket.id)}>
+                <td>
+                  <FormCheck
+                    name={`select-${ticket.id}`}
+                    checked={selectedTicketIds.includes(ticket.id)}
+                    onChange={c => handleSelectTicket(ticket.id, c)} />
+                </td>
                 <td>{index + 1}</td>
                 <td>
                   <ApplicationStatusLabel
@@ -238,7 +316,7 @@ const StoreViewPage: React.FC = () => {
                 </td>
                 <td><Link to={`/tickets/${ticket.hashId}`}>{ticket.hashId ?? '---'}</Link></td>
                 <td>{formatByDate(ticket.createdAt, 'M/D H:m')}</td>
-              </tr>
+              </ActiveTR>
             ))}
         </tbody>
       </table>

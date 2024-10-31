@@ -11,7 +11,7 @@ const FormSelect = styled.select`
   width: 100%;
   border-radius: 5px;
   font: inherit;
-  font-size: 16px;
+  font-size: 1rem;
   border: 1px solid var(--border-color);
   background-color: var(--inputfield-background-color);
   color: var(--text-color);

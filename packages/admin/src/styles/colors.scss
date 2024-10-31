@@ -23,6 +23,7 @@
   --blink-keyframe-2: #d8d8d8;
   --scroll-thumb-color: #c0c0c0;
   --scroll-thumb-active-color: #d8d8d8;
+  --row-active-color: #e8e8e8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -50,5 +51,6 @@
     --blink-keyframe-2: #403d3d;
     --scroll-thumb-color: #303030;
     --scroll-thumb-active-color: #383838;
+    --row-active-color: #2a2828;
   }
 }
