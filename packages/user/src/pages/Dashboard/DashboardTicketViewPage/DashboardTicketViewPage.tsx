@@ -32,7 +32,7 @@ import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardB
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 
-const DashboardTicketDetailPage: React.FC = () => {
+const DashboardTicketViewPage: React.FC = () => {
   const { hashId } = useParams()
   const { formatByDate } = useDayjs()
   const {
@@ -320,4 +320,4 @@ const DashboardTicketDetailPage: React.FC = () => {
   )
 }
 
-export default DashboardTicketDetailPage
+export default DashboardTicketViewPage

@@ -13,26 +13,26 @@ import ActionPage from './pages/ActionPage/ActionPage'
 import CircleApplyPage from './pages/ApplyForm/CircleApplyPage/CircleApplyPage'
 import TicketApplyPage from './pages/ApplyForm/TicketApplyPage/TicketApplyPage'
 import TicketAssignPage from './pages/ApplyForm/TicketAssignPage/TicketAssignPage'
-import DashboardCircleApplicationDetailPage from './pages/Dashboard/DashboardCircleApplicationDetailPage/DashboardCircleApplicationDetailPage'
-import DashboardCircleApplicationEditLinksPage from './pages/Dashboard/DashboardCircleApplicationEditLinksPage/DashboardCircleApplicationEditLinksPage'
-import DashboardCircleApplicationEditOverviewPage from './pages/Dashboard/DashboardCircleApplicationEditOverviewPage/DashboardCircleApplicationEditOverviewPage'
-import DashboardCircleApplicationListPage from './pages/Dashboard/DashboardCircleApplicationListPage/DashboardCircleApplicationListPage'
-import DashboardCircleApplicationUpdateCutPage from './pages/Dashboard/DashboardCircleApplicationUpdateCutPage/DashboardCircleApplicationUpdateCutPage'
+import DashboardCircleEditLinksPage from './pages/Dashboard/DashboardCircleEditLinksPage/DashboardCircleEditLinksPage'
+import DashboardCircleEditOverviewPage from './pages/Dashboard/DashboardCircleEditOverviewPage/DashboardCircleEditOverviewPage'
+import DashboardCircleListPage from './pages/Dashboard/DashboardCircleListPage/DashboardCircleListPage'
+import DashboardCircleUpdateCutPage from './pages/Dashboard/DashboardCircleUpdateCutPage/DashboardCircleUpdateCutPage'
+import DashboardCircleViewPage from './pages/Dashboard/DashboardCircleViewPage/DashboardCircleViewPage'
 import DashboardContactPage from './pages/Dashboard/DashboardContactPage/DashboardContactPage'
-import DashboardMyTicketDetailPage from './pages/Dashboard/DashboardMyTicketDetailPage/DashboardMyTicketDetailPage'
+import DashboardMyTicketViewPage from './pages/Dashboard/DashboardMyTicketViewPage/DashboardMyTicketViewPage'
 import DashboardMyTicketListPage from './pages/Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardPaymentListPage from './pages/Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
 import DashboardSettingPage from './pages/Dashboard/DashboardSettingPage/DashboardSettingPage'
-import DashboardTicketDetailPage from './pages/Dashboard/DashboardTicketDetailPage/DashboardTicketDetailPage'
 import DashboardTicketListPage from './pages/Dashboard/DashboardTicketListPage/DashboardTicketListPage'
+import DashboardTicketViewPage from './pages/Dashboard/DashboardTicketViewPage/DashboardTicketViewPage'
 import DashboardTopPage from './pages/Dashboard/DashboardTopPage/DashboardTopPage'
 import IndexPage from './pages/IndexPage/IndexPage'
-import InformationDetailPage from './pages/InformationDetailPage/InformationDetailPage'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
 import PasswordResetPage from './pages/PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from './pages/Static/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/Static/TermsOfServicePage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
+import InformationViewPage from './pages/InformationViewPage/InformationViewPage'
 
 getFirebaseApp()
 initializeAppCheck()
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':informationId',
-            element: <InformationDetailPage />
+            element: <InformationViewPage />
           }
         ]
       },
@@ -141,26 +141,26 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <DashboardCircleApplicationListPage />
+                element: <DashboardCircleListPage />
               },
               {
                 path: ':hashId',
                 children: [
                   {
                     index: true,
-                    element: <DashboardCircleApplicationDetailPage />
+                    element: <DashboardCircleViewPage />
                   },
                   {
                     path: 'links',
-                    element: <DashboardCircleApplicationEditLinksPage />
+                    element: <DashboardCircleEditLinksPage />
                   },
                   {
                     path: 'overview',
-                    element: <DashboardCircleApplicationEditOverviewPage />
+                    element: <DashboardCircleEditOverviewPage />
                   },
                   {
                     path: 'cut',
-                    element: <DashboardCircleApplicationUpdateCutPage />
+                    element: <DashboardCircleUpdateCutPage />
                   }
                 ]
               }
@@ -175,7 +175,7 @@ const router = createBrowserRouter([
               },
               {
                 path: ':hashId',
-                element: <DashboardTicketDetailPage />
+                element: <DashboardTicketViewPage />
               }
             ]
           },
@@ -188,7 +188,7 @@ const router = createBrowserRouter([
               },
               {
                 path: ':hashId',
-                element: <DashboardMyTicketDetailPage />
+                element: <DashboardMyTicketViewPage />
               }
             ]
           },

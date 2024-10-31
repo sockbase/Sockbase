@@ -11,7 +11,7 @@ import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import CircleApplicationList from './CircleApplicationList'
 import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseEvent } from 'sockbase'
 
-const DashboardCircleApplicationListPage: React.FC = () => {
+const DashboardCircleListPage: React.FC = () => {
   const { user } = useFirebase()
   const { getApplicationsByUserIdWithIdAsync, getApplicationMetaByIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
@@ -87,4 +87,4 @@ const DashboardCircleApplicationListPage: React.FC = () => {
   )
 }
 
-export default DashboardCircleApplicationListPage
+export default DashboardCircleListPage

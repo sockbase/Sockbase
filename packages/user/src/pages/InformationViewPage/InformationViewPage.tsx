@@ -10,7 +10,7 @@ import useInformation from '../../hooks/useInformation'
 import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import type { SockbaseInformationDocument } from 'sockbase'
 
-const InformationDetailPage: React.FC = () => {
+const InformationViewPage: React.FC = () => {
   const { formatByDate } = useDayjs()
   const { informationId } = useParams<{ informationId: string }>()
   const { getInformationByIdNullableAsync } = useInformation()
@@ -61,7 +61,7 @@ const InformationDetailPage: React.FC = () => {
   )
 }
 
-export default InformationDetailPage
+export default InformationViewPage
 
 const InformationTitle = styled.h1`
   margin-bottom: 0;
