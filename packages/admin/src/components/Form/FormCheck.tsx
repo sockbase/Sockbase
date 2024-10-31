@@ -2,11 +2,16 @@ import styled from 'styled-components'
 
 interface Props {
   name: string
+  checked: boolean
+  onChange: (checked: boolean) => void
 }
 const FormCheck: React.FC<Props> = (props) => {
   return (
     <>
-      <Checkbox id={props.name}/>
+      <Checkbox
+        id={props.name}
+        checked={props.checked}
+        onChange={e => props.onChange(e.target.checked)} />
       <CheckboxLabel htmlFor={props.name} />
     </>
   )
