@@ -85,7 +85,7 @@ const InquiryListPage: React.FC = () => {
         <tbody>
           {filteredInquiries?.map((i) => (
             <tr key={i.id}>
-              <td><InquiryStatusLabel status={inquiryMetas?.[i.id]?.status ?? i.status} /></td>
+              <td><InquiryStatusLabel status={inquiryMetas?.[i.id]?.status ?? i.status} isOnlyIcon={true} /></td>
               <td>{getInquiryType(i.inquiryType).name}</td>
               <td><Link to={`/inquiries/${i.id}`}>{i.id}</Link></td>
               <td>{formatByDate(inquiryMetas?.[i.id]?.createdAt, 'YYYY/M/D H:mm')}</td>

@@ -7,6 +7,7 @@ import type { SockbaseInquiryStatus } from 'sockbase'
 
 interface Props {
   status: SockbaseInquiryStatus | undefined
+  isOnlyIcon?: boolean
 }
 
 const InquiryStatusLabel: React.FC<Props> = (props) => {
@@ -40,7 +41,10 @@ const InquiryStatusLabel: React.FC<Props> = (props) => {
     props.status !== undefined
       ? (
         <Container status={props.status}>
-          <IconLabel icon={iconElement} label={labelText} />
+          <IconLabel
+            icon={iconElement}
+            label={labelText}
+            isOnlyIcon={props.isOnlyIcon} />
         </Container>
       )
       : (

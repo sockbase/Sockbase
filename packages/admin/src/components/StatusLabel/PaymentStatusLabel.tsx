@@ -7,6 +7,7 @@ import type { PaymentStatus } from 'sockbase'
 
 interface Props {
   status: PaymentStatus | undefined
+  isOnlyIcon?: boolean
 }
 
 const PaymentStatusLabel: React.FC<Props> = (props) => {
@@ -48,7 +49,10 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
     props.status !== undefined
       ? (
         <Container status={props.status}>
-          <IconLabel icon={iconElement} label={labelText} />
+          <IconLabel
+            icon={iconElement}
+            label={labelText}
+            isOnlyIcon={props.isOnlyIcon} />
         </Container>
       )
       : (
