@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
+import AnchorButton from '../../components/Parts/AnchorButton'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
@@ -52,6 +53,21 @@ const InquiryViewPage: React.FC = () => {
       .then(() => setInquiryMeta(s => s && ({ ...s, status })))
       .catch((err) => { throw err })
   }, [])
+
+  const mailLink = useMemo(() => {
+    if (!inquiry || !userData || !inquiryType) return
+    const to = userData.email
+    const subject = `[Sockbase] ${inquiryType.name} #${inquiry.id}`
+    const body = [
+      `${userData.name} 様`,
+      '',
+      'お問い合わせありがとうございます。Sockbase サポートです。',
+      '＜ここに概要を入力＞の件について承りました。',
+      ''
+    ].join('\n')
+
+    return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  }, [inquiry, userData, inquiryType])
 
   useEffect(() => {
     if (!inquiryId) return
@@ -143,6 +159,15 @@ const InquiryViewPage: React.FC = () => {
                   <IconLabel icon={<MdCheck />} label='クローズ' />
                 </FormButton>
               )}
+            </FormItem>
+          </FormSection>
+          <FormSection>
+            <FormItem $inlined>
+              <AnchorButton href={mailLink} target="_blank">
+                <IconLabel
+                  icon={<MdMail />}
+                  label="メールクライアントを開く" />
+              </AnchorButton>
             </FormItem>
           </FormSection>
         </>
