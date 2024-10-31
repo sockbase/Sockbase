@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   MdAddCircleOutline,
   MdDataset,
   MdOpenInNew,
+  MdRefresh,
   MdStore
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
+import FormButton from '../../components/Form/FormButton'
 import FormCheck from '../../components/Form/FormCheck'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -46,15 +48,22 @@ const StoreViewPage: React.FC = () => {
   const [ticketUsedStatuses, setTicketUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [userDataSet, setUserDataSet] = useState<Record<string, SockbaseAccount>>()
 
-  useEffect(() => {
-    if (!storeId) return
-
-    getStoreByIdAsync(storeId)
-      .then(setStore)
-      .catch(err => { throw err })
+  const handleRefresh = useCallback((storeId: string) => {
+    setTickets(undefined)
     getTicketsByStoreIdAsync(storeId)
       .then(setTickets)
       .catch(err => { throw err })
+  }, [])
+
+  useEffect(() => {
+    if (!storeId) return
+
+    setStore(undefined)
+    getStoreByIdAsync(storeId)
+      .then(setStore)
+      .catch(err => { throw err })
+
+    handleRefresh(storeId)
   }, [storeId])
 
   useEffect(() => {
@@ -113,6 +122,14 @@ const StoreViewPage: React.FC = () => {
         icon={<MdStore />}
         title={store?.name}
         isLoading={!store} />
+
+      <FormSection>
+        <FormItem>
+          <FormButton onClick={() => storeId && handleRefresh(storeId)} disabled={!storeId}>
+            <IconLabel icon={<MdRefresh />} label='最新の情報に更新' />
+          </FormButton>
+        </FormItem>
+      </FormSection>
 
       <FormSection>
         <FormItem $inlined>

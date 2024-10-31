@@ -8,9 +8,11 @@ import {
   MdImage,
   MdListAlt,
   MdMail,
-  MdOpenInNew
+  MdOpenInNew,
+  MdRefresh
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
+import FormButton from '../../components/Form/FormButton'
 import FormCheck from '../../components/Form/FormCheck'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -61,18 +63,25 @@ const EventViewPage: React.FC = () => {
     return event?.spaces?.find(s => s.id === spaceId)
   }, [event])
 
-  useEffect(() => {
-    if (!eventId) return
+  const handleRefresh = useCallback((eventId: string) => {
+    setApps(undefined)
+    setSpaces(undefined)
 
-    getEventByIdAsync(eventId)
-      .then(setEvent)
-      .catch(err => { throw err })
     getApplicationsByEventIdAsync(eventId)
       .then(setApps)
       .catch(err => { throw err })
     getSpacesByEventIdAsync(eventId)
       .then(setSpaces)
       .catch(err => { throw err })
+  }, [])
+
+  useEffect(() => {
+    if (!eventId) return
+
+    getEventByIdAsync(eventId)
+      .then(setEvent)
+      .catch(err => { throw err })
+    handleRefresh(eventId)
   }, [eventId])
 
   useEffect(() => {
@@ -104,6 +113,14 @@ const EventViewPage: React.FC = () => {
         icon={<MdEditCalendar />}
         title={event?.name}
         isLoading={!event} />
+
+      <FormSection>
+        <FormItem>
+          <FormButton onClick={() => eventId && handleRefresh(eventId)} disabled={!eventId}>
+            <IconLabel icon={<MdRefresh />} label='最新の情報に更新' />
+          </FormButton>
+        </FormItem>
+      </FormSection>
 
       <FormSection>
         <FormItem $inlined>
