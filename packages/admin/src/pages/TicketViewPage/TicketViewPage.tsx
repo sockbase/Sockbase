@@ -2,17 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdCheck, MdClose, MdOutlineDeleteForever, MdPendingActions, MdWallet } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import sockbaseShared from 'shared'
-import {
-  type SockbaseTicketHashIdDocument,
-  type SockbaseStoreDocument,
-  type SockbaseTicketDocument,
-  type SockbaseTicketUsedStatus,
-  type SockbaseTicketUserDocument,
-  type SockbaseTicketMeta,
-  type SockbaseAccount,
-  type SockbaseApplicationStatus,
-  type SockbasePaymentDocument
-} from 'sockbase'
 import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -21,6 +10,7 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
+import PaymentStatusController from '../../components/Parts/PaymentStatusController'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import TicketAssignStatusLabel from '../../components/StatusLabel/TicketAssignStatusLabel'
@@ -31,6 +21,17 @@ import useRole from '../../hooks/useRole'
 import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
+import type {
+  SockbaseTicketHashIdDocument,
+  SockbaseStoreDocument,
+  SockbaseTicketDocument,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketUserDocument,
+  SockbaseTicketMeta,
+  SockbaseAccount,
+  SockbaseApplicationStatus,
+  SockbasePaymentDocument
+} from 'sockbase'
 
 const TicketViewPage: React.FC = () => {
   const { hashId } = useParams()
@@ -243,7 +244,15 @@ const TicketViewPage: React.FC = () => {
             <tbody>
               <tr>
                 <th>ID</th>
-                <td>{ticket?.hashId} <CopyToClipboard content={ticket?.hashId} /></td>
+                <td>{ticket?.hashId ?? <BlinkField />} <CopyToClipboard content={ticket?.hashId} /></td>
+              </tr>
+              <tr>
+                <th>内部 ID</th>
+                <td>{ticket?.id ?? <BlinkField />} <CopyToClipboard content={ticket?.id} /></td>
+              </tr>
+              <tr>
+                <th>決済 ID</th>
+                <td>{payment ? payment?.id ?? '支払い必要なし' : <BlinkField />} <CopyToClipboard content={payment?.id} /></td>
               </tr>
             </tbody>
           </table>
@@ -251,7 +260,7 @@ const TicketViewPage: React.FC = () => {
       </TwoColumnLayout>
       <TwoColumnLayout>
         <>
-          <h3>操作</h3>
+          <h3>申し込みステータス変更</h3>
           <FormSection>
             <FormItem $inlined>
               {ticketMeta?.applicationStatus !== 2 && (
@@ -271,17 +280,31 @@ const TicketViewPage: React.FC = () => {
               )}
             </FormItem>
           </FormSection>
-          {ticketUsed && (
-            <FormSection>
-              <FormItem>
-                <FormButton onClick={() => handleSetTicketUsed(!ticketUsed.used)}>
-                  <IconLabel
-                    icon={ticketUsed.used ? <MdPendingActions /> : <MdCheck />}
-                    label={ticketUsed.used ? '未使用にする' : '使用済みにする'} />
-                </FormButton>
-              </FormItem>
-            </FormSection>
-          )}
+
+          <h3>使用済みステータス変更</h3>
+          {ticketUsed
+            ? (
+              <>
+                <FormSection>
+                  <FormItem>
+                    <FormButton onClick={() => handleSetTicketUsed(!ticketUsed.used)}>
+                      <IconLabel
+                        icon={ticketUsed.used ? <MdPendingActions /> : <MdCheck />}
+                        label={ticketUsed.used ? '未使用にする' : '使用済みにする'} />
+                    </FormButton>
+                  </FormItem>
+                </FormSection>
+              </>
+            )
+            : <BlinkField />}
+
+          <PaymentStatusController
+            paymentId={ticketHash?.paymentId}
+            status={payment?.status}
+            onChange={st => {
+              setPayment(s => s && ({ ...s, status: st }))
+              alert('支払いステータスを変更しました')
+            }} />
         </>
         {isSystemAdmin && (
           <>

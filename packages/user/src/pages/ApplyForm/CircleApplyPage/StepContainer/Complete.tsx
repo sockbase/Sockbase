@@ -68,7 +68,7 @@ const ApplicationCompleteArea = styled.div`
 const ApplicationCompleteLogotype = styled.img`
   margin-bottom: 10px;
   max-width: 100%;
-  max-height: 96px;
+  max-height: 128px;
 `
 const TweetButton = styled.a`
   display: inline-block;

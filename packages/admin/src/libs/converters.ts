@@ -423,7 +423,9 @@ export const spaceHashConverter: FirestoreDataConverter<SockbaseSpaceHashDocumen
 
 export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
   {
-    toFirestore: (): DocumentData => ({}),
+    toFirestore: (payment: SockbasePaymentDocument): DocumentData => ({
+      status: payment.status
+    }),
     fromFirestore: (snapshot: QueryDocumentSnapshot): SockbasePaymentDocument => {
       const payment = snapshot.data()
       return {

@@ -103,12 +103,13 @@ const PaymentList: React.FC<Props> = (props) => {
                 <td>{p.bankTransferCode}</td>
                 <td>{p.updatedAt?.toLocaleString() ?? '---'}</td>
                 <td>
-                  {p.status === 0 && getPaymentLink(p)}
-                  {p.paymentResult?.receiptURL && (
-                    <a href={p.paymentResult.receiptURL} target="_blank" rel="noreferrer">
-                      領収書
-                    </a>
-                  )}
+                  {p.status === 0
+                    ? getPaymentLink(p)
+                    : p.paymentResult?.receiptURL && (
+                      <a href={p.paymentResult.receiptURL} target="_blank" rel="noreferrer">
+                        領収書
+                      </a>
+                    )}
                 </td>
               </tr>)
             : <tr><th colSpan={7}>決済情報はありません</th></tr>

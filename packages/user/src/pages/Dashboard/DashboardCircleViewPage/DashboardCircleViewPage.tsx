@@ -28,7 +28,6 @@ import type {
   SockbaseEvent,
   SockbaseApplicationLinksDocument,
   SockbaseSpaceDocument,
-  SockbaseEventSpace,
   SockbaseApplicationOverviewDocument
 } from 'sockbase'
 
@@ -63,9 +62,9 @@ const DashboardCircleViewPage: React.FC = () => {
     return `${event.name} 申し込み情報`
   }, [event])
 
-  const eventSpace = useMemo((): SockbaseEventSpace | undefined => {
+  const eventSpace = useMemo(() => {
     if (!event || !app) return
-    return event.spaces.filter(s => s.id === app.spaceId)[0]
+    return event.spaces.find(s => s.id === app.spaceId)
   }, [event, app])
 
   const genreName = useMemo(() => {
@@ -186,20 +185,22 @@ const DashboardCircleViewPage: React.FC = () => {
                 <th>申し込み状況</th>
                 <td>{(app && <ApplicationStatusLabel status={app.meta.applicationStatus} />) || <BlinkField />}</td>
               </tr>
-              {eventSpace?.productInfo && <tr>
+              <tr>
                 <th>お支払い状況</th>
                 <td>
-                  {(payment && (
-                    payment?.status === 0
-                      ? <Link to="/dashboard/payments">
-                        <PaymentStatusLabel payment={payment} isLink={true}/>
-                      </Link>
-                      : <>
-                        <PaymentStatusLabel payment={payment} />
-                      </>)) ||
-                      <BlinkField />}
+                  {payment !== undefined
+                    ? payment !== null
+                      ? payment.status === 0
+                        ? (
+                          <Link to="/dashboard/payments">
+                            <PaymentStatusLabel payment={payment} />
+                          </Link>
+                        )
+                        : <PaymentStatusLabel payment={payment} />
+                      : 'お支払いいただく必要はありません'
+                    : <BlinkField />}
                 </td>
-              </tr>}
+              </tr>
               <tr>
                 <th>申し込んだイベント</th>
                 <td>{(event && `${event.name} ${formatByDate(event.schedules.startEvent, '(YYYY年 M月 D日 開催)')}`) || <BlinkField />}</td>
