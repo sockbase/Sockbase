@@ -307,7 +307,7 @@ export interface SockbaseTicket {
  * チケット情報(DB取得)
  */
 export type SockbaseTicketDocument = SockbaseTicket & {
-  id?: string
+  id: string
   userId: string
   createdAt: Date | null
   updatedAt: Date | null
