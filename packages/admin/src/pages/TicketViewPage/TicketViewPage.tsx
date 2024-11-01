@@ -199,7 +199,7 @@ const TicketViewPage: React.FC = () => {
                       ? <BlinkField />
                       : payment === null
                         ? '支払い必要なし'
-                        : <PaymentStatusLabel status={payment?.status} />
+                        : <PaymentStatusLabel payment={payment} isShowBrand />
                   }
                 </td>
               </tr>

@@ -1,18 +1,20 @@
 import { useMemo } from 'react'
-import { MdCheck, MdClose, MdOutlineQuestionMark, MdPendingActions } from 'react-icons/md'
+import { MdCheck, MdClose, MdCreditCard, MdOutlineQuestionMark, MdPayments, MdPendingActions } from 'react-icons/md'
+import { SiAmericanexpress, SiJcb, SiMastercard, SiVisa } from 'react-icons/si'
 import styled from 'styled-components'
 import BlinkField from '../Parts/BlinkField'
 import IconLabel from '../Parts/IconLabel'
-import type { PaymentStatus } from 'sockbase'
+import type { PaymentStatus, SockbasePaymentDocument } from 'sockbase'
 
 interface Props {
-  status: PaymentStatus | undefined
+  payment: SockbasePaymentDocument | undefined
+  isShowBrand?: boolean
   isOnlyIcon?: boolean
 }
 
 const PaymentStatusLabel: React.FC<Props> = (props) => {
   const labelText = useMemo(() => {
-    switch (props.status) {
+    switch (props.payment?.status) {
       case 0:
         return '支払待'
       case 1:
@@ -26,10 +28,10 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
       default:
         return '状態不明'
     }
-  }, [props.status])
+  }, [props.payment])
 
   const iconElement = useMemo(() => {
-    switch (props.status) {
+    switch (props.payment?.status) {
       case 0:
         return <MdPendingActions />
       case 1:
@@ -43,14 +45,42 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
       default:
         return <MdOutlineQuestionMark />
     }
-  }, [props.status])
+  }, [props.payment])
+
+  const icon2Element = useMemo(() => {
+    if (!props.isShowBrand) return
+    if (props.payment?.paymentResult?.cardBrand) {
+      switch (props.payment.paymentResult.cardBrand) {
+        case 'visa':
+          return <SiVisa />
+        case 'mastercard':
+          return <SiMastercard />
+        case 'jcb':
+          return <SiJcb />
+        case 'amex':
+          return <SiAmericanexpress />
+        default:
+          return <MdCreditCard />
+      }
+    } else {
+      switch (props.payment?.paymentMethod) {
+        case 1:
+          return <MdCreditCard />
+        case 2:
+          return <MdPayments />
+        default:
+          return <MdOutlineQuestionMark />
+      }
+    }
+  }, [props.payment])
 
   return (
-    props.status !== undefined
+    props.payment?.status !== undefined
       ? (
-        <Container status={props.status}>
+        <Container status={props.payment.status}>
           <IconLabel
             icon={iconElement}
+            icon2={icon2Element}
             label={labelText}
             isOnlyIcon={props.isOnlyIcon} />
         </Container>

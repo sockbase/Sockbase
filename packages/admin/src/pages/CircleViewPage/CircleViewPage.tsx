@@ -167,7 +167,11 @@ const CircleViewPage: React.FC = () => {
               <tr>
                 <th>お支払い状況</th>
                 <td>
-                  {(payment && <PaymentStatusLabel status={payment?.status} />) ?? <BlinkField />}
+                  {(payment && (
+                    <PaymentStatusLabel
+                      payment={payment}
+                      isShowBrand />
+                  )) ?? <BlinkField />}
                 </td>
               </tr>
               <tr>

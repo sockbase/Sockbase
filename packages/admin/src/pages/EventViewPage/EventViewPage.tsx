@@ -193,12 +193,13 @@ const EventViewPage: React.FC = () => {
                 <td>
                   <ApplicationStatusLabel
                     status={app.meta.applicationStatus}
-                    isOnlyIcon={true} />
+                    isOnlyIcon />
                 </td>
                 <td>
                   <PaymentStatusLabel
-                    status={payments?.[app.id].status}
-                    isOnlyIcon={true} />
+                    payment={payments?.[app.id]}
+                    isOnlyIcon
+                    isShowBrand />
                 </td>
                 <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
                 <td>{app.circle.name}</td>
