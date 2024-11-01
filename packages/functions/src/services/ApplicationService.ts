@@ -51,6 +51,8 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     const unionApp = await getApplicationByIdAsync(unionAppHashDoc.applicationId)
     if (unionApp?.unionCircleId) {
       throw new https.HttpsError('already-exists', 'application_already_union')
+    } else if (unionApp.eventId !== payload.app.eventId) {
+      throw new https.HttpsError('invalid-argument', 'invalid_union_different_event')
     }
   }
 
