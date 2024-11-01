@@ -11,10 +11,12 @@ import CopyToClipboard from '../../../components/Parts/CopyToClipboard'
 import LinkButton from '../../../components/Parts/LinkButton'
 import Loading from '../../../components/Parts/Loading'
 import ApplicationStatusLabel from '../../../components/Parts/StatusLabel/ApplicationStatusLabel'
+import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
 import StoreTypeLabel from '../../../components/Parts/StatusLabel/StoreTypeLabel'
 import TicketAssignStatusLabel from '../../../components/Parts/StatusLabel/TicketAssignStatusLabel'
 import TicketUsedStatusLabel from '../../../components/Parts/StatusLabel/TicketUsedStatusLabel'
 import useDayjs from '../../../hooks/useDayjs'
+import usePayment from '../../../hooks/usePayment'
 import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
@@ -26,7 +28,9 @@ import type {
   SockbaseAccount,
   SockbaseTicketUsedStatus,
   SockbaseTicketMeta,
-  SockbaseTicketUserDocument
+  SockbaseTicketUserDocument,
+  SockbaseTicketHashIdDocument,
+  SockbasePaymentDocument
 } from 'sockbase'
 
 const DashboardStoreTicketListPage: React.FC = () => {
@@ -39,8 +43,10 @@ const DashboardStoreTicketListPage: React.FC = () => {
     getTicketUsedStatusByIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
+    getTicketIdByHashIdAsync,
     exportCSV
   } = useStore()
+  const { getPaymentAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdOptionalAsync } = useUserData()
 
   const [store, setStore] = useState<SockbaseStoreDocument>()
@@ -50,6 +56,8 @@ const DashboardStoreTicketListPage: React.FC = () => {
   const [usedStatuses, setUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
   const [usableUsers, setUsableUsers] = useState<Record<string, SockbaseAccount | null>>()
+  const [ticketHashes, setTicketHashes] = useState<SockbaseTicketHashIdDocument[]>()
+  const [payments, setPayments] = useState<Record<string, SockbasePaymentDocument>>()
 
   const [ticketCSV, setTicketCSV] = useState('')
 
@@ -162,6 +170,10 @@ const DashboardStoreTicketListPage: React.FC = () => {
         .then(fetchedTicketUsers => mapObjectTicketUsers(fetchedTicketUsers))
         .catch(err => { throw err })
 
+      Promise.all(ticketHashIds.map(getTicketIdByHashIdAsync))
+        .then(setTicketHashes)
+        .catch(err => { throw err })
+
       const mapObjectUsers = (users: Array<{ id: string, data: SockbaseAccount | null }>): void => {
         const objectMappedUsers = users
           .reduce<Record<string, SockbaseAccount | null>>((p, c) => ({ ...p, [c.id]: c.data }), {})
@@ -216,6 +228,17 @@ const DashboardStoreTicketListPage: React.FC = () => {
     fetchAsync()
       .catch(err => { throw err })
   }, [storeId, ticketUsers])
+
+  useEffect(() => {
+    if (!ticketHashes) return
+    const paymentIds = ticketHashes.map(t => ({ ticketId: t.ticketId, paymentId: t.paymentId }))
+    Promise.all(paymentIds.map(async t => ({
+      id: t.ticketId,
+      data: t.paymentId ? await getPaymentAsync(t.paymentId) : null
+    })))
+      .then(fetchedPayments => setPayments(fetchedPayments.reduce((p, c) => ({ ...p, [c.id]: c.data }), {})))
+      .catch(err => { throw err })
+  }, [ticketHashes])
 
   useEffect(() => {
     if (!filteredTickets || !ticketUsers || !usableUsers) return
@@ -290,6 +313,7 @@ const DashboardStoreTicketListPage: React.FC = () => {
             <tr>
               <th>#</th>
               <th>申込</th>
+              <th>決済</th>
               <th>割当</th>
               <th>使用</th>
               <th>種別</th>
@@ -306,6 +330,7 @@ const DashboardStoreTicketListPage: React.FC = () => {
                 .map((t, i) => <tr key={t.id}>
                   <td>{i + 1}</td>
                   <td>{t?.id && <ApplicationStatusLabel status={ticketMetas?.[t.id].applicationStatus} />}</td>
+                  <td>{(payments?.[t.id] && <PaymentStatusLabel payment={payments[t.id]} />) ?? <BlinkField />}</td>
                   <td>{(t?.hashId && <TicketAssignStatusLabel status={!!ticketUsers?.[t.hashId]?.usableUserId}/>) ?? <BlinkField />}</td>
                   <td>{(t?.id && <TicketUsedStatusLabel status={usedStatuses?.[t.id].used} />) ?? <BlinkField />}</td>
                   <td><StoreTypeLabel type={getType(t.typeId)} /></td>
