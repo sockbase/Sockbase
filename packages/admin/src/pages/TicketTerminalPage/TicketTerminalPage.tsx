@@ -389,7 +389,7 @@ const TicketTerminalPage: React.FC = () => {
                 <td>
                   {payment !== undefined
                     ? payment !== null
-                      ? <PaymentStatusLabel status={payment.status} />
+                      ? <PaymentStatusLabel payment={payment} />
                       : '支払い不要'
                     : <BlinkField />}
                 </td>

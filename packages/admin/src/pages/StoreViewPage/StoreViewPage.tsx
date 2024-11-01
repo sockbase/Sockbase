@@ -282,14 +282,15 @@ const StoreViewPage: React.FC = () => {
                 <td>
                   <ApplicationStatusLabel
                     status={ticketMetas?.[ticket.id].applicationStatus}
-                    isOnlyIcon={true} />
+                    isOnlyIcon />
                 </td>
                 <td>
                   {payments
                     ? payments[ticket.id] !== null
                       ? <PaymentStatusLabel
-                        status={payments[ticket.id]?.status}
-                        isOnlyIcon={true} />
+                        payment={payments[ticket.id] ?? undefined}
+                        isOnlyIcon
+                        isShowBrand />
                       : '不要'
                     : <BlinkField />}
                 </td>
@@ -297,13 +298,13 @@ const StoreViewPage: React.FC = () => {
                   {ticket.hashId
                     ? <TicketAssignStatusLabel
                       usableUserId={ticketUsers?.[ticket.hashId].usableUserId}
-                      isOnlyIcon={true} />
+                      isOnlyIcon />
                     : <BlinkField />}
                 </td>
                 <td>
                   <TicketUsedStatusLabel
                     used={ticketUsedStatuses?.[ticket.id].used}
-                    isOnlyIcon={true} />
+                    isOnlyIcon />
                 </td>
                 <td>
                   <TicketTypeLabel store={store} typeId={ticket.typeId} />
