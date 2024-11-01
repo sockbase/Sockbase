@@ -16,11 +16,11 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
   const labelText = useMemo(() => {
     switch (props.payment?.status) {
       case 0:
-        return '支払待'
+        return '支払待ち'
       case 1:
-        return '支払済'
+        return '支払済み'
       case 2:
-        return '返金'
+        return '返金済み'
       case 3:
         return 'エラー'
       case 4:

@@ -3,17 +3,6 @@ import { MdCheck, MdClose, MdEdit, MdOutlineDeleteForever, MdPendingActions } fr
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import sockbaseShared from 'shared'
-import {
-  type SockbaseApplicationHashIdDocument,
-  type SockbaseEventDocument,
-  type SockbaseApplicationDocument,
-  type SockbaseApplicationMeta,
-  type SockbaseAccount,
-  type SockbaseApplicationLinksDocument,
-  type SockbaseApplicationStatus,
-  type SockbaseSpaceDocument,
-  type SockbasePaymentDocument
-} from 'sockbase'
 import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -22,6 +11,7 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
+import PaymentStatusController from '../../components/Parts/PaymentStatusController'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import TwoColumnLayout from '../../components/TwoColumnLayout'
@@ -31,6 +21,17 @@ import usePayment from '../../hooks/usePayment'
 import useRole from '../../hooks/useRole'
 import useUserData from '../../hooks/useUserData'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
+import type {
+  SockbaseApplicationHashIdDocument,
+  SockbaseEventDocument,
+  SockbaseApplicationDocument,
+  SockbaseApplicationMeta,
+  SockbaseAccount,
+  SockbaseApplicationLinksDocument,
+  SockbaseApplicationStatus,
+  SockbaseSpaceDocument,
+  SockbasePaymentDocument
+} from 'sockbase'
 
 const CircleViewPage: React.FC = () => {
   const { hashId } = useParams()
@@ -157,7 +158,7 @@ const CircleViewPage: React.FC = () => {
 
       <TwoColumnLayout>
         <>
-          <h3>申し込み基礎情報</h3>
+          <h3>ステータス</h3>
           <table>
             <tbody>
               <tr>
@@ -174,6 +175,12 @@ const CircleViewPage: React.FC = () => {
                   )) ?? <BlinkField />}
                 </td>
               </tr>
+            </tbody>
+          </table>
+
+          <h3>基礎情報</h3>
+          <table>
+            <tbody>
               <tr>
                 <th>サークル名</th>
                 <td>
@@ -203,14 +210,20 @@ const CircleViewPage: React.FC = () => {
               <tr>
                 <th>ID</th>
                 <td>
-                  {
-                    app
-                      ? <>
-                        {app.hashId} <CopyToClipboard content={app.hashId} />
-                      </>
-                      : <BlinkField />
-                  }
+                  {app
+                    ? <>
+                      {app.hashId} <CopyToClipboard content={app.hashId} />
+                    </>
+                    : <BlinkField />}
                 </td>
+              </tr>
+              <tr>
+                <th>内部 ID</th>
+                <td>{app?.id ?? <BlinkField />}  <CopyToClipboard content={app?.id} /></td>
+              </tr>
+              <tr>
+                <th>決済 ID</th>
+                <td>{payment?.id ?? <BlinkField />}  <CopyToClipboard content={payment?.id} /></td>
               </tr>
             </tbody>
           </table>
@@ -303,7 +316,7 @@ const CircleViewPage: React.FC = () => {
 
       <h3>通信欄</h3>
       <p>
-        (空欄)
+        {app ? app.remarks || '(空欄)' : <BlinkField />}
       </p>
 
       <TwoColumnLayout>
@@ -328,7 +341,16 @@ const CircleViewPage: React.FC = () => {
               )}
             </FormItem>
           </FormSection>
+
+          <PaymentStatusController
+            paymentId={payment?.id}
+            status={payment?.status}
+            onChange={st => {
+              setPayment(s => s && ({ ...s, status: st }))
+              alert('支払いステータスを変更しました')
+            }} />
         </>
+
         {isSystemAdmin && (
           <>
             <h3>システム操作</h3>
