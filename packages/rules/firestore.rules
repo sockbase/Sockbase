@@ -41,6 +41,10 @@ service cloud.firestore {
   	match /users/{userId} {
     	allow read: if request.auth.uid == userId || isSystemAdmin(request.auth.uid);
       allow write: if request.auth.uid == userId;
+
+      match /_events/{eventId} {
+        allow delete: if isSystemAdmin(request.auth.uid);
+      }
     }
 
     match /organizations/{organizationId} {
@@ -79,6 +83,14 @@ service cloud.firestore {
 
       match /_applications/{applicationId} {
         allow read: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+      }
+
+      match /docLinks/{docLinkId} {
+        allow read: if exists(/databases/$(database)/documents/users/$(request.auth.uid)/_events/$(eventId))
+        || isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+        allow create: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+        allow update: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+        allow delete: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
       }
     }
 

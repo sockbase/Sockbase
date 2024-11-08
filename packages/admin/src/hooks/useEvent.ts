@@ -1,10 +1,17 @@
 import { useCallback } from 'react'
-import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore'
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { ref, uploadBytes } from 'firebase/storage'
-import { eventConverter, spaceConverter } from '../libs/converters'
+import { docLinkConverter, eventConverter, spaceConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseCirclePassCreatedResult, SockbaseEvent, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
+import type {
+  SockbaseCirclePassCreatedResult,
+  SockbaseDocLink,
+  SockbaseDocLinkDocument,
+  SockbaseEvent,
+  SockbaseEventDocument,
+  SockbaseSpaceDocument
+} from 'sockbase'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
@@ -12,6 +19,10 @@ interface IUseEvent {
   getSpaceByIdAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceByIdNullableAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
+  getDocLinksByEventIdAsync: (eventId: string) => Promise<SockbaseDocLinkDocument[]>
+  addDocLinkAsync: (docLink: SockbaseDocLink) => Promise<string>
+  updateDocLinkAsync: (docLink: SockbaseDocLinkDocument) => Promise<void>
+  deleteDocLinkAsync: (eventId: string, docLinkId: string) => Promise<void>
   createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreatedResult>
   createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
   uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
@@ -88,6 +99,35 @@ const useEvent = (): IUseEvent => {
       return queryDocs
     }, [])
 
+  const getDocLinksByEventIdAsync = useCallback(async (eventId: string) => {
+    const docLinksRef = collection(db, 'events', eventId, 'docLinks')
+      .withConverter(docLinkConverter)
+    const docLinksQuery = query(docLinksRef, where('eventId', '==', eventId))
+    const docLinksSnapshot = await getDocs(docLinksQuery)
+    const queryDocs = docLinksSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+    return queryDocs
+  }, [])
+
+  const addDocLinkAsync = useCallback(async (docLink: SockbaseDocLink) => {
+    const docLinkRef = collection(db, 'events', docLink.eventId, 'docLinks')
+      .withConverter(docLinkConverter)
+    const result = await addDoc(docLinkRef, docLink)
+    return result.id
+  }, [])
+
+  const updateDocLinkAsync = useCallback(async (docLink: SockbaseDocLinkDocument) => {
+    const docLinkRef = doc(db, 'events', docLink.eventId, 'docLinks', docLink.id)
+      .withConverter(docLinkConverter)
+    await setDoc(docLinkRef, docLink)
+  }, [])
+
+  const deleteDocLinkAsync = useCallback(async (eventId: string, docLinkId: string) => {
+    const docLinkRef = doc(db, 'events', eventId, 'docLinks', docLinkId)
+    await deleteDoc(docLinkRef)
+  }, [])
+
   const createPassesAsync =
   useCallback(async (eventId: string) => {
     const createPassesFunction = httpsCallable<string, SockbaseCirclePassCreatedResult>(
@@ -117,6 +157,10 @@ const useEvent = (): IUseEvent => {
     getSpaceByIdAsync,
     getSpaceByIdNullableAsync,
     getSpacesByEventIdAsync,
+    getDocLinksByEventIdAsync,
+    addDocLinkAsync,
+    updateDocLinkAsync,
+    deleteDocLinkAsync,
     createPassesAsync,
     createEventAsync,
     uploadEventEyecatchAsync

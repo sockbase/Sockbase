@@ -4,6 +4,7 @@ import CircleViewPage from './pages/CircleViewPage/CircleViewPage'
 import EventCreatePage from './pages/EventCreatePage/EventCreatePage'
 import EventCreatePassPage from './pages/EventCreatePassPage/EventCreatePassPage'
 import EventDownloadCircleCutPage from './pages/EventDownloadCircleCutPage/EventDownloadCircleCutPage'
+import EventEditLinkPage from './pages/EventEditLinkPage/EventEditLinkPage'
 import EventExportSoleilPage from './pages/EventExportSoleilTSVPage/EventExportSoleilTSVPage'
 import EventListPage from './pages/EventListPage/EventListPage'
 import EventManageSpacePage from './pages/EventManageSpacePage/EventManageSpacePage'
@@ -143,6 +144,10 @@ const routes = createBrowserRouter([
               {
                 path: 'print-tanzaku',
                 element: <EventPrintTanzakuPage />
+              },
+              {
+                path: 'edit-links',
+                element: <EventEditLinkPage />
               }
             ]
           }

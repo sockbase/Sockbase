@@ -9,7 +9,8 @@ import {
   MdListAlt,
   MdMail,
   MdOpenInNew,
-  MdRefresh
+  MdRefresh,
+  MdAddLink
 } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
@@ -156,6 +157,9 @@ const EventViewPage: React.FC = () => {
           </LinkButton>
           <LinkButton to={`/events/${eventId}/send-mails`}>
             <IconLabel icon={<MdMail />} label='メール送信' />
+          </LinkButton>
+          <LinkButton to={`/events/${eventId}/edit-links`}>
+            <IconLabel icon={<MdAddLink />} label='資料リンク編集' />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/view-meta`}>
             <IconLabel icon={<MdCalendarViewMonth />} label='メタ情報参照' />

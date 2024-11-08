@@ -2,11 +2,12 @@ import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
 import * as FirebaseStorage from 'firebase/storage'
 import {
+  docLinkConverter,
   eventConverter,
   spaceConverter
 } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
+import type { SockbaseDocLinkDocument, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
@@ -15,6 +16,7 @@ interface IUseEvent {
   getSpaceAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceOptionalAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
+  getDocLinksByEventIdAsync: (eventId: string) => Promise<SockbaseDocLinkDocument[]>
 }
 
 const useEvent = (): IUseEvent => {
@@ -103,13 +105,26 @@ const useEvent = (): IUseEvent => {
       return queryDocs
     }
 
+  const getDocLinksByEventIdAsync = useCallback(async (eventId: string): Promise<SockbaseDocLinkDocument[]> => {
+    const db = getFirestore()
+    const docLinksRef = FirestoreDB.collection(db, 'events', eventId, 'docLinks')
+      .withConverter(docLinkConverter)
+    const docLinksQuery = FirestoreDB.query(docLinksRef, FirestoreDB.where('eventId', '==', eventId))
+    const docLinksSnapshot = await FirestoreDB.getDocs(docLinksQuery)
+    const queryDocs = docLinksSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+    return queryDocs
+  }, [])
+
   return {
     getEventByIdAsync,
     getEventsByOrganizationIdAsync,
     getEventEyecatchAsync,
     getSpaceAsync,
     getSpaceOptionalAsync,
-    getSpacesByEventIdAsync
+    getSpacesByEventIdAsync,
+    getDocLinksByEventIdAsync
   }
 }
 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { MdBookmarkAdd, MdEdit, MdImage } from 'react-icons/md'
+import { MdBookmarkAdd, MdEdit, MdImage, MdLink } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
@@ -140,6 +140,14 @@ const DashboardCircleViewPage: React.FC = () => {
         title={app?.circle.name}
         description="申し込み情報"
         isLoading={!app} />
+
+      <FormSection>
+        <FormItem $inlined>
+          <LinkButton to={`/dashboard/applications/${hashId}/view-links`}>
+            <IconLabel icon={<MdLink />} label="資料リンク確認" />
+          </LinkButton>
+        </FormItem>
+      </FormSection>
 
       {payment?.status === 0 && <Alert type="warning" title="サークル参加費のお支払いをお願いいたします">
         お支払いは <Link to="/dashboard/payments">決済履歴</Link> からお願いいたします。

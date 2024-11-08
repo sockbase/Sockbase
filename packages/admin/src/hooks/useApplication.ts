@@ -124,6 +124,7 @@ const useApplication = (): IUseApplication => {
       const appRef = doc(db, `_applications/${appHash.applicationId}`)
       const appHashRef = doc(db, `_applicationHashIds/${appHash.hashId}`)
       const paymentRef = (appHash.paymentId && doc(db, `_payments/${appHash.paymentId}`)) || null
+      const userEventMetaRef = doc(db, `users/${appHash.userId}/_events/${appHash.eventId}`)
 
       await runTransaction(db, async tx => {
         tx.delete(appOverviewRef)
@@ -131,6 +132,7 @@ const useApplication = (): IUseApplication => {
         tx.delete(appMetaRef)
         tx.delete(appRef)
         tx.delete(appHashRef)
+        tx.delete(userEventMetaRef)
 
         if (paymentRef) {
           tx.delete(paymentRef)

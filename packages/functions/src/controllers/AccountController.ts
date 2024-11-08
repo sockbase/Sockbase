@@ -1,5 +1,5 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import { firestore, type EventContext, type Change } from 'firebase-functions'
+import { firestore, type EventContext, type Change } from 'firebase-functions/v1'
 
 import AccountService from '../services/AccountService'
 import type { SockbaseAccountDocument, SockbaseRole } from 'sockbase'

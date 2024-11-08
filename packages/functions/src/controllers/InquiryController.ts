@@ -1,5 +1,5 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import { type EventContext, firestore } from 'firebase-functions'
+import { type EventContext, firestore } from 'firebase-functions/v1'
 import InquiryService from '../services/InquiryService'
 import type { SockbaseInquiryDocument } from 'sockbase'
 

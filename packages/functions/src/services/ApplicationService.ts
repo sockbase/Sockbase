@@ -117,6 +117,13 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .withConverter(overviewConverter)
     .set(overview)
 
+  const userEventMeta = {
+    applicationId: appId
+  }
+  await firestore
+    .doc(`/users/${userId}/_events/${payload.app.eventId}`)
+    .set(userEventMeta)
+
   const bankTransferCode = PaymentService.generateBankTransferCode(now)
   const paymentId = space.productInfo
     ? await PaymentService.createPaymentAsync(
