@@ -3,7 +3,7 @@ import styled from 'styled-components'
 interface Props {
   icon: JSX.Element
   icon2?: React.ReactNode
-  label: string
+  label?: string
   isOnlyIcon?: boolean
 }
 const IconLabel: React.FC<Props> = (props) => {

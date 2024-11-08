@@ -1,4 +1,4 @@
-import { https } from 'firebase-functions'
+import { https } from 'firebase-functions/v1'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { eventConverter } from '../libs/converters'
 

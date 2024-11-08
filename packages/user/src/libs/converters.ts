@@ -22,7 +22,8 @@ import type {
   SockbaseInquiryDocument,
   SockbaseInquiryMetaDocument,
   SockbasePaymentDocument,
-  SockbaseInformationDocument
+  SockbaseInformationDocument,
+  SockbaseDocLinkDocument
 } from 'sockbase'
 
 export const accountConverter: FirestoreDataConverter<SockbaseAccount> = {
@@ -375,6 +376,21 @@ export const informationConverter: FirestoreDataConverter<SockbaseInformationDoc
       body: info.body,
       updatedAt: info.updatedAt,
       isPublished: info.isPublished
+    }
+  }
+}
+
+export const docLinkConverter: FirestoreDataConverter<SockbaseDocLinkDocument> = {
+  toFirestore: () => ({
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseDocLinkDocument => {
+    const link = snapshot.data()
+    return {
+      id: snapshot.id,
+      eventId: link.eventId,
+      name: link.name,
+      url: link.url,
+      order: link.order
     }
   }
 }

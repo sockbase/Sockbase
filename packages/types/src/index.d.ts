@@ -602,3 +602,20 @@ export type SockbaseCircleListControlDocument = SockbaseCircleListControl & {
  * 1: 本公開用 (スペース番号順)
  */
 export type CircleListType = 0 | 1
+
+/**
+ * 資料リンク
+ */
+export interface SockbaseDocLink {
+  eventId: string
+  name: string
+  url: string
+  order: number
+}
+
+/**
+ * 資料リンク(DB取得)
+ */
+export type SockbaseDocLinkDocument = SockbaseDocLink & {
+  id: string
+}

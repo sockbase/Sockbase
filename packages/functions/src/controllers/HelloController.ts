@@ -1,4 +1,4 @@
-import { https } from 'firebase-functions'
+import { https } from 'firebase-functions/v1'
 import HelloWorldService from '../services/HelloWorldService'
 
 export const helloWorld = https

@@ -17,6 +17,7 @@ import DashboardCircleEditLinksPage from './pages/Dashboard/DashboardCircleEditL
 import DashboardCircleEditOverviewPage from './pages/Dashboard/DashboardCircleEditOverviewPage/DashboardCircleEditOverviewPage'
 import DashboardCircleListPage from './pages/Dashboard/DashboardCircleListPage/DashboardCircleListPage'
 import DashboardCircleUpdateCutPage from './pages/Dashboard/DashboardCircleUpdateCutPage/DashboardCircleUpdateCutPage'
+import DashboardCircleViewLinksPage from './pages/Dashboard/DashboardCircleViewLinksPage/DashboardCircleViewLinksPage'
 import DashboardCircleViewPage from './pages/Dashboard/DashboardCircleViewPage/DashboardCircleViewPage'
 import DashboardContactPage from './pages/Dashboard/DashboardContactPage/DashboardContactPage'
 import DashboardMyTicketListPage from './pages/Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
@@ -161,6 +162,10 @@ const router = createBrowserRouter([
                   {
                     path: 'cut',
                     element: <DashboardCircleUpdateCutPage />
+                  },
+                  {
+                    path: 'view-links',
+                    element: <DashboardCircleViewLinksPage />
                   }
                 ]
               }

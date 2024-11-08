@@ -6,6 +6,7 @@ import type {
   SockbaseApplicationHashIdDocument,
   SockbaseApplicationLinksDocument,
   SockbaseApplicationMeta,
+  SockbaseDocLinkDocument,
   SockbaseEventDocument,
   SockbaseInformationDocument,
   SockbaseInquiryDocument,
@@ -449,3 +450,22 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
       }
     }
   }
+
+export const docLinkConverter: FirestoreDataConverter<SockbaseDocLinkDocument> = {
+  toFirestore: (link: SockbaseDocLinkDocument): DocumentData => ({
+    eventId: link.eventId,
+    name: link.name,
+    url: link.url,
+    order: link.order
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseDocLinkDocument => {
+    const link = snapshot.data()
+    return {
+      id: snapshot.id,
+      eventId: link.eventId,
+      name: link.name,
+      url: link.url,
+      order: link.order
+    }
+  }
+}
