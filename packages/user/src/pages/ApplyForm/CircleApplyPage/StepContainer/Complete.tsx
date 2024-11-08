@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { FaTwitter } from 'react-icons/fa6'
 import { MdInfo, MdWeb } from 'react-icons/md'
 import styled from 'styled-components'
 import ApplicationCompleteImage from '../../../../assets/application-complete.png'
@@ -32,7 +33,7 @@ const Complete: React.FC<Props> = (props) => {
           「{props.event?.name}」へのサークル申し込み手続きが完了しました。<br />
           お申し込みいただきましてありがとうございました。<br />
           <TweetButton href={tweetText} target="_blank" rel="noopener noreferrer">
-            Twitterでシェアする
+            <IconLabel icon={<FaTwitter />} label="Twitterでシェアする" />
           </TweetButton>
         </p>
       </ApplicationCompleteArea>
