@@ -252,7 +252,7 @@ const TicketViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>決済 ID</th>
-                <td>{payment ? payment?.id ?? '支払い必要なし' : <BlinkField />} <CopyToClipboard content={payment?.id} /></td>
+                <td>{payment !== undefined ? payment?.id ?? '支払い必要なし' : <BlinkField />} <CopyToClipboard content={payment?.id} /></td>
               </tr>
             </tbody>
           </table>
