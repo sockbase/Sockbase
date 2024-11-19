@@ -87,7 +87,7 @@ const TicketCreatePage: React.FC = () => {
         throw err
       })
       .finally(() => setProgress(false))
-  }, [])
+  }, [storeId, createTicketData, isClearEmail])
 
   useEffect(() => {
     if (!storeId) return
