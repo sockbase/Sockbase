@@ -5,10 +5,10 @@ import './styles/main.scss'
 import './styles/colors.scss'
 
 import App from './App'
-
-import { getFirebaseApp } from './libs/FirebaseApp'
+import { getFirebaseApp, initializeAppCheck } from './libs/FirebaseApp'
 
 getFirebaseApp()
+initializeAppCheck()
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

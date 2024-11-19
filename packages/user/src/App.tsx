@@ -5,10 +5,6 @@ import {
   ScrollRestoration
 } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
-import {
-  getFirebaseApp,
-  initializeAppCheck
-} from './libs/FirebaseApp'
 import ActionPage from './pages/ActionPage/ActionPage'
 import CircleApplyPage from './pages/ApplyForm/CircleApplyPage/CircleApplyPage'
 import TicketApplyPage from './pages/ApplyForm/TicketApplyPage/TicketApplyPage'
@@ -34,9 +30,6 @@ import PasswordResetPage from './pages/PasswordResetPage/PasswordResetPage'
 import PrivacyPolicyPage from './pages/Static/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/Static/TermsOfServicePage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
-
-getFirebaseApp()
-initializeAppCheck()
 
 const Root: React.FC = () => {
   return (
