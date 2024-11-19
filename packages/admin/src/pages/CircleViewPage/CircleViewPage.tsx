@@ -371,4 +371,5 @@ const CircleViewPage: React.FC = () => {
 export default CircleViewPage
 
 const CircleCutImage = styled.img`
+  width: 100%;
 `
