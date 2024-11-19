@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   MdAddCircleOutline,
   MdDataset,
@@ -69,6 +69,23 @@ const StoreViewPage: React.FC = () => {
 
   const [selectedTicketIds, setSelectedTicketIds] = useState<string[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
+
+  const [selectedTypeId, setSelectedTypeId] = useState('')
+  const [selectedApplicationStatus, setSelectedApplicationStatus] = useState('')
+  const [selectedAssignStatus, setSelectedAssignStatus] = useState('')
+
+  const filteredTickets = useMemo(() => {
+    if (!tickets || !ticketUsers || !ticketMetas) return undefined
+    return tickets.filter(ticket => {
+      if (selectedTypeId && ticket.typeId !== selectedTypeId) return false
+      if (selectedApplicationStatus && ticketMetas[ticket.id].applicationStatus !== parseInt(selectedApplicationStatus)) return false
+      if (selectedAssignStatus) {
+        if (selectedAssignStatus === '0' && ticket.hashId && ticketUsers[ticket.hashId].usableUserId) return false
+        if (selectedAssignStatus === '1' && ticket.hashId && !ticketUsers[ticket.hashId].usableUserId) return false
+      }
+      return true
+    })
+  }, [tickets, selectedTypeId, selectedApplicationStatus, selectedAssignStatus, ticketMetas, ticketUsers])
 
   const handleSelectTicket = useCallback((ticketId: string, isAdd: boolean) => {
     if (isAdd) {
@@ -229,6 +246,41 @@ const StoreViewPage: React.FC = () => {
 
       <FormSection>
         <FormItem>
+          <FormLabel>フィルター</FormLabel>
+        </FormItem>
+        <FormItem>
+          <FormSelect
+            value={selectedTypeId}
+            onChange={e => setSelectedTypeId(e.target.value)}>
+            <option value=''>種別を選択</option>
+            {store?.types.map(type => (
+              <option key={type.id} value={type.id}>{type.name}</option>
+            ))}
+          </FormSelect>
+        </FormItem>
+        <FormItem>
+          <FormSelect
+            value={selectedApplicationStatus}
+            onChange={e => setSelectedApplicationStatus(e.target.value)}>
+            <option value=''>ステータスを選択</option>
+            <option value='0'>確認待ち</option>
+            <option value='1'>キャンセル</option>
+            <option value='2'>確定</option>
+          </FormSelect>
+        </FormItem>
+        <FormItem>
+          <FormSelect
+            value={selectedAssignStatus}
+            onChange={e => setSelectedAssignStatus(e.target.value)}>
+            <option value=''>割当状況を選択</option>
+            <option value='0'>未割当</option>
+            <option value='1'>割当済</option>
+          </FormSelect>
+        </FormItem>
+      </FormSection>
+
+      <FormSection>
+        <FormItem>
           <FormLabel>申し込みステータスを変更</FormLabel>
           <FormSelect
             value=""
@@ -264,12 +316,17 @@ const StoreViewPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {!tickets && (
+          {!filteredTickets && (
             <tr>
               <td colSpan={10}>読込中です…</td>
             </tr>
           )}
-          {tickets?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
+          {filteredTickets && filteredTickets.length === 0 && (
+            <tr>
+              <td colSpan={10}>該当するチケットがありません</td>
+            </tr>
+          )}
+          {filteredTickets?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
             .map((ticket, index) => (
               <ActiveTR key={ticket.id} active={selectedTicketIds.includes(ticket.id)}>
                 <td>

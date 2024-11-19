@@ -190,6 +190,11 @@ const EventViewPage: React.FC = () => {
               <td colSpan={9}>読込中です</td>
             </tr>
           )}
+          {apps && apps.length === 0 && (
+            <tr>
+              <td colSpan={9}>データがありません</td>
+            </tr>
+          )}
           {apps?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
             .map((app, i) => (
               <tr key={app.id}>
