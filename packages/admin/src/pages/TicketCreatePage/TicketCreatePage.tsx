@@ -175,7 +175,7 @@ const TicketCreatePage: React.FC = () => {
                   .map((t, i) => <tr key={t.id}>
                     <td>{createdTickets.length - i}</td>
                     <td>
-                      <a href={`/dashboard/tickets/${t.hashId}`} target="_blank" rel="noreferrer">
+                      <a href={`/tickets/${t.hashId}`} target="_blank" rel="noreferrer">
                         {getType(t.typeId)?.name}
                       </a>
                     </td>
