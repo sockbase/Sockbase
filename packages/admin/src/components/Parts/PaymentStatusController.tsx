@@ -28,25 +28,31 @@ const PaymentStatusController: React.FC<Props> = (props) => {
   return (
     <>
       <h3>決済ステータス変更</h3>
-      {props.paymentId
-        ? props.status === 0
+      {props.paymentId === undefined
+        ? (
+          <BlinkField />
+        )
+        : props.paymentId === null
           ? (
-            <FormSection>
-              <FormItem $inlined>
-                <FormButton onClick={() => handleSetPaymentStatus(1)}>
-                  <IconLabel icon={<MdCheck />} label='支払い済みにする' />
-                </FormButton>
-                <FormButton onClick={() => handleSetPaymentStatus(2)}>
-                  <IconLabel icon={<MdOutlinePayments />} label='返金済みにする' />
-                </FormButton>
-                <FormButton onClick={() => handleSetPaymentStatus(4)}>
-                  <IconLabel icon={<MdCancel />} label='キャンセルにする' />
-                </FormButton>
-              </FormItem>
-            </FormSection>
+            <Alert type="warning" title="決済情報がないためステータスを変更できません。" />
           )
-          : <Alert type="warning" title="決済ステータスの変更がロックされています。Sockbase 管理者へお問い合わせください。" />
-        : <BlinkField />}
+          : props.status === 0
+            ? (
+              <FormSection>
+                <FormItem $inlined>
+                  <FormButton onClick={() => handleSetPaymentStatus(1)}>
+                    <IconLabel icon={<MdCheck />} label='支払い済みにする' />
+                  </FormButton>
+                  <FormButton onClick={() => handleSetPaymentStatus(2)}>
+                    <IconLabel icon={<MdOutlinePayments />} label='返金済みにする' />
+                  </FormButton>
+                  <FormButton onClick={() => handleSetPaymentStatus(4)}>
+                    <IconLabel icon={<MdCancel />} label='キャンセルにする' />
+                  </FormButton>
+                </FormItem>
+              </FormSection>
+            )
+            : <Alert type="warning" title="決済ステータスの変更がロックされています。Sockbase 管理者へお問い合わせください。" />}
       <Alert type="info" title="決済ステータスは一度変更すると変更できません。" />
     </>
   )
