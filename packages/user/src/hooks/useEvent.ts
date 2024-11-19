@@ -1,18 +1,13 @@
 import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
-import * as FirebaseFunctions from 'firebase/functions'
 import * as FirebaseStorage from 'firebase/storage'
 import {
+  docLinkConverter,
   eventConverter,
   spaceConverter
 } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type {
-  SockbaseCirclePassCreatedResult,
-  SockbaseEvent,
-  SockbaseEventDocument,
-  SockbaseSpaceDocument
-} from 'sockbase'
+import type { SockbaseDocLinkDocument, SockbaseEventDocument, SockbaseSpaceDocument } from 'sockbase'
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
@@ -21,13 +16,11 @@ interface IUseEvent {
   getSpaceAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceOptionalAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
   getSpacesByEventIdAsync: (eventId: string) => Promise<SockbaseSpaceDocument[]>
-  createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
-  uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
-  createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreatedResult>
+  getDocLinksByEventIdAsync: (eventId: string) => Promise<SockbaseDocLinkDocument[]>
 }
 
 const useEvent = (): IUseEvent => {
-  const { getFirestore, getStorage, getFunctions } = useFirebase()
+  const { getFirestore, getStorage } = useFirebase()
 
   const getEventByIdAsync =
     async (eventId: string): Promise<SockbaseEventDocument> => {
@@ -112,32 +105,17 @@ const useEvent = (): IUseEvent => {
       return queryDocs
     }
 
-  const createEventAsync =
-    async (eventId: string, event: SockbaseEvent): Promise<void> => {
-      const db = getFirestore()
-      const eventRef = FirestoreDB.doc(db, `/events/${eventId}`)
-        .withConverter(eventConverter)
-      await FirestoreDB.setDoc(eventRef, event)
-        .catch(err => { throw err })
-    }
-
-  const uploadEventEyecatchAsync =
-    async (eventId: string, eyecatchFile: File): Promise<void> => {
-      const storage = getStorage()
-      const eyecatchRef = FirebaseStorage.ref(storage, `events/${eventId}/eyecatch.jpg`)
-      await FirebaseStorage.uploadBytes(eyecatchRef, eyecatchFile)
-    }
-
-  const createPassesAsync =
-    async (eventId: string): Promise<SockbaseCirclePassCreatedResult> => {
-      const functions = getFunctions()
-      const createPassesFunction = FirebaseFunctions
-        .httpsCallable<string, SockbaseCirclePassCreatedResult>(
-        functions,
-        'event-createPasses')
-      const createResult = await createPassesFunction(eventId)
-      return createResult.data
-    }
+  const getDocLinksByEventIdAsync = useCallback(async (eventId: string): Promise<SockbaseDocLinkDocument[]> => {
+    const db = getFirestore()
+    const docLinksRef = FirestoreDB.collection(db, 'events', eventId, 'docLinks')
+      .withConverter(docLinkConverter)
+    const docLinksQuery = FirestoreDB.query(docLinksRef, FirestoreDB.where('eventId', '==', eventId))
+    const docLinksSnapshot = await FirestoreDB.getDocs(docLinksQuery)
+    const queryDocs = docLinksSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+    return queryDocs
+  }, [])
 
   return {
     getEventByIdAsync,
@@ -146,9 +124,7 @@ const useEvent = (): IUseEvent => {
     getSpaceAsync,
     getSpaceOptionalAsync,
     getSpacesByEventIdAsync,
-    createEventAsync,
-    uploadEventEyecatchAsync,
-    createPassesAsync
+    getDocLinksByEventIdAsync
   }
 }
 

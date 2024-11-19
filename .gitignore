@@ -73,3 +73,5 @@ gha-creds-*.json
 .DS_Store
 
 dist/
+
+certs/*.pem

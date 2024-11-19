@@ -178,6 +178,7 @@ const createTicketCoreAsync =
 
     const hashId = generateTicketHashId(now)
     const ticketDoc: SockbaseTicketDocument = {
+      id: '',
       storeId: store.id,
       typeId: type.id,
       paymentMethod: isAdmin || paymentMethod === 1 ? 'online' : 'bankTransfer',

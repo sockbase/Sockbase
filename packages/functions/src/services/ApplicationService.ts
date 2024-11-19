@@ -51,6 +51,8 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     const unionApp = await getApplicationByIdAsync(unionAppHashDoc.applicationId)
     if (unionApp?.unionCircleId) {
       throw new https.HttpsError('already-exists', 'application_already_union')
+    } else if (unionApp.eventId !== payload.app.eventId) {
+      throw new https.HttpsError('invalid-argument', 'invalid_union_different_event')
     }
   }
 
@@ -114,6 +116,13 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .doc(`/_applicationOverviews/${appId}`)
     .withConverter(overviewConverter)
     .set(overview)
+
+  const userEventMeta = {
+    applicationId: appId
+  }
+  await firestore
+    .doc(`/users/${userId}/_events/${payload.app.eventId}`)
+    .set(userEventMeta)
 
   const bankTransferCode = PaymentService.generateBankTransferCode(now)
   const paymentId = space.productInfo

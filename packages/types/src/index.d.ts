@@ -132,14 +132,26 @@ export interface SockbaseOrganization {
   contactUrl: string
 }
 
+export type SockbaseOrganizationDocument = SockbaseOrganization & {
+  id: string
+}
+
 /**
  * 組織設定
  */
-export type SockbaseOrganizationWithMeta = SockbaseOrganization & {
+export type SockbaseOrganizationWithMeta = SockbaseOrganizationDocument & {
   config: {
     discordWebhookURL: string
     discordRoleId: string
   }
+}
+
+export interface SockbaseOrganizationManager {
+  role: SockbaseRole
+}
+
+export type SockbaseOrganizationManagerDocument = SockbaseOrganizationManager & {
+  userId: string
 }
 
 /**
@@ -468,6 +480,12 @@ export interface SockbasePayment {
   bankTransferCode: string
   applicationId: string | null
   ticketId: string | null
+  paymentResult: SockbasePaymentResult | null
+}
+
+export interface SockbasePaymentResult {
+  cardBrand: string | null
+  receiptURL: string | null
 }
 
 /**
@@ -584,3 +602,20 @@ export type SockbaseCircleListControlDocument = SockbaseCircleListControl & {
  * 1: 本公開用 (スペース番号順)
  */
 export type CircleListType = 0 | 1
+
+/**
+ * 資料リンク
+ */
+export interface SockbaseDocLink {
+  eventId: string
+  name: string
+  url: string
+  order: number
+}
+
+/**
+ * 資料リンク(DB取得)
+ */
+export type SockbaseDocLinkDocument = SockbaseDocLink & {
+  id: string
+}

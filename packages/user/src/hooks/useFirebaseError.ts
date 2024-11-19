@@ -26,6 +26,8 @@ const useFirebaseError = (): IUseFirebaseError => {
         return '隣接配置先サークルの申し込みIDが間違っています'
       } else if (errorMessage.includes('application_already_union')) {
         return '隣接希望サークルが他のサークルとの隣接を希望しているため、申し込みできませんでした。'
+      } else if (errorMessage.includes('invalid_union_different_event')) {
+        return '別イベントに参加しているサークルとの隣接希望は受け付けられません'
       } else if (errorMessage.includes('user_not_found')) {
         return 'ユーザが見つかりませんでした'
       } else if (errorMessage === 'Missing or insufficient permissions.') {

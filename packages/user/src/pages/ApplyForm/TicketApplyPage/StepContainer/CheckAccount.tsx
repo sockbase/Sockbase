@@ -1,9 +1,11 @@
 import { useCallback } from 'react'
-import FormButton from '../../../../components/Form/Button'
+import { MdArrowForward, MdLogout } from 'react-icons/md'
+import FormButton from '../../../../components/Form/FormButton'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import LoginForm from '../../../../components/LoginForm'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import type { User } from 'firebase/auth'
 
 interface Props {
@@ -44,14 +46,18 @@ const CheckAccount: React.FC<Props> = (props) => {
         <Alert type="info" title="別のアカウントで申し込みを行うには、ログアウトしてください。" />
         <FormSection>
           <FormItem>
-            <FormButton color="default" onClick={handleLogout}>ログアウト</FormButton>
+            <FormButton onClick={handleLogout}>
+              <IconLabel icon={<MdLogout />} label="ログアウト" />
+            </FormButton>
           </FormItem>
         </FormSection>
       </>}
       <FormSection>
         <FormItem>
-          <FormButton onClick={props.nextStep}>
-            申し込み説明画面へ進む
+          <FormButton
+            color="primary"
+            onClick={props.nextStep}>
+            <IconLabel icon={<MdArrowForward />} label="申し込み説明画面へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>
