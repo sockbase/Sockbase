@@ -186,7 +186,8 @@ const createTicketCoreAsync =
       createdAt: now,
       updatedAt: now,
       hashId,
-      createdUserId: createdUserId ?? null
+      createdUserId: createdUserId ?? null,
+      id: ''
     }
 
     const ticketResult = await firestore
