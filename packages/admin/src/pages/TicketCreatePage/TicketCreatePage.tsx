@@ -56,11 +56,11 @@ const TicketCreatePage: React.FC = () => {
 
   const getType = useCallback((typeId: string) => {
     return store?.types.find(t => t.id === typeId)
-  }, [])
+  }, [store])
 
   const getAssignURL = useCallback((hashId: string) => {
     return hashId && `${envHelper.userAppURL}/assign-tickets?thi=${hashId}`
-  }, [])
+  }, [envHelper.userAppURL])
 
   const createTicket = useCallback(() => {
     if (!storeId || !createTicketData.email || !createTicketData.typeId) return
