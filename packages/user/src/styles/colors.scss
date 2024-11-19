@@ -1,0 +1,77 @@
+:root {
+  --brand-color: #b14963;
+  --body-background-color: #f4f0f0;
+  --panel-background-color: #e4e0e0;
+  --brand-background-color: #242020;
+  --brand-background-active-color: #e4e0e0;
+  --inputfield-background-color: #fcfcfc;
+  --inputfield-active-background-color: #e0e0e0;
+  --text-color: #242020;
+  --text-foreground-color: #242020;
+  --text-light-color: #848080;
+  --link-color: #242020;
+  --border-color: #d4d0d0;
+  --outline-color: #908888;
+  --disabled-background-color: #d0d0d0;
+  --disabled-text-color: #a0a0a0;
+  --primary-color: #b14963;
+  --primary-active-color: #a0415b;
+  --warning-color: #f0a000;
+  --warning-active-color: #e09000;
+  --danger-color: #d63526;
+  --danger-active-color: #c52b1f;
+  --success-color: #379637;
+  --success-active-color: #2f7e2f;
+  --info-color: #1f6ec7;
+  --info-active-color: #1a63b2;
+  --default-color: #d4d0d0;
+  --white-color: #ffffff;
+  --pending-color: #a0a0a0;
+  --blink-keyframe-1: #c0c0c0;
+  --blink-keyframe-2: #d8d8d8;
+  --primary-blink-keyframe-1: #e989a1;
+  --primary-blink-keyframe-2: #fbaec3;
+  --scroll-thumb-color: #c0c0c0;
+  --scroll-thumb-active-color: #d0d0d0;
+  --sidebar-menu-item-background-color: #f8f8f8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brand-color: #b14963;
+    --body-background-color: #222020;
+    --panel-background-color: #2a2828;
+    --brand-background-color: #121010;
+    --brand-background-active-color: #323030;
+    --inputfield-background-color: #222020;
+    --inputfield-active-background-color: #2a2828;
+    --text-color: #d8d0d0;
+    --text-foreground-color: #d8d0d0;
+    --text-light-color: #888080;
+    --link-color: #d8d0d0;
+    --border-color: #444040;
+    --outline-color: #a8a0a0;
+    --disabled-background-color: #404040;
+    --disabled-text-color: #606060;
+    --primary-color: #b14963;
+    --primary-active-color: #a0415b;
+    --warning-color: #f0a000;
+    --warning-active-color: #e09000;
+    --danger-color: #e04b40;
+    --danger-active-color: #d63526;
+    --success-color: #379637;
+    --success-active-color: #2f7e2f;
+    --info-color: #1f6ec7;
+    --info-active-color: #1a63b2;
+    --default-color: #404040;
+    --white-color: #ffffff;
+    --pending-color: #404040;
+    --blink-keyframe-1: #323030;
+    --blink-keyframe-2: #403d3d;
+    --primary-blink-keyframe-1: #742c3e;
+    --primary-blink-keyframe-2: #8f3f53;
+    --scroll-thumb-color: #303030;
+    --scroll-thumb-active-color: #383838;
+    --sidebar-menu-item-background-color: #2a2828;
+  }
+}

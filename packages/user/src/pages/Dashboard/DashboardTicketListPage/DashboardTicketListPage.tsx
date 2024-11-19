@@ -99,11 +99,11 @@ const DashboardTicketListPage: React.FC = () => {
   }
 
   return (
-    <DashboardBaseLayout title="購入済みチケット一覧">
+    <DashboardBaseLayout title="購入済みチケット">
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle title="購入済みチケット一覧" icon={<MdWallet />} description="あなたが購入したチケットを表示中" />
+      <PageTitle title="購入済みチケット" icon={<MdWallet />} description="あなたが購入したチケットを表示中" />
 
       <Alert type="info" title="受け取ったチケットが見つからない場合">
         受け取ったチケットは <Link to="/dashboard/mytickets">マイチケット</Link> で確認できます。

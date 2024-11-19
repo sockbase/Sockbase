@@ -20,6 +20,6 @@ const Container = styled.label<{ bgColor: string }>`
   padding: 2px 5px;
   border-radius: 5px;
 
+  color: var(--white-color);
   background-color: ${props => props.bgColor};
-  color: var(--text-foreground-color);
 `

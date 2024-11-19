@@ -1,5 +1,6 @@
 import { MdRefresh } from 'react-icons/md'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
+import Blink from '../Keyframes/Blink'
 
 interface Props {
   text?: string
@@ -14,14 +15,6 @@ const Loading: React.FC<Props> = (props) => {
   )
 }
 
-const blinkKeyframe = keyframes`
-  0% {
-    background-color: var(--background-primary-brand-color);
-  }
-  100% {
-    background-color: var(--background-primary-brand2-color);
-  }
-`
 const Container = styled.div`
   display: grid;
   grid-template-rows: auto auto;
@@ -36,7 +29,7 @@ const Container = styled.div`
   }
   border-radius: 5px;
   
-  animation: ${blinkKeyframe} 0.5s ease-in-out alternate infinite;
+  animation: ${Blink} 0.5s ease-in-out alternate infinite;
 `
 const Icon = styled.div`
   grid-row: 1 / 3;

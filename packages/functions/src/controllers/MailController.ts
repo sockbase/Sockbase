@@ -1,5 +1,5 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import { type Change, firestore, https } from 'firebase-functions'
+import { type Change, firestore, https } from 'firebase-functions/v1'
 import {
   type SockbaseSendMailForEventPayload,
   type SockbaseApplicationDocument,

@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react'
-import FormButton from '../../../../components/Form/Button'
+import { MdArrowBack, MdCheck } from 'react-icons/md'
+import FormButton from '../../../../components/Form/FormButton'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
-import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrapper'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import UserDataView from '../../../../components/UserDataView'
 import useFirebaseError from '../../../../hooks/useFirebaseError'
 import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseStoreType } from 'sockbase'
@@ -73,20 +74,20 @@ const Confirm: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormButton
-            color="default"
             onClick={props.prevStep}
             disabled={isProgress}>
-            修正する
+            <IconLabel icon={<MdArrowBack />} label="修正する" />
           </FormButton>
         </FormItem>
+      </FormSection>
+      <FormSection>
         <FormItem>
-          <LoadingCircleWrapper isLoading={isProgress}>
-            <FormButton
-              onClick={handleSubmit}
-              disabled={isProgress}>
-              チケットを受け取る
-            </FormButton>
-          </LoadingCircleWrapper>
+          <FormButton
+            color="primary"
+            onClick={handleSubmit}
+            disabled={isProgress}>
+            <IconLabel icon={<MdCheck />} label="チケットを受け取る" />
+          </FormButton>
         </FormItem>
       </FormSection>
     </>

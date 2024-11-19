@@ -1,8 +1,10 @@
 import { useCallback, useState } from 'react'
+import { MdHome } from 'react-icons/md'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import Alert from '../../components/Parts/Alert'
+import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 import Loading from '../../components/Parts/Loading'
 import useFirebase from '../../hooks/useFirebase'
@@ -56,9 +58,7 @@ const IndexPage: React.FC = () => {
       {user === undefined
         ? <Loading text='認証情報' />
         : user !== null
-          ? <p>
-            {user.email} としてログイン中です
-          </p>
+          ? <Alert type='info' title={`${user.email} としてログイン中です`} />
           : <Login
             email={email}
             password={password}
@@ -71,7 +71,9 @@ const IndexPage: React.FC = () => {
 
       {user !== null && <FormSection>
         <FormItem>
-          <LinkButton to="/dashboard" disabled={!user}>マイページに進む</LinkButton>
+          <LinkButton color="primary" to="/dashboard" disabled={!user}>
+            <IconLabel icon={<MdHome />} label="マイページに進む" />
+          </LinkButton>
         </FormItem>
       </FormSection>}
 

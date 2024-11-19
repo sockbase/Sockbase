@@ -1,9 +1,11 @@
-import FormButton from '../../components/Form/Button'
+import { MdLogin, MdQuestionMark } from 'react-icons/md'
+import FormButton from '../../components/Form/FormButton'
+import FormInput from '../../components/Form/FormInput'
 import FormItem from '../../components/Form/FormItem'
+import FormLabel from '../../components/Form/FormLabel'
 import FormSection from '../../components/Form/FormSection'
-import FormInput from '../../components/Form/Input'
-import FormLabel from '../../components/Form/Label'
 import Alert from '../../components/Parts/Alert'
+import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 
 interface Props {
@@ -37,25 +39,26 @@ const Login: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
       <FormSection>
-        <FormItem>
+        <FormItem $inlined>
           <FormButton
+            color='primary'
             onClick={props.login}
-            disabled={!props.email || !props.password || props.isProcessing}>ログイン</FormButton>
-        </FormItem>
-        <FormItem>
+            disabled={!props.email || !props.password || props.isProcessing}>
+            <IconLabel icon={<MdLogin />} label="ログイン" />
+          </FormButton>
           <LinkButton
-            color="default"
             to="/reset-password"
             disabled={props.isProcessing}>
-              パスワードを忘れた場合
+            <IconLabel icon={<MdQuestionMark />} label="パスワードを忘れた場合" />
           </LinkButton>
         </FormItem>
-        {props.error &&
+        {props.error && (
           <FormItem>
             <Alert type="error" title={props.error.title}>
               {props.error.content}
             </Alert>
-          </FormItem>}
+          </FormItem>
+        )}
       </FormSection>
     </>
   )

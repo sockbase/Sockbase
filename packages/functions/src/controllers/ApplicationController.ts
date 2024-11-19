@@ -1,5 +1,4 @@
-import { firestore, https } from 'firebase-functions'
-
+import { firestore, https } from 'firebase-functions/v1'
 import ApplicationService from '../services/ApplicationService'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import type {
