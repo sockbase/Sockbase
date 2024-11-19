@@ -20,7 +20,8 @@ const IndexPage: React.FC = () => {
           <PageTitle
             icon={<MdHome />}
             title="ホーム" />
-        App
+
+            メニューから行いたい操作を選択してください。
         </>
       )}
     </DefaultLayout>
