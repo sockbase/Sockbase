@@ -1,4 +1,4 @@
-name: '🚀 Auto Deploy'
+name: '🚀 Deploy'
 
 on:
   push:
@@ -7,16 +7,16 @@ on:
       - 'develop'
     paths:
       - "packages/**"
-  # workflow_dispatch:
-  #   inputs:
-  #     deployment_target:
-  #       description: 'Deployment target'
-  #       required: true
-  #       default: 'staging'
-  #       type: choice
-  #       options:
-  #         - staging
-  #         - production
+  workflow_dispatch:
+    inputs:
+      deployment_target:
+        description: 'Deployment target'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
 
 jobs:
   build-and-deploy:
