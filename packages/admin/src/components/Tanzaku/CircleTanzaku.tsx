@@ -75,8 +75,14 @@ const CircleTanzaku: React.FC<Props> = (props) => {
                   <PrintTable>
                     <tbody>
                       <tr>
-                        <th>合体サークル</th>
-                        <td>{props.unionApp?.circle.name || '(空欄)'}</td>
+                        <th>合体先</th>
+                        <td>
+                          {
+                            props.app.unionCircleId
+                              ? props.unionApp?.circle.name || '(合体先が存在しない)'
+                              : '(空欄)'
+                          }
+                        </td>
                       </tr>
                       <tr>
                         <th>ﾌﾟﾁｵﾝﾘｰｺｰﾄﾞ</th>
@@ -166,6 +172,10 @@ const CircleTanzaku: React.FC<Props> = (props) => {
                   <PrintSectionTitle>3. 頒布物情報</PrintSectionTitle>
                   <PrintTable>
                     <tbody>
+                      <tr>
+                        <th>成人向け作品</th>
+                        <td>{props.app.circle.hasAdult ? '有り' : '無し'}</td>
+                      </tr>
                       <tr>
                         <th>ジャンル</th>
                         <td>{genreType?.name}</td>
