@@ -84,7 +84,7 @@ const CircleCut: React.FC<Props> = (props) => {
       </ul>
 
       <Alert type="warning" title="サークルカットの提出は必須です">
-        後でアップロードすることも可能ですが、<b>{formatByDate((props.event?.schedules.catalogInformationFixedAt ?? 0) - 1, 'YYYY年 M月 D日')}</b> までにご提出いただくようお願いいたします。
+        後でアップロードすることも可能ですが、<b>{formatByDate((props.event?.schedules.overviewFixedAt ?? 0) - 1, 'YYYY年 M月 D日')}</b> までにご提出いただくようお願いいたします。
       </Alert>
 
       <FormSection>

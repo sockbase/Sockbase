@@ -149,40 +149,36 @@ const DashboardCircleViewPage: React.FC = () => {
         </FormItem>
       </FormSection>
 
-      {payment?.status === 0 && <Alert type="warning" title="サークル参加費のお支払いをお願いいたします">
-        お支払いは <Link to="/dashboard/payments">決済履歴</Link> からお願いいたします。
-      </Alert>}
+      {payment?.status === 0 && (
+        <Alert type="warning" title="サークル参加費のお支払いをお願いいたします">
+          お支払いは <Link to="/dashboard/payments">決済履歴</Link> からお願いいたします。
+        </Alert>
+      )}
 
-      {circleCutURL === null && event && <Alert type="warning" title="サークルカットを提出してください">
-        サークルカットは <Link to={`/dashboard/applications/${hashId}/cut`}>こちら</Link> から提出できます。
-      </Alert>}
+      {circleCutURL === null && event && (
+        <Alert type="warning" title="サークルカットを提出してください">
+          サークルカットは <Link to={`/dashboard/applications/${hashId}/cut`}>こちら</Link> から提出できます。
+        </Alert>
+      )}
 
-      {!links && event &&
+      {!links && event && (
         <Alert type="warning" title="カタログ掲載情報を入力してください">
           カタログ掲載情報は <Link to={`/dashboard/applications/${hashId}/links`}>こちら</Link> から入力できます。
-        </Alert>}
+        </Alert>
+      )}
 
-      {links && event && event.schedules.catalogInformationFixedAt > now &&
-        <Alert type="info" title="カタログ掲載情報締切にご注意ください">
-          <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をカタログ等に掲載いたします。<br />
-          確定日以降の情報は掲載されませんのでご注意ください。
-        </Alert>}
-
-      {event && event.schedules.overviewFirstFixedAt > now &&
-        <Alert type="info" title="配置情報締切までに頒布物情報を更新してください">
-          <b>{formatByDate(event.schedules.overviewFirstFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報で配置を行います。<br />
-          申し込み時から大きく変更がある場合は必ず更新を行ってください。
-        </Alert>}
-
-      {event && event.schedules.overviewFirstFixedAt <= now && event.schedules.overviewFinalFixedAt > now &&
+      {event && event.schedules.overviewFixedAt > now && (
         <Alert type="info" title="頒布物情報を最新の状態にしてください">
-          <b>{formatByDate(event.schedules.overviewFinalFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をイベント運営で使用いたします。<br />
-          実際に頒布する作品の情報をご入力いただきますようお願いいたします。
-        </Alert>}
+          <b>{formatByDate(event.schedules.overviewFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をカタログやイベント運営で使用いたします。<br />
+          変更がある場合は、この日までに情報を更新してください。
+        </Alert>
+      )}
 
-      {event && event.schedules.publishSpaces <= now && space && <Alert type="success" title="スペース配置情報">
+      {event && event.schedules.publishSpaces <= now && space && (
+        <Alert type="success" title="スペース配置情報">
         あなたのサークル「{app?.circle.name}」は <b>{space.spaceName}</b> に配置されています。
-      </Alert>}
+        </Alert>
+      )}
 
       <TwoColumnsLayout>
         <>
