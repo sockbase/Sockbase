@@ -110,16 +110,12 @@ const DashboardCircleUpdateCutPage: React.FC = () => {
 
       <TwoColumnsLayout>
         <>
-          {event && (
-            event.schedules.catalogInformationFixedAt > now
-              ? <Alert type="info" title="カタログ掲載情報締切にご注意ください">
-                カタログ掲載情報の確定日は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> です。<br />
-                確定日以降の情報は掲載されませんのでご注意ください。
-              </Alert>
-              : <Alert type="warning" title="カタログ掲載情報は締め切りました">
-                カタログ掲載情報は <b>{formatByDate(event.schedules.catalogInformationFixedAt - 1, 'YYYY年 M月 D日')}</b> に締め切りました。<br />
-                更新してもカタログには反映されません。
-              </Alert>)}
+          {event && event.schedules.overviewFixedAt > now && (
+            <Alert type="info" title="サークルカットは差し替えましたか？">
+              <b>{formatByDate(event.schedules.overviewFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点のサークルカットをカタログに掲載いたします。<br />
+                変更がある場合は、この日までに差し替えてください。
+            </Alert>
+          )}
 
           <ul>
             <li>サークルカットを提出する際は、テンプレートを使用する必要があります。</li>

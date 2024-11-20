@@ -5,8 +5,8 @@ import FormInput from '../../../components/Form/FormInput'
 import FormItem from '../../../components/Form/FormItem'
 import FormLabel from '../../../components/Form/FormLabel'
 import FormSection from '../../../components/Form/FormSection'
-import EyecatchPreview from '../../../components/Parts/EyecatchPreview'
 import FormTextarea from '../../../components/Form/FormTextarea'
+import EyecatchPreview from '../../../components/Parts/EyecatchPreview'
 import useDayjs from '../../../hooks/useDayjs'
 import useFile from '../../../hooks/useFile'
 import type { SockbaseEvent, SockbaseEventDocument, SockbaseEventSpace } from 'sockbase'
@@ -46,9 +46,7 @@ const InformationImport: React.FC<Props> = (props) => {
     schedules: {
       startApplication: 0,
       endApplication: 0,
-      overviewFirstFixedAt: 0,
-      catalogInformationFixedAt: 0,
-      overviewFinalFixedAt: 0,
+      overviewFixedAt: 0,
       publishSpaces: 0,
       startEvent: 0,
       endEvent: 0
@@ -179,9 +177,7 @@ const InformationImport: React.FC<Props> = (props) => {
       schedules: {
         startApplication: ev.schedules.startApplication ?? 0,
         endApplication: ev.schedules.endApplication ?? 0,
-        overviewFirstFixedAt: ev.schedules.overviewFirstFixedAt ?? 0,
-        catalogInformationFixedAt: ev.schedules.catalogInformationFixedAt ?? 0,
-        overviewFinalFixedAt: ev.schedules.overviewFinalFixedAt ?? 0,
+        overviewFixedAt: ev.schedules.overviewFixedAt ?? 0,
         publishSpaces: ev.schedules.publishSpaces ?? 0,
         startEvent: ev.schedules.startEvent ?? 0,
         endEvent: ev.schedules.endEvent ?? 0
@@ -490,13 +486,6 @@ const InformationImport: React.FC<Props> = (props) => {
             onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, endApplication: new Date(e.target.value).getTime() } }))} />
         </FormItem>
         <FormItem>
-          <FormLabel>配置情報締切</FormLabel>
-          <FormInput
-            type="datetime-local"
-            value={formatByDate(event.schedules.overviewFirstFixedAt, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, overviewFirstFixedAt: new Date(e.target.value).getTime() } }))} />
-        </FormItem>
-        <FormItem>
           <FormLabel>配置発表</FormLabel>
           <FormInput
             type="datetime-local"
@@ -504,17 +493,10 @@ const InformationImport: React.FC<Props> = (props) => {
             onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, publishSpaces: new Date(e.target.value).getTime() } }))} />
         </FormItem>
         <FormItem>
-          <FormLabel>カタログ掲載情報締切</FormLabel>
+          <FormLabel>サークル情報変更締切</FormLabel>
           <FormInput
             type="datetime-local"
-            value={formatByDate(event.schedules.catalogInformationFixedAt, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, catalogInformationFixedAt: new Date(e.target.value).getTime() } }))} />
-        </FormItem>
-        <FormItem>
-          <FormLabel>頒布物情報更新締切</FormLabel>
-          <FormInput
-            type="datetime-local"
-            value={formatByDate(event.schedules.overviewFinalFixedAt, 'YYYY-MM-DDTHH:mm')}
+            value={formatByDate(event.schedules.overviewFixedAt, 'YYYY-MM-DDTHH:mm')}
             onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, overviewFinalFixedAt: new Date(e.target.value).getTime() } }))} />
         </FormItem>
         <FormItem>
