@@ -1,4 +1,4 @@
-name: '🚀 Auto Deploy'
+name: '🚀 Deploy'
 
 on:
   push:
@@ -7,16 +7,7 @@ on:
       - 'develop'
     paths:
       - "packages/**"
-  # workflow_dispatch:
-  #   inputs:
-  #     deployment_target:
-  #       description: 'Deployment target'
-  #       required: true
-  #       default: 'staging'
-  #       type: choice
-  #       options:
-  #         - staging
-  #         - production
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -66,5 +57,6 @@ jobs:
         run: |
           firebase use ${{ vars.VITE_FIREBASE_PROJECT_ID }}
           firebase target:apply hosting user ${{ (github.ref == 'refs/heads/master' && 'sb-user-prod') || (github.ref == 'refs/heads/develop' && 'sb-user-staging') || '' }}
+          firebase target:apply hosting admin ${{ (github.ref == 'refs/heads/master' && 'sb-admin-prod') || (github.ref == 'refs/heads/develop' && 'sb-admin-staging') || '' }}
           firebase target:apply hosting circlelist ${{ (github.ref == 'refs/heads/master' && 'sb-circlelist-prod') || (github.ref == 'refs/heads/develop' && 'sb-circlelist-staging') || '' }}
           firebase deploy
