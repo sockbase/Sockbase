@@ -57,9 +57,8 @@ service cloud.firestore {
     }
     
     match /stores/{storeId} {
-      allow read: if resource.data.isPublic
-        || request.time.toMillis() >= resource.data.schedules.startApplication
-        || isOrganizationStaff(request.auth.uid, resource.data._organization.id);
+      allow read: if isOrganizationStaff(request.auth.uid, resource.data._organization.id)
+        || (resource.data.isPublic && request.time.toMillis() >= resource.data.schedules.startApplication);
       allow write: if isSystemAdmin(request.auth.uid);
 
       match /_users/{userId} {
@@ -71,9 +70,8 @@ service cloud.firestore {
     }
     
   	match /events/{eventId} {
-    	allow read: if resource.data.isPublic
-        || request.time.toMillis() >= resource.data.schedules.startApplication
-        || isOrganizationStaff(request.auth.uid, resource.data._organization.id);
+    	allow read: if isOrganizationStaff(request.auth.uid, resource.data._organization.id)
+        || (resource.data.isPublic && request.time.toMillis() >= resource.data.schedules.startApplication);
       allow write: if isSystemAdmin(request.auth.uid);
 
       match /_users/{userId} {
