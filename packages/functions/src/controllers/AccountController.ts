@@ -4,6 +4,24 @@ import { firestore, type EventContext, type Change } from 'firebase-functions/v1
 import AccountService from '../services/AccountService'
 import type { SockbaseAccountDocument, SockbaseRole } from 'sockbase'
 
+export const onCreateOrganizationRoles = firestore
+  .document('/organizations/{organizationId}/users/{userId}')
+  .onCreate(
+    async (
+      snapshot: QueryDocumentSnapshot,
+      context: EventContext<{ organizationId: string, userId: string }>
+    ) => {
+      const { userId, organizationId } = context.params
+
+      await AccountService
+        .updateUserRoleByOrganizationAsync(
+          userId,
+          organizationId,
+          snapshot.data().role as SockbaseRole)
+        .then(() => console.log('organization role updated'))
+        .catch(err => { throw err })
+    })
+
 export const onChangeOrganizationRoles = firestore
   .document('/organizations/{organizationId}/users/{userId}')
   .onUpdate(
