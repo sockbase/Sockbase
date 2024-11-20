@@ -497,7 +497,7 @@ const InformationImport: React.FC<Props> = (props) => {
           <FormInput
             type="datetime-local"
             value={formatByDate(event.schedules.overviewFixedAt, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, overviewFinalFixedAt: new Date(e.target.value).getTime() } }))} />
+            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, overviewFixedAt: new Date(e.target.value).getTime() } }))} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント開始</FormLabel>
