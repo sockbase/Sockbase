@@ -10,6 +10,7 @@ const PrintTable = styled.table`
   width: 100%;
   th, td {
     padding: 0.5mm 1mm;
+    word-break: break-all;
   }
   tbody {
     border: 1px solid black;
