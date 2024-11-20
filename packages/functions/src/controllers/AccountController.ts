@@ -28,6 +28,19 @@ export const onChangeOrganizationRoles = firestore
         .catch(err => { throw err })
     })
 
+export const onCreateUserRoles = firestore
+  .document('/users/{userId}/_roles/{organizationId}')
+  .onCreate(
+    async (
+      _,
+      context: EventContext<{ userId: string, organizationId: string }>
+    ) => {
+      await AccountService.updateRolesByUserIdAsync(context.params.userId)
+        .then(() => console.log('roles claim updated'))
+        .catch(err => { throw err })
+    }
+  )
+
 export const onChangeUserRoles = firestore
   .document('/users/{userId}/_roles/{organizationId}')
   .onUpdate(
