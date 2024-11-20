@@ -486,18 +486,18 @@ const InformationImport: React.FC<Props> = (props) => {
             onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, endApplication: new Date(e.target.value).getTime() } }))} />
         </FormItem>
         <FormItem>
-          <FormLabel>配置発表</FormLabel>
-          <FormInput
-            type="datetime-local"
-            value={formatByDate(event.schedules.publishSpaces, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, publishSpaces: new Date(e.target.value).getTime() } }))} />
-        </FormItem>
-        <FormItem>
           <FormLabel>サークル情報変更締切</FormLabel>
           <FormInput
             type="datetime-local"
             value={formatByDate(event.schedules.overviewFixedAt, 'YYYY-MM-DDTHH:mm')}
             onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, overviewFixedAt: new Date(e.target.value).getTime() } }))} />
+        </FormItem>
+        <FormItem>
+          <FormLabel>配置発表</FormLabel>
+          <FormInput
+            type="datetime-local"
+            value={formatByDate(event.schedules.publishSpaces, 'YYYY-MM-DDTHH:mm')}
+            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, publishSpaces: new Date(e.target.value).getTime() } }))} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント開始</FormLabel>
@@ -515,7 +515,7 @@ const InformationImport: React.FC<Props> = (props) => {
         </FormItem>
       </FormSection>
 
-      <h3>ジャンル</h3>
+      <h3>配置希望ジャンル</h3>
       <table>
         <thead>
           <tr>
