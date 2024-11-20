@@ -89,7 +89,7 @@ const Confirm: React.FC<Props> = (props) => {
             </td>
           </tr>}
           <tr>
-            <th>頒布物のジャンル</th>
+            <th>配置希望ジャンル</th>
             <td>{props.selectedGenre?.name}</td>
           </tr>
           <tr>

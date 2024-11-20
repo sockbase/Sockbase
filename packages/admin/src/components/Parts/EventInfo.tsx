@@ -105,7 +105,7 @@ const EventInfo: React.FC<Props> = (props) => {
         </tbody>
       </table>
 
-      <h3>ジャンル</h3>
+      <h3>配置希望ジャンル</h3>
       <table>
         <thead>
           <tr>

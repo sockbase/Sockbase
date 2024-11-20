@@ -268,7 +268,7 @@ const CircleViewPage: React.FC = () => {
                 </td>
               </tr>
               <tr>
-                <th>頒布物のジャンル</th>
+                <th>配置希望ジャンル</th>
                 <td>{genreType?.name ?? <BlinkField />}</td>
               </tr>
               <tr>

@@ -333,7 +333,7 @@ const DashboardCircleViewPage: React.FC = () => {
                   : <BlinkField />}</td>
               </tr>
               <tr>
-                <th>頒布物のジャンル</th>
+                <th>配置希望ジャンル</th>
                 <td>{genreName || <BlinkField />}</td>
               </tr>
               <tr>
