@@ -14,12 +14,12 @@ const PrintTable = styled.table`
     max-height: 20mm;
   }
   tbody {
-    border: 1px solid black;
+    border: 0.25mm solid black;
     th {
       width: 30%;
     }
     th, td {
-      border: 1px solid black;
+      border: 0.25mm solid black;
       vertical-align: top;
     }
   }

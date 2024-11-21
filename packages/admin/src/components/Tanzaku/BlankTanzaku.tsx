@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import useDayjs from '../../hooks/useDayjs'
-import B5Page from '../Print/A5Page'
+import A5Page from '../Print/A5Page'
 import PrintContainer from '../Print/PrintContainer'
 import PrintPlaceHolderField from '../Print/PrintPlaceHolderField'
 import type { SockbaseEventDocument } from 'sockbase'
@@ -14,7 +14,7 @@ interface Props {
 const BlankTanzaku: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
   return (
-    <B5Page>
+    <A5Page>
       <PrintContainer>
         <Header>
           <OrganizationName>{props.event._organization.name}</OrganizationName>
@@ -32,7 +32,7 @@ const BlankTanzaku: React.FC<Props> = (props) => {
           {formatByDate(props.now, 'YYYY/MM/DD HH:mm:ss')}
         </Footer>
       </PrintContainer>
-    </B5Page>
+    </A5Page>
   )
 }
 
@@ -43,8 +43,7 @@ const Header = styled.div`
 `
 const OrganizationName = styled.div``
 const EventName = styled.div`
-  margin-top: -1mm;
-  font-size: 7mm;
+  font-size: 2em;
   font-weight: bold;
 `
 const Main = styled.div``
