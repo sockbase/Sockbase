@@ -184,20 +184,30 @@ const CircleTanzaku: React.FC<Props> = (props) => {
                       </tr>
                       <tr>
                         <th>頒布物概要</th>
-                        <td style={{ height: '20mm' }}>{props.overview?.description ?? props.app.overview.description}</td>
+                        <td>
+                          <HeightLimit>
+                            {props.overview?.description ?? props.app.overview.description}
+                          </HeightLimit>
+                        </td>
                       </tr>
                       <tr>
                         <th>総搬入量</th>
-                        <td style={{ height: '20mm' }}>{props.overview?.totalAmount ?? props.app.overview.totalAmount}</td>
+                        <td>
+                          <HeightLimit>
+                            {props.overview?.totalAmount ?? props.app.overview.totalAmount}
+                          </HeightLimit>
+                        </td>
                       </tr>
                       <tr>
                         <th>ｻｰｸﾙｶｯﾄ</th>
                         <td style={{ fontSize: '0' }}>
-                          {
-                            props.circleCutURL
-                              ? <CircleCut src={props.circleCutURL} />
-                              : '(未提出)'
-                          }
+                          <CircleCutArea>
+                            {
+                              props.circleCutURL
+                                ? <CircleCut src={props.circleCutURL} />
+                                : '(未提出)'
+                            }
+                          </CircleCutArea>
                         </td>
                       </tr>
                     </tbody>
@@ -278,9 +288,18 @@ const Indicator = styled.div<{ $active: boolean }>`
 const IndicatorIcon = styled.div`
   font-size: 10pt;
 `
+const CircleCutArea = styled.div`
+  height: 40mm;
+  text-align: center;
+`
 const CircleCut = styled.img`
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
 `
 const Footer = styled.div`
   text-align: right;
+`
+const HeightLimit = styled.div`
+  height: 20mm;
+  overflow: hidden;
 `

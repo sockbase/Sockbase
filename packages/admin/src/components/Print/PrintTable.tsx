@@ -11,6 +11,7 @@ const PrintTable = styled.table`
   th, td {
     padding: 0.5mm 1mm;
     word-break: break-all;
+    max-height: 20mm;
   }
   tbody {
     border: 1px solid black;

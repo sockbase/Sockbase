@@ -83,8 +83,7 @@ const Header = styled.div`
 `
 const OrganizationName = styled.div``
 const EventName = styled.div`
-  margin-top: -1mm;
-  font-size: 7mm;
+  font-size: 2em;
   font-weight: bold;
 `
 const Main = styled.div``
