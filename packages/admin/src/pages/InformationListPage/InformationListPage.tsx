@@ -50,6 +50,11 @@ const InformationListPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
+          {!informations && (
+            <tr>
+              <th colSpan={3}>読み込み中…</th>
+            </tr>
+          )}
           {informations?.sort((a, b) => b.updatedAt - a.updatedAt)
             .map(i => <tr key={i.id}>
               <td>{formatByDate(i.updatedAt, 'YYYY年 M月 D日')}</td>

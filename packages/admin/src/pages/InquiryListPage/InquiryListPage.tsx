@@ -83,7 +83,7 @@ const InquiryListPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredInquiries === undefined && (
+          {!filteredInquiries && (
             <tr>
               <th colSpan={4}>
                 読み込み中…
