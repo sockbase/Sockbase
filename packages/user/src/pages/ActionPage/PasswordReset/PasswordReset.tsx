@@ -3,8 +3,8 @@ import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import Alert from '../../../components/Parts/Alert'
 import LinkButton from '../../../components/Parts/LinkButton'
+import useError from '../../../hooks/useError'
 import useFirebase from '../../../hooks/useFirebase'
-import useFirebaseError from '../../../hooks/useFirebaseError'
 import PasswordInputForm from './PasswordInputForm'
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 const PasswordReset: React.FC<Props> = (props) => {
   const { verifyPasswordResetCodeAsync, confirmPasswordResetAsync } = useFirebase()
-  const { localize } = useFirebaseError()
+  const { convertErrorMessage } = useError()
 
   const [errorMessage, setErrorMessage] = useState<string | null>()
   const [isReady, setReady] = useState(false)
@@ -22,7 +22,7 @@ const PasswordReset: React.FC<Props> = (props) => {
     verifyPasswordResetCodeAsync(props.oobCode)
       .then(() => setReady(true))
       .catch(err => {
-        setErrorMessage(localize(err.message))
+        setErrorMessage(convertErrorMessage(err))
         throw err
       })
   }, [props.oobCode])
@@ -31,7 +31,7 @@ const PasswordReset: React.FC<Props> = (props) => {
     await confirmPasswordResetAsync(props.oobCode, password)
       .then(() => setChangedPassword(true))
       .catch(err => {
-        setErrorMessage(localize(err.message))
+        setErrorMessage(convertErrorMessage(err))
         throw err
       })
   }, [props.oobCode])

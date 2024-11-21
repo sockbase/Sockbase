@@ -15,7 +15,7 @@ interface Props {
   setPassword: (password: string) => void
   login: () => void
   isProcessing: boolean
-  error?: { title: string, content: string } | null
+  errorMessage: string | null | undefined
 }
 const Login: React.FC<Props> = (props) => {
   return (
@@ -52,10 +52,10 @@ const Login: React.FC<Props> = (props) => {
             <IconLabel icon={<MdQuestionMark />} label="パスワードを忘れた場合" />
           </LinkButton>
         </FormItem>
-        {props.error && (
+        {props.errorMessage && (
           <FormItem>
-            <Alert type="error" title={props.error.title}>
-              {props.error.content}
+            <Alert type="error" title="エラーが発生しました">
+              {props.errorMessage}
             </Alert>
           </FormItem>
         )}

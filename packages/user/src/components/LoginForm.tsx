@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { MdLogin, MdQuestionMark } from 'react-icons/md'
+import useError from '../hooks/useError'
 import useFirebase from '../hooks/useFirebase'
-import useFirebaseError from '../hooks/useFirebaseError'
 import useValidate from '../hooks/useValidate'
 import FormButton from './Form/FormButton'
 import FormInput from './Form/FormInput'
@@ -15,7 +15,7 @@ import LinkButton from './Parts/LinkButton'
 const LoginForm: React.FC = () => {
   const validator = useValidate()
   const { loginByEmailAsync } = useFirebase()
-  const { localize } = useFirebaseError()
+  const { convertErrorMessage } = useError()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,7 +35,7 @@ const LoginForm: React.FC = () => {
     setProgress(true)
     loginByEmailAsync(email, password)
       .catch(err => {
-        setError(localize(err.message))
+        setError(convertErrorMessage(err))
         setProgress(false)
         throw err
       })

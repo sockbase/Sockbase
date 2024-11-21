@@ -8,7 +8,7 @@ import IconLabel from '../../../../components/Parts/IconLabel'
 import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrapper'
 import ProgressBar from '../../../../components/Parts/ProgressBar'
 import UserDataView from '../../../../components/UserDataView'
-import useFirebaseError from '../../../../hooks/useFirebaseError'
+import useError from '../../../../hooks/useError'
 import type {
   SockbaseEventDocument,
   SockbaseApplication,
@@ -34,7 +34,7 @@ interface Props {
   nextStep: () => void
 }
 const Confirm: React.FC<Props> = (props) => {
-  const { localize } = useFirebaseError()
+  const { convertErrorMessage } = useError()
 
   const [isProgress, setProgress] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>()
@@ -45,7 +45,7 @@ const Confirm: React.FC<Props> = (props) => {
     props.submitAsync()
       .then(() => props.nextStep())
       .catch(err => {
-        setErrorMessage(localize(err.message))
+        setErrorMessage(convertErrorMessage(err))
         setProgress(false)
         throw err
       })
