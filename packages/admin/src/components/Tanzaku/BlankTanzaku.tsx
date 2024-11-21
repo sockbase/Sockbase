@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import useDayjs from '../../hooks/useDayjs'
-import B5Page from '../Print/B5Page'
+import B5Page from '../Print/A5Page'
 import PrintContainer from '../Print/PrintContainer'
 import PrintPlaceHolderField from '../Print/PrintPlaceHolderField'
 import type { SockbaseEventDocument } from 'sockbase'

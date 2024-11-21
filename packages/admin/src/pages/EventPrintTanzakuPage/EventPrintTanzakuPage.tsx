@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { MdPrint } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { type SockbaseApplicationLinksDocument, type SockbaseAccount, type SockbaseApplicationDocument, type SockbaseApplicationMeta, type SockbaseEventDocument } from 'sockbase'
+import { type SockbaseApplicationLinksDocument, type SockbaseAccount, type SockbaseApplicationDocument, type SockbaseApplicationMeta, type SockbaseEventDocument, type SockbaseApplicationOverviewDocument } from 'sockbase'
 import FormButton from '../../components/Form/FormButton'
 import FormInput from '../../components/Form/FormInput'
 import FormItem from '../../components/Form/FormItem'
@@ -28,7 +28,8 @@ const EventPrintTanzakuPage: React.FC = () => {
   const {
     getApplicationsByEventIdAsync,
     getLinksByApplicationIdAsync,
-    getCircleCutURLByHashIdNullableAsync
+    getCircleCutURLByHashIdNullableAsync,
+    getOverviewByIdNullableAsync
   } = useApplication()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
 
@@ -37,6 +38,7 @@ const EventPrintTanzakuPage: React.FC = () => {
   const [appLinks, setAppLinks] = useState<Record<string, SockbaseApplicationLinksDocument>>()
   const [users, setUsers] = useState<Record<string, SockbaseAccount>>()
   const [circleCutURLs, setCircleCutURLs] = useState<Record<string, string | null>>()
+  const [overviews, setOverviews] = useState<Record<string, SockbaseApplicationOverviewDocument | null>>()
 
   const [blankTanzakuCount, setBlankTanzakuCount] = useState('0')
 
@@ -78,8 +80,15 @@ const EventPrintTanzakuPage: React.FC = () => {
           id: appId,
           data: await getLinksByApplicationIdAsync(appId)
         })))
-          .then(fetchedLinks => fetchedLinks.reduce((acc, link) => ({ ...acc, [link.id]: link.data }), {}))
+          .then(fetchedLinks => fetchedLinks.reduce((p, c) => ({ ...p, [c.id]: c.data }), {}))
           .then(setAppLinks)
+          .catch(err => { throw err })
+        Promise.all(appIds.map(async appId => ({
+          id: appId,
+          data: await getOverviewByIdNullableAsync(appId)
+        })))
+          .then(fetchedOverviews => fetchedOverviews.reduce((p, c) => ({ ...p, [c.id]: c.data }), {}))
+          .then(setOverviews)
           .catch(err => { throw err })
 
         const userIds = fetchedApps.map(app => app.userId)
@@ -87,7 +96,7 @@ const EventPrintTanzakuPage: React.FC = () => {
           id: userId,
           data: await getUserDataByUserIdAndEventIdAsync(userId, eventId)
         })))
-          .then(fetchedUsers => fetchedUsers.reduce((acc, user) => ({ ...acc, [user.id]: user.data }), {}))
+          .then(fetchedUsers => fetchedUsers.reduce((p, c) => ({ ...p, [c.id]: c.data }), {}))
           .then(setUsers)
           .catch(err => { throw err })
 
@@ -96,7 +105,7 @@ const EventPrintTanzakuPage: React.FC = () => {
           hashId,
           url: await getCircleCutURLByHashIdNullableAsync(hashId)
         })))
-          .then(fetchedURLs => fetchedURLs.reduce((acc, url) => ({ ...acc, [url.hashId]: url.url }), {}))
+          .then(fetchedURLs => fetchedURLs.reduce((p, c) => ({ ...p, [c.hashId]: c.url }), {}))
           .then(setCircleCutURLs)
           .catch(err => { throw err })
       })
@@ -162,19 +171,22 @@ const EventPrintTanzakuPage: React.FC = () => {
             unionAppCount={unionAppCount} />
         )}
         {event && confirmedApps?.map((a, i) => {
-          if (!a.hashId || !users || !appLinks) return <></>
+          if (!a.hashId || !users || !appLinks || !overviews) return <></>
 
           const appLink = appLinks?.[a.id] ?? null
           const unionApp = a.unionCircleId
             ? confirmedApps.find(app => app.hashId === a.unionCircleId)
             : null
           const circleCutURL = circleCutURLs?.[a.hashId] ?? null
+          const overview = overviews[a.id] ?? null
+
           return (
             <CircleTanzaku
               key={a.id}
               now={now}
               event={event}
               app={a}
+              overview={overview}
               appLink={appLink}
               unionApp={unionApp}
               circleCutURL={circleCutURL}
