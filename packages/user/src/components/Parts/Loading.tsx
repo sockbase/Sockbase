@@ -9,7 +9,7 @@ const Loading: React.FC<Props> = (props) => {
   return (
     <Container>
       <Icon><MdRefresh /></Icon>
-      <Title>読み込み中...</Title>
+      <Title>読み込み中…</Title>
       {props.text && <Description>{props.text}を読み込んでいます。</Description>}
     </Container>
   )

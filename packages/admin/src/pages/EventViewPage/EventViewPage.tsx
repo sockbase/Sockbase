@@ -187,7 +187,7 @@ const EventViewPage: React.FC = () => {
         <tbody>
           {!apps && (
             <tr>
-              <td colSpan={9}>読込中です</td>
+              <td colSpan={9}>読み込み中…</td>
             </tr>
           )}
           {apps && apps.length === 0 && (

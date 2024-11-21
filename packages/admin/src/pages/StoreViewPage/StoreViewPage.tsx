@@ -318,7 +318,7 @@ const StoreViewPage: React.FC = () => {
         <tbody>
           {!filteredTickets && (
             <tr>
-              <td colSpan={10}>読込中です…</td>
+              <td colSpan={10}>読み込み中…</td>
             </tr>
           )}
           {filteredTickets && filteredTickets.length === 0 && (

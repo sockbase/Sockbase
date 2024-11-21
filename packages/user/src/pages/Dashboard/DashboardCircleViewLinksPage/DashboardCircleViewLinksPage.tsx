@@ -75,7 +75,7 @@ const DashboardCircleViewLinksPage: React.FC = () => {
         <tbody>
           {docLinks === undefined && (
             <tr>
-              <td colSpan={2}>読み込み中です...</td>
+              <td colSpan={2}>読み込み中…</td>
             </tr>
           )}
           {docLinks?.length === 0 && (
