@@ -5,6 +5,7 @@ import FormInput from '../../components/Form/FormInput'
 import FormItem from '../../components/Form/FormItem'
 import FormLabel from '../../components/Form/FormLabel'
 import FormSection from '../../components/Form/FormSection'
+import Alert from '../../components/Parts/Alert'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
 import useFirebase from '../../hooks/useFirebase'
@@ -16,13 +17,16 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isProgress, setIsProgress] = useState(false)
+  const [errorMessage, setErrorMessage] = useState(false)
 
   const handleLogin = useCallback(() => {
     if (!email || !password) return
     setIsProgress(true)
+    setErrorMessage(false)
     loginByEmailAsync(email, password)
       .catch(err => {
         setIsProgress(false)
+        setErrorMessage(true)
         throw err
       })
   }, [email, password])
@@ -59,6 +63,9 @@ const LoginPage: React.FC = () => {
           </FormButton>
         </FormItem>
       </FormSection>
+      {errorMessage && (
+        <Alert type="error" title="エラーが発生しました" />
+      )}
     </DefaultLayout>
   )
 }
