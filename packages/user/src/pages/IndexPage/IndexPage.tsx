@@ -7,8 +7,8 @@ import Alert from '../../components/Parts/Alert'
 import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 import Loading from '../../components/Parts/Loading'
+import useError from '../../hooks/useError'
 import useFirebase from '../../hooks/useFirebase'
-import useFirebaseError from '../../hooks/useFirebaseError'
 import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import InformationList from './InformationList'
 import Login from './Login'
@@ -22,25 +22,24 @@ const IndexPage: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { user, loginByEmailAsync } = useFirebase()
-  const { localize: localizeFirebaseError } = useFirebaseError()
+  const { convertErrorMessage } = useError()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isProccesing, setProcessing] = useState(false)
-  const [error, setError] = useState<{ title: string, content: string } | null>()
+  const [errorMessage, setErrorMessage] = useState<string | null>()
 
   const fromPathName = location.state?.from?.pathname
 
   const handleLogin = useCallback(() => {
     setProcessing(true)
-    setError(null)
+    setErrorMessage(null)
 
     loginByEmailAsync(email, password)
       .then(() => navigate(fromPathName || '/dashboard', { replace: true }))
-      .catch((e: Error) => {
-        const message = localizeFirebaseError(e.message)
-        setError({ title: 'ログインに失敗しました', content: message })
-        throw e
+      .catch((err) => {
+        setErrorMessage(convertErrorMessage(err))
+        throw err
       })
       .finally(() => {
         setProcessing(false)
@@ -66,7 +65,7 @@ const IndexPage: React.FC = () => {
             setPassword={password => setPassword(password)}
             login={handleLogin}
             isProcessing={isProccesing}
-            error={error} />
+            errorMessage={errorMessage} />
       }
 
       {user !== null && <FormSection>

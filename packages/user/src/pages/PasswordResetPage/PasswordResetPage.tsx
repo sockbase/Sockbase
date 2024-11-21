@@ -1,20 +1,20 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
-import FormItem from '../../components/Form/FormItem'
-import FormSection from '../../components/Form/FormSection'
 import FormInput from '../../components/Form/FormInput'
+import FormItem from '../../components/Form/FormItem'
 import FormLabel from '../../components/Form/FormLabel'
+import FormSection from '../../components/Form/FormSection'
 import Alert from '../../components/Parts/Alert'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
+import useError from '../../hooks/useError'
 import useFirebase from '../../hooks/useFirebase'
-import useFirebaseError from '../../hooks/useFirebaseError'
 import useValidate from '../../hooks/useValidate'
 import DefaultBaseLayout from '../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 
 const PasswordResetPage: React.FC = () => {
   const validator = useValidate()
-  const { localize } = useFirebaseError()
+  const { convertErrorMessage } = useError()
   const { sendPasswordResetURLAsync } = useFirebase()
 
   const [email, setEmail] = useState('')
@@ -32,7 +32,7 @@ const PasswordResetPage: React.FC = () => {
     sendPasswordResetURLAsync(email)
       .then(() => setSuccess(true))
       .catch((err: Error) => {
-        setErrorMessage(localize(err.message))
+        setErrorMessage(convertErrorMessage(err))
         setProgress(false)
       })
   }

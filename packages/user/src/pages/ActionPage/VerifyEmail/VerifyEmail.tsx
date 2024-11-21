@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import Alert from '../../../components/Parts/Alert'
+import useError from '../../../hooks/useError'
 import useFirebase from '../../../hooks/useFirebase'
-import useFirebaseError from '../../../hooks/useFirebaseError'
 
 interface Props {
   oobCode: string
 }
 const VerifyEmail: React.FC<Props> = (props) => {
   const { applyActionCodeAsync } = useFirebase()
-  const { localize } = useFirebaseError()
+  const { convertErrorMessage } = useError()
 
   const [isSuccess, setSuccess] = useState<boolean>()
   const [errorMessage, setErrorMessage] = useState<string>()
@@ -23,7 +23,7 @@ const VerifyEmail: React.FC<Props> = (props) => {
       })
       .catch(err => {
         if (isRequested.current) return
-        setErrorMessage(localize(err.message))
+        setErrorMessage(convertErrorMessage(err))
         throw err
       })
   }, [])

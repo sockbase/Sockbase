@@ -13,8 +13,8 @@ import IconLabel from '../../../components/Parts/IconLabel'
 import Loading from '../../../components/Parts/Loading'
 import LoadingCircleWrapper from '../../../components/Parts/LoadingCircleWrapper'
 import useDayjs from '../../../hooks/useDayjs'
+import useError from '../../../hooks/useError'
 import useFirebase from '../../../hooks/useFirebase'
-import useFirebaseError from '../../../hooks/useFirebaseError'
 import usePostalCode from '../../../hooks/usePostalCode'
 import useUserData from '../../../hooks/useUserData'
 import useValidate from '../../../hooks/useValidate'
@@ -28,13 +28,13 @@ const DashboardSettingPage: React.FC = () => {
   const { getMyUserDataAsync, updateUserDataAsync } = useUserData()
   const validator = useValidate()
   const { getAddressByPostalCode } = usePostalCode()
-  const { localize: localizeFirebaseError } = useFirebaseError()
+  const { convertErrorMessage } = useError()
   const { formatByDate } = useDayjs()
 
   const [isProgress, setProgress] = useState(false)
   const [sentPasswordResetUrl, setSentPasswordResetUrl] = useState(false)
   const [userData, setUserData] = useState<SockbaseAccount>()
-  const [error, setError] = useState<Error | null>()
+  const [errorMessage, setErrorMessage] = useState<string | null>()
   const [displayBirthday, setDisplayBirthday] = useState('1990-01-01')
   const [displayGender, setDisplayGender] = useState('')
 
@@ -57,7 +57,7 @@ const DashboardSettingPage: React.FC = () => {
   const handleUpdate = useCallback(() => {
     if (!user || !userData || errorCount !== 0) return
 
-    setError(null)
+    setErrorMessage(null)
     setProgress(true)
 
     updateUserDataAsync(user.uid, userData)
@@ -66,7 +66,7 @@ const DashboardSettingPage: React.FC = () => {
         setProgress(false)
       })
       .catch(err => {
-        setError(new Error(localizeFirebaseError(err)))
+        setErrorMessage(convertErrorMessage(err))
       })
   }, [user, userData, errorCount])
 
@@ -202,7 +202,7 @@ const DashboardSettingPage: React.FC = () => {
               </FormItem>
             </FormSection>
 
-            {error && <Alert type="error" title="エラーが発生しました">{error.message}</Alert>}
+            {errorMessage && <Alert type="error" title="エラーが発生しました">{errorMessage}</Alert>}
             {errorCount !== 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
 
             <FormSection>

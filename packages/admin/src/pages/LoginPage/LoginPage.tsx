@@ -8,25 +8,27 @@ import FormSection from '../../components/Form/FormSection'
 import Alert from '../../components/Parts/Alert'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
+import useError from '../../hooks/useError'
 import useFirebase from '../../hooks/useFirebase'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 
 const LoginPage: React.FC = () => {
   const { loginByEmailAsync } = useFirebase()
+  const { convertErrorMessage } = useError()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isProgress, setIsProgress] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>()
 
   const handleLogin = useCallback(() => {
     if (!email || !password) return
     setIsProgress(true)
-    setErrorMessage(false)
+    setErrorMessage(null)
     loginByEmailAsync(email, password)
       .catch(err => {
         setIsProgress(false)
-        setErrorMessage(true)
+        setErrorMessage(convertErrorMessage(err))
         throw err
       })
   }, [email, password])
@@ -64,7 +66,9 @@ const LoginPage: React.FC = () => {
         </FormItem>
       </FormSection>
       {errorMessage && (
-        <Alert type="error" title="エラーが発生しました" />
+        <Alert type="error" title="エラーが発生しました">
+          {errorMessage}
+        </Alert>
       )}
     </DefaultLayout>
   )
