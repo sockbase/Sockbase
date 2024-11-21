@@ -3,6 +3,18 @@ import { MdCheck, MdClose, MdEdit, MdOutlineDeleteForever, MdPendingActions } fr
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import sockbaseShared from 'shared'
+import {
+  type SockbaseApplicationHashIdDocument,
+  type SockbaseEventDocument,
+  type SockbaseApplicationDocument,
+  type SockbaseApplicationMeta,
+  type SockbaseAccount,
+  type SockbaseApplicationLinksDocument,
+  type SockbaseApplicationStatus,
+  type SockbaseSpaceDocument,
+  type SockbasePaymentDocument,
+  type SockbaseApplicationOverviewDocument
+} from 'sockbase'
 import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
@@ -21,17 +33,6 @@ import usePayment from '../../hooks/usePayment'
 import useRole from '../../hooks/useRole'
 import useUserData from '../../hooks/useUserData'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
-import type {
-  SockbaseApplicationHashIdDocument,
-  SockbaseEventDocument,
-  SockbaseApplicationDocument,
-  SockbaseApplicationMeta,
-  SockbaseAccount,
-  SockbaseApplicationLinksDocument,
-  SockbaseApplicationStatus,
-  SockbaseSpaceDocument,
-  SockbasePaymentDocument
-} from 'sockbase'
 
 const CircleViewPage: React.FC = () => {
   const { hashId } = useParams()
@@ -41,7 +42,8 @@ const CircleViewPage: React.FC = () => {
     getLinksByApplicationIdAsync,
     setApplicationStatusByIdAsync,
     deleteApplicationAsync,
-    getCircleCutURLByHashIdNullableAsync
+    getCircleCutURLByHashIdNullableAsync,
+    getOverviewByIdNullableAsync
   } = useApplication()
   const {
     getEventByIdAsync,
@@ -59,6 +61,7 @@ const CircleViewPage: React.FC = () => {
   const [circleCutURL, setCircleCutURL] = useState<string | null>()
   const [space, setSpace] = useState<SockbaseSpaceDocument | null>()
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
+  const [overview, setOverview] = useState<SockbaseApplicationOverviewDocument | null>()
 
   const [isDeletedApplication, setIsDeletedApplication] = useState(false)
 
@@ -131,6 +134,9 @@ const CircleViewPage: React.FC = () => {
       .catch(err => { throw err })
     getPaymentByIdAsync(appHash.paymentId)
       .then(setPayment)
+      .catch(err => { throw err })
+    getOverviewByIdNullableAsync(appHash.applicationId)
+      .then(setOverview)
       .catch(err => { throw err })
 
     if (appHash.spaceId) {
@@ -273,11 +279,11 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>頒布物概要</th>
-                <td>{app?.overview.description ?? <BlinkField />}</td>
+                <td>{overview?.description ?? app?.overview.description ?? <BlinkField />}</td>
               </tr>
               <tr>
                 <th>総搬入量</th>
-                <td>{app?.overview.totalAmount ?? <BlinkField />}</td>
+                <td>{overview?.totalAmount ?? app?.overview.totalAmount ?? <BlinkField />}</td>
               </tr>
             </tbody>
           </table>

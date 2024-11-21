@@ -14,5 +14,5 @@ const BlankLabel = styled.div`
   border-top: 1px dashed black;
   text-align: center;
   padding-top: 1mm;
-  letter-spacing: 10pt;
+  letter-spacing: 1em;
 `

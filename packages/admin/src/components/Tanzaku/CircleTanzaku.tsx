@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import styled from 'styled-components'
 import useDayjs from '../../hooks/useDayjs'
-import B5Page from '../Print/B5Page'
+import B5Page from '../Print/A5Page'
 import PrintBlankBar from '../Print/PrintBlankBar'
 import PrintContainer from '../Print/PrintContainer'
 import PrintMainContent from '../Print/PrintMainContent'
@@ -15,6 +15,7 @@ import type {
   SockbaseApplicationDocument,
   SockbaseApplicationLinksDocument,
   SockbaseApplicationMeta,
+  SockbaseApplicationOverviewDocument,
   SockbaseEventDocument
 } from 'sockbase'
 
@@ -22,6 +23,7 @@ interface Props {
   now: Date
   event: SockbaseEventDocument
   app: SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }
+  overview: SockbaseApplicationOverviewDocument | null
   appLink: SockbaseApplicationLinksDocument
   unionApp: (SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }) | null | undefined
   circleCutURL: string | null
@@ -152,7 +154,7 @@ const CircleTanzaku: React.FC<Props> = (props) => {
                         <td>{props.appLink.twitterScreenName || '(空欄)'}</td>
                       </tr>
                       <tr>
-                        <th>Pixiv</th>
+                        <th>pixiv</th>
                         <td>{props.appLink.pixivUserId || '(空欄)'}</td>
                       </tr>
                       <tr>
@@ -182,11 +184,11 @@ const CircleTanzaku: React.FC<Props> = (props) => {
                       </tr>
                       <tr>
                         <th>頒布物概要</th>
-                        <td style={{ height: '20mm' }}>{props.app.overview.description}</td>
+                        <td style={{ height: '20mm' }}>{props.overview?.description ?? props.app.overview.description}</td>
                       </tr>
                       <tr>
                         <th>総搬入量</th>
-                        <td style={{ height: '20mm' }}>{props.app.overview.totalAmount}</td>
+                        <td style={{ height: '20mm' }}>{props.overview?.totalAmount ?? props.app.overview.totalAmount}</td>
                       </tr>
                       <tr>
                         <th>ｻｰｸﾙｶｯﾄ</th>
@@ -274,7 +276,7 @@ const Indicator = styled.div<{ $active: boolean }>`
   `}
 `
 const IndicatorIcon = styled.div`
-  font-size: 5mm;
+  font-size: 10pt;
 `
 const CircleCut = styled.img`
   width: 100%;

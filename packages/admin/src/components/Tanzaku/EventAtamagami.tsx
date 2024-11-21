@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import useDayjs from '../../hooks/useDayjs'
-import B5Page from '../Print/B5Page'
+import B5Page from '../Print/A5Page'
 import PrintBlankBar from '../Print/PrintBlankBar'
 import PrintContainer from '../Print/PrintContainer'
 import PrintMainContent from '../Print/PrintMainContent'
@@ -62,7 +62,7 @@ const EventAtamagami: React.FC<Props> = (props) => {
             </PrintSection>
             <PrintSection>
               <PrintSectionTitle>2. 特殊対応メモ</PrintSectionTitle>
-              <PrintPlaceHolderField style={{ height: '120mm' }} />
+              <PrintPlaceHolderField style={{ height: '100mm' }} />
             </PrintSection>
           </PrintMainContent>
           <PrintBlankBar />

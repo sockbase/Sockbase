@@ -13,6 +13,7 @@ import type {
   SockbaseApplicationHashIdDocument,
   SockbaseApplicationLinksDocument,
   SockbaseApplicationMeta,
+  SockbaseApplicationOverviewDocument,
   SockbaseApplicationStatus
 } from 'sockbase'
 
@@ -24,6 +25,7 @@ interface IUseApplication {
   setApplicationStatusByIdAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void>
   deleteApplicationAsync: (appHashId: string) => Promise<void>
   getCircleCutURLByHashIdNullableAsync: (hashId: string) => Promise<string | null>
+  getOverviewByIdNullableAsync: (appId: string) => Promise<SockbaseApplicationOverviewDocument | null>
 }
 
 const useApplication = (): IUseApplication => {
@@ -165,6 +167,14 @@ const useApplication = (): IUseApplication => {
         .catch(() => null)
     }, [])
 
+  const getOverviewByIdNullableAsync =
+    useCallback(async (appId: string) => {
+      const appOverviewRef = doc(db, `_applicationOverviews/${appId}`)
+      return await getDoc(appOverviewRef)
+        .then(doc => doc.data() as SockbaseApplicationOverviewDocument)
+        .catch(() => null)
+    }, [])
+
   return {
     getApplicationIdByHashIdAsync,
     getApplicationByIdAsync,
@@ -172,7 +182,8 @@ const useApplication = (): IUseApplication => {
     getLinksByApplicationIdAsync,
     setApplicationStatusByIdAsync,
     deleteApplicationAsync,
-    getCircleCutURLByHashIdNullableAsync
+    getCircleCutURLByHashIdNullableAsync,
+    getOverviewByIdNullableAsync
   }
 }
 
