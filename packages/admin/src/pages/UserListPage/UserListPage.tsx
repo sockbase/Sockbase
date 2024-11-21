@@ -39,7 +39,7 @@ const UserListPage: React.FC = () => {
         <tbody>
           {!users && (
             <tr>
-              <td colSpan={3}>読み込み中...</td>
+              <td colSpan={3}>読み込み中…</td>
             </tr>
           )}
           {users?.map(user => (

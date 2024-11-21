@@ -83,6 +83,13 @@ const InquiryListPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
+          {filteredInquiries === undefined && (
+            <tr>
+              <th colSpan={4}>
+                読み込み中…
+              </th>
+            </tr>
+          )}
           {filteredInquiries?.map((i) => (
             <tr key={i.id}>
               <td><InquiryStatusLabel status={inquiryMetas?.[i.id]?.status ?? i.status} isOnlyIcon={true} /></td>

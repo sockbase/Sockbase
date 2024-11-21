@@ -38,7 +38,7 @@ const OrganizationListPage: React.FC = () => {
         <tbody>
           {!organizations && (
             <tr>
-              <td colSpan={2}>読み込み中...</td>
+              <td colSpan={2}>読み込み中…</td>
             </tr>
           )}
           {organizations?.map(organization => (
