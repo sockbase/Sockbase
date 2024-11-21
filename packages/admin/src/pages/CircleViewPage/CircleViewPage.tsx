@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MdCheck, MdClose, MdEdit, MdOutlineDeleteForever, MdPendingActions } from 'react-icons/md'
+import { MdCheck, MdClose, MdEdit, MdOpenInNew, MdOutlineDeleteForever, MdPendingActions } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import sockbaseShared from 'shared'
@@ -18,6 +18,7 @@ import {
 import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
+import AnchorButton from '../../components/Parts/AnchorButton'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
@@ -27,6 +28,7 @@ import PaymentStatusController from '../../components/Parts/PaymentStatusControl
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import TwoColumnLayout from '../../components/TwoColumnLayout'
+import envHelper from '../../helpers/envHelper'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import usePayment from '../../hooks/usePayment'
@@ -161,6 +163,16 @@ const CircleViewPage: React.FC = () => {
         icon={<MdEdit />}
         title={app?.circle.name}
         isLoading={!app} />
+
+      <FormSection>
+        <FormItem>
+          <AnchorButton
+            href={`${envHelper.userAppURL}/dashboard/applications/${hashId}`}
+            target="_blank">
+            <IconLabel icon={<MdOpenInNew />} label='ユーザ画面で開く' />
+          </AnchorButton>
+        </FormItem>
+      </FormSection>
 
       <TwoColumnLayout>
         <>
