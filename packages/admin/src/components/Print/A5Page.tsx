@@ -6,6 +6,7 @@ const A5Page = styled.div`
   margin: 0;
   padding: 7mm;
   font-size: 8pt;
+  line-height: 1.1;
   background-color: white;
   color: black;
   page-break-after: always;
