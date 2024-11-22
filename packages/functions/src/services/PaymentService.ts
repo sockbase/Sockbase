@@ -29,7 +29,8 @@ const createPaymentAsync = async (
     updatedAt: null,
     id: '',
     paymentId: '',
-    status: 0
+    status: 0,
+    paymentResult: null
   }
   const result = await firestore
     .collection('_payments')

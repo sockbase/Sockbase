@@ -1,35 +1,32 @@
 import {
-  MdEditCalendar,
   MdCollectionsBookmark,
   MdHome,
-  MdInbox,
   MdLocalActivity,
   MdMail,
+  MdOpenInNew,
   MdPayments,
-  MdQrCodeScanner,
   MdSettings,
-  MdStore,
-  MdWallet,
-  MdBadge,
-  MdSearch,
-  MdInfo
+  MdWallet
 } from 'react-icons/md'
 import styled from 'styled-components'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
 import AnchorButton from '../../../components/Parts/AnchorButton'
+import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import IconLabel from '../../../components/Parts/IconLabel'
 import TopCard from '../../../components/Parts/TopCard'
-import useRole from '../../../hooks/useRole'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import TwoColumnsLayout from '../../../layouts/TwoColumnsLayout/TwoColumnsLayout'
 import InformationList from '../../IndexPage/InformationList'
 
 const DashboardTopPage: React.FC = () => {
-  const { systemRole, commonRole } = useRole()
-
   return (
     <DashboardBaseLayout title="マイページ トップ">
+      <Breadcrumbs>
+        <li>マイページ</li>
+      </Breadcrumbs>
+
       <PageTitle
         icon={<MdHome />}
         title="ホーム"
@@ -51,12 +48,12 @@ const DashboardTopPage: React.FC = () => {
             <TopCard
               to="/dashboard/tickets"
               icon={<MdWallet />}
-              title="チケット申し込み履歴"
+              title="購入済みチケット"
               description="今までに申し込んだチケット履歴を表示します。" />
             <TopCard
               to="/dashboard/applications"
               icon={<MdCollectionsBookmark />}
-              title="サークル申し込み履歴"
+              title="申込済みイベント"
               description="今までに申し込んだサークル参加履歴を表示します。" />
             <TopCard
               to="/dashboard/payments"
@@ -65,85 +62,31 @@ const DashboardTopPage: React.FC = () => {
               description="Sockbase を通して申し込んだサークル参加・チケットの決済履歴を表示します。" />
           </CardContainer>
 
-          <h2>サポート・設定</h2>
+          <h2>設定・サポート</h2>
           <CardContainer>
-            <TopCard
-              to="/dashboard/contact"
-              icon={<MdMail />}
-              title="お問い合わせ"
-              description="Sockbase 運営チームによるサポートが必要な場合は、こちらからお問い合わせください。" />
             <TopCard
               to="/dashboard/settings"
               icon={<MdSettings />}
               title="マイページ設定"
               description="Sockbase に登録している情報を変更します。" />
+            <TopCard
+              to="/dashboard/contact"
+              icon={<MdMail />}
+              title="お問い合わせ"
+              description="Sockbase 運営チームによるサポートが必要な場合は、こちらからお問い合わせください。" />
           </CardContainer>
-
-          {!!commonRole && commonRole >= 1 && <>
-            <h2>イベント開催支援</h2>
-            <CardContainer>
-              <TopCard
-                to="/dashboard/tickets/terminal"
-                icon={<MdQrCodeScanner />}
-                title="チケット照会ターミナル"
-                description="チケットコードを用いて情報を表示し、使用ステータスを管理します。" />
-              <TopCard
-                to="/dashboard/license"
-                icon={<MdBadge />}
-                title="権限"
-                description="付与されている権限情報を表示します。" />
-            </CardContainer>
-          </>}
-
-          {!!commonRole && commonRole >= 2 && <>
-            <h2>申し込み管理</h2>
-            <CardContainer>
-              <TopCard
-                to="/dashboard/search"
-                icon={<MdSearch />}
-                title="検索 (BETA)"
-                description="申し込み ID から内部管理IDを取得します。" />
-              <TopCard
-                to="/dashboard/events/"
-                icon={<MdEditCalendar />}
-                title="管理イベント"
-                description="Sockbase で管理しているイベントを表示します。" />
-              <TopCard
-                to="/dashboard/stores"
-                icon={<MdStore />}
-                title="管理チケットストア"
-                description="Sockbase で管理しているチケットストアを表示します。" />
-              <TopCard
-                to="/dashboard/stream"
-                icon={<MdQrCodeScanner />}
-                title="ストリームターミナル"
-                description="QR コードの情報を読み取りストリームに出力します。" />
-            </CardContainer>
-          </>}
-
-          {!!systemRole && systemRole >= 2 && <>
-            <h2>システム操作</h2>
-            <CardContainer>
-              <TopCard
-                to="/dashboard/inquiries"
-                icon={<MdInbox />}
-                title="お問い合わせ管理"
-                description="利用者から届いたお問い合わせを管理します。" />
-              <TopCard
-                to="/dashboard/informations"
-                icon={<MdInfo />}
-                title="お知らせ管理"
-                description="お知らせを管理します。" />
-            </CardContainer>
-          </>}
         </>
         <>
           <InformationList />
           <h2>法令に基づく表記</h2>
           <FormSection>
-            <FormItem inlined>
-              <AnchorButton href="/tos" target="_blank" color="default" inlined>利用規約・特商法に基づく表記</AnchorButton>
-              <AnchorButton href="/privacy-policy" target="_blank" color="default" inlined>プライバシーポリシー</AnchorButton>
+            <FormItem $inlined>
+              <AnchorButton href="/tos" target="_blank">
+                <IconLabel icon={<MdOpenInNew />} label='利用規約・特商法に基づく表記' />
+              </AnchorButton>
+              <AnchorButton href="/privacy-policy" target="_blank">
+                <IconLabel icon={<MdOpenInNew />} label='プライバシーポリシー' />
+              </AnchorButton>
             </FormItem>
           </FormSection>
         </>
@@ -163,9 +106,4 @@ const CardContainer = styled.section`
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
-
-  @media screen and (max-width: 840px) {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
 `

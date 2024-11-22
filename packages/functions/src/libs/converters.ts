@@ -32,7 +32,8 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
     applicationId: payment.applicationId,
     ticketId: payment.ticketId,
     createdAt: payment.createdAt,
-    updatedAt: payment.updatedAt
+    updatedAt: payment.updatedAt,
+    paymentResult: payment.paymentResult
   }),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbasePaymentDocument => {
     const data = snapshot.data()
@@ -48,7 +49,8 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
       applicationId: data.applicationId,
       ticketId: data.ticketId,
       createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
-      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null
+      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null,
+      paymentResult: data.paymentResult ?? null
     }
   }
 }
@@ -161,9 +163,7 @@ export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
       schedules: {
         startApplication: event.schedules.startApplication,
         endApplication: event.schedules.endApplication,
-        overviewFirstFixedAt: event.schedules.overviewFirstFixedAt,
-        catalogInformationFixedAt: event.schedules.catalogInformationFixedAt,
-        overviewFinalFixedAt: event.schedules.overviewFinalFixedAt,
+        overviewFixedAt: event.schedules.overviewFixedAt,
         publishSpaces: event.schedules.publishSpaces,
         startEvent: event.schedules.startEvent,
         endEvent: event.schedules.endEvent

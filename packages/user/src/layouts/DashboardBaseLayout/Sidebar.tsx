@@ -8,34 +8,18 @@ import {
   MdEditSquare,
   MdPayments,
   MdSettings,
-  MdQrCodeScanner,
-  MdEditCalendar,
-  MdStore,
   MdMail,
-  MdInbox,
   MdWallet,
-  MdBadge,
-  MdSearch,
   MdArrowBackIosNew,
-  MdArrowForwardIos,
-  MdInfo
+  MdArrowForwardIos
 } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import sockbaseShared from 'shared'
-import useRole from '../../hooks/useRole'
 import useWindowDimension from '../../hooks/useWindowDimension'
 import type { User } from 'firebase/auth'
 import type { SockbaseRole } from 'sockbase'
 
-interface MenuSection {
-  sectionKey: string
-  sectionName: string
-  items: MenuItem[]
-  requireSystemRole?: SockbaseRole
-  requireCommonRole?: SockbaseRole
-}
-interface MenuItem {
+interface MenuItemType {
   key: string
   icon: React.ReactNode
   text: string
@@ -45,15 +29,22 @@ interface MenuItem {
   requireSystemRole?: SockbaseRole
   requireCommonRole?: SockbaseRole
 }
+interface MenuSection {
+  sectionKey: string
+  sectionName: string | null
+  items: MenuItemType[]
+  requireSystemRole?: SockbaseRole
+  requireCommonRole?: SockbaseRole
+}
 const menu: MenuSection[] = [
   {
-    sectionKey: 'mypage',
-    sectionName: 'マイページ',
+    sectionKey: 'home',
+    sectionName: null,
     items: [
       {
         key: 'mypageHome',
         icon: <MdHome />,
-        text: 'マイページホーム',
+        text: 'ホーム',
         link: '/dashboard'
       },
       {
@@ -62,17 +53,23 @@ const menu: MenuSection[] = [
         text: 'マイチケット',
         link: '/dashboard/mytickets',
         isImportant: true
-      },
+      }
+    ]
+  },
+  {
+    sectionKey: 'history',
+    sectionName: '申し込み履歴',
+    items: [
       {
         key: 'ticketList',
         icon: <MdWallet />,
-        text: '購入済みチケット一覧',
+        text: '購入済みチケット',
         link: '/dashboard/tickets'
       },
       {
         key: 'circleHistories',
         icon: <MdEditSquare />,
-        text: 'サークル申し込み履歴',
+        text: '申込済みイベント',
         link: '/dashboard/applications'
       },
       {
@@ -80,87 +77,24 @@ const menu: MenuSection[] = [
         icon: <MdPayments />,
         text: '決済履歴',
         link: '/dashboard/payments'
+      }
+    ]
+  },
+  {
+    sectionKey: 'settings',
+    sectionName: '設定・サポート',
+    items: [
+      {
+        key: 'settings',
+        icon: <MdSettings />,
+        text: 'マイページ設定',
+        link: '/dashboard/settings'
       },
       {
         key: 'contact',
         icon: <MdMail />,
         text: 'お問い合わせ',
         link: '/dashboard/contact'
-      },
-      {
-        key: 'settings',
-        icon: <MdSettings />,
-        text: 'マイページ設定',
-        link: '/dashboard/settings'
-      }
-    ]
-  },
-  {
-    sectionKey: 'support',
-    sectionName: 'イベント開催支援',
-    requireCommonRole: sockbaseShared.enumerations.user.permissionRoles.staff,
-    items: [
-      {
-        key: 'terminal',
-        icon: <MdQrCodeScanner />,
-        text: 'チケット照会ターミナル',
-        link: '/dashboard/tickets/terminal'
-      },
-      {
-        key: 'license',
-        icon: <MdBadge />,
-        text: '権限',
-        link: '/dashboard/license'
-      }
-    ]
-  },
-  {
-    sectionKey: 'event',
-    sectionName: 'イベント管理',
-    requireCommonRole: sockbaseShared.enumerations.user.permissionRoles.admin,
-    items: [
-      {
-        key: 'omnisearch',
-        icon: <MdSearch />,
-        text: '検索',
-        link: '/dashboard/search'
-      },
-      {
-        key: 'manageEvents',
-        icon: <MdEditCalendar />,
-        text: 'イベント管理',
-        link: '/dashboard/events'
-      },
-      {
-        key: 'manageStores',
-        icon: <MdStore />,
-        text: 'チケットストア管理',
-        link: '/dashboard/stores'
-      },
-      {
-        key: 'streamTerminal',
-        icon: <MdQrCodeScanner />,
-        text: 'ストリームターミナル',
-        link: '/dashboard/stream'
-      }
-    ]
-  },
-  {
-    sectionKey: 'system',
-    sectionName: 'システム操作',
-    requireSystemRole: sockbaseShared.enumerations.user.permissionRoles.admin,
-    items: [
-      {
-        key: 'manageInquiries',
-        icon: <MdInbox />,
-        text: 'お問い合わせ管理',
-        link: '/dashboard/inquiries'
-      },
-      {
-        key: 'manageInformations',
-        icon: <MdInfo />,
-        text: 'お知らせ管理',
-        link: '/dashboard/informations'
       }
     ]
   }
@@ -174,7 +108,6 @@ interface Props {
 }
 const Sidebar: React.FC<Props> = (props) => {
   const { width } = useWindowDimension()
-  const { systemRole, commonRole } = useRole()
 
   const [isHideToggleMenu, setHideToggleMenu] = useState(false)
   const [isOpenMenu, setOpenMenu] = useState(false)
@@ -184,75 +117,78 @@ const Sidebar: React.FC<Props> = (props) => {
   useEffect(() => setHideToggleMenu(width > 840), [width])
 
   return (
-    <StyledSidebarContainer>
-      {!isHideToggleMenu && <StyledSection isSlim={isSlim}>
-        <StyledMenu>
+    <Container>
+      {!isHideToggleMenu && <Section isSlim={isSlim}>
+        <Menu>
           {
             !isOpenMenu
-              ? <StyledMenuItem onClick={() => setOpenMenu(true)}>
-                <StyledMenuItemIcon isSlim={isSlim}><MdMenu /></StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>メニュー</StyledMenuItemText>}
-              </StyledMenuItem>
-              : <StyledMenuItem onClick={() => setOpenMenu(false)}>
-                <StyledMenuItemIcon isSlim={isSlim}><MdClose /></StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>閉じる</StyledMenuItemText>}
-              </StyledMenuItem>
+              ? <MenuItem onClick={() => setOpenMenu(true)}>
+                <MenuItemIcon isSlim={isSlim}><MdMenu /></MenuItemIcon>
+                {!isSlim && <MenuItemText>メニュー</MenuItemText>}
+              </MenuItem>
+              : <MenuItem onClick={() => setOpenMenu(false)}>
+                <MenuItemIcon isSlim={isSlim}><MdClose /></MenuItemIcon>
+                {!isSlim && <MenuItemText>閉じる</MenuItemText>}
+              </MenuItem>
           }
-        </StyledMenu>
-      </StyledSection>}
+        </Menu>
+      </Section>}
       {
         (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) &&
         <>
-          {!isSlim && <StyledStatePanel>
-            <StyledStatePanelTitle>ログイン中ユーザー</StyledStatePanelTitle>
-            <StyledStatePanelContent>{props.user.email}</StyledStatePanelContent>
-          </StyledStatePanel>}
-          <StyledSection isSlim={isSlim}>
-            <StyledMenu>
-              <StyledMenuItem onClick={props.logout}>
-                <StyledMenuItemIcon isSlim={isSlim}><MdLogout /></StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>ログアウト</StyledMenuItemText>}
-              </StyledMenuItem>
-            </StyledMenu>
-          </StyledSection>
+          {!isSlim && <StatePanel>
+            <StatePanelTitle>ログイン中ユーザー</StatePanelTitle>
+            <StatePanelContent>{props.user.email}</StatePanelContent>
+          </StatePanel>}
           {menu
-            .filter(m =>
-              (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
-              (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
-            .map(sec => <StyledSection key={sec.sectionKey} isSlim={isSlim}>
-              {!isSlim && sec.sectionName && <StyledSectionHeader>{sec.sectionName}</StyledSectionHeader>}
-              <StyledMenu>
+            .map(sec => <Section key={sec.sectionKey} isSlim={isSlim}>
+              {!isSlim && sec.sectionName && <SectionHeader>{sec.sectionName}</SectionHeader>}
+              <Menu>
                 {
                   sec.items
-                    .filter(m =>
-                      (!m.requireCommonRole || m.requireCommonRole <= (commonRole ?? 0)) &&
-                      (!m.requireSystemRole || m.requireSystemRole <= (systemRole ?? 0)))
                     .map(item =>
-                      <StyledMenuItemLink key={item.key} to={item.link} onClick={() => setOpenMenu(false)}>
-                        <StyledMenuItemIcon isSlim={isSlim} isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.icon}</StyledMenuItemIcon>
-                        {!isSlim && <StyledMenuItemText isImportant={item.isImportant} isDisabled={item.isDisabled}>{item.text}</StyledMenuItemText>}
-                      </StyledMenuItemLink>
+                      <MenuItemLink
+                        key={item.key}
+                        to={item.link}
+                        onClick={() => setOpenMenu(false)}
+                        $isImportant={item.isImportant}
+                        $isDisabled={item.isDisabled}>
+                        <MenuItemIcon isSlim={isSlim}>{item.icon}</MenuItemIcon>
+                        {!isSlim && (
+                          <MenuItemText isDisabled={item.isDisabled}>
+                            {item.text}
+                          </MenuItemText>
+                        )}
+                      </MenuItemLink>
                     )
                 }
-              </StyledMenu>
-            </StyledSection>)}
-          {isHideToggleMenu && <StyledSection isSlim={isSlim}>
-            <StyledMenu>
-              <StyledMenuItem onClick={() => props.setSlim(!props.isSlim)}>
-                <StyledMenuItemIcon isSlim={isSlim}>
+              </Menu>
+            </Section>)}
+          <Section isSlim={isSlim}>
+            <Menu>
+              <MenuItem onClick={props.logout}>
+                <MenuItemIcon isSlim={isSlim}><MdLogout /></MenuItemIcon>
+                {!isSlim && <MenuItemText>ログアウト</MenuItemText>}
+              </MenuItem>
+            </Menu>
+          </Section>
+          {isHideToggleMenu && <Section isSlim={isSlim}>
+            <Menu>
+              <MenuItem onClick={() => props.setSlim(!props.isSlim)}>
+                <MenuItemIcon isSlim={isSlim}>
                   {isSlim ? <MdArrowForwardIos /> : <MdArrowBackIosNew />}
-                </StyledMenuItemIcon>
-                {!isSlim && <StyledMenuItemText>メニュー最小化</StyledMenuItemText>}
-              </StyledMenuItem>
-            </StyledMenu>
-          </StyledSection>}
+                </MenuItemIcon>
+                {!isSlim && <MenuItemText>メニュー最小化</MenuItemText>}
+              </MenuItem>
+            </Menu>
+          </Section>}
         </>}
-    </StyledSidebarContainer >
+    </Container >
   )
 }
 
-const StyledSidebarContainer = styled.nav``
-const StyledSection = styled.section<{ isSlim: boolean }>`
+const Container = styled.nav``
+const Section = styled.section<{ isSlim: boolean }>`
   margin-bottom: 10px;
   ${props => props.isSlim && {
     marginBottom: '15px'
@@ -262,111 +198,82 @@ const StyledSection = styled.section<{ isSlim: boolean }>`
     margin-bottom: 0;
   }
 `
-const StyledSectionHeader = styled.h2`
-  display: block;
-  margin: 0;
+const SectionHeader = styled.div`
   margin-bottom: 5px;
-  padding: 0;
-  border-bottom: none;
-  font-size: 1em;
-  color: var(--text-color);
-  &::after {
-    display: none;
-  }
+  font-size: 0.8em;
+  color: var(--text-light-color);
 `
-const StyledMenu = styled.section`
+const Menu = styled.section`
 `
-const styledMenuItemStyle = css`
-  display: grid;
-  grid-template-columns: 48px 1fr;
+const MenuItemStyle = css<{ $isDisabled?: boolean, $isImportant?: boolean }>`
   margin-bottom: 5px;
   &:last-child {
     margin-bottom: 0;
   }
-  &:hover {
-    text-decoration: none;
-  }
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  text-decoration: none;
   cursor: pointer;
-`
+  background-color: var(--sidebar-menu-item-background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
 
-const StyledMenuItem = styled.span`
-  ${styledMenuItemStyle}
+  transition: border 0.2s;
+
+  &:hover {
+    border: 1px solid var(--brand-color);
+  }
+
+  ${props => props.$isDisabled && `
+    background-color: var(--disabled-background-color);
+    color: var(--disabled-text-color);
+  `}
+
+  ${props => props.$isImportant && `
+    color: var(--danger-color);
+    font-weight: bold;
+  `}
 `
-const StyledMenuItemLink = styled(Link)`
-  ${styledMenuItemStyle}
+const MenuItem = styled.span`
+  ${MenuItemStyle}
 `
-const StyledMenuItemIcon = styled.span<{ isImportant?: boolean, isDisabled?: boolean, isSlim: boolean }>`
+const MenuItemLink = styled(Link)`
+  ${MenuItemStyle}
+`
+const MenuItemIcon = styled.span<{ isSlim: boolean }>`
   padding: 10px;
-  border-radius: 5px 0 0 5px;
-  border-right: none;
-  color: var(--text-foreground-color);
-  text-align: center;
-  font-size: 24px;
   
   display: flex;
   align-items: center;
   justify-content: center;
 
-  ${props => props.isDisabled
-    ? {
-      backgroundColor: 'var(--text-disabled-color)'
-    }
-    : props.isImportant
-      ? {
-        backgroundColor: 'var(--danger-color)'
-      }
-      : {
-        backgroundColor: 'var(--primary-brand-color)'
-      }}
-
-  ${prpos => prpos.isSlim && {
-    borderRadius: '5px'
-  }}
-`
-const StyledMenuItemText = styled.span<{ isImportant?: boolean, isDisabled?: boolean }>`
-  padding: 10px;
-  background-color: var(--background-light-color);
-  border-radius: 0 5px 5px 0;
-  border-left: none;
-
-  // Webkitで閲読済みリンクに意図しない枠線が入る対策
-  // https://stackoverflow.com/questions/11207857/border-appearing-the-text-color-of-an-anchor-on-google-chrome
-  &,
-  *:visited & {
-    ${props => props.isDisabled
-    ? {
-      backgroundColor: 'var(--background-disabled-color)',
-      border: '2px solid var(--text-disabled-color)',
-      color: 'var(--text-disabled-color)'
-    }
-    : props.isImportant
-      ? {
-        backgroundColor: 'var(--background-light-color)',
-        border: '2px solid var(--danger-color)',
-        color: 'var(--danger-color)',
-        fontWeight: 'bold'
-      }
-      : {
-        border: '2px solid var(--primary-brand-color)',
-        color: 'var(--text-color)'
-      }}
+  svg {
+    width: 1.5em;
+    height: 1.5em;
   }
+
+  ${prpos => prpos.isSlim && `
+    border-radius: 5px;
+  `}
 `
-const StyledStatePanel = styled.div`
+const MenuItemText = styled.span<{ isDisabled?: boolean }>`
+  padding: 10px 0;
+`
+const StatePanel = styled.div`
   padding: 10px;
   border-radius: 5px;
-  background-color: var(--primary-brand-color);
-  color: var(--text-foreground-color);
+  background-color: var(--sidebar-menu-item-background-color);
+  border: 1px solid var(--outline-color);
 
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   &:last-child {
     margin-bottom: 0;
   }
 `
-const StyledStatePanelTitle = styled.div`
+const StatePanelTitle = styled.div`
   font-size: 0.9em;
 `
-const StyledStatePanelContent = styled.div`
+const StatePanelContent = styled.div`
   font-weight: bold;
 `
 export default Sidebar

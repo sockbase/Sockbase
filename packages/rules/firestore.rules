@@ -41,12 +41,24 @@ service cloud.firestore {
   	match /users/{userId} {
     	allow read: if request.auth.uid == userId || isSystemAdmin(request.auth.uid);
       allow write: if request.auth.uid == userId;
+
+      match /_events/{eventId} {
+        allow delete: if isSystemAdmin(request.auth.uid);
+      }
+    }
+
+    match /organizations/{organizationId} {
+      allow read: if isOrganizationAdmin(request.auth.uid, organizationId) || isSystemAdmin(request.auth.uid);
+
+      match /users/{userId} {
+        allow read: if isOrganizationAdmin(request.auth.uid, organizationId) || isSystemAdmin(request.auth.uid);
+        allow write: if isSystemAdmin(request.auth.uid);
+      }
     }
     
     match /stores/{storeId} {
-      allow read: if resource.data.isPublic
-        || request.time.toMillis() >= resource.data.schedules.startApplication
-        || isOrganizationStaff(request.auth.uid, resource.data._organization.id);
+      allow read: if isOrganizationStaff(request.auth.uid, resource.data._organization.id)
+        || (resource.data.isPublic && request.time.toMillis() >= resource.data.schedules.startApplication);
       allow write: if isSystemAdmin(request.auth.uid);
 
       match /_users/{userId} {
@@ -58,9 +70,8 @@ service cloud.firestore {
     }
     
   	match /events/{eventId} {
-    	allow read: if resource.data.isPublic
-        || request.time.toMillis() >= resource.data.schedules.startApplication
-        || isOrganizationStaff(request.auth.uid, resource.data._organization.id);
+    	allow read: if isOrganizationStaff(request.auth.uid, resource.data._organization.id)
+        || (resource.data.isPublic && request.time.toMillis() >= resource.data.schedules.startApplication);
       allow write: if isSystemAdmin(request.auth.uid);
 
       match /_users/{userId} {
@@ -70,6 +81,14 @@ service cloud.firestore {
 
       match /_applications/{applicationId} {
         allow read: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+      }
+
+      match /docLinks/{docLinkId} {
+        allow read: if exists(/databases/$(database)/documents/users/$(request.auth.uid)/_events/$(eventId))
+        || isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+        allow create: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+        allow update: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+        allow delete: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
       }
     }
 
@@ -194,7 +213,9 @@ service cloud.firestore {
       allow read: if request.auth.uid == resource.data.userId
         || (resource.data.applicationId != null && isOrganizationStaff(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id))
         || (resource.data.ticketId != null && isOrganizationStaff(request.auth.uid, getStore(getTicket(resource.data.ticketId).storeId)._organization.id));
-      allow write: if isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id);
+      allow write: if 
+           (resource.data.applicationId != null && isOrganizationAdmin(request.auth.uid, getEvent(getApplication(resource.data.applicationId).eventId)._organization.id))
+        || (resource.data.ticketId != null && isOrganizationAdmin(request.auth.uid, getStore(getTicket(resource.data.ticketId).storeId)._organization.id));
       allow delete: if isSystemAdmin(request.auth.uid);
     }
 

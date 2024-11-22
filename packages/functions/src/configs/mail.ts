@@ -105,7 +105,7 @@ const templates = {
       `サークル名: ${app.circle.name}`,
       `ペンネーム: ${app.circle.penName}`,
       `スペース: ${space.name}`,
-      `申込みID: ${app.hashId ?? ''}`,
+      `申し込みID: ${app.hashId ?? ''}`,
       '',
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       'ご不明点がありましたら、お気軽にご連絡ください。',
@@ -131,7 +131,7 @@ const templates = {
       `サークル名: ${app.circle.name}`,
       `ペンネーム: ${app.circle.penName}`,
       `スペース: ${space.name}`,
-      `申込みID: ${app.hashId ?? ''}`,
+      `申し込みID: ${app.hashId ?? ''}`,
       ...autoSuffix
     ]
   }),

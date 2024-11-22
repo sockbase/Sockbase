@@ -178,6 +178,7 @@ const createTicketCoreAsync =
 
     const hashId = generateTicketHashId(now)
     const ticketDoc: SockbaseTicketDocument = {
+      id: '',
       storeId: store.id,
       typeId: type.id,
       paymentMethod: isAdmin || paymentMethod === 1 ? 'online' : 'bankTransfer',
@@ -185,8 +186,7 @@ const createTicketCoreAsync =
       createdAt: now,
       updatedAt: now,
       hashId,
-      createdUserId: createdUserId ?? null,
-      id: ''
+      createdUserId: createdUserId ?? null
     }
 
     const ticketResult = await firestore
@@ -250,12 +250,10 @@ const createTicketCoreAsync =
   }
 
 const generateTicketHashId = (now: Date): string => {
-  const codeDigit = 32
-  const randomId = random.generateRandomCharacters(codeDigit)
-
-  const formatedDateTime = dayjs(now).tz().format('YYYYMMDDHHmmssSSS')
-  const hashId = `${formatedDateTime}-${randomId}`
-
+  const codeDigit = 12
+  const randomId = random.generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+  const formatedDateTime = dayjs(now).tz().format('MMDD')
+  const hashId = `ST${formatedDateTime}${randomId}`
   return hashId
 }
 

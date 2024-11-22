@@ -1,0 +1,146 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body, fieldset, textarea {
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6, p, ol, ul, details {
+  margin: 0;
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+fieldset {
+  border: none;
+}
+
+html, body {
+  font-family: sans-serif;
+  height: 100vh;
+  height: 100dvh;
+  
+  background-color: var(--body-background-color);
+  color: var(--text-color);
+
+  @media screen and (max-width: 840px) {
+    font-size: 14px;
+  }
+}
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+::-webkit-scrollbar {
+  & {
+    width: 5px;
+    height: 5px;
+  }
+  &-thumb {
+    background-color: var(--scroll-thumb-color);
+    opacity: 10%;
+
+    &:hover {
+      background-color: var(--scroll-thumb-active-color);
+      opacity: 10%;
+    }
+  }
+}
+
+#root {
+  height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+}
+
+h1 { font-size: 2em; }
+h2 {
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 4px;
+  font-size: 1.5em;
+}
+h3 {
+  font-size: 1em;
+  color: var(--brand-color);
+}
+h4 { font-size: 0.9em; }
+h5 { font-size: 0.8em; }
+h6 { font-size: 0.7em; }
+
+table {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--body-background-color);
+
+  tr {
+    border-bottom: 1px solid var(--border-color);
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+
+  tbody {
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+
+    th {
+      width: 35%;
+    }
+  }
+}
+
+a {
+  color: var(--link-color);
+  cursor: pointer;
+}
+
+ul, ol, p {
+  line-height: 2em;
+}
+
+code {
+  display: inline-block;
+  padding: 0 5px;
+  border-radius: 5px;
+
+  font-family: 'Consolas', 'Osaka-Mono', monospace;
+  font-size: 1em;
+  
+  background-color: var(--panel-background-color);
+}
+
+details {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: var(--panel-background-color);
+  color: var(--text-color);
+
+  &:not([open]) summary {
+    margin-bottom: 0;
+  }
+}
+
+summary {
+  margin: 0;
+  margin-bottom: 10px;
+  user-select: none;
+  cursor: pointer;
+}
