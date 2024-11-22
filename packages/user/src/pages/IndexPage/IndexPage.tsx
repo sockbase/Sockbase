@@ -68,13 +68,15 @@ const IndexPage: React.FC = () => {
             errorMessage={errorMessage} />
       }
 
-      {user !== null && <FormSection>
-        <FormItem>
-          <LinkButton color="primary" to="/dashboard" disabled={!user}>
-            <IconLabel icon={<MdHome />} label="マイページに進む" />
-          </LinkButton>
-        </FormItem>
-      </FormSection>}
+      {user && (
+        <FormSection>
+          <FormItem>
+            <LinkButton color="primary" to="/dashboard">
+              <IconLabel icon={<MdHome />} label="マイページに進む" />
+            </LinkButton>
+          </FormItem>
+        </FormSection>
+      )}
 
       {!fromPathName && <>
         <InformationList />
