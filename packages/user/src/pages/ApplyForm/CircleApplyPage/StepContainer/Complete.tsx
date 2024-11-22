@@ -1,6 +1,12 @@
+import { useMemo } from 'react'
+import { FaTwitter } from 'react-icons/fa6'
+import { MdInfo, MdWeb } from 'react-icons/md'
+import styled from 'styled-components'
+import ApplicationCompleteImage from '../../../../assets/application-complete.png'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import LinkButton from '../../../../components/Parts/LinkButton'
 import useDayjs from '../../../../hooks/useDayjs'
 import type { SockbaseApplicationAddedResult, SockbaseEventDocument } from 'sockbase'
@@ -12,28 +18,41 @@ interface Props {
 const Complete: React.FC<Props> = (props) => {
   const { formatByDate } = useDayjs()
 
+  const tweetText = useMemo(() => {
+    if (!props.event) return
+    const postURL = 'https://twitter.com/intent/tweet?text='
+    const message = `「${props.event.name}」に申し込みました！\n${props.event.websiteURL}\n\n`
+    return `${postURL}${encodeURIComponent(message)}`
+  }, [props.event])
+
   return (
     <>
-      <h1>申し込みが完了しました</h1>
-      <p>
-        お申し込みいただきましてありがとうございました。
-      </p>
+      <ApplicationCompleteArea>
+        <ApplicationCompleteLogotype src={ApplicationCompleteImage} />
+        <p>
+          「{props.event?.name}」へのサークル申し込み手続きが完了しました。<br />
+          お申し込みいただきましてありがとうございました。<br />
+          <TweetButton href={tweetText} target="_blank" rel="noopener noreferrer">
+            <IconLabel icon={<FaTwitter />} label="Twitterでシェアする" />
+          </TweetButton>
+        </p>
+      </ApplicationCompleteArea>
 
       <h2>サークルカットの提出・差し替え</h2>
       <p>
         サークルカットの提出・差し替えは「申し込み内容確認ページ」から行うことができます。<br />
-        {formatByDate((props.event?.schedules.catalogInformationFixedAt ?? 0) - 1, 'YYYY年 M月 D日')}時点の情報を元にカタログ等を制作いたしますので、変更がある場合はこの日までにご提出いただくようお願いいたします。
+        <b>{formatByDate((props.event?.schedules.overviewFixedAt ?? 0) - 1, 'YYYY年M月D日')}</b>時点の情報を元にカタログ等を制作いたしますので、変更がある場合はこの日までにご提出いただくようお願いいたします。
       </p>
 
       <FormSection>
-        <FormItem>
-          <LinkButton to={`/dashboard/applications/${props.addedResult?.hashId}`}>
-            申し込み内容を確認する
+        <FormItem $inlined>
+          <LinkButton
+            color="primary"
+            to={`/dashboard/applications/${props.addedResult?.hashId}`}>
+            <IconLabel icon={<MdInfo />} label="申し込み内容を確認する" />
           </LinkButton>
-        </FormItem>
-        <FormItem>
-          <AnchorButton color="default" href={props.event?.websiteURL}>
-            イベントサイトへ戻る
+          <AnchorButton href={props.event?.websiteURL}>
+            <IconLabel icon={<MdWeb />} label="イベントサイトへ戻る" />
           </AnchorButton>
         </FormItem>
       </FormSection>
@@ -42,3 +61,26 @@ const Complete: React.FC<Props> = (props) => {
 }
 
 export default Complete
+
+const ApplicationCompleteArea = styled.div`
+  margin-bottom: 20px;
+  text-align: center;
+`
+const ApplicationCompleteLogotype = styled.img`
+  margin-bottom: 10px;
+  max-width: 100%;
+  max-height: 128px;
+`
+const TweetButton = styled.a`
+  display: inline-block;
+  margin-top: 10px;
+  padding: 2px 20px;
+  background-color: #1da1f2;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  &:hover {
+    background-color: #118be3;
+  }
+`

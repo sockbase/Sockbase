@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react'
-import FormButton from '../../../../components/Form/Button'
-import FormCheckbox from '../../../../components/Form/Checkbox'
+import { MdArrowForward, MdUpload } from 'react-icons/md'
+import FormButton from '../../../../components/Form/FormButton'
+import FormCheckbox from '../../../../components/Form/FormCheckbox'
+import FormInput from '../../../../components/Form/FormInput'
 import FormItem from '../../../../components/Form/FormItem'
+import FormLabel from '../../../../components/Form/FormLabel'
 import FormSection from '../../../../components/Form/FormSection'
-import FormInput from '../../../../components/Form/Input'
-import FormLabel from '../../../../components/Form/Label'
 import Alert from '../../../../components/Parts/Alert'
 import CircleCutImage from '../../../../components/Parts/CircleCutImage'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import useApplication from '../../../../hooks/useApplication'
 import useDayjs from '../../../../hooks/useDayjs'
 import useFile from '../../../../hooks/useFile'
@@ -82,7 +84,7 @@ const CircleCut: React.FC<Props> = (props) => {
       </ul>
 
       <Alert type="warning" title="サークルカットの提出は必須です">
-        後でアップロードすることも可能ですが、<b>{formatByDate((props.event?.schedules.catalogInformationFixedAt ?? 0) - 1, 'YYYY年 M月 D日')}</b> までにご提出いただくようお願いいたします。
+        後でアップロードすることも可能ですが、<b>{formatByDate((props.event?.schedules.overviewFixedAt ?? 0) - 1, 'YYYY年 M月 D日')}</b> までにご提出いただくようお願いいたします。
       </Alert>
 
       <FormSection>
@@ -94,16 +96,19 @@ const CircleCut: React.FC<Props> = (props) => {
             onChange={e => setCircleCutFile(e.target.files?.[0])}
             disabled={isLaterUpload} />
         </FormItem>
-        <FormItem>
-          {circleCutData && <CircleCutImage src={circleCutData} />}
-        </FormItem>
+        {circleCutData && <FormItem>
+          <CircleCutImage src={circleCutData} />
+        </FormItem>}
         <FormItem>
           <FormButton
+            color="primary"
             onClick={uploadCircleCut}
-            disabled={isProgress || isLaterUpload}>
-            アップロード
+            disabled={!circleCutData || isProgress || isLaterUpload}>
+            <IconLabel icon={<MdUpload />} label="アップロードする" />
           </FormButton>
         </FormItem>
+      </FormSection>
+      <FormSection>
         <FormItem>
           <FormCheckbox
             name="isLaterUpload"
@@ -117,9 +122,10 @@ const CircleCut: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormButton
+            color="primary"
             onClick={props.nextStep}
             disabled={!isUploaded && !isLaterUpload}>
-              次に進む
+            <IconLabel icon={<MdArrowForward />} label="次へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>

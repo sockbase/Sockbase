@@ -2,10 +2,10 @@ import { keyframes } from 'styled-components'
 
 const Blink = keyframes`
   0% {
-    background-color: var(--background-primary-brand-color);
+    background-color: var(--primary-blink-keyframe-1);
   }
   100% {
-    background-color: var(--background-primary-brand2-color);
+    background-color: var(--primary-blink-keyframe-2);
   }
 `
 

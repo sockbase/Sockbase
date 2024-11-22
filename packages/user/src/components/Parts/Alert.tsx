@@ -53,6 +53,7 @@ const Container = styled.div<{ type: AlertType }>`
   border: 1px solid ${props => colorMap[props.type]};
   border-left: 6px solid ${props => colorMap[props.type]};
   border-radius: 5px;
+  background-color: var(--inputfield-background-color);
 `
 const Header = styled.div`
   display: grid;

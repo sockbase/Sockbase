@@ -47,6 +47,8 @@ const Container = styled.label<{ status: PaymentStatus, isLink?: boolean }>`
   padding: 2px 5px;
   border-radius: 5px;
 
+  color: var(--white-color);
+
   ${p => {
     if (p.status === 0) {
       return 'background-color: var(--pending-color);'
@@ -57,7 +59,5 @@ const Container = styled.label<{ status: PaymentStatus, isLink?: boolean }>`
     }
   }};
   
-  color: var(--text-foreground-color);
-
   ${p => p.isLink && 'cursor: pointer;'}
 `

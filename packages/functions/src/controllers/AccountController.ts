@@ -1,8 +1,26 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
-import { firestore, type EventContext, type Change } from 'firebase-functions'
+import { firestore, type EventContext, type Change } from 'firebase-functions/v1'
 
 import AccountService from '../services/AccountService'
 import type { SockbaseAccountDocument, SockbaseRole } from 'sockbase'
+
+export const onCreateOrganizationRoles = firestore
+  .document('/organizations/{organizationId}/users/{userId}')
+  .onCreate(
+    async (
+      snapshot: QueryDocumentSnapshot,
+      context: EventContext<{ organizationId: string, userId: string }>
+    ) => {
+      const { userId, organizationId } = context.params
+
+      await AccountService
+        .updateUserRoleByOrganizationAsync(
+          userId,
+          organizationId,
+          snapshot.data().role as SockbaseRole)
+        .then(() => console.log('organization role updated'))
+        .catch(err => { throw err })
+    })
 
 export const onChangeOrganizationRoles = firestore
   .document('/organizations/{organizationId}/users/{userId}')
@@ -27,6 +45,19 @@ export const onChangeOrganizationRoles = firestore
         .then(() => console.log('organization role updated'))
         .catch(err => { throw err })
     })
+
+export const onCreateUserRoles = firestore
+  .document('/users/{userId}/_roles/{organizationId}')
+  .onCreate(
+    async (
+      _,
+      context: EventContext<{ userId: string, organizationId: string }>
+    ) => {
+      await AccountService.updateRolesByUserIdAsync(context.params.userId)
+        .then(() => console.log('roles claim updated'))
+        .catch(err => { throw err })
+    }
+  )
 
 export const onChangeUserRoles = firestore
   .document('/users/{userId}/_roles/{organizationId}')

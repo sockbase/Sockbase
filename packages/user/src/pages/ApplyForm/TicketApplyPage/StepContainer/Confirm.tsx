@@ -1,12 +1,14 @@
 import { useCallback, useState } from 'react'
-import FormButton from '../../../../components/Form/Button'
+import { MdArrowBack, MdArrowForward } from 'react-icons/md'
+import FormButton from '../../../../components/Form/FormButton'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrapper'
 import ProgressBar from '../../../../components/Parts/ProgressBar'
 import UserDataView from '../../../../components/UserDataView'
-import useFirebaseError from '../../../../hooks/useFirebaseError'
+import useError from '../../../../hooks/useError'
 import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreType } from 'sockbase'
 
 interface Props {
@@ -20,7 +22,7 @@ interface Props {
   nextStep: () => void
 }
 const Confirm: React.FC<Props> = (props) => {
-  const { localize } = useFirebaseError()
+  const { convertErrorMessage } = useError()
 
   const [isProgress, setProgress] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>()
@@ -31,7 +33,7 @@ const Confirm: React.FC<Props> = (props) => {
     props.submitAsync()
       .then(() => props.nextStep())
       .catch(err => {
-        setErrorMessage(localize(err.message))
+        setErrorMessage(convertErrorMessage(err))
         setProgress(false)
         throw err
       })
@@ -89,15 +91,18 @@ const Confirm: React.FC<Props> = (props) => {
             color="default"
             onClick={props.prevStep}
             disabled={isProgress}>
-            修正する
+            <IconLabel icon={<MdArrowBack />} label="修正する" />
           </FormButton>
         </FormItem>
+      </FormSection>
+      <FormSection>
         <FormItem>
-          <LoadingCircleWrapper isLoading={isProgress}>
+          <LoadingCircleWrapper isLoading={isProgress} inlined>
             <FormButton
+              color="primary"
               onClick={handleSubmit}
               disabled={isProgress}>
-              決済に進む (申し込み情報送信)
+              <IconLabel icon={<MdArrowForward />} label="決済に進む (申し込み情報送信)" />
             </FormButton>
           </LoadingCircleWrapper>
         </FormItem>

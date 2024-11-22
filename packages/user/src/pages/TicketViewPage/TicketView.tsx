@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components'
 import ReactQRCode from 'react-qr-code'
 import { type SockbaseStoreDocument, type SockbaseTicketUserDocument } from 'sockbase'
 import logotypeSVG from '../../assets/logotype.svg'
-import FormButton from '../../components/Form/Button'
+import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import Alert from '../../components/Parts/Alert'
@@ -138,6 +138,8 @@ const Container = styled.div`
   height: 100%;
   padding: 40px 25%;
 
+  background-color: var(--panel-background-color);
+
   @media screen and (max-width: 840px) {
     padding: 0;
   }
@@ -166,15 +168,15 @@ const UsedTicketAlert = styled.div`
 `
 const loopBackgroundKeyframes = keyframes`
   0% {
-    background-position: 0 0;
+    background-position: 256px 0;
   }
   100% {
-    background-position: 256px 256px;
+    background-position: 0 256px;
   }
 `
 const TitleContainer = styled.section`
   padding: 20px;
-  color: var(--text-foreground-color);
+  color: var(--white-color);
   text-align: center;
   border-radius: 5px 5px 0 0;
   @media screen and (max-width: 840px) {
@@ -204,7 +206,7 @@ const Code = styled.div`
 `
 const ContentContainer = styled.section`
   padding: 20px;
-  background-color: var(--background-color);
+  background-color: var(--body-background-color);
 `
 const Footer = styled.footer`
   display: flex;
@@ -213,13 +215,13 @@ const Footer = styled.footer`
 
   padding: 10px;
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
-  background-color: var(--background-gray-color);
+  background-color: var(--brand-background-color);
   text-align: right;
 `
 
 const UpdatedDate = styled.section`
   margin-top: -2px;
-  color: var(--text-foreground-color);
+  color: var(--white-color);
 `
 const LogotypeArea = styled.section``
 

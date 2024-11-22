@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MdArrowBack, MdArrowForward, MdFileOpen } from 'react-icons/md'
 import sockbaseShared from 'shared'
-import FormButton from '../../../../components/Form/Button'
-import FormCheckbox from '../../../../components/Form/Checkbox'
+import FormButton from '../../../../components/Form/FormButton'
+import FormCheckbox from '../../../../components/Form/FormCheckbox'
+import FormHelp from '../../../../components/Form/FormHelp'
+import FormInput from '../../../../components/Form/FormInput'
 import FormItem from '../../../../components/Form/FormItem'
+import FormLabel from '../../../../components/Form/FormLabel'
+import FormRadio from '../../../../components/Form/FormRadio'
 import FormSection from '../../../../components/Form/FormSection'
-import FormHelp from '../../../../components/Form/Help'
-import FormInput from '../../../../components/Form/Input'
-import FormLabel from '../../../../components/Form/Label'
-import FormRadio from '../../../../components/Form/Radio'
-import FormSelect from '../../../../components/Form/Select'
-import FormTextarea from '../../../../components/Form/Textarea'
+import FormSelect from '../../../../components/Form/FormSelect'
+import FormTextarea from '../../../../components/Form/FormTextarea'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import UserDataForm from '../../../../components/UserDataForm'
 import useDayjs from '../../../../hooks/useDayjs'
 import useValidate from '../../../../hooks/useValidate'
@@ -83,7 +85,7 @@ const Input: React.FC<Props> = (props) => {
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
   const [isAgreed, setAgreed] = useState(false)
 
-  const [pastAppId, setPastAppId] = useState<string>()
+  const [pastAppId, setPastAppId] = useState('')
   const [isAppliedPastApp, setAppliedPastApp] = useState(false)
 
   const spaceIds = useMemo(() => props.event.spaces.map(s => s.id), [props.event])
@@ -200,6 +202,7 @@ const Input: React.FC<Props> = (props) => {
     }
 
     setAppliedPastApp(true)
+    setPastAppId('')
   }, [pastAppId, props.pastApps, props.pastAppLinks, props.pastEvents])
 
   useEffect(() => {
@@ -227,15 +230,13 @@ const Input: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton
-            color="default"
-            onClick={props.prevStep}>
-              申し込み説明画面へ戻る
+          <FormButton onClick={props.prevStep}>
+            <IconLabel icon={<MdArrowBack />} label="申し込み説明画面へ戻る" />
           </FormButton>
         </FormItem>
       </FormSection>
 
-      {props.pastApps?.length && <>
+      {props.pastApps && props.pastApps.length > 0 && <>
         <h2>過去の申し込み情報を引用</h2>
         <FormSection>
           <FormItem>
@@ -248,12 +249,12 @@ const Input: React.FC<Props> = (props) => {
                 <option key={a.id} value={a.id}>{a.circle.name} ({props.pastEvents?.[a.eventId].name})</option>)}
             </FormSelect>
           </FormItem>
-          <FormItem inlined>
+          <FormItem>
             <FormButton
+              color="primary"
               onClick={handleApplyPastApp}
-              disabled={pastAppId === undefined}
-              inlined>
-                引用する
+              disabled={pastAppId === ''}>
+              <IconLabel icon={<MdFileOpen />} label="引用する" />
             </FormButton>
           </FormItem>
         </FormSection>
@@ -345,7 +346,7 @@ const Input: React.FC<Props> = (props) => {
       </FormSection>
       <FormSection>
         <FormItem>
-          <FormLabel>頒布物のジャンル</FormLabel>
+          <FormLabel>配置希望ジャンル</FormLabel>
           <FormSelect
             value={app.circle.genre}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}
@@ -353,9 +354,6 @@ const Input: React.FC<Props> = (props) => {
             <option value="">選択してください</option>
             {props.event.genres.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
           </FormSelect>
-          <FormHelp hasError={isAppliedPastApp && !app.circle.genre}>
-            頒布する作品が複数ある場合、大半を占めるジャンルを選択してください。
-          </FormHelp>
         </FormItem>
       </FormSection>
       <FormSection>
@@ -395,7 +393,7 @@ const Input: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>合体希望サークル 申し込み ID</FormLabel>
           <FormInput
-            placeholder='20231231235959123-abc0def1'
+            placeholder='SCXXXXABCDEFGHIJKL'
             value={app.unionCircleId}
             onChange={e => setApp(s => ({ ...s, unionCircleId: e.target.value.trim() }))}
             hasError={!validator.isEmpty(app.unionCircleId) && !validator.isApplicationHashId(app.unionCircleId)} />
@@ -538,9 +536,10 @@ const Input: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormButton
+          color="primary"
           disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
-            入力内容確認画面へ進む
+          <IconLabel icon={<MdArrowForward />} label="入力内容確認画面へ進む" />
         </FormButton>
       </FormSection>
     </>

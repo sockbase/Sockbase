@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
-import FormButton from '../../../components/Form/Button'
+import FormButton from '../../../components/Form/FormButton'
 import FormItem from '../../../components/Form/FormItem'
 import FormSection from '../../../components/Form/FormSection'
-import FormHelp from '../../../components/Form/Help'
-import FormInput from '../../../components/Form/Input'
-import FormLabel from '../../../components/Form/Label'
+import FormHelp from '../../../components/Form/FormHelp'
+import FormInput from '../../../components/Form/FormInput'
+import FormLabel from '../../../components/Form/FormLabel'
 import useValidate from '../../../hooks/useValidate'
 
 interface Props {

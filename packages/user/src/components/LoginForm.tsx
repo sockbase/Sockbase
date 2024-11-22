@@ -1,19 +1,21 @@
 import { useCallback, useMemo, useState } from 'react'
+import { MdLogin, MdQuestionMark } from 'react-icons/md'
+import useError from '../hooks/useError'
 import useFirebase from '../hooks/useFirebase'
-import useFirebaseError from '../hooks/useFirebaseError'
 import useValidate from '../hooks/useValidate'
-import FormButton from './Form/Button'
+import FormButton from './Form/FormButton'
+import FormInput from './Form/FormInput'
 import FormItem from './Form/FormItem'
+import FormLabel from './Form/FormLabel'
 import FormSection from './Form/FormSection'
-import FormInput from './Form/Input'
-import FormLabel from './Form/Label'
 import Alert from './Parts/Alert'
+import IconLabel from './Parts/IconLabel'
 import LinkButton from './Parts/LinkButton'
 
 const LoginForm: React.FC = () => {
   const validator = useValidate()
   const { loginByEmailAsync } = useFirebase()
-  const { localize } = useFirebaseError()
+  const { convertErrorMessage } = useError()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -33,7 +35,7 @@ const LoginForm: React.FC = () => {
     setProgress(true)
     loginByEmailAsync(email, password)
       .catch(err => {
-        setError(localize(err.message))
+        setError(convertErrorMessage(err))
         setProgress(false)
         throw err
       })
@@ -61,19 +63,17 @@ const LoginForm: React.FC = () => {
         </FormItem>
       </FormSection>
       <FormSection>
-        <FormItem>
+        <FormItem $inlined>
           <FormButton
+            color="primary"
             onClick={handleLogin}
             disabled={isProgress || errorCount > 0}>
-              ログイン
+            <IconLabel icon={<MdLogin />} label="ログイン" />
           </FormButton>
-        </FormItem>
-        <FormItem>
           <LinkButton
-            color="default"
             to="/reset-password"
             disabled={isProgress}>
-              パスワードを忘れた場合
+            <IconLabel icon={<MdQuestionMark />} label="パスワードを忘れた場合" />
           </LinkButton>
         </FormItem>
         {error && <FormItem>

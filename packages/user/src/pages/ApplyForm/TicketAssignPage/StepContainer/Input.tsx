@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import FormButton from '../../../../components/Form/Button'
-import FormCheckbox from '../../../../components/Form/Checkbox'
+import { MdArrowBack, MdArrowForward } from 'react-icons/md'
+import FormButton from '../../../../components/Form/FormButton'
+import FormCheckbox from '../../../../components/Form/FormCheckbox'
 import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import Alert from '../../../../components/Parts/Alert'
+import IconLabel from '../../../../components/Parts/IconLabel'
 import UserDataForm from '../../../../components/UserDataForm'
 import useDayjs from '../../../../hooks/useDayjs'
 import useValidate from '../../../../hooks/useValidate'
@@ -67,10 +69,8 @@ const Input: React.FC<Props> = (props) => {
     <>
       <FormSection>
         <FormItem>
-          <FormButton
-            color="default"
-            onClick={props.prevStep}>
-            アカウント確認画面へ戻る
+          <FormButton onClick={props.prevStep}>
+            <IconLabel icon={<MdArrowBack />} label="アカウント確認画面へ戻る" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -124,9 +124,10 @@ const Input: React.FC<Props> = (props) => {
 
       <FormSection>
         <FormButton
+          color="primary"
           disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
-            入力内容確認画面へ進む
+          <IconLabel icon={<MdArrowForward />} label="確認画面へ進む" />
         </FormButton>
       </FormSection>
     </>

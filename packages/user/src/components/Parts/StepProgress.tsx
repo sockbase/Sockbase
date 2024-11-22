@@ -9,15 +9,15 @@ interface Props {
 
 const StepProgress: React.FC<Props> = (props) => {
   return (
-    <StyledStepProgress>
+    <Container>
       {props.steps.map((i, k) => <li key={k} className={i.isActive ? 'active' : ''}>{i.text}</li>)}
-    </StyledStepProgress>
+    </Container>
   )
 }
 
 export default StepProgress
 
-const StyledStepProgress = styled.ol`
+const Container = styled.ol`
   margin-bottom: 20px;
   padding: 20px 0;
   border-bottom: 2px solid var(--border-color);
@@ -34,12 +34,14 @@ const StyledStepProgress = styled.ol`
     &::before {
       position: absolute;
       left: 0;
+      top: calc(50% - 12px);
       content: '';
       display: inline-block;
       width: 24px;
       height: 24px;
-      background-color: var(--background-dark-color);
+      border: 1px solid var(--border-color);
       border-radius: 50%;
+      background-color: var(--inputfield-background-color);
 
       transition: background-color 100ms linear,
                   color 100ms linear,
@@ -48,7 +50,7 @@ const StyledStepProgress = styled.ol`
     &::after {
       position: absolute;
       top: 0;
-      left: 7px;
+      left: 8px;
       counter-increment: listItemCount 1;
       content: counter(listItemCount);
       color: var(--text-color);
@@ -58,11 +60,12 @@ const StyledStepProgress = styled.ol`
     &.active {
       font-weight: bold;
       &::before {
-        background-color: var(--primary-brand-color);
+        background-color: var(--primary-color);
+        border: 1px solid var(--primary-color);
       }
       
       &::after {
-        color: var(--text-foreground-color);
+        color: var(--white-color);
       }
     }
   }

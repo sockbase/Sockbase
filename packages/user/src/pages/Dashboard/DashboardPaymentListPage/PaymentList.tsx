@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
 import type {
-  PaymentMethod,
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
   SockbaseEvent,
@@ -29,15 +28,6 @@ const PaymentList: React.FC<Props> = (props) => {
       return `/dashboard/tickets/${ticket?.hashId ?? ''}`
     }
     return ''
-  }, [])
-
-  const paymentMethod = useCallback((method: PaymentMethod): string => {
-    switch (method) {
-      case 1:
-        return 'オンライン決済'
-      case 2:
-        return '銀行振込'
-    }
   }, [])
 
   const getTargetName = useCallback((payment: SockbasePaymentDocument): string => {
@@ -94,13 +84,12 @@ const PaymentList: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th>お支払い先</th>
-            <th>お支払い金額</th>
-            <th>お支払い方法</th>
-            <th>補助番号</th>
             <th>決済状態</th>
+            <th>お支払い先</th>
+            <th>ご請求金額</th>
+            <th>補助番号</th>
             <th>状態更新日時</th>
-            <th>操作</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -108,13 +97,20 @@ const PaymentList: React.FC<Props> = (props) => {
             ? props.payments
               .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
               .map(p => <tr key={p.id}>
-                <th><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getTargetName(p)}</Link></th>
-                <td>{p.paymentAmount.toLocaleString()}円</td>
-                <td>{paymentMethod(p.paymentMethod)}</td>
-                <td>{p.bankTransferCode}</td>
                 <td><PaymentStatusLabel payment={p} /></td>
-                <td>{p.updatedAt?.toLocaleString() ?? '-'}</td>
-                <td>{getPaymentLink(p)}</td>
+                <td><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getTargetName(p)}</Link></td>
+                <td>{p.paymentAmount.toLocaleString()}円</td>
+                <td>{p.bankTransferCode}</td>
+                <td>{p.updatedAt?.toLocaleString() ?? '---'}</td>
+                <td>
+                  {p.status === 0
+                    ? getPaymentLink(p)
+                    : p.paymentResult?.receiptURL && (
+                      <a href={p.paymentResult.receiptURL} target="_blank" rel="noreferrer">
+                        領収書
+                      </a>
+                    )}
+                </td>
               </tr>)
             : <tr><th colSpan={7}>決済情報はありません</th></tr>
           }

@@ -1,17 +1,8 @@
 import styled from 'styled-components'
-import { buttonStyle, type ColorTypes } from '../Mixins/Button'
+import buttonStyle from '../Mixins/buttonStyle'
 
-const AnchorButton = styled.a<{ color?: ColorTypes, inlined?: boolean }>`
-  display: inline-block;
-  width: 100%;
+const AnchorButton = styled.a`
   ${buttonStyle}
-
-  ${props => props.inlined && `
-    width: auto;
-    padding: 10px 40px;
-  `}
-  text-align: center;
-  text-decoration: none !important;
 `
 
 export default AnchorButton
