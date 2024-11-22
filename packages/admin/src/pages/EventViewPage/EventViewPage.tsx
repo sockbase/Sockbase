@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   MdEditCalendar,
   MdAssignmentTurnedIn,
@@ -22,6 +22,7 @@ import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import IconLabel from '../../components/Parts/IconLabel'
 import LinkButton from '../../components/Parts/LinkButton'
 import PageTitle from '../../components/Parts/PageTitle'
+import SortButton from '../../components/Parts/SortButton'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import envHelper from '../../helpers/envHelper'
@@ -58,6 +59,8 @@ const EventViewPage: React.FC = () => {
   const [appHashes, setAppHashes] = useState<SockbaseApplicationHashIdDocument[]>()
   const [payments, setPayments] = useState<Record<string, SockbasePaymentDocument>>()
 
+  const [isActiveSort, setIsActiveSort] = useState(false)
+
   const getSpace = useCallback((appHashId: string) => {
     const app = appHashes?.find(app => app.hashId === appHashId)
     const spaceId = app?.spaceId
@@ -79,6 +82,21 @@ const EventViewPage: React.FC = () => {
       .then(setSpaces)
       .catch(err => { throw err })
   }, [])
+
+  const sortedApps = useMemo(() => {
+    if (!apps) return
+    if (isActiveSort) {
+      return apps
+        .sort((a, b) => {
+          const spaceA = getSpace(a.hashId ?? '')?.spaceName
+          const spaceB = getSpace(b.hashId ?? '')?.spaceName
+          if (!spaceA || !spaceB) return !spaceA ? 1 : -1
+          return spaceA.localeCompare(spaceB, 'ja', { numeric: true })
+        })
+    } else {
+      return apps.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
+    }
+  }, [apps, isActiveSort])
 
   useEffect(() => {
     if (!eventId) return
@@ -176,7 +194,13 @@ const EventViewPage: React.FC = () => {
             <th>#</th>
             <th>状態</th>
             <th>決済</th>
-            <th>配置</th>
+            <th>
+              <SortButton
+                active={isActiveSort}
+                onClick={() => setIsActiveSort(s => !s)}>
+                配置
+              </SortButton>
+            </th>
             <th>サークル</th>
             <th>ペンネーム</th>
             <th>スペース</th>
@@ -185,39 +209,38 @@ const EventViewPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {!apps && (
+          {!sortedApps && (
             <tr>
               <td colSpan={9}>読み込み中…</td>
             </tr>
           )}
-          {apps && apps.length === 0 && (
+          {sortedApps && sortedApps.length === 0 && (
             <tr>
               <td colSpan={9}>データがありません</td>
             </tr>
           )}
-          {apps?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
-            .map((app, i) => (
-              <tr key={app.id}>
-                <td>{i + 1}</td>
-                <td>
-                  <ApplicationStatusLabel
-                    status={app.meta.applicationStatus}
-                    isOnlyIcon />
-                </td>
-                <td>
-                  <PaymentStatusLabel
-                    payment={payments?.[app.id]}
-                    isOnlyIcon
-                    isShowBrand />
-                </td>
-                <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
-                <td>{app.circle.name}</td>
-                <td>{app.circle.penName}</td>
-                <td>{getSpaceType(app.spaceId)?.name}</td>
-                <td><Link to={`/circles/${app.hashId}`}>{app.hashId ?? '---'}</Link></td>
-                <td>{userDataSet?.[app.userId].name ?? <BlinkField />}</td>
-              </tr>
-            ))}
+          {sortedApps?.map((app, i) => (
+            <tr key={app.id}>
+              <td>{i + 1}</td>
+              <td>
+                <ApplicationStatusLabel
+                  status={app.meta.applicationStatus}
+                  isOnlyIcon />
+              </td>
+              <td>
+                <PaymentStatusLabel
+                  payment={payments?.[app.id]}
+                  isOnlyIcon
+                  isShowBrand />
+              </td>
+              <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
+              <td>{app.circle.name}</td>
+              <td>{app.circle.penName}</td>
+              <td>{getSpaceType(app.spaceId)?.name}</td>
+              <td><Link to={`/circles/${app.hashId}`}>{app.hashId ?? '---'}</Link></td>
+              <td>{userDataSet?.[app.userId].name ?? <BlinkField />}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </DefaultLayout>
