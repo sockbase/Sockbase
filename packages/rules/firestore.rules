@@ -84,8 +84,8 @@ service cloud.firestore {
       }
 
       match /docLinks/{docLinkId} {
-        allow read: if exists(/databases/$(database)/documents/users/$(request.auth.uid)/_events/$(eventId))
-        || isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
+        allow read: if exists(/databases/$(database)/documents/events/$(eventId)/_users/$(request.auth.uid))
+          || isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
         allow create: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
         allow update: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
         allow delete: if isOrganizationAdmin(request.auth.uid, getEvent(eventId)._organization.id);
