@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
-import { MdEdit } from 'react-icons/md'
+import { MdEdit, MdOpenInNew } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
+import AnchorButton from '../../../components/Parts/AnchorButton'
 import BlinkField from '../../../components/Parts/BlinkField'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import IconLabel from '../../../components/Parts/IconLabel'
 import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
 import DashboardBaseLayout from '../../../layouts/DashboardBaseLayout/DashboardBaseLayout'
@@ -68,8 +70,8 @@ const DashboardCircleViewLinksPage: React.FC = () => {
       <table>
         <thead>
           <tr>
-            <th>タイトル</th>
-            <th>URL</th>
+            <th style={{ width: '75%' }}>タイトル</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -87,7 +89,15 @@ const DashboardCircleViewLinksPage: React.FC = () => {
             .map(docLink => (
               <tr key={docLink.id}>
                 <td>{docLink.name}</td>
-                <td><a href={docLink.url} target="_blank" rel="noopener noreferrer">{docLink.url}</a></td>
+                <td>
+                  <AnchorButton
+                    href={docLink.url}
+                    $isSlim={true}
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    <IconLabel icon={<MdOpenInNew />} label="開く" />
+                  </AnchorButton>
+                </td>
               </tr>
             ))}
         </tbody>
