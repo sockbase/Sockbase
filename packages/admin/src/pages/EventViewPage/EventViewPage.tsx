@@ -62,7 +62,7 @@ const EventViewPage: React.FC = () => {
     const app = appHashes?.find(app => app.hashId === appHashId)
     const spaceId = app?.spaceId
     return spaces?.find(space => space.id === spaceId)
-  }, [spaces])
+  }, [appHashes, spaces])
 
   const getSpaceType = useCallback((spaceId: string) => {
     return event?.spaces?.find(s => s.id === spaceId)
