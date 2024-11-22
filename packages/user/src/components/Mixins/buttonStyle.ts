@@ -2,7 +2,7 @@ import { css } from 'styled-components'
 
 type ColorType = 'default' | 'primary' | 'info' | 'danger'
 
-const buttonStyle = css<{ color?: ColorType, disabled?: boolean }>`
+const buttonStyle = css<{ color?: ColorType, disabled?: boolean, $isSlim?: boolean }>`
   display: inline-block;
   padding: 10px 40px;
   border-radius: 5px;
@@ -29,6 +29,10 @@ const buttonStyle = css<{ color?: ColorType, disabled?: boolean }>`
     &:active {
       background-color: var(--${props.color}-active-color);
     }
+  `}
+
+  ${props => props.$isSlim && `
+    padding: 5px 10px;
   `}
 
   &:disabled {
