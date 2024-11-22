@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { ref, uploadBytes } from 'firebase/storage'
-import { docLinkConverter, eventConverter, spaceConverter } from '../libs/converters'
+import { docLinkConverter, eventConverter, spaceConverter, spaceHashConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
 import type {
   SockbaseCirclePassCreatedResult,
@@ -82,7 +82,7 @@ const useEvent = (): IUseEvent => {
   const getSpacesByEventIdAsync =
     useCallback(async (eventId: string): Promise<SockbaseSpaceDocument[]> => {
       const spaceHashesRef = collection(db, '_spaceHashes')
-        .withConverter(spaceConverter)
+        .withConverter(spaceHashConverter)
       const spaceHashesQuery = query(spaceHashesRef, where('eventId', '==', eventId))
 
       const spaceHashesSnapshot = await getDocs(spaceHashesQuery)
