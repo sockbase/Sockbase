@@ -7,15 +7,17 @@ import StepContainer from './StepContainer/StepContainer'
 
 const EventCreatePage: React.FC = () => {
   return (
-    <DefaultLayout title="イベント作成" requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title="イベント作成">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title="イベント作成"
-        icon={<MdEditCalendar />} />
+        icon={<MdEditCalendar />}
+        title="イベント作成" />
 
       <StepContainer />
     </DefaultLayout>

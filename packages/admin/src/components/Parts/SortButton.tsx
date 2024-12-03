@@ -7,9 +7,11 @@ interface Props {
   children: string
   onClick: () => void
 }
-const SortButton: React.FC<Props> = (props) => {
+const SortButton: React.FC<Props> = props => {
   return (
-    <Text active={props.active} onClick={props.onClick}>
+    <Text
+      active={props.active}
+      onClick={props.onClick}>
       {props.children} <MdSort />
     </Text>
   )

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdMail, MdSend } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { type SockbaseMailSendTarget, type SockbaseEventDocument } from 'sockbase'
 import FormButton from '../../components/Form/FormButton'
 import FormCheckbox from '../../components/Form/FormCheckbox'
 import FormHelp from '../../components/Form/FormHelp'
@@ -21,6 +20,7 @@ import useEvent from '../../hooks/useEvent'
 import useMail from '../../hooks/useMail'
 import useValidate from '../../hooks/useValidate'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
+import type { SockbaseMailSendTarget, SockbaseEventDocument } from 'sockbase'
 
 const EventSendMailPage: React.FC = () => {
   const { eventId } = useParams()
@@ -80,7 +80,9 @@ const EventSendMailPage: React.FC = () => {
   const [event, setEvent] = useState<SockbaseEventDocument>()
 
   return (
-    <DefaultLayout title="メール送信" requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title="メール送信">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
@@ -100,38 +102,38 @@ const EventSendMailPage: React.FC = () => {
             </FormItem>
             <FormItem $inlined>
               <FormCheckbox
-                name="target-all"
-                label="仮申し込み"
                 checked={targetFlag.pending}
-                onChange={checked => setTargetFlag(s => ({ ...s, pending: checked }))}
-                inlined />
+                inlined
+                label="仮申し込み"
+                name="target-all"
+                onChange={checked => setTargetFlag(s => ({ ...s, pending: checked }))} />
               <FormCheckbox
-                name="target-confirmed"
-                label="申し込み確定"
                 checked={targetFlag.confirmed}
-                onChange={checked => setTargetFlag(s => ({ ...s, confirmed: checked }))}
-                inlined />
+                inlined
+                label="申し込み確定"
+                name="target-confirmed"
+                onChange={checked => setTargetFlag(s => ({ ...s, confirmed: checked }))} />
               <FormCheckbox
-                name="target-canceled"
-                label="キャンセル済み"
                 checked={targetFlag.canceled}
-                onChange={checked => setTargetFlag(s => ({ ...s, canceled: checked }))}
-                inlined />
+                inlined
+                label="キャンセル済み"
+                name="target-canceled"
+                onChange={checked => setTargetFlag(s => ({ ...s, canceled: checked }))} />
             </FormItem>
             <FormItem>
               <FormLabel>返信控え送付先 (CC)</FormLabel>
               <FormInput
-                value={mailCC}
+                disabled={isProgress}
                 onChange={e => setMailCC(e.target.value)}
-                disabled={isProgress} />
+                value={mailCC} />
             </FormItem>
             <FormItem>
               <FormLabel>返信先 (Reply-To)</FormLabel>
               <FormInput
-                value={mailReplyTo}
+                disabled={isProgress}
                 onChange={e => setMailReplyTo(e.target.value)}
                 placeholder="support@sockbase.net"
-                disabled={isProgress} />
+                value={mailReplyTo} />
               <FormHelp>
                 何も入力しない場合、返信先は Sockbase 管理者のメールアドレスになります。
               </FormHelp>
@@ -139,17 +141,17 @@ const EventSendMailPage: React.FC = () => {
             <FormItem>
               <FormLabel>件名</FormLabel>
               <FormInput
-                value={mailSubject}
+                disabled={isProgress}
                 onChange={e => setMailSubject(e.target.value)}
-                disabled={isProgress} />
+                value={mailSubject} />
             </FormItem>
             <FormItem>
               <FormLabel>本文</FormLabel>
               <FormTextarea
-                style={{ height: '12em' }}
-                value={mailBody}
+                disabled={isProgress}
                 onChange={e => setMailBody(e.target.value)}
-                disabled={isProgress} />
+                style={{ height: '12em' }}
+                value={mailBody} />
             </FormItem>
           </FormSection>
         </>
@@ -163,9 +165,15 @@ const EventSendMailPage: React.FC = () => {
 
       <FormSection>
         <FormItem>
-          <LoadingCircleWrapper inlined isLoading={isProgress}>
-            <FormButton onClick={handleSend} disabled={errorCount > 0 || isProgress}>
-              <IconLabel label="送信" icon={<MdSend />} />
+          <LoadingCircleWrapper
+            inlined
+            isLoading={isProgress}>
+            <FormButton
+              disabled={errorCount > 0 || isProgress}
+              onClick={handleSend}>
+              <IconLabel
+                icon={<MdSend />}
+                label="送信" />
             </FormButton>
           </LoadingCircleWrapper>
         </FormItem>

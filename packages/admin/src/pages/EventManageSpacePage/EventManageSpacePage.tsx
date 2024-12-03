@@ -101,7 +101,9 @@ const EventManageSpacePage: React.FC = () => {
   }, [eventId, spaceDataWithHook])
 
   return (
-    <DefaultLayout title="配置管理" requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title="配置管理">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
@@ -115,8 +117,12 @@ const EventManageSpacePage: React.FC = () => {
 
       <FormSection>
         <FormItem>
-          <FormButton color="default" onClick={handleDownload}>
-            <IconLabel label="配置データダウンロード" icon={<MdDownload />} />
+          <FormButton
+            color="default"
+            onClick={handleDownload}>
+            <IconLabel
+              icon={<MdDownload />}
+              label="配置データダウンロード" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -127,13 +133,18 @@ const EventManageSpacePage: React.FC = () => {
             配置データ
           </FormLabel>
           <FormInput
-            type="file"
             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            onChange={e => setSpaceDataFile(e.target.files?.[0])} />
+            onChange={e => setSpaceDataFile(e.target.files?.[0])}
+            type="file" />
         </FormItem>
       </FormSection>
 
-      {loadErrorMessage && <Alert type="error" title="エラーが発生しました">{loadErrorMessage}</Alert>}
+      {loadErrorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">{loadErrorMessage}
+        </Alert>
+      )}
 
       <table>
         <thead>
@@ -148,37 +159,52 @@ const EventManageSpacePage: React.FC = () => {
           {spaceImportResult && spaceImportResult?.spaces.length > 0
             ? spaceImportResult.spaces.map(s => {
               const app = getAppByHashId(s.appHashId)
-              return <tr key={s.appHashId}>
-                <td>{s.spaceId}</td>
-                <td>{s.appHashId}</td>
-                <td>{app?.circle.name}</td>
-                <td>{app?.circle.penName}</td>
-              </tr>
+              return (
+                <tr key={s.appHashId}>
+                  <td>{s.spaceId}</td>
+                  <td>{s.appHashId}</td>
+                  <td>{app?.circle.name}</td>
+                  <td>{app?.circle.penName}</td>
+                </tr>
+              )
             })
-            : <tr>
-              <td colSpan={4}>配置データを選択してください</td>
-            </tr>}
+            : (
+              <tr>
+                <td colSpan={4}>配置データを選択してください</td>
+              </tr>
+            )}
         </tbody>
       </table>
 
-      {event && <p>
-        配置情報は <b>{formatByDate(event.schedules.publishSpaces, 'YYYY年 M月 D日 H時mm分')}</b> に自動公開されます。<br />
-        公開日時を変更する場合はシステム管理者までお問い合わせください。
-      </p>}
+      {event && (
+        <p>
+          配置情報は <b>{formatByDate(event.schedules.publishSpaces, 'YYYY年 M月 D日 H時mm分')}</b> に自動公開されます。<br />
+          公開日時を変更する場合はシステム管理者までお問い合わせください。
+        </p>
+      )}
 
       <FormSection>
         <FormItem>
-          <LoadingCircleWrapper isLoading={isProgress} inlined>
+          <LoadingCircleWrapper
+            inlined
+            isLoading={isProgress}>
             <FormButton
               disabled={!spaceImportResult || isProgress}
               onClick={handleUpdate}>
-              <IconLabel label="配置データを適用する" icon={<MdCheck />} />
+              <IconLabel
+                icon={<MdCheck />}
+                label="配置データを適用する" />
             </FormButton>
           </LoadingCircleWrapper>
         </FormItem>
       </FormSection>
 
-      {updateErrorMessage && <Alert type="error" title="エラーが発生しました">{updateErrorMessage}</Alert>}
+      {updateErrorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">{updateErrorMessage}
+        </Alert>
+      )}
     </DefaultLayout>
   )
 }

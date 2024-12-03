@@ -75,22 +75,28 @@ const TicketAssignPage: React.FC = () => {
 
   return (
     <DefaultBaseLayout title="チケット受け取りページ">
-      {(ticketUser === null || !ticketHashId) && <Alert type="error" title="チケット情報が見つかりません">
-        チケット情報を取得できませんでした。<br />
-        URL をもう一度お確かめください。
-      </Alert>}
-      {store && ticketHashId && ticketUser && <StepContainer
-        store={store}
-        ticketHashId={ticketHashId}
-        ticketUser={ticketUser}
-        user={user}
-        userData={userData}
-        loginAsync={handleLoginAsync}
-        logoutAsync={handleLogoutAsync}
-        createUserAsync={createUserAsync}
-        updateUserDataAsync={updateUserDataAsync}
-        updateUserDataWithStoreIdAsync={updateUserDataWithStoreIdAsync}
-        assignTicketUserAsync={assignTicketUserAsync} />}
+      {(ticketUser === null || !ticketHashId) && (
+        <Alert
+          title="チケット情報が見つかりません"
+          type="error">
+          チケット情報を取得できませんでした。<br />
+          URL をもう一度お確かめください。
+        </Alert>
+      )}
+      {store && ticketHashId && ticketUser && (
+        <StepContainer
+          assignTicketUserAsync={assignTicketUserAsync}
+          createUserAsync={createUserAsync}
+          loginAsync={handleLoginAsync}
+          logoutAsync={handleLogoutAsync}
+          store={store}
+          ticketHashId={ticketHashId}
+          ticketUser={ticketUser}
+          updateUserDataAsync={updateUserDataAsync}
+          updateUserDataWithStoreIdAsync={updateUserDataWithStoreIdAsync}
+          user={user}
+          userData={userData} />
+      )}
     </DefaultBaseLayout>
   )
 }

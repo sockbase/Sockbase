@@ -15,7 +15,7 @@ interface Props {
   event: SockbaseEventDocument | undefined
   addedResult: SockbaseApplicationAddedResult | undefined
 }
-const Complete: React.FC<Props> = (props) => {
+const Complete: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   const tweetText = useMemo(() => {
@@ -32,8 +32,13 @@ const Complete: React.FC<Props> = (props) => {
         <p>
           「{props.event?.name}」へのサークル申し込み手続きが完了しました。<br />
           お申し込みいただきましてありがとうございました。<br />
-          <TweetButton href={tweetText} target="_blank" rel="noopener noreferrer">
-            <IconLabel icon={<FaTwitter />} label="Twitterでシェアする" />
+          <TweetButton
+            href={tweetText}
+            rel="noopener noreferrer"
+            target="_blank">
+            <IconLabel
+              icon={<FaTwitter />}
+              label="Twitterでシェアする" />
           </TweetButton>
         </p>
       </ApplicationCompleteArea>
@@ -49,10 +54,14 @@ const Complete: React.FC<Props> = (props) => {
           <LinkButton
             color="primary"
             to={`/dashboard/applications/${props.addedResult?.hashId}`}>
-            <IconLabel icon={<MdInfo />} label="申し込み内容を確認する" />
+            <IconLabel
+              icon={<MdInfo />}
+              label="申し込み内容を確認する" />
           </LinkButton>
           <AnchorButton href={props.event?.websiteURL}>
-            <IconLabel icon={<MdWeb />} label="イベントサイトへ戻る" />
+            <IconLabel
+              icon={<MdWeb />}
+              label="イベントサイトへ戻る" />
           </AnchorButton>
         </FormItem>
       </FormSection>

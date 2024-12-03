@@ -18,7 +18,9 @@ const InformationCreatePage: React.FC = () => {
   }, [])
 
   return (
-    <DefaultLayout title='お知らせ作成' requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title="お知らせ作成">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/informations">お知らせ管理</Link></li>
@@ -29,8 +31,8 @@ const InformationCreatePage: React.FC = () => {
         title="お知らせ作成" />
 
       <InformationEditor
-        isNewInformation={true}
-        handleChange={handleCreate} />
+        handleChange={handleCreate}
+        isNewInformation={true} />
     </DefaultLayout>
   )
 }

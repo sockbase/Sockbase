@@ -5,7 +5,7 @@ interface Props {
   docId: string
   setTitle: (t: string) => void
 }
-const StaticDocumentProvider: React.FC<Props> = (props) => {
+const StaticDocumentProvider: React.FC<Props> = props => {
   const { fetchDocsByIdAsync, DocProvider, content } = useDocs(props.docId)
 
   const onInitialize: () => void =

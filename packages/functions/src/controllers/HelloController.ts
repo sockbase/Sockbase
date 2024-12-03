@@ -8,6 +8,6 @@ export const helloWorld = https
   })
 
 export const ping = https
-  .onCall((data) => {
+  .onCall(data => {
     return HelloWorldService.getPong(data)
   })

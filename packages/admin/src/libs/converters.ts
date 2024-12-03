@@ -74,7 +74,7 @@ export const accountDocumentConverter: FirestoreDataConverter<SockbaseAccountDoc
 }
 
 export const organizationConverter: FirestoreDataConverter<SockbaseOrganizationDocument> = {
-  toFirestore: (organization: SockbaseOrganizationDocument): DocumentData => ({
+  toFirestore: (): DocumentData => ({
   }),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseOrganizationDocument => {
     const organization = snapshot.data()
@@ -315,7 +315,7 @@ export const inquiryMetaConverter: FirestoreDataConverter<SockbaseInquiryMetaDoc
   }
 
 export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDocument> = {
-  toFirestore: (app: SockbaseApplicationDocument): DocumentData => ({}),
+  toFirestore: (): DocumentData => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationDocument => {
     const app = snapshot.data()
     return {

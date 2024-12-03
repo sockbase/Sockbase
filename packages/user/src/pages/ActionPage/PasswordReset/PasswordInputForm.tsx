@@ -1,16 +1,16 @@
 import { useCallback, useMemo, useState } from 'react'
 import FormButton from '../../../components/Form/FormButton'
-import FormItem from '../../../components/Form/FormItem'
-import FormSection from '../../../components/Form/FormSection'
 import FormHelp from '../../../components/Form/FormHelp'
 import FormInput from '../../../components/Form/FormInput'
+import FormItem from '../../../components/Form/FormItem'
 import FormLabel from '../../../components/Form/FormLabel'
+import FormSection from '../../../components/Form/FormSection'
 import useValidate from '../../../hooks/useValidate'
 
 interface Props {
   submitAsync: (password: string) => Promise<void>
 }
-const PasswordInputForm: React.FC<Props> = (props) => {
+const PasswordInputForm: React.FC<Props> = props => {
   const validator = useValidate()
 
   const [password, setPassword] = useState('')
@@ -44,33 +44,36 @@ const PasswordInputForm: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormLabel>新しいパスワード</FormLabel>
-          <FormInput type="password"
-            placeholder='●●●●●●●●●●●●'
-            value={password}
+          <FormInput
+            hasError={!validator.isEmpty(password) && !validator.isStrongPassword(password)}
             onChange={e => setPassword(e.target.value)}
-            hasError={!validator.isEmpty(password) && !validator.isStrongPassword(password)} />
+            placeholder="●●●●●●●●●●●●"
+            type="password"
+            value={password} />
           <FormHelp hasError={!validator.isEmpty(password) && !validator.isStrongPassword(password)}>
             アルファベット大文字を含め、英数12文字以上で設定してください。
           </FormHelp>
         </FormItem>
         <FormItem>
           <FormLabel>新しいパスワード (確認)</FormLabel>
-          <FormInput type="password"
-            placeholder='●●●●●●●●●●●●'
-            value={rePassword}
+          <FormInput
+            hasError={!validator.isEmpty(rePassword) && password !== rePassword}
             onChange={e => setRePassword(e.target.value)}
-            hasError={!validator.isEmpty(rePassword) && password !== rePassword} />
-          {!validator.isEmpty(rePassword) && password !== rePassword &&
+            placeholder="●●●●●●●●●●●●"
+            type="password"
+            value={rePassword} />
+          {!validator.isEmpty(rePassword) && password !== rePassword && (
             <FormHelp hasError>
               パスワードの入力が間違っています
-            </FormHelp>}
+            </FormHelp>
+          )}
         </FormItem>
       </FormSection>
       <FormSection>
         <FormItem>
           <FormButton
-            onClick={handleSubmit}
-            disabled={errorCount > 0 || isProgress}>
+            disabled={errorCount > 0 || isProgress}
+            onClick={handleSubmit}>
             パスワードを変更する
           </FormButton>
         </FormItem>

@@ -1,4 +1,3 @@
-
 import { type SockbaseStoreDocument } from 'sockbase'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { storeConverter } from '../libs/converters'

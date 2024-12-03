@@ -101,8 +101,8 @@ const useApplication = (): IUseApplication => {
         FirestoreDB.where('userId', '==', userId))
       const querySnapshot = await FirestoreDB.getDocs(appsQuery)
       const queryDocs = querySnapshot.docs
-        .filter((doc) => doc.exists())
-        .map((doc) => doc.data())
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
 
       return queryDocs
     }
@@ -118,7 +118,7 @@ const useApplication = (): IUseApplication => {
         FirestoreDB.where('userId', '==', userId))
       const querySnapshot = await FirestoreDB.getDocs(appsQuery)
       const queryDocs = querySnapshot.docs
-        .filter((doc) => doc.exists())
+        .filter(doc => doc.exists())
         .reduce<Record<string, SockbaseApplicationDocument>>(
         (p, c) => ({ ...p, [c.id]: c.data() }),
         {}
@@ -241,7 +241,7 @@ const useApplication = (): IUseApplication => {
         userId: user.uid
       }
 
-      await FirestoreDB.setDoc(linksRef, linksDoc).catch((err) => {
+      await FirestoreDB.setDoc(linksRef, linksDoc).catch(err => {
         throw err
       })
     }, [user])
@@ -263,7 +263,7 @@ const useApplication = (): IUseApplication => {
   const getOverviewByApplicationIdOptionalAsync =
     async (appId: string): Promise<SockbaseApplicationOverviewDocument | null> =>
       await getOverviewByApplicationIdAsync(appId)
-        .then((fetchedOverview) => fetchedOverview)
+        .then(fetchedOverview => fetchedOverview)
         .catch(err => {
           console.error(err)
           return null

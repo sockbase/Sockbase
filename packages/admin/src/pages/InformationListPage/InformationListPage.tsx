@@ -25,7 +25,9 @@ const InformationListPage: React.FC = () => {
   }, [])
 
   return (
-    <DefaultLayout title='お知らせ管理' requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title="お知らせ管理">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
@@ -36,7 +38,9 @@ const InformationListPage: React.FC = () => {
       <FormSection>
         <FormItem>
           <LinkButton to="/informations/create">
-            <IconLabel icon={<MdAdd />} label='お知らせ作成' />
+            <IconLabel
+              icon={<MdAdd />}
+              label="お知らせ作成" />
           </LinkButton>
         </FormItem>
       </FormSection>
@@ -56,11 +60,13 @@ const InformationListPage: React.FC = () => {
             </tr>
           )}
           {informations?.sort((a, b) => b.updatedAt - a.updatedAt)
-            .map(i => <tr key={i.id}>
-              <td>{formatByDate(i.updatedAt, 'YYYY年 M月 D日')}</td>
-              <td><Link to={`/informations/${i.id}`}>{i.title}</Link></td>
-              <td>{i.isPublished ? '公開' : '---'}</td>
-            </tr>)}
+            .map(i => (
+              <tr key={i.id}>
+                <td>{formatByDate(i.updatedAt, 'YYYY年 M月 D日')}</td>
+                <td><Link to={`/informations/${i.id}`}>{i.title}</Link></td>
+                <td>{i.isPublished ? '公開' : '---'}</td>
+              </tr>
+            ))}
           {informations?.length === 0 && (
             <tr>
               <td colSpan={3}>お知らせはありません</td>

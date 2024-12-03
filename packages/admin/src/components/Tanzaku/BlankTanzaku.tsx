@@ -11,7 +11,7 @@ interface Props {
   blankIndex: number
   blankTanzakuCount: number
 }
-const BlankTanzaku: React.FC<Props> = (props) => {
+const BlankTanzaku: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
   return (
     <A5Page>

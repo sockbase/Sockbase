@@ -8,7 +8,7 @@ interface Props {
   payment: SockbasePaymentDocument
   isLink?: boolean
 }
-const PaymentStatusLabel: React.FC<Props> = (props) => {
+const PaymentStatusLabel: React.FC<Props> = props => {
   const statusTextLabel = useMemo(() => {
     const paymentMethod = props.payment.paymentMethod === 1
       ? 'オンライン決済'
@@ -17,24 +17,46 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
         : '-'
     switch (props.payment.status) {
       case 0:
-        return <IconLabel label={`お支払い待ち（${paymentMethod}）`} icon={<MdOutlinePendingActions />} />
+        return (
+          <IconLabel
+            icon={<MdOutlinePendingActions />}
+            label={`お支払い待ち（${paymentMethod}）`} />
+        )
 
       case 1:
-        return <IconLabel label={`お支払い済み（${paymentMethod}）`} icon={<MdCheck />} />
+        return (
+          <IconLabel
+            icon={<MdCheck />}
+            label={`お支払い済み（${paymentMethod}）`} />
+        )
 
       case 2:
-        return <IconLabel label={`返金済み（${paymentMethod}）`} icon={<MdUndo />} />
+        return (
+          <IconLabel
+            icon={<MdUndo />}
+            label={`返金済み（${paymentMethod}）`} />
+        )
 
       case 3:
-        return <IconLabel label={`お支払い失敗（${paymentMethod}）`} icon={<MdClose />} />
+        return (
+          <IconLabel
+            icon={<MdClose />}
+            label={`お支払い失敗（${paymentMethod}）`} />
+        )
 
       case 4:
-        return <IconLabel label={`キャンセル済み（${paymentMethod}）`} icon={<MdClose />} />
+        return (
+          <IconLabel
+            icon={<MdClose />}
+            label={`キャンセル済み（${paymentMethod}）`} />
+        )
     }
   }, [props.payment])
 
   return (
-    <Container status={props.payment.status ?? 0} isLink={props.isLink}>
+    <Container
+      isLink={props.isLink}
+      status={props.payment.status ?? 0}>
       {statusTextLabel}
     </Container>
   )
@@ -52,9 +74,11 @@ const Container = styled.label<{ status: PaymentStatus, isLink?: boolean }>`
   ${p => {
     if (p.status === 0) {
       return 'background-color: var(--pending-color);'
-    } else if (p.status === 1) {
+    }
+    else if (p.status === 1) {
       return 'background-color: var(--success-color);'
-    } else if (p.status === 2 || p.status === 3 || p.status === 4) {
+    }
+    else if (p.status === 2 || p.status === 3 || p.status === 4) {
       return 'background-color: var(--danger-color);'
     }
   }};

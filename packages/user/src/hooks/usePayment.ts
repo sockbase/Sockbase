@@ -39,8 +39,8 @@ const usePayment = (): IUsePayment => {
       )
       const querySnapshot = await FirestoreDB.getDocs(paymentsQuery)
       const queryDocs = querySnapshot.docs
-        .filter((doc) => doc.exists())
-        .map((doc) => doc.data())
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
 
       return queryDocs
     }

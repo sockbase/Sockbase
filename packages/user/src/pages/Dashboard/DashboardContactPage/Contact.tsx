@@ -87,71 +87,94 @@ const Contact: React.FC = () => {
     <>
       {userData
         ? isSuccess
-          ? <Alert type="success" title="送信が完了しました">
+          ? (
+            <Alert
+              title="送信が完了しました"
+              type="success">
             お問い合わせが完了しました。<br />
             通常 3 営業日以内にメールにてご返信いたしますので、今しばらくお待ちください。
-          </Alert>
-          : <>
-            <FormSection>
-              <FormItem>
-                <FormLabel>お名前</FormLabel>
-                <FormInput
-                  disabled
-                  defaultValue={userData.name} />
-              </FormItem>
-              <FormItem>
-                <FormLabel>ご返信先メールアドレス</FormLabel>
-                <FormInput
-                  disabled
-                  defaultValue={userData.email} />
-              </FormItem>
-              <FormItem>
-                <FormLabel>お問い合わせ種類</FormLabel>
-                <FormSelect
-                  value={type}
-                  onChange={e => setType(e.target.value)}>
-                  <option value=''>お問い合わせ内容を選択してください</option>
-                  {inquiryHelper.inquiryTypes.map(ct => <option key={ct.type} value={ct.type}>{ct.name}</option>)}
-                </FormSelect>
-              </FormItem>
-              <FormItem>
-                <FormLabel>お問い合わせ内容</FormLabel>
-                {inquiryContext?.description && <FormItem>
-                  <Alert type='info' title={inquiryContext?.name}>
-                    {inquiryContext?.description ?? ''}
-                  </Alert>
-                </FormItem>}
-                <FormTextarea
-                  value={body}
-                  onChange={e => setBody(e.target.value)}
-                  hasError={bodyLength > maxBodyLength} />
-                <FormHelp hasError={bodyLength > maxBodyLength}>
+            </Alert>
+          )
+          : (
+            <>
+              <FormSection>
+                <FormItem>
+                  <FormLabel>お名前</FormLabel>
+                  <FormInput
+                    defaultValue={userData.name}
+                    disabled />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>ご返信先メールアドレス</FormLabel>
+                  <FormInput
+                    defaultValue={userData.email}
+                    disabled />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>お問い合わせ種類</FormLabel>
+                  <FormSelect
+                    onChange={e => setType(e.target.value)}
+                    value={type}>
+                    <option value="">お問い合わせ内容を選択してください</option>
+                    {inquiryHelper.inquiryTypes.map(ct => (
+                      <option
+                        key={ct.type}
+                        value={ct.type}>{ct.name}
+                      </option>
+                    ))}
+                  </FormSelect>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>お問い合わせ内容</FormLabel>
+                  {inquiryContext?.description && (
+                    <FormItem>
+                      <Alert
+                        title={inquiryContext?.name}
+                        type="info">
+                        {inquiryContext?.description ?? ''}
+                      </Alert>
+                    </FormItem>
+                  )}
+                  <FormTextarea
+                    hasError={bodyLength > maxBodyLength}
+                    onChange={e => setBody(e.target.value)}
+                    value={body} />
+                  <FormHelp hasError={bodyLength > maxBodyLength}>
                   お問い合わせ内容を {maxBodyLength.toLocaleString()} 文字以下で入力してください。
-                </FormHelp>
-                <FormLabel>{bodyLength.toLocaleString()} 文字 / {maxBodyLength.toLocaleString()} 文字</FormLabel>
-              </FormItem>
-            </FormSection>
+                  </FormHelp>
+                  <FormLabel>{bodyLength.toLocaleString()} 文字 / {maxBodyLength.toLocaleString()} 文字</FormLabel>
+                </FormItem>
+              </FormSection>
 
-            {errorCount !== 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`}/>}
+              {errorCount !== 0 && (
+                <Alert
+                  title={`${errorCount} 個の入力項目に不備があります。`}
+                  type="error" />
+              )}
 
-            <p>
+              <p>
               返信はメールにて行います。<br />
               迷惑メール設定にてドメイン規制設定を行なっている方は、受信許可ドメインに <code>@sockbase.net</code> を追加してください。
-            </p>
+              </p>
 
-            <FormSection>
-              <FormItem>
-                <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
-                  <FormButton
-                    onClick={handleSubmit}
-                    disabled={isProgress || isSuccess || errorCount !== 0}
-                    color="primary">
-                    <IconLabel icon={<MdSend />} label="送信する" />
-                  </FormButton>
-                </LoadingCircleWrapper>
-              </FormItem>
-            </FormSection>
-          </>
+              <FormSection>
+                <FormItem>
+                  <LoadingCircleWrapper
+                    inlined={true}
+                    isLoading={isProgress}>
+                    <FormButton
+                      color="primary"
+                      disabled={isProgress || isSuccess || errorCount !== 0}
+                      onClick={handleSubmit}>
+                      <IconLabel
+                        icon={<MdSend />}
+                        label="送信する" />
+                    </FormButton>
+                  </LoadingCircleWrapper>
+                </FormItem>
+              </FormSection>
+            </>
+          )
         : <Loading text="ユーザ情報" />}
     </>
   )

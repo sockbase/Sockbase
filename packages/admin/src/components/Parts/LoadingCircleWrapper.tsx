@@ -5,15 +5,17 @@ interface Props {
   children: React.ReactNode
   inlined?: boolean
 }
-const LoadingCircleWrapper: React.FC<Props> = (props) => {
+const LoadingCircleWrapper: React.FC<Props> = props => {
   return (
     <Container inlined={props.inlined}>
       {props.children}
-      {props.isLoading && <LoadingContainer>
-        <LoadingCircleArea>
-          <LoadingCircle />
-        </LoadingCircleArea>
-      </LoadingContainer>}
+      {props.isLoading && (
+        <LoadingContainer>
+          <LoadingCircleArea>
+            <LoadingCircle />
+          </LoadingCircleArea>
+        </LoadingContainer>
+      )}
     </Container>
   )
 }

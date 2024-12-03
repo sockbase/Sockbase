@@ -87,15 +87,17 @@ const OrganizationViewPage: React.FC = () => {
   }, [])
 
   return (
-    <DefaultLayout title="組織情報照会" requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title="組織情報照会">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/organizations">組織一覧</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title="組織情報照会"
-        icon={<MdGroup />} />
+        icon={<MdGroup />}
+        title="組織情報照会" />
 
       <TwoColumnLayout>
         <>
@@ -149,11 +151,15 @@ const OrganizationViewPage: React.FC = () => {
               <FormSection>
                 <FormItem>
                   <FormLabel>ユーザ ID</FormLabel>
-                  <FormInput value={managerUserId} onChange={e => setManagerUserId(e.target.value)} />
+                  <FormInput
+                    onChange={e => setManagerUserId(e.target.value)}
+                    value={managerUserId} />
                 </FormItem>
                 <FormItem>
                   <FormLabel>ロール</FormLabel>
-                  <FormSelect value={role} onChange={e => setRole(e.target.value)}>
+                  <FormSelect
+                    onChange={e => setRole(e.target.value)}
+                    value={role}>
                     <option value="">ロールを選択</option>
                     <option value="0">0: ユーザ</option>
                     <option value="1">1: スタッフ</option>
@@ -164,7 +170,9 @@ const OrganizationViewPage: React.FC = () => {
               <FormSection>
                 <FormItem>
                   <FormButton onClick={handleSetManager}>
-                    <IconLabel icon={<MdSave />} label="設定" />
+                    <IconLabel
+                      icon={<MdSave />}
+                      label="設定" />
                   </FormButton>
                 </FormItem>
               </FormSection>

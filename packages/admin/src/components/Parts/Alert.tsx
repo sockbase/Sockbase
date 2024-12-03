@@ -23,7 +23,7 @@ interface Props {
   title: string
   children?: React.ReactNode
 }
-const Alert: React.FC<Props> = (props) => {
+const Alert: React.FC<Props> = props => {
   return (
     <Container type={props.type}>
       <Header>

@@ -92,7 +92,8 @@ const CircleViewPage: React.FC = () => {
     const promptAppId = prompt(`この申し込みを削除するには ${hashId} と入力してください`)
     if (promptAppId === null) {
       return
-    } else if (promptAppId !== hashId) {
+    }
+    else if (promptAppId !== hashId) {
       alert('入力が間違っています')
       return
     }
@@ -145,13 +146,16 @@ const CircleViewPage: React.FC = () => {
       getSpaceByIdNullableAsync(appHash.spaceId)
         .then(setSpace)
         .catch(err => { throw err })
-    } else {
+    }
+    else {
       setSpace(null)
     }
   }, [appHash])
 
   return (
-    <DefaultLayout title={app?.circle.name ?? 'サークル情報照会'} requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title={app?.circle.name ?? 'サークル情報照会'}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
@@ -161,15 +165,17 @@ const CircleViewPage: React.FC = () => {
 
       <PageTitle
         icon={<MdEdit />}
-        title={app?.circle.name}
-        isLoading={!app} />
+        isLoading={!app}
+        title={app?.circle.name} />
 
       <FormSection>
         <FormItem>
           <AnchorButton
             href={`${envHelper.userAppURL}/dashboard/applications/${hashId}`}
             target="_blank">
-            <IconLabel icon={<MdOpenInNew />} label='ユーザ画面で開く' />
+            <IconLabel
+              icon={<MdOpenInNew />}
+              label="ユーザ画面で開く" />
           </AnchorButton>
         </FormItem>
       </FormSection>
@@ -188,8 +194,8 @@ const CircleViewPage: React.FC = () => {
                 <td>
                   {(payment && (
                     <PaymentStatusLabel
-                      payment={payment}
-                      isShowBrand />
+                      isShowBrand
+                      payment={payment} />
                   )) ?? <BlinkField />}
                 </td>
               </tr>
@@ -229,9 +235,11 @@ const CircleViewPage: React.FC = () => {
                 <th>ID</th>
                 <td>
                   {app
-                    ? <>
-                      {app.hashId} <CopyToClipboard content={app.hashId} />
-                    </>
+                    ? (
+                      <>
+                        {app.hashId} <CopyToClipboard content={app.hashId} />
+                      </>
+                    )
                     : <BlinkField />}
                 </td>
               </tr>
@@ -344,29 +352,35 @@ const CircleViewPage: React.FC = () => {
             <FormItem $inlined>
               {app?.meta.applicationStatus !== 2 && (
                 <FormButton onClick={() => handleSetApplicationStatus(2)}>
-                  <IconLabel icon={<MdCheck />} label='申し込み確定状態にする' />
+                  <IconLabel
+                    icon={<MdCheck />}
+                    label="申し込み確定状態にする" />
                 </FormButton>
               )}
               {app?.meta.applicationStatus !== 0 && (
                 <FormButton onClick={() => handleSetApplicationStatus(0)}>
-                  <IconLabel icon={<MdPendingActions />} label='仮申し込み状態にする' />
+                  <IconLabel
+                    icon={<MdPendingActions />}
+                    label="仮申し込み状態にする" />
                 </FormButton>
               )}
               {app?.meta.applicationStatus !== 1 && (
                 <FormButton onClick={() => handleSetApplicationStatus(1)}>
-                  <IconLabel icon={<MdClose />} label='キャンセル状態にする' />
+                  <IconLabel
+                    icon={<MdClose />}
+                    label="キャンセル状態にする" />
                 </FormButton>
               )}
             </FormItem>
           </FormSection>
 
           <PaymentStatusController
-            paymentId={payment?.id}
-            status={payment?.status}
             onChange={st => {
               setPayment(s => s && ({ ...s, status: st }))
               alert('支払いステータスを変更しました')
-            }} />
+            }}
+            paymentId={payment?.id}
+            status={payment?.status} />
         </>
 
         {isSystemAdmin && (
@@ -374,8 +388,12 @@ const CircleViewPage: React.FC = () => {
             <h3>システム操作</h3>
             <FormSection>
               <FormItem>
-                <FormButton onClick={handleDeleteApplication} disabled={isDeletedApplication}>
-                  <IconLabel icon={<MdOutlineDeleteForever />} label='申し込み情報を削除する' />
+                <FormButton
+                  disabled={isDeletedApplication}
+                  onClick={handleDeleteApplication}>
+                  <IconLabel
+                    icon={<MdOutlineDeleteForever />}
+                    label="申し込み情報を削除する" />
                 </FormButton>
               </FormItem>
             </FormSection>

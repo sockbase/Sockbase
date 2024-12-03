@@ -18,7 +18,7 @@ interface Props {
   store: SockbaseStoreDocument
   userId: string | null
 }
-const TicketView: React.FC<Props> = (props) => {
+const TicketView: React.FC<Props> = props => {
   const { assignTicketUserAsync } = useStore()
   const { formatByDate } = useDayjs()
 
@@ -65,59 +65,81 @@ const TicketView: React.FC<Props> = (props) => {
         <TicketStatusContainer>
           {props.ticketUser.used && <UsedTicketAlert>このチケットは使用済みです</UsedTicketAlert>}
         </TicketStatusContainer>
-        <TitleWrapper color={type?.color || 'var(--background-disabled-color)'} disabled={!ticketUser?.usableUserId || ticketUser?.used}>
+        <TitleWrapper
+          color={type?.color || 'var(--background-disabled-color)'}
+          disabled={!ticketUser?.usableUserId || ticketUser?.used}>
           <TitleContainer>
             <StoreName>{props.store.name}</StoreName>
             <TypeName>{type?.name}</TypeName>
             <QRCodeArea>
-              <QRCode value={props.ticketHashId} size={192} />
+              <QRCode
+                size={192}
+                value={props.ticketHashId} />
             </QRCodeArea>
             <Code>{props.ticketHashId}</Code>
           </TitleContainer>
         </TitleWrapper>
         <ContentContainer>
           {ticketUser && ticketUser.usableUserId === null
-            ? <>
-              <Alert type="error" title="チケットの割り当てが完了していません">
+            ? (
+              <>
+                <Alert
+                  title="チケットの割り当てが完了していません"
+                  type="error">
                 このチケットを使うユーザの割り当てが完了していません。
-                {props.userId !== ticketUser.userId &&
-                  <>
-                    <br />
+                  {props.userId !== ticketUser.userId && (
+                    <>
+                      <br />
                     チケット購入者からチケット受け取り URL を送付してもらい、情報を入力してください。
-                  </>}
-              </Alert>
-              {props.userId === ticketUser.userId &&
-                <>
-                  <p>
+                    </>
+                  )}
+                </Alert>
+                {props.userId === ticketUser.userId && (
+                  <>
+                    <p>
                     自分でこのチケットを使う場合は「チケットを有効化する」を押してください。<br />
                     他の方にチケットを渡す場合は、<Link to={`/dashboard/tickets/${props.ticketHashId}`}>チケット情報表示ページ</Link> から チケット受け取り URL を渡してください。
-                  </p>
-                  <FormSection>
-                    <FormItem>
-                      <LoadingCircleWrapper isLoading={isProgress}>
-                        <FormButton onClick={handleAssignMe} disabled={isProgress}>チケットを有効化する</FormButton>
-                      </LoadingCircleWrapper>
-                    </FormItem>
-                  </FormSection>
-                </>}
-            </>
-            : <>
-              {props.ticketUser.used
-                ? <Alert type="error" title="使用済みです">
+                    </p>
+                    <FormSection>
+                      <FormItem>
+                        <LoadingCircleWrapper isLoading={isProgress}>
+                          <FormButton
+                            disabled={isProgress}
+                            onClick={handleAssignMe}>チケットを有効化する
+                          </FormButton>
+                        </LoadingCircleWrapper>
+                      </FormItem>
+                    </FormSection>
+                  </>
+                )}
+              </>
+            )
+            : (
+              <>
+                {props.ticketUser.used
+                  ? (
+                    <Alert
+                      title="使用済みです"
+                      type="error">
                   このチケットは既に使用されています。
-                </Alert>
-                : ticketUser && props.userId !== ticketUser.usableUserId &&
-                <Alert type="warning" title="他の方に割り当てられているチケットです">
+                    </Alert>
+                  )
+                  : ticketUser && props.userId !== ticketUser.usableUserId && (
+                    <Alert
+                      title="他の方に割り当てられているチケットです"
+                      type="warning">
                   あなたが使用すると、割り当てた方が使用できなくなります。<br />
                   自分のチケットは <Link to="/dashboard/mytickets">マイチケット</Link> から確認できます。
-                </Alert>}
-              <p>
+                    </Alert>
+                  )}
+                <p>
                 上の QR コードを入口スタッフまでご提示ください。
-              </p>
-              <p>
+                </p>
+                <p>
                 QR コードを提示できない場合は、この画面を印刷しご持参ください。
-              </p>
-            </>}
+                </p>
+              </>
+            )}
         </ContentContainer>
         <Footer>
           <UpdatedDate>

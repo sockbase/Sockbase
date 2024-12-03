@@ -1,4 +1,3 @@
-
 import styled from 'styled-components'
 import HeadHelper from '../../libs/Helmet'
 import Footer from './Footer'
@@ -7,7 +6,7 @@ interface Props {
   children: React.ReactNode
   title?: string
 }
-const DefaultBaseLayout: React.FC<Props> = (props) => {
+const DefaultBaseLayout: React.FC<Props> = props => {
   return (
     <Layout>
       <HeadHelper title={props.title} />

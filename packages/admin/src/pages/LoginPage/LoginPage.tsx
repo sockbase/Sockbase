@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
   }, [email, password])
 
   return (
-    <DefaultLayout title='ログイン'>
+    <DefaultLayout title="ログイン">
       <PageTitle
         icon={<MdLogin />}
         title="ログイン" />
@@ -42,31 +42,35 @@ const LoginPage: React.FC = () => {
         <FormItem>
           <FormLabel>メールアドレス</FormLabel>
           <FormInput
-            value={email}
+            disabled={isProgress}
             onChange={e => setEmail(e.target.value)}
-            disabled={isProgress} />
+            value={email} />
         </FormItem>
         <FormItem>
           <FormLabel>パスワード</FormLabel>
           <FormInput
-            type="password"
-            value={password}
+            disabled={isProgress}
             onChange={e => setPassword(e.target.value)}
-            disabled={isProgress} />
+            type="password"
+            value={password} />
         </FormItem>
       </FormSection>
       <FormSection>
         <FormItem>
           <FormButton
-            type="submit"
+            disabled={isProgress}
             onClick={handleLogin}
-            disabled={isProgress}>
-            <IconLabel icon={<MdLogin />} label="ログイン" />
+            type="submit">
+            <IconLabel
+              icon={<MdLogin />}
+              label="ログイン" />
           </FormButton>
         </FormItem>
       </FormSection>
       {errorMessage && (
-        <Alert type="error" title="エラーが発生しました">
+        <Alert
+          title="エラーが発生しました"
+          type="error">
           {errorMessage}
         </Alert>
       )}

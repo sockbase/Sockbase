@@ -34,7 +34,7 @@ const useInquiry = (): IUseInquiry => {
       .withConverter(inquiryConverter)
 
     const inquiriesDocs = await getDocs(inquiriesRef)
-    const inquries = inquiriesDocs.docs.map((i) => i.data())
+    const inquries = inquiriesDocs.docs.map(i => i.data())
 
     return inquries
   }, [])
@@ -53,7 +53,7 @@ const useInquiry = (): IUseInquiry => {
 
   const getInquiryType =
     (inquiryType: string): { type: string, name: string, description: string } =>
-      inquiryHelper.inquiryTypes.filter((t) => t.type === inquiryType)[0]
+      inquiryHelper.inquiryTypes.filter(t => t.type === inquiryType)[0]
 
   const setStatusByIdAsync = useCallback(async (inquiryId: string, status: SockbaseInquiryStatus) => {
     const inquiryMetaRef = doc(db, `/_inquiries/${inquiryId}/private/meta`)

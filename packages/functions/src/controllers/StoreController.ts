@@ -60,7 +60,8 @@ export const createTicketForAdmin = https.onCall(
     const store = storeDoc.data()
     if (!store) {
       throw new https.HttpsError('not-found', 'store')
-    } else if (context.auth.token.roles?.[store._organization.id] < 2) {
+    }
+    else if (context.auth.token.roles?.[store._organization.id] < 2) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }
 

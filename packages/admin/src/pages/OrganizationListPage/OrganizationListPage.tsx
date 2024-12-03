@@ -19,14 +19,16 @@ const OrganizationListPage: React.FC = () => {
   }, [])
 
   return (
-    <DefaultLayout title="組織一覧" requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title="組織一覧">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title="組織一覧"
-        icon={<MdGroup />} />
+        icon={<MdGroup />}
+        title="組織一覧" />
 
       <table>
         <thead>

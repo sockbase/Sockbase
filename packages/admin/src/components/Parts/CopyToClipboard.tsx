@@ -6,7 +6,7 @@ import useClipboard from '../../hooks/useClipboard'
 interface Props {
   content: string | null | undefined
 }
-const CopyToClipboard: React.FC<Props> = (props) => {
+const CopyToClipboard: React.FC<Props> = props => {
   const [isCopied, setCopied] = useState(false)
   const { copyToClipboardAsync } = useClipboard()
 
@@ -24,7 +24,9 @@ const CopyToClipboard: React.FC<Props> = (props) => {
   }, [isCopied])
 
   return (
-    <Container onClick={copyToClipboard} $isActive={isCopied}>
+    <Container
+      $isActive={isCopied}
+      onClick={copyToClipboard}>
       {
         isCopied
           ? <MdLibraryAddCheck />

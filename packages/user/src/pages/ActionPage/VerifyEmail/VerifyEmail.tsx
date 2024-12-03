@@ -6,7 +6,7 @@ import useFirebase from '../../../hooks/useFirebase'
 interface Props {
   oobCode: string
 }
-const VerifyEmail: React.FC<Props> = (props) => {
+const VerifyEmail: React.FC<Props> = props => {
   const { applyActionCodeAsync } = useFirebase()
   const { convertErrorMessage } = useError()
 
@@ -30,13 +30,21 @@ const VerifyEmail: React.FC<Props> = (props) => {
 
   return (
     <>
-      {errorMessage && <Alert type="error" title="エラーが発生しました">
-        {errorMessage}
-      </Alert>}
+      {errorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">
+          {errorMessage}
+        </Alert>
+      )}
 
-      {isSuccess && <Alert type="success" title="メールアドレスの確認が完了しました">
-        タブを閉じてください。
-      </Alert>}
+      {isSuccess && (
+        <Alert
+          title="メールアドレスの確認が完了しました"
+          type="success">
+          タブを閉じてください。
+        </Alert>
+      )}
     </>
   )
 }

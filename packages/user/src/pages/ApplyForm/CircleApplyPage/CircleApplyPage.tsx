@@ -119,19 +119,19 @@ const NewCircleApplyPage: React.FC = () => {
   return (
     <DefaultBaseLayout title={pageTitle}>
       <StepContainer
+        createUserAsync={createUserAsync}
         event={event}
-        user={user}
         eyecatchURL={eyecatchURL}
-        userData={userData}
-        pastApps={pastApps}
-        pastAppLinks={pastAppLinks}
-        pastEvents={pastEvents}
         loginAsync={handleLoginAsync}
         logoutAsync={handleLogoutAsync}
-        createUserAsync={createUserAsync}
-        updateUserDataAsync={updateUserDataAsync}
+        pastAppLinks={pastAppLinks}
+        pastApps={pastApps}
+        pastEvents={pastEvents}
         submitApplicationAsync={submitApplicationAsync}
-        updateCircleCutFileAsync={uploadCircleCutFileAsync} />
+        updateCircleCutFileAsync={uploadCircleCutFileAsync}
+        updateUserDataAsync={updateUserDataAsync}
+        user={user}
+        userData={userData} />
     </DefaultBaseLayout>
   )
 }

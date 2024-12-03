@@ -37,7 +37,9 @@ const EventListPage: React.FC = () => {
   }, [roles])
 
   return (
-    <DefaultLayout title='イベント管理' requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title="イベント管理">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
@@ -46,24 +48,30 @@ const EventListPage: React.FC = () => {
         icon={<MdEditCalendar />}
         title="イベント管理" />
 
-      {isSystemAdmin && <FormSection>
-        <FormItem>
-          <LinkButton to="/events/create">
-            <IconLabel icon={<MdAdd />} label='イベント作成' />
-          </LinkButton>
-        </FormItem>
-      </FormSection>}
+      {isSystemAdmin && (
+        <FormSection>
+          <FormItem>
+            <LinkButton to="/events/create">
+              <IconLabel
+                icon={<MdAdd />}
+                label="イベント作成" />
+            </LinkButton>
+          </FormItem>
+        </FormSection>
+      )}
 
       <ul>
         {events && Object.entries(events).map(([id, evs]) => (
           <li key={id}>{id}
             <ul>
-              {evs.map(e =>
+              {evs.map(e => (
                 <li key={e.id}>
                   <Link to={`/events/${e.id}`}>{e.name}</Link> @{e.venue.name}
-                </li>)}
+                </li>
+              ))}
             </ul>
-          </li>))}
+          </li>
+        ))}
       </ul>
     </DefaultLayout>
   )

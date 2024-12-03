@@ -16,13 +16,15 @@ const Header: React.FC = () => {
   const loggedInState = useMemo(() => {
     if (user === undefined) {
       return '認証中'
-    } else if (user) {
+    }
+    else if (user) {
       return (
         <span onClick={handleLogout}>
           {user.email} としてログイン中
         </span>
       )
-    } else {
+    }
+    else {
       return <Link to="/">未ログイン</Link>
     }
   }, [user])
@@ -30,7 +32,9 @@ const Header: React.FC = () => {
   return (
     <StyledHeader>
       <Logo>
-        <Logotype src={LogotypeSVG} alt="Sockbase Logotype" /> 開発用ヘッダー
+        <Logotype
+          alt="Sockbase Logotype"
+          src={LogotypeSVG} /> 開発用ヘッダー
       </Logo>
       <Account>
         {loggedInState}

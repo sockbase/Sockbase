@@ -8,9 +8,11 @@ import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 const IndexPage: React.FC = () => {
   const { commonRole } = useRole()
   return (
-    <DefaultLayout title='ホーム'>
+    <DefaultLayout title="ホーム">
       {commonRole === 0 && (
-        <Alert type='error' title='アカウントが無効です' />
+        <Alert
+          title="アカウントが無効です"
+          type="error" />
       )}
       {commonRole != null && commonRole >= 1 && (
         <>

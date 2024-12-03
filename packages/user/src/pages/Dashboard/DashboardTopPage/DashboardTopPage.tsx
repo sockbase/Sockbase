@@ -28,52 +28,52 @@ const DashboardTopPage: React.FC = () => {
       </Breadcrumbs>
 
       <PageTitle
+        description="Sockbase マイページへようこそ！"
         icon={<MdHome />}
-        title="ホーム"
-        description="Sockbase マイページへようこそ！" />
+        title="ホーム" />
 
       <TwoColumnsLayout>
         <>
           <CardContainer>
             <TopCard
-              to="/dashboard/mytickets"
-              icon={<MdLocalActivity />}
-              title="マイチケット"
               description="あなたに割り当てられているチケットを表示します。"
-              important />
+              icon={<MdLocalActivity />}
+              important
+              title="マイチケット"
+              to="/dashboard/mytickets" />
           </CardContainer>
 
           <h2>申し込み履歴</h2>
           <CardContainer>
             <TopCard
-              to="/dashboard/tickets"
+              description="今までに申し込んだチケット履歴を表示します。"
               icon={<MdWallet />}
               title="購入済みチケット"
-              description="今までに申し込んだチケット履歴を表示します。" />
+              to="/dashboard/tickets" />
             <TopCard
-              to="/dashboard/applications"
+              description="今までに申し込んだサークル参加履歴を表示します。"
               icon={<MdCollectionsBookmark />}
               title="申込済みイベント"
-              description="今までに申し込んだサークル参加履歴を表示します。" />
+              to="/dashboard/applications" />
             <TopCard
-              to="/dashboard/payments"
+              description="Sockbase を通して申し込んだサークル参加・チケットの決済履歴を表示します。"
               icon={<MdPayments />}
               title="決済履歴"
-              description="Sockbase を通して申し込んだサークル参加・チケットの決済履歴を表示します。" />
+              to="/dashboard/payments" />
           </CardContainer>
 
           <h2>設定・サポート</h2>
           <CardContainer>
             <TopCard
-              to="/dashboard/settings"
+              description="Sockbase に登録している情報を変更します。"
               icon={<MdSettings />}
               title="マイページ設定"
-              description="Sockbase に登録している情報を変更します。" />
+              to="/dashboard/settings" />
             <TopCard
-              to="/dashboard/contact"
+              description="Sockbase 運営チームによるサポートが必要な場合は、こちらからお問い合わせください。"
               icon={<MdMail />}
               title="お問い合わせ"
-              description="Sockbase 運営チームによるサポートが必要な場合は、こちらからお問い合わせください。" />
+              to="/dashboard/contact" />
           </CardContainer>
         </>
         <>
@@ -81,11 +81,19 @@ const DashboardTopPage: React.FC = () => {
           <h2>法令に基づく表記</h2>
           <FormSection>
             <FormItem $inlined>
-              <AnchorButton href="/tos" target="_blank">
-                <IconLabel icon={<MdOpenInNew />} label='利用規約・特商法に基づく表記' />
+              <AnchorButton
+                href="/tos"
+                target="_blank">
+                <IconLabel
+                  icon={<MdOpenInNew />}
+                  label="利用規約・特商法に基づく表記" />
               </AnchorButton>
-              <AnchorButton href="/privacy-policy" target="_blank">
-                <IconLabel icon={<MdOpenInNew />} label='プライバシーポリシー' />
+              <AnchorButton
+                href="/privacy-policy"
+                target="_blank">
+                <IconLabel
+                  icon={<MdOpenInNew />}
+                  label="プライバシーポリシー" />
               </AnchorButton>
             </FormItem>
           </FormSection>

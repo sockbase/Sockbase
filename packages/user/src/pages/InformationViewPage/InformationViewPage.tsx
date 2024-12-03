@@ -39,24 +39,34 @@ const InformationViewPage: React.FC = () => {
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
 
-      {information === undefined && <Alert type="info" title="お知らせを取得中">
+      {information === undefined && (
+        <Alert
+          title="お知らせを取得中"
+          type="info">
         お知らせを取得しています。しばらくお待ちください。
-      </Alert>}
+        </Alert>
+      )}
 
-      {information === null && <Alert type="error" title="お知らせが見つかりませんでした">
+      {information === null && (
+        <Alert
+          title="お知らせが見つかりませんでした"
+          type="error">
         URL をお確かめの上、再度お試しください。
-      </Alert>}
+        </Alert>
+      )}
 
-      {information && informationBody && <>
-        <InformationTitle>{information.title}</InformationTitle>
-        <InformationDate>
-          {formatByDate(information.updatedAt, 'YYYY年 M月 D日')} 更新
-        </InformationDate>
+      {information && informationBody && (
+        <>
+          <InformationTitle>{information.title}</InformationTitle>
+          <InformationDate>
+            {formatByDate(information.updatedAt, 'YYYY年 M月 D日')} 更新
+          </InformationDate>
 
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {informationBody}
-        </ReactMarkdown>
-      </>}
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {informationBody}
+          </ReactMarkdown>
+        </>
+      )}
     </DefaultBaseLayout>
   )
 }

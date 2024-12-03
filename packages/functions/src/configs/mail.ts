@@ -10,8 +10,7 @@ import type {
   SockbaseApplicationDocument,
   SockbaseTicketDocument,
   SockbaseStoreDocument,
-  SockbaseStoreType,
-  SockbaseEventGenre
+  SockbaseStoreType
 } from 'sockbase'
 
 const commonSuffix = [
@@ -36,7 +35,7 @@ const manuallySuffix = [
 ]
 
 const templates = {
-  acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument, space: SockbaseEventSpace, genre: SockbaseEventGenre) => ({
+  acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument) => ({
     subject: `[${event.name}] サークル参加申し込み 内容確認`,
     body: [
       `この度は、${event.name}への参加申し込みをいただき、誠にありがとうございます。`,

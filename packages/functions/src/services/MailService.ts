@@ -22,10 +22,8 @@ const auth = adminApp.auth()
 const sendMailAcceptCircleApplicationAsync = async (app: SockbaseApplicationDocument): Promise<void> => {
   const email = await getEmail(app.userId)
   const event = await getEventByIdAsync(app.eventId)
-  const space = event.spaces.filter(s => s.id === app.spaceId)[0]
-  const genre = event.genres.filter(g => g.id === app.circle.genre)[0]
 
-  const template = mailConfig.templates.acceptApplication(event, app, space, genre)
+  const template = mailConfig.templates.acceptApplication(event, app)
   await addQueueAsync(email, template)
 }
 
@@ -160,9 +158,9 @@ const sendMailManuallyForEventAsync = async (payload: SockbaseSendMailForEventPa
     .catch(err => { throw err })
 
   const targetApps = apps
-    .filter(a => (payload.target.pending && appMetas[a.id].applicationStatus === 0) ||
-        (payload.target.canceled && appMetas[a.id].applicationStatus === 1) ||
-        (payload.target.confirmed && appMetas[a.id].applicationStatus === 2))
+    .filter(a => (payload.target.pending && appMetas[a.id].applicationStatus === 0)
+    || (payload.target.canceled && appMetas[a.id].applicationStatus === 1)
+    || (payload.target.confirmed && appMetas[a.id].applicationStatus === 2))
   if (targetApps.length === 0) {
     console.log('targetApps are empty')
     return false

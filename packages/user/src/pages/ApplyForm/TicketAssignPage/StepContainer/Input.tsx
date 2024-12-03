@@ -19,7 +19,7 @@ interface Props {
   prevStep: () => void
   nextStep: (userData: SockbaseAccountSecure | undefined) => void
 }
-const Input: React.FC<Props> = (props) => {
+const Input: React.FC<Props> = props => {
   const validator = useValidate()
   const { formatByDate } = useDayjs()
 
@@ -38,7 +38,8 @@ const Input: React.FC<Props> = (props) => {
         props.fetchedUserData.gender || validator.isIn(userData?.gender?.toString() ?? '', ['1', '2'])
       ]
       errorCount += additionalUserDataValidators.filter(v => !v).length
-    } else {
+    }
+    else {
       if (!userData) return 1
       const userDataValidators = [
         validator.isNotEmpty(userData.name),
@@ -70,7 +71,9 @@ const Input: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormButton onClick={props.prevStep}>
-            <IconLabel icon={<MdArrowBack />} label="アカウント確認画面へ戻る" />
+            <IconLabel
+              icon={<MdArrowBack />}
+              label="アカウント確認画面へ戻る" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -91,9 +94,13 @@ const Input: React.FC<Props> = (props) => {
             <td>{formatByDate(props.store.schedules.startEvent, 'YYYY年 M月 D日 H時mm分')} ～ {formatByDate(props.store.schedules.endEvent, 'H時mm分')}</td>
           </tr>
           <tr>
-            <th></th>
+            <th />
             <td>
-              <a href={props.store.websiteURL} target="_blank" rel="noreferrer">その他の開催情報…</a>
+              <a
+                href={props.store.websiteURL}
+                rel="noreferrer"
+                target="_blank">その他の開催情報…
+              </a>
             </td>
           </tr>
         </tbody>
@@ -101,33 +108,48 @@ const Input: React.FC<Props> = (props) => {
 
       <UserDataForm
         fetchedUserData={props.fetchedUserData}
-        userData={props.userData}
+        isTicketAssignPage={true}
         setUserData={u => setUserData(u)}
-        isTicketAssignPage={true} />
+        userData={props.userData} />
 
       <h2>注意事項</h2>
       <p>
-        <a href="/tos" target="_blank">Sockbase利用規約</a>および<a href="/privacy-policy" target="_blank">プライバシーポリシー</a>に同意しますか？
+        <a
+          href="/tos"
+          target="_blank">Sockbase利用規約
+        </a>
+        および
+        <a
+          href="/privacy-policy"
+          target="_blank">プライバシーポリシー
+        </a>
+        に同意しますか？
       </p>
 
       <FormSection>
         <FormItem>
           <FormCheckbox
-            name="isAggreed"
+            checked={isAgreed}
             label="同意します"
-            onChange={checked => setAgreed(checked)}
-            checked={isAgreed} />
+            name="isAggreed"
+            onChange={checked => setAgreed(checked)} />
         </FormItem>
       </FormSection>
 
-      {errorCount > 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
+      {errorCount > 0 && (
+        <Alert
+          title={`${errorCount} 個の入力項目に不備があります。`}
+          type="error" />
+      )}
 
       <FormSection>
         <FormButton
           color="primary"
           disabled={!isAgreed || errorCount > 0}
           onClick={handleSubmit}>
-          <IconLabel icon={<MdArrowForward />} label="確認画面へ進む" />
+          <IconLabel
+            icon={<MdArrowForward />}
+            label="確認画面へ進む" />
         </FormButton>
       </FormSection>
     </>

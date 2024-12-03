@@ -5,12 +5,12 @@ interface Props {
   checked: boolean
   onChange: (checked: boolean) => void
 }
-const FormCheck: React.FC<Props> = (props) => {
+const FormCheck: React.FC<Props> = props => {
   return (
     <>
       <Checkbox
-        id={props.name}
         checked={props.checked}
+        id={props.name}
         onChange={e => props.onChange(e.target.checked)} />
       <CheckboxLabel htmlFor={props.name} />
     </>
