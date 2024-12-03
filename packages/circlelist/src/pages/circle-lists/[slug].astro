@@ -165,7 +165,9 @@ const spaces = props.listControl.type === 1
         return {
           spaceName: `(${s.spaceName})`,
           circleName: '',
+          circleNameYomi: '',
           penName: '',
+          penNameYomi: '',
           hasAdult: false,
           links: []
         }
@@ -177,7 +179,9 @@ const spaces = props.listControl.type === 1
       return {
         spaceName: s.spaceName,
         circleName: appDoc.circle.name,
+        circleNameYomi: appDoc.circle.yomi,
         penName: appDoc.circle.penName,
+        penNameYomi: appDoc.circle.penNameYomi,
         hasAdult: appDoc.circle.hasAdult,
         links,
         circleCutURL
@@ -190,8 +194,10 @@ const spaces = props.listControl.type === 1
 
       return {
         spaceName: null,
-        circleName: app.circle.name,
-        penName: app.circle.penName,
+        circleName: appDoc.circle.name,
+        circleNameYomi: appDoc.circle.yomi,
+        penName: appDoc.circle.penName,
+        penNameYomi: appDoc.circle.penNameYomi,
         hasAdult: app.circle.hasAdult,
         links,
         circleCutURL
@@ -234,8 +240,18 @@ const spaces = props.listControl.type === 1
             {s.circleCutURL && <a href={s.circleCutURL.url}><img src={s.circleCutURL.url} class="circleCutImage" /></a>}
           </td>
           {props.listControl.type === 1 && <td>{s.spaceName}</td>}
-          <td>{s.circleName}</td>
-          <td>{s.penName}</td>
+          <td>
+            <ruby>
+              {s.circleName}
+              <rp>(</rp><rt>{s.circleNameYomi}</rt><rp>)</rp>
+            </ruby>
+          </td>
+          <td>  
+            <ruby>
+              {s.penName}
+              <rp>(</rp><rt>{s.penNameYomi}</rt><rp>)</rp>
+            </ruby>
+          </td>
           <td>{s.hasAdult ? '成人向' : '-'}</td>
           <td>
             {s.links.length === 0 && '-'}
