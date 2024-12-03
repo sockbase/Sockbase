@@ -8,7 +8,7 @@ interface Props {
   typeId: string | undefined
 }
 
-const TicketTypeLabel: React.FC<Props> = (props) => {
+const TicketTypeLabel: React.FC<Props> = props => {
   const ticketType = useMemo(() => {
     return props.store?.types.find(t => t.id === props.typeId)
   }, [props.store, props.typeId])

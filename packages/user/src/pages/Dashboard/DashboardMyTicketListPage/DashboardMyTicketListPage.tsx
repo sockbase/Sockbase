@@ -76,61 +76,78 @@ const DashboardMyTicketsPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle title="マイチケット" icon={<MdLocalActivity />} description="あなたに割り当てられているチケットを表示中" />
+      <PageTitle
+        description="あなたに割り当てられているチケットを表示中"
+        icon={<MdLocalActivity />}
+        title="マイチケット" />
 
       {ticketUsers === undefined
-        ? <Loading text='マイチケット' />
-        : <>
-          {unusedTicketUsers
-            ? unusedTicketUsers.length !== 0
-              ? <>
-                <TicketsRack>
-                  {unusedTicketUsers
-                    .map(t => <TicketCard
-                      key={t.hashId}
-                      ticketUser={t}
-                      store={getStore(t.storeId)}
-                      type={getType(t.storeId, t.typeId)} />)}
-                </TicketsRack>
-                <Alert type="info" title="購入したチケットが見つからない場合">
+        ? <Loading text="マイチケット" />
+        : (
+          <>
+            {unusedTicketUsers
+              ? unusedTicketUsers.length !== 0
+                ? (
+                  <>
+                    <TicketsRack>
+                      {unusedTicketUsers
+                        .map(t => (
+                          <TicketCard
+                            key={t.hashId}
+                            store={getStore(t.storeId)}
+                            ticketUser={t}
+                            type={getType(t.storeId, t.typeId)} />
+                        ))}
+                    </TicketsRack>
+                    <Alert
+                      title="購入したチケットが見つからない場合"
+                      type="info">
                     購入したチケットは <Link to="/dashboard/tickets">購入済みチケット一覧</Link> で確認できます。
-                </Alert>
-              </>
-              : <p>
+                    </Alert>
+                  </>
+                )
+                : (
+                  <p>
                 割り当てられているチケットはありません。<br />
                 ご自身で購入したチケットは <Link to="/dashboard/tickets">購入済みチケット一覧</Link> からご確認ください。
-              </p>
-            : <Loading text="チケット一覧" />}
+                  </p>
+                )
+              : <Loading text="チケット一覧" />}
 
-          <details>
-            <summary>使用済みチケットの一覧</summary>
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>チケット名</th>
-                  <th>チケット種別</th>
-                  <th>使用日</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {usedTicketUsers.length !== 0
-                  ? usedTicketUsers
-                    .map((t, i) => <tr key={t.hashId}>
-                      <td>{i + 1}</td>
-                      <th>{getStore(t.storeId)?.name}</th>
-                      <td>{getType(t.storeId, t.typeId)?.name}</td>
-                      <td>{formatByDate(t.usedAt, 'YYYY年 M月 D日 H時mm分')}</td>
-                      <td><Link to={`/dashboard/mytickets/${t.hashId}`}>詳細</Link></td>
-                    </tr>)
-                  : <tr>
-                    <td colSpan={5}>使用済みチケットはありません。</td>
-                  </tr>}
-              </tbody>
-            </table>
-          </details>
-        </>}
+            <details>
+              <summary>使用済みチケットの一覧</summary>
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>チケット名</th>
+                    <th>チケット種別</th>
+                    <th>使用日</th>
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {usedTicketUsers.length !== 0
+                    ? usedTicketUsers
+                      .map((t, i) => (
+                        <tr key={t.hashId}>
+                          <td>{i + 1}</td>
+                          <th>{getStore(t.storeId)?.name}</th>
+                          <td>{getType(t.storeId, t.typeId)?.name}</td>
+                          <td>{formatByDate(t.usedAt, 'YYYY年 M月 D日 H時mm分')}</td>
+                          <td><Link to={`/dashboard/mytickets/${t.hashId}`}>詳細</Link></td>
+                        </tr>
+                      ))
+                    : (
+                      <tr>
+                        <td colSpan={5}>使用済みチケットはありません。</td>
+                      </tr>
+                    )}
+                </tbody>
+              </table>
+            </details>
+          </>
+        )}
     </DashboardBaseLayout>
   )
 }

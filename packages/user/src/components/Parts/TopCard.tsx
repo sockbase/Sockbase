@@ -8,7 +8,7 @@ interface Props {
   description: string
   important?: boolean
 }
-const TopCard: React.FC<Props> = (props) => {
+const TopCard: React.FC<Props> = props => {
   return (
     <Card to={props.to}>
       <CardHeader important={props.important}>

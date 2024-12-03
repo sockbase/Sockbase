@@ -9,16 +9,19 @@ interface Props {
   inlined?: boolean
   disabled?: boolean
 }
-const FormCheckbox: React.FC<Props> = (props) => {
+const FormCheckbox: React.FC<Props> = props => {
   return (
     <>
       <Checkbox
-        name={props.name}
-        id={`${props.name}`}
-        onChange={e => props.onChange(e.target.checked)}
         checked={props.checked}
-        disabled={props.disabled} />
-      <CheckboxLabel htmlFor={props.name} inlined={props.inlined}>{props.label}</CheckboxLabel>
+        disabled={props.disabled}
+        id={`${props.name}`}
+        name={props.name}
+        onChange={e => props.onChange(e.target.checked)} />
+      <CheckboxLabel
+        htmlFor={props.name}
+        inlined={props.inlined}>{props.label}
+      </CheckboxLabel>
     </>
   )
 }

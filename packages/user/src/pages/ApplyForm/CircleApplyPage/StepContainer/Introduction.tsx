@@ -12,7 +12,7 @@ interface Props {
   nextStep: () => void
   prevStep: () => void
 }
-const Introduction: React.FC<Props> = (props) => {
+const Introduction: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   return (
@@ -20,7 +20,9 @@ const Introduction: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormButton onClick={props.prevStep}>
-            <IconLabel icon={<MdArrowBack />} label="アカウント確認画面へ戻る" />
+            <IconLabel
+              icon={<MdArrowBack />}
+              label="アカウント確認画面へ戻る" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -73,18 +75,22 @@ const Introduction: React.FC<Props> = (props) => {
 
       <h4>サークル参加費のお支払い</h4>
       {props.event.permissions.canUseBankTransfer
-        ? <>
-          <p>
+        ? (
+          <>
+            <p>
             参加費のお支払いには、クレジットカード・デビットカード・プリペイドカードを利用したオンライン決済のほか、銀行振込がご利用いただけます。
-          </p>
-          <p>
+            </p>
+            <p>
             銀行振込の場合、手数料は申し込み者様によるご負担となります。<br />
             また、お振込みの確認までにお時間をいただく場合がございます。
-          </p>
-        </>
-        : <p>
+            </p>
+          </>
+        )
+        : (
+          <p>
           参加費のお支払いには、クレジットカード・デビットカード・プリペイドカードを利用したオンライン決済のみご利用いただけます。
-        </p>}
+          </p>
+        )}
 
       <h4>申し込み完了</h4>
       <p>
@@ -108,13 +114,17 @@ const Introduction: React.FC<Props> = (props) => {
         デジタル通行証を表示できる端末をお持ちでない場合は、デジタル通行証のページから予め紙の通行証を印刷し、入り口スタッフまでご提示ください。
       </p>
 
-      {!props.event.permissions.allowAdult && <>
-        <h2>お知らせ</h2>
-        <Alert type="error" title="成人向け作品の頒布はできません">
+      {!props.event.permissions.allowAdult && (
+        <>
+          <h2>お知らせ</h2>
+          <Alert
+            title="成人向け作品の頒布はできません"
+            type="error">
           今回のイベントでは、会場からの要請・運営の都合上、成人向け作品の頒布はできません。<br />
           予めご了承ください。
-        </Alert>
-      </>}
+          </Alert>
+        </>
+      )}
 
       <h2>申し込みに必要なもの</h2>
 
@@ -149,11 +159,13 @@ const Introduction: React.FC<Props> = (props) => {
           {
             props.event.spaces
               .filter(s => s.acceptApplication)
-              .map(i => <tr key={i.id}>
-                <th>{i.name}</th>
-                <td>{i.price.toLocaleString()} 円</td>
-                <td>{i.description}</td>
-              </tr>)
+              .map(i => (
+                <tr key={i.id}>
+                  <th>{i.name}</th>
+                  <td>{i.price.toLocaleString()} 円</td>
+                  <td>{i.description}</td>
+                </tr>
+              ))
           }
         </tbody>
       </table>
@@ -169,14 +181,24 @@ const Introduction: React.FC<Props> = (props) => {
         イベントの内容に関するご質問は、イベント主催である「<a href={props.event._organization.contactUrl}>{props.event._organization.name}</a>」へ直接お問い合わせください。
       </p>
       {import.meta.env.VITE_SOCKBASE_MANAGE_ORGANIZATION_ID === props.event._organization.id
-        ? <p>
+        ? (
+          <p>
           申し込み情報はプライバシーポリシーに則って管理いたします。
-        </p>
-        : <p>
+          </p>
+        )
+        : (
+          <p>
           申し込み情報はねくたりしょんが保管し、イベント主催である「{props.event._organization.name}」に提供いたします。
-        </p>}
+          </p>
+        )}
       <p>
-        詳しくは <a href="/privacy-policy" target="_blank">プライバシーポリシー</a> をご確認ください。
+        詳しくは
+        <a
+          href="/privacy-policy"
+          target="_blank">
+          プライバシーポリシー
+        </a>
+        をご確認ください。
       </p>
 
       <FormSection>
@@ -184,7 +206,9 @@ const Introduction: React.FC<Props> = (props) => {
           <FormButton
             color="primary"
             onClick={props.nextStep}>
-            <IconLabel icon={<MdArrowForward />} label="情報入力画面へ進む" />
+            <IconLabel
+              icon={<MdArrowForward />}
+              label="情報入力画面へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>

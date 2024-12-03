@@ -39,7 +39,7 @@ interface Props {
   submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationAddedResult>
   updateCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
 }
-const StepContainer: React.FC<Props> = (props) => {
+const StepContainer: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   const [step, setStep] = useState(0)
@@ -78,7 +78,8 @@ const StepContainer: React.FC<Props> = (props) => {
       }
       const newUser = await props.createUserAsync(userData.email, userData.password)
       await props.updateUserDataAsync(newUser.uid, userData)
-    } else if (props.userData && !props.userData?.gender) {
+    }
+    else if (props.userData && !props.userData?.gender) {
       await props.updateUserDataAsync(props.user.uid, {
         ...props.userData,
         gender: userData?.gender
@@ -91,7 +92,7 @@ const StepContainer: React.FC<Props> = (props) => {
       .then(async result => {
         setSubmitProgressPercent(100)
         setAddedResult(result)
-        await (new Promise((resolve) => setTimeout(resolve, 2000)))
+        await (new Promise(resolve => setTimeout(resolve, 2000)))
       })
       .catch(err => { throw err })
   }, [app, links, userData])
@@ -102,68 +103,68 @@ const StepContainer: React.FC<Props> = (props) => {
     if (!props.event) return
     return ([
       <CheckAccount
-        key="checkAccount"
         event={props.event}
-        pastApps={props.pastApps}
         eyecatchURL={props.eyecatchURL}
-        user={props.user}
+        key="checkAccount"
         loginAsync={props.loginAsync}
         logoutAsync={props.logoutAsync}
-        nextStep={() => setStep(1)} />,
-      <Introduction
-        key="introduction"
-        event={props.event}
-        prevStep={() => setStep(0)}
-        nextStep={() => setStep(2)} />,
-      <Input
-        key="input"
-        event={props.event}
-        app={app}
-        links={links}
-        userData={userData}
+        nextStep={() => setStep(1)}
         pastApps={props.pastApps}
-        pastAppLinks={props.pastAppLinks}
-        pastEvents={props.pastEvents}
+        user={props.user} />,
+      <Introduction
+        event={props.event}
+        key="introduction"
+        nextStep={() => setStep(2)}
+        prevStep={() => setStep(0)} />,
+      <Input
+        app={app}
+        event={props.event}
         fetchedUserData={props.userData}
-        prevStep={() => setStep(1)}
+        key="input"
+        links={links}
         nextStep={(a, l, u) => {
           setApp(a)
           setLinks(l)
           setUserData(u)
           setStep(3)
-        }}/>,
+        }}
+        pastAppLinks={props.pastAppLinks}
+        pastApps={props.pastApps}
+        pastEvents={props.pastEvents}
+        prevStep={() => setStep(1)}
+        userData={userData} />,
       <Confirm
-        key="confirm"
-        event={props.event}
         app={app}
-        links={links}
-        userData={userData}
+        event={props.event}
         fetchedUserData={props.userData}
-        selectedSpace={selectedSpace}
-        selectedGenre={selectedGenre}
-        selectedPaymentMethod={selectedPaymentMethod}
-        submitProgressPercent={submitProgressPercent}
+        key="confirm"
+        links={links}
         nextStep={() => setStep(4)}
         prevStep={() => setStep(2)}
-        submitAsync={handleSubmitAsync} />,
-      <Payment
-        key="payment"
-        user={props.user}
-        event={props.event}
-        app={app}
-        addedResult={addedResult}
+        selectedGenre={selectedGenre}
+        selectedPaymentMethod={selectedPaymentMethod}
         selectedSpace={selectedSpace}
-        nextStep={() => setStep(5)} />,
-      <CircleCut
-        key="circle-cut"
+        submitAsync={handleSubmitAsync}
+        submitProgressPercent={submitProgressPercent}
+        userData={userData} />,
+      <Payment
+        addedResult={addedResult}
         app={app}
         event={props.event}
+        key="payment"
+        nextStep={() => setStep(5)}
+        selectedSpace={selectedSpace}
+        user={props.user} />,
+      <CircleCut
         addedResult={addedResult}
-        nextStep={() => setStep(6) }/>,
-      <Complete
-        key="complete"
+        app={app}
         event={props.event}
-        addedResult={addedResult} />
+        key="circle-cut"
+        nextStep={() => setStep(6)} />,
+      <Complete
+        addedResult={addedResult}
+        event={props.event}
+        key="complete" />
     ])
   }, [
     props.event,
@@ -188,32 +189,48 @@ const StepContainer: React.FC<Props> = (props) => {
 
   return (
     <>
-      {props.event === null && <Alert title="イベントが見つかりません" type="error">
-        指定された ID のイベントを見つけることができませんでした。<br />
-        URL が正しく入力されていることを確認してください。
-      </Alert>}
+      {props.event === null && (
+        <Alert
+          title="イベントが見つかりません"
+          type="error">
+          指定された ID のイベントを見つけることができませんでした。<br />
+          URL が正しく入力されていることを確認してください。
+        </Alert>
+      )}
 
-      {props.event && <>
-        <h1>{props.event.name} サークル参加申し込み受付</h1>
+      {props.event && (
+        <>
+          <h1>{props.event.name} サークル参加申し込み受付</h1>
 
-        {now < props.event.schedules.startApplication && <Alert type="error" title="受付期間前です">
-          このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。
-        </Alert>}
+          {now < props.event.schedules.startApplication && (
+            <Alert
+              title="受付期間前です"
+              type="error">
+              このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。
+            </Alert>
+          )}
 
-        {props.event.schedules.endApplication <= now && <Alert type="error" title="受付を終了しました">
-          このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
-        </Alert>}
+          {props.event.schedules.endApplication <= now && (
+            <Alert
+              title="受付を終了しました"
+              type="error">
+              このイベントのサークル参加申し込み受付は <b>{formatByDate(props.event.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
+            </Alert>
+          )}
 
-        {props.event.schedules.startApplication < now && now <= props.event.schedules.endApplication && <>
-          {props.event.descriptions.map((d, k) => <p key={k}>{d}</p>)}
-          <StepProgress
-            steps={stepProgresses.map((s, k) => ({
-              text: s,
-              isActive: k === step - 1
-            }))} />
-          {steps?.[step]}
-        </>}
-      </>}
+          {props.event.schedules.startApplication < now && now <= props.event.schedules.endApplication && (
+            <>
+              {props.event.descriptions.map((d, k) => <p key={k}>{d}</p>)}
+              <StepProgress
+                steps={stepProgresses.map((s, k) => ({
+                  text: s,
+                  isActive: k === step - 1
+                }))} />
+              {steps?.[step]}
+            </>
+          )}
+        </>
+      )}
     </>
   )
 }

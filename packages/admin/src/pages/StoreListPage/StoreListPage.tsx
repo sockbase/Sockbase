@@ -37,7 +37,9 @@ const StoreListPage: React.FC = () => {
   }, [roles])
 
   return (
-    <DefaultLayout title='チケットストア管理' requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title="チケットストア管理">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
@@ -45,24 +47,30 @@ const StoreListPage: React.FC = () => {
         icon={<MdStore />}
         title="チケットストア管理" />
 
-      {isSystemAdmin && <FormSection>
-        <FormItem>
-          <LinkButton to="/stores/create">
-            <IconLabel icon={<MdAdd />} label='チケットストア作成' />
-          </LinkButton>
-        </FormItem>
-      </FormSection>}
+      {isSystemAdmin && (
+        <FormSection>
+          <FormItem>
+            <LinkButton to="/stores/create">
+              <IconLabel
+                icon={<MdAdd />}
+                label="チケットストア作成" />
+            </LinkButton>
+          </FormItem>
+        </FormSection>
+      )}
 
       <ul>
         {stores && Object.entries(stores).map(([id, sts]) => (
           <li key={id}>{id}
             <ul>
-              {sts.map(s =>
+              {sts.map(s => (
                 <li key={s.id}>
                   <Link to={`/stores/${s.id}`}>{s.name}</Link> {s.venue && `@${s.venue.name}`}
-                </li>)}
+                </li>
+              ))}
             </ul>
-          </li>))}
+          </li>
+        ))}
       </ul>
     </DefaultLayout>
   )

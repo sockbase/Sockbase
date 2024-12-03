@@ -6,10 +6,23 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config([
   {
-    ignores: ['**/lib/**']
+    ignores: ['**/lib/**', '**/dist/**']
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+  {
+    rules: {
+      ...tseslint.configs.recommended.rules,
+      '@typescript-eslint/no-unused-vars': [
+        'error', {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_'
+        }
+      ],
+      '@typescript-eslint/triple-slash-reference': 'off'
+    }
+  },
   stylistic.configs['recommended-flat'],
   {
     rules: {
@@ -26,6 +39,7 @@ export default tseslint.config([
       '@stylistic/comma-dangle': ['error', 'never'],
       '@stylistic/indent': ['error', 2],
       '@stylistic/arrow-parens': ['error', 'as-needed'],
+      '@stylistic/operator-linebreak': ['error', 'before', { overrides: { '=': 'after' } }],
       '@stylistic/react-in-jsx-scope': 'off',
       '@stylistic/jsx-tag-spacing': ['error', { beforeSelfClosing: 'always' }],
       '@stylistic/jsx-indent': 'off',
@@ -54,6 +68,7 @@ export default tseslint.config([
     },
     rules: {
       'import/no-unresolved': 'off',
+      'import/no-named-as-default': 'off',
       'import/order': [
         'error',
         {

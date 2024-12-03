@@ -9,7 +9,7 @@ interface Props {
   ticketUser: SockbaseTicketUserDocument | null | undefined
   store: SockbaseStore | undefined
 }
-const TicketBaseLayout: React.FC<Props> = (props) => {
+const TicketBaseLayout: React.FC<Props> = props => {
   const typeName = useMemo(() => {
     if (!props.store || !props.ticketUser) return ''
 

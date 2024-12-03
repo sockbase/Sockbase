@@ -12,7 +12,7 @@ interface Props {
   requireCommonRole?: SockbaseRole
   children: React.ReactNode
 }
-const AuthenticateProvider: React.FC<Props> = (props) => {
+const AuthenticateProvider: React.FC<Props> = props => {
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -21,19 +21,26 @@ const AuthenticateProvider: React.FC<Props> = (props) => {
   const showChildren = useMemo(() => {
     if (props.user === undefined) {
       return undefined
-    } else if (props.commonRole === undefined || props.systemRole === undefined) {
+    }
+    else if (props.commonRole === undefined || props.systemRole === undefined) {
       return undefined
-    } else if (props.requireSystemRole) {
+    }
+    else if (props.requireSystemRole) {
       return props.systemRole !== null && props.requireSystemRole <= props.systemRole
-    } else if (props.requireCommonRole) {
+    }
+    else if (props.requireCommonRole) {
       return props.commonRole !== null && props.requireCommonRole <= props.commonRole
-    } else if (!isLoginPath && props.allowAnonymous) {
+    }
+    else if (!isLoginPath && props.allowAnonymous) {
       return true
-    } else if (isLoginPath && props.user === null) {
+    }
+    else if (isLoginPath && props.user === null) {
       return true
-    } else if (!isLoginPath && props.user) {
+    }
+    else if (!isLoginPath && props.user) {
       return true
-    } else if (props.user === null) {
+    }
+    else if (props.user === null) {
       return false
     }
     return false

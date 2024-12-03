@@ -15,7 +15,7 @@ const PrivacyPolicyPage: React.FC =
         </Breadcrumbs>
 
         <StaticDocumentProvider
-          docId='privacy-policy'
+          docId="privacy-policy"
           setTitle={t => setTitle(t)} />
       </DefaultBaseLayout>
     )

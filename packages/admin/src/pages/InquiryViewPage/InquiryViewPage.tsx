@@ -51,7 +51,7 @@ const InquiryViewPage: React.FC = () => {
     if (!inquiryId) return
     setStatusByIdAsync(inquiryId, status)
       .then(() => setInquiryMeta(s => s && ({ ...s, status })))
-      .catch((err) => { throw err })
+      .catch(err => { throw err })
   }, [])
 
   const mailLink = useMemo(() => {
@@ -73,21 +73,23 @@ const InquiryViewPage: React.FC = () => {
     if (!inquiryId) return
     getInquiryByIdAsync(inquiryId)
       .then(setInquiry)
-      .catch((err) => { throw err })
+      .catch(err => { throw err })
     getInquiryMetaByInquiryIdAsync(inquiryId)
       .then(setInquiryMeta)
-      .catch((err) => { throw err })
+      .catch(err => { throw err })
   }, [])
 
   useEffect(() => {
     if (!inquiry) return
     getUserDataByUserIdAsync(inquiry.userId)
       .then(setUserData)
-      .catch((err) => { throw err })
+      .catch(err => { throw err })
   }, [inquiry])
 
   return (
-    <DefaultLayout title={inquiryType?.name ?? '問い合わせ照会'} requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title={inquiryType?.name ?? '問い合わせ照会'}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/inquiries">問い合わせ管理</Link></li>
@@ -95,8 +97,8 @@ const InquiryViewPage: React.FC = () => {
 
       <PageTitle
         icon={<MdMail />}
-        title={`${inquiryType?.name} #${inquiry?.id}`}
-        isLoading={!inquiry || !inquiryType} />
+        isLoading={!inquiry || !inquiryType}
+        title={`${inquiryType?.name} #${inquiry?.id}`} />
 
       <TwoColumnLayout>
         <>
@@ -146,24 +148,32 @@ const InquiryViewPage: React.FC = () => {
             <FormItem $inlined>
               {(inquiryMeta?.status ?? inquiry?.status ?? 0) !== 0 && (
                 <FormButton onClick={() => handleStatusChange(0)}>
-                  <IconLabel icon={<MdCircle />} label='オープン' />
+                  <IconLabel
+                    icon={<MdCircle />}
+                    label="オープン" />
                 </FormButton>
               )}
               {(inquiryMeta?.status ?? inquiry?.status ?? 0) !== 1 && (
                 <FormButton onClick={() => handleStatusChange(1)}>
-                  <IconLabel icon={<MdPendingActions />} label='対応中' />
+                  <IconLabel
+                    icon={<MdPendingActions />}
+                    label="対応中" />
                 </FormButton>
               )}
               {(inquiryMeta?.status ?? inquiry?.status ?? 0) !== 2 && (
                 <FormButton onClick={() => handleStatusChange(2)}>
-                  <IconLabel icon={<MdCheck />} label='クローズ' />
+                  <IconLabel
+                    icon={<MdCheck />}
+                    label="クローズ" />
                 </FormButton>
               )}
             </FormItem>
           </FormSection>
           <FormSection>
             <FormItem $inlined>
-              <AnchorButton href={mailLink} target="_blank">
+              <AnchorButton
+                href={mailLink}
+                target="_blank">
                 <IconLabel
                   icon={<MdMail />}
                   label="メールクライアントを開く" />

@@ -38,7 +38,7 @@ const DashboardCircleListPage: React.FC = () => {
           const eventIds = [...eventIdsSet]
 
           const fetchedMetas = await Promise.all(
-            appIds.map(async (appId) => ({
+            appIds.map(async appId => ({
               appId,
               data: await getApplicationMetaByIdAsync(appId)
             }))
@@ -50,7 +50,7 @@ const DashboardCircleListPage: React.FC = () => {
           setMetas(objectMappedMetas)
 
           const fetchedEvents = await Promise.all(
-            eventIds.map(async (eventId) => (
+            eventIds.map(async eventId => (
               {
                 eventId,
                 ...await getEventByIdAsync(eventId)
@@ -76,12 +76,17 @@ const DashboardCircleListPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
+        description="今までに申し込んだイベントの一覧を表示中"
         icon={<MdCollectionsBookmark />}
-        title="申込済みイベント"
-        description="今までに申し込んだイベントの一覧を表示中" />
+        title="申込済みイベント" />
 
       {apps && events && metas
-        ? <CircleApplicationList apps={apps} metas={metas} events={events} />
+        ? (
+          <CircleApplicationList
+            apps={apps}
+            events={events}
+            metas={metas} />
+        )
         : <Loading text="申し込み履歴" />}
     </DashboardBaseLayout>
   )

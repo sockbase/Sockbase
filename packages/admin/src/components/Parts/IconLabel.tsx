@@ -6,7 +6,7 @@ interface Props {
   label?: string
   isOnlyIcon?: boolean
 }
-const IconLabel: React.FC<Props> = (props) => {
+const IconLabel: React.FC<Props> = props => {
   return (
     <Container>
       <Icon>{props.icon}</Icon>

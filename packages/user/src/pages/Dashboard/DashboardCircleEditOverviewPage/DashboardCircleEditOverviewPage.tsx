@@ -107,15 +107,21 @@ const DashboardCircleEditOverviewPage: React.FC = () => {
           {(hashId && app && <Link to={`/dashboard/applications/${hashId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
-      <PageTitle title={app?.circle.name} description="頒布物情報編集" icon={<MdEdit />} isLoading={!app} />
+      <PageTitle
+        description="頒布物情報編集"
+        icon={<MdEdit />}
+        isLoading={!app}
+        title={app?.circle.name} />
 
       {(!app || !event || !overview) && <Loading text="頒布物概要" />}
 
-      {app && event && overview &&
+      {app && event && overview && (
         <TwoColumnsLayout>
           <>
             {event && event.schedules.overviewFixedAt > now && (
-              <Alert type="info" title="頒布物情報を最新の状態にしてください">
+              <Alert
+                title="頒布物情報を最新の状態にしてください"
+                type="info">
                 <b>{formatByDate(event.schedules.overviewFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をカタログやイベント運営で使用いたします。<br />
                 変更がある場合は、この日までに情報を更新してください。
               </Alert>
@@ -125,17 +131,19 @@ const DashboardCircleEditOverviewPage: React.FC = () => {
               <FormItem>
                 <FormLabel>頒布物概要</FormLabel>
                 <FormTextarea
-                  placeholder='◯◯◯◯と△△△△のシリアス系合同誌(小説, 漫画)を頒布する予定。その他グッズや既刊あり。'
-                  value={overview.description}
+                  hasError={!overview.description}
                   onChange={e => setOverview(s => s && ({ ...s, description: e.target.value }))}
-                  hasError={!overview.description} />
+                  placeholder="◯◯◯◯と△△△△のシリアス系合同誌(小説, 漫画)を頒布する予定。その他グッズや既刊あり。"
+                  value={overview.description} />
                 <FormHelp hasError={!overview.description}>
                   スペース配置の参考にしますので、キャラクター名等は正しく入力してください。<br />
                   合同誌企画がある場合はその旨も入力してください。
                 </FormHelp>
               </FormItem>
               <FormItem>
-                <Alert type="info" title="「頒布物概要」に記載された内容を元に配置します。">
+                <Alert
+                  title="「頒布物概要」に記載された内容を元に配置します。"
+                  type="info">
                   サークルカットの内容は考慮されませんのでご注意ください。
                 </Alert>
               </FormItem>
@@ -145,34 +153,45 @@ const DashboardCircleEditOverviewPage: React.FC = () => {
               <FormItem>
                 <FormLabel>総搬入量</FormLabel>
                 <FormTextarea
-                  placeholder='合同誌: 1 種 1,000 冊, 既刊: 5 種合計 500 冊, 色紙: 1 枚, グッズ: 3 種合計 30 個'
-                  value={overview.totalAmount}
+                  hasError={!overview.totalAmount}
                   onChange={e => setOverview(s => s && ({ ...s, totalAmount: e.target.value }))}
-                  hasError={!overview.totalAmount} />
+                  placeholder="合同誌: 1 種 1,000 冊, 既刊: 5 種合計 500 冊, 色紙: 1 枚, グッズ: 3 種合計 30 個"
+                  value={overview.totalAmount} />
                 <FormHelp hasError={!overview.totalAmount}>単位まで入力してください。</FormHelp>
               </FormItem>
               <FormItem>
-                <Alert type="info" title="搬入量が決まっていない場合は、最大の持ち込み予定数を入力してください。" />
+                <Alert
+                  title="搬入量が決まっていない場合は、最大の持ち込み予定数を入力してください。"
+                  type="info" />
               </FormItem>
             </FormSection>
 
-            {errorCount !== 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
+            {errorCount !== 0 && (
+              <Alert
+                title={`${errorCount} 個の入力項目に不備があります。`}
+                type="error" />
+            )}
 
             <FormSection>
               <FormItem>
-                <LoadingCircleWrapper isLoading={isProgress} inlined>
+                <LoadingCircleWrapper
+                  inlined
+                  isLoading={isProgress}>
                   <FormButton
                     color="primary"
                     disabled={isProgress || errorCount !== 0}
                     onClick={handleSubmit}>
-                    <IconLabel icon={<MdEdit />} label="情報を更新する" />
+                    <IconLabel
+                      icon={<MdEdit />}
+                      label="情報を更新する" />
                   </FormButton>
                 </LoadingCircleWrapper>
               </FormItem>
             </FormSection>
           </>
           <></>
-        </TwoColumnsLayout>}
+        </TwoColumnsLayout>
+      )}
     </DashboardBaseLayout>
   )
 }

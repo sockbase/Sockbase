@@ -106,7 +106,7 @@ interface Props {
   user: User
   logout: () => void
 }
-const Sidebar: React.FC<Props> = (props) => {
+const Sidebar: React.FC<Props> = props => {
   const { width } = useWindowDimension()
 
   const [isHideToggleMenu, setHideToggleMenu] = useState(false)
@@ -118,71 +118,88 @@ const Sidebar: React.FC<Props> = (props) => {
 
   return (
     <Container>
-      {!isHideToggleMenu && <Section isSlim={isSlim}>
-        <Menu>
-          {
-            !isOpenMenu
-              ? <MenuItem onClick={() => setOpenMenu(true)}>
-                <MenuItemIcon isSlim={isSlim}><MdMenu /></MenuItemIcon>
-                {!isSlim && <MenuItemText>メニュー</MenuItemText>}
-              </MenuItem>
-              : <MenuItem onClick={() => setOpenMenu(false)}>
-                <MenuItemIcon isSlim={isSlim}><MdClose /></MenuItemIcon>
-                {!isSlim && <MenuItemText>閉じる</MenuItemText>}
-              </MenuItem>
-          }
-        </Menu>
-      </Section>}
+      {!isHideToggleMenu && (
+        <Section isSlim={isSlim}>
+          <Menu>
+            {
+              !isOpenMenu
+                ? (
+                  <MenuItem onClick={() => setOpenMenu(true)}>
+                    <MenuItemIcon isSlim={isSlim}><MdMenu /></MenuItemIcon>
+                    {!isSlim && <MenuItemText>メニュー</MenuItemText>}
+                  </MenuItem>
+                )
+                : (
+                  <MenuItem onClick={() => setOpenMenu(false)}>
+                    <MenuItemIcon isSlim={isSlim}><MdClose /></MenuItemIcon>
+                    {!isSlim && <MenuItemText>閉じる</MenuItemText>}
+                  </MenuItem>
+                )
+            }
+          </Menu>
+        </Section>
+      )}
       {
-        (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) &&
-        <>
-          {!isSlim && <StatePanel>
-            <StatePanelTitle>ログイン中ユーザー</StatePanelTitle>
-            <StatePanelContent>{props.user.email}</StatePanelContent>
-          </StatePanel>}
-          {menu
-            .map(sec => <Section key={sec.sectionKey} isSlim={isSlim}>
-              {!isSlim && sec.sectionName && <SectionHeader>{sec.sectionName}</SectionHeader>}
+        (isHideToggleMenu || (!isHideToggleMenu && isOpenMenu)) && (
+          <>
+            {!isSlim && (
+              <StatePanel>
+                <StatePanelTitle>ログイン中ユーザー</StatePanelTitle>
+                <StatePanelContent>{props.user.email}</StatePanelContent>
+              </StatePanel>
+            )}
+            {menu
+              .map(sec => (
+                <Section
+                  isSlim={isSlim}
+                  key={sec.sectionKey}>
+                  {!isSlim && sec.sectionName && <SectionHeader>{sec.sectionName}</SectionHeader>}
+                  <Menu>
+                    {
+                      sec.items
+                        .map(item => (
+                          <MenuItemLink
+                            $isDisabled={item.isDisabled}
+                            $isImportant={item.isImportant}
+                            key={item.key}
+                            onClick={() => setOpenMenu(false)}
+                            to={item.link}>
+                            <MenuItemIcon isSlim={isSlim}>{item.icon}</MenuItemIcon>
+                            {!isSlim && (
+                              <MenuItemText isDisabled={item.isDisabled}>
+                                {item.text}
+                              </MenuItemText>
+                            )}
+                          </MenuItemLink>
+                        )
+                        )
+                    }
+                  </Menu>
+                </Section>
+              ))}
+            <Section isSlim={isSlim}>
               <Menu>
-                {
-                  sec.items
-                    .map(item =>
-                      <MenuItemLink
-                        key={item.key}
-                        to={item.link}
-                        onClick={() => setOpenMenu(false)}
-                        $isImportant={item.isImportant}
-                        $isDisabled={item.isDisabled}>
-                        <MenuItemIcon isSlim={isSlim}>{item.icon}</MenuItemIcon>
-                        {!isSlim && (
-                          <MenuItemText isDisabled={item.isDisabled}>
-                            {item.text}
-                          </MenuItemText>
-                        )}
-                      </MenuItemLink>
-                    )
-                }
+                <MenuItem onClick={props.logout}>
+                  <MenuItemIcon isSlim={isSlim}><MdLogout /></MenuItemIcon>
+                  {!isSlim && <MenuItemText>ログアウト</MenuItemText>}
+                </MenuItem>
               </Menu>
-            </Section>)}
-          <Section isSlim={isSlim}>
-            <Menu>
-              <MenuItem onClick={props.logout}>
-                <MenuItemIcon isSlim={isSlim}><MdLogout /></MenuItemIcon>
-                {!isSlim && <MenuItemText>ログアウト</MenuItemText>}
-              </MenuItem>
-            </Menu>
-          </Section>
-          {isHideToggleMenu && <Section isSlim={isSlim}>
-            <Menu>
-              <MenuItem onClick={() => props.setSlim(!props.isSlim)}>
-                <MenuItemIcon isSlim={isSlim}>
-                  {isSlim ? <MdArrowForwardIos /> : <MdArrowBackIosNew />}
-                </MenuItemIcon>
-                {!isSlim && <MenuItemText>メニュー最小化</MenuItemText>}
-              </MenuItem>
-            </Menu>
-          </Section>}
-        </>}
+            </Section>
+            {isHideToggleMenu && (
+              <Section isSlim={isSlim}>
+                <Menu>
+                  <MenuItem onClick={() => props.setSlim(!props.isSlim)}>
+                    <MenuItemIcon isSlim={isSlim}>
+                      {isSlim ? <MdArrowForwardIos /> : <MdArrowBackIosNew />}
+                    </MenuItemIcon>
+                    {!isSlim && <MenuItemText>メニュー最小化</MenuItemText>}
+                  </MenuItem>
+                </Menu>
+              </Section>
+            )}
+          </>
+        )
+      }
     </Container >
   )
 }

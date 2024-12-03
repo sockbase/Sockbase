@@ -13,18 +13,18 @@ interface Props {
   requireCommonRole?: SockbaseRole
 }
 
-const PrintLayout: React.FC<Props> = (props) => {
+const PrintLayout: React.FC<Props> = props => {
   const { user } = useFirebase()
   const { commonRole, systemRole } = useRole()
 
   return (
     <AuthenticateProvider
-      user={user}
-      commonRole={commonRole}
-      systemRole={systemRole}
       allowAnonymous={props.allowAnonymous}
+      commonRole={commonRole}
+      requireCommonRole={props.requireCommonRole}
       requireSystemRole={props.requireSystemRole}
-      requireCommonRole={props.requireCommonRole}>
+      systemRole={systemRole}
+      user={user}>
       <Root title={props.title}>
         <Container>
           {props.children}

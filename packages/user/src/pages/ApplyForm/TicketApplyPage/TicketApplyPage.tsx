@@ -65,14 +65,14 @@ const TicketApplyPage: React.FC = () => {
   return (
     <DefaultBaseLayout title={pageTitle}>
       <StepContainer
-        store={store}
-        user={user}
+        createTicketAsync={createTicketAsync}
+        createUserAsync={createUserAsync}
         loginAsync={handleLoginAsync}
         logoutAsync={handleLogoutAsync}
-        userData={userData}
-        createUserAsync={createUserAsync}
+        store={store}
         updateUserDataAsync={updateUserDataAsync}
-        createTicketAsync={createTicketAsync} />
+        user={user}
+        userData={userData} />
     </DefaultBaseLayout>
   )
 }

@@ -148,7 +148,7 @@ export const applicationMetaConverter: FirestoreDataConverter<SockbaseApplicatio
 }
 
 export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
-  toFirestore: (event: SockbaseEvent): DocumentData => ({}),
+  toFirestore: (): DocumentData => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseEvent => {
     const event = snapshot.data()
     return {
@@ -190,7 +190,7 @@ export const roleConverter: FirestoreDataConverter<{ role: number }> = {
 }
 
 export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
-  toFirestore: (app: SockbaseApplicationHashIdDocument): DocumentData => ({}),
+  toFirestore: (): DocumentData => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseApplicationHashIdDocument => {
     const hashDoc = snapshot.data()
     return {

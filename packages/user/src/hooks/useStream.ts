@@ -22,7 +22,7 @@ const useStream = (): IUseStream => {
       const streamRef = ref(rtdb, `users/${user.uid}/streams/${channel}`)
 
       return onValue(streamRef,
-        (snapshot) => setStreamData(snapshot.val()?.data ?? null),
+        snapshot => setStreamData(snapshot.val()?.data ?? null),
         err => { throw err })
     }, [user])
 

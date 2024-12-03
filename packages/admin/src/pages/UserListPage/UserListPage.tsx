@@ -19,14 +19,16 @@ const UserListPage: React.FC = () => {
   }, [])
 
   return (
-    <DefaultLayout title="ユーザ一覧" requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title="ユーザ一覧">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
 
       <PageTitle
-        title="ユーザ一覧"
-        icon={<MdManageAccounts />} />
+        icon={<MdManageAccounts />}
+        title="ユーザ一覧" />
 
       <table>
         <thead>

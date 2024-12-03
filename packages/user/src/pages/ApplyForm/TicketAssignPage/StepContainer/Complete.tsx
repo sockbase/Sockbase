@@ -11,7 +11,7 @@ interface Props {
   store: SockbaseStoreDocument
   selectedType: SockbaseStoreType
 }
-const Complete: React.FC<Props> = (props) => {
+const Complete: React.FC<Props> = props => {
   return (
     <>
       <h1>チケットを受け取りました</h1>
@@ -37,10 +37,16 @@ const Complete: React.FC<Props> = (props) => {
           <LinkButton
             color="primary"
             to={`/dashboard/mytickets/${props.ticketHashId}`}>
-            <IconLabel icon={<MdInfo />} label="チケット情報を確認する" />
+            <IconLabel
+              icon={<MdInfo />}
+              label="チケット情報を確認する" />
           </LinkButton>
-          <AnchorButton href={`/tickets/${props.ticketHashId}`} target="_blank">
-            <IconLabel icon={<MdBookOnline />} label="チケット画面を開く" />
+          <AnchorButton
+            href={`/tickets/${props.ticketHashId}`}
+            target="_blank">
+            <IconLabel
+              icon={<MdBookOnline />}
+              label="チケット画面を開く" />
           </AnchorButton>
         </FormItem>
       </FormSection>

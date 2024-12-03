@@ -97,7 +97,9 @@ const TicketCreatePage: React.FC = () => {
   }, [storeId])
 
   return (
-    <DefaultLayout title="チケット作成" requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title="チケット作成">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/stores">チケットストア一覧</Link></li>
@@ -116,8 +118,8 @@ const TicketCreatePage: React.FC = () => {
             <FormItem>
               <FormLabel>メールアドレス</FormLabel>
               <FormInput
-                placeholder="sumire@sockbase.net"
                 onChange={e => setCreateTicketData(s => ({ ...s, email: e.target.value }))}
+                placeholder="sumire@sockbase.net"
                 value={createTicketData.email} />
               <FormHelp>ユーザが存在する必要があります</FormHelp>
             </FormItem>
@@ -129,9 +131,13 @@ const TicketCreatePage: React.FC = () => {
                 <option value="">チケット種別を選択してください</option>
                 {store?.types
                   .filter(t => !t.productInfo)
-                  .map((t, i) => <option key={t.id} value={t.id}>
-                    {i + 1}: {t.name}
-                  </option>)}
+                  .map((t, i) => (
+                    <option
+                      key={t.id}
+                      value={t.id}>
+                      {i + 1}: {t.name}
+                    </option>
+                  ))}
               </FormSelect>
               <FormHelp>
                 決済が必要ないチケット種別のみ発行できます
@@ -139,19 +145,27 @@ const TicketCreatePage: React.FC = () => {
             </FormItem>
           </FormSection>
 
-          {error && <Alert type="error" title="エラーが発生しました">{error}</Alert>}
+          {error && (
+            <Alert
+              title="エラーが発生しました"
+              type="error">{error}
+            </Alert>
+          )}
 
           <FormSection>
             <FormItem>
               <LoadingCircleWrapper isLoading={isProgress}>
-                <FormButton onClick={createTicket} disabled={isProgress || errorCount > 0}>確認して登録</FormButton>
+                <FormButton
+                  disabled={isProgress || errorCount > 0}
+                  onClick={createTicket}>確認して登録
+                </FormButton>
               </LoadingCircleWrapper>
             </FormItem>
             <FormItem>
               <FormCheckbox
-                name="isClearEmail"
-                label="追加後メールアドレスを空欄にする"
                 checked={isClearEmail}
+                label="追加後メールアドレスを空欄にする"
+                name="isClearEmail"
                 onChange={c => setIsClearEmail(c)} />
             </FormItem>
           </FormSection>
@@ -165,27 +179,34 @@ const TicketCreatePage: React.FC = () => {
                 <th>種別</th>
                 <th>メールアドレス</th>
                 <th>作成時刻</th>
-                <th></th>
+                <th />
               </tr>
             </thead>
             <tbody>
               {createdTickets.length !== 0
                 ? createdTickets
                   .sort((a, b) => (b.createdAt ?? 9) - (a.createdAt ?? 0))
-                  .map((t, i) => <tr key={t.id}>
-                    <td>{createdTickets.length - i}</td>
-                    <td>
-                      <a href={`/tickets/${t.hashId}`} target="_blank" rel="noreferrer">
-                        {getType(t.typeId)?.name}
-                      </a>
-                    </td>
-                    <td>{t.email}</td>
-                    <td>{formatByDate(t.createdAt, 'H時mm分ss秒')}</td>
-                    <td><CopyToClipboard content={(t.hashId && getAssignURL(t.hashId)) ?? ''} /></td>
-                  </tr>)
-                : <tr>
-                  <td colSpan={5}>今回作成したチケットはありません</td>
-                </tr>}
+                  .map((t, i) => (
+                    <tr key={t.id}>
+                      <td>{createdTickets.length - i}</td>
+                      <td>
+                        <a
+                          href={`/tickets/${t.hashId}`}
+                          rel="noreferrer"
+                          target="_blank">
+                          {getType(t.typeId)?.name}
+                        </a>
+                      </td>
+                      <td>{t.email}</td>
+                      <td>{formatByDate(t.createdAt, 'H時mm分ss秒')}</td>
+                      <td><CopyToClipboard content={(t.hashId && getAssignURL(t.hashId)) ?? ''} /></td>
+                    </tr>
+                  ))
+                : (
+                  <tr>
+                    <td colSpan={5}>今回作成したチケットはありません</td>
+                  </tr>
+                )}
             </tbody>
           </table>
         </>

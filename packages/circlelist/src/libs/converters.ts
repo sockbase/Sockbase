@@ -11,7 +11,7 @@ import type {
 
 export const circleListControlConverter: FirestoreDataConverter<SockbaseCircleListControlDocument> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot) => {
+  fromFirestore: snapshot => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -24,7 +24,7 @@ export const circleListControlConverter: FirestoreDataConverter<SockbaseCircleLi
 
 export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDocument> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot) => {
+  fromFirestore: snapshot => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -46,7 +46,7 @@ export const applicationConverter: FirestoreDataConverter<SockbaseApplicationDoc
 
 export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicationHashIdDocument> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot) => {
+  fromFirestore: snapshot => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -63,7 +63,7 @@ export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicat
 
 export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicationLinksDocument> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot) => {
+  fromFirestore: snapshot => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -79,7 +79,7 @@ export const applicationLinksConverter: FirestoreDataConverter<SockbaseApplicati
 
 export const applicationMetaConverter: FirestoreDataConverter<SockbaseApplicationMeta> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot) => {
+  fromFirestore: snapshot => {
     const data = snapshot.data()
     return {
       applicationStatus: data.applicationStatus
@@ -89,7 +89,7 @@ export const applicationMetaConverter: FirestoreDataConverter<SockbaseApplicatio
 
 export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot) => {
+  fromFirestore: snapshot => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
@@ -111,7 +111,7 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
 
 export const spaceConverter: FirestoreDataConverter<SockbaseSpaceDocument> = {
   toFirestore: () => ({}),
-  fromFirestore: (snapshot) => {
+  fromFirestore: snapshot => {
     const data = snapshot.data()
     return {
       id: snapshot.id,

@@ -18,12 +18,13 @@ interface Props {
   stores: Record<string, SockbaseStoreDocument>
   email: string
 }
-const PaymentList: React.FC<Props> = (props) => {
+const PaymentList: React.FC<Props> = props => {
   const linkTargetId = useCallback((appId: string | null, ticketId: string | null): string => {
     if (appId) {
       const app = props.apps[appId]
       return `/dashboard/applications/${app?.hashId ?? ''}`
-    } else if (ticketId) {
+    }
+    else if (ticketId) {
       const ticket = props.tickets[ticketId]
       return `/dashboard/tickets/${ticket?.hashId ?? ''}`
     }
@@ -37,7 +38,8 @@ const PaymentList: React.FC<Props> = (props) => {
 
       const event = props.events[app.eventId]
       return event.name
-    } else if (payment.ticketId) {
+    }
+    else if (payment.ticketId) {
       const ticket = props.tickets[payment.ticketId]
       if (!ticket) return '(不明なチケットストア)'
 
@@ -64,8 +66,15 @@ const PaymentList: React.FC<Props> = (props) => {
         .filter(s => s.id === app.spaceId)[0]
       if (!space.productInfo) return '-'
 
-      return <a href={`${space.productInfo.paymentURL}${emailLink}`} target="_blank" rel="noreferrer">お支払いはこちら</a>
-    } else if (payment.ticketId) {
+      return (
+        <a
+          href={`${space.productInfo.paymentURL}${emailLink}`}
+          rel="noreferrer"
+          target="_blank">お支払いはこちら
+        </a>
+      )
+    }
+    else if (payment.ticketId) {
       const ticket = props.tickets[payment.ticketId]
       if (!ticket) return '-'
 
@@ -73,7 +82,13 @@ const PaymentList: React.FC<Props> = (props) => {
         .filter(t => t.id === ticket.typeId)[0]
       if (!typeInfo.productInfo) return '-'
 
-      return <a href={`${typeInfo.productInfo.paymentURL}${emailLink}`} target="_blank" rel="noreferrer">お支払いはこちら</a>
+      return (
+        <a
+          href={`${typeInfo.productInfo.paymentURL}${emailLink}`}
+          rel="noreferrer"
+          target="_blank">お支払いはこちら
+        </a>
+      )
     }
 
     return '-'
@@ -89,31 +104,35 @@ const PaymentList: React.FC<Props> = (props) => {
             <th>ご請求金額</th>
             <th>補助番号</th>
             <th>状態更新日時</th>
-            <th></th>
+            <th />
           </tr>
         </thead>
         <tbody>
           {props.payments.length !== 0
             ? props.payments
               .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
-              .map(p => <tr key={p.id}>
-                <td><PaymentStatusLabel payment={p} /></td>
-                <td><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getTargetName(p)}</Link></td>
-                <td>{p.paymentAmount.toLocaleString()}円</td>
-                <td>{p.bankTransferCode}</td>
-                <td>{p.updatedAt?.toLocaleString() ?? '---'}</td>
-                <td>
-                  {p.status === 0
-                    ? getPaymentLink(p)
-                    : p.paymentResult?.receiptURL && (
-                      <a href={p.paymentResult.receiptURL} target="_blank" rel="noreferrer">
+              .map(p => (
+                <tr key={p.id}>
+                  <td><PaymentStatusLabel payment={p} /></td>
+                  <td><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getTargetName(p)}</Link></td>
+                  <td>{p.paymentAmount.toLocaleString()}円</td>
+                  <td>{p.bankTransferCode}</td>
+                  <td>{p.updatedAt?.toLocaleString() ?? '---'}</td>
+                  <td>
+                    {p.status === 0
+                      ? getPaymentLink(p)
+                      : p.paymentResult?.receiptURL && (
+                        <a
+                          href={p.paymentResult.receiptURL}
+                          rel="noreferrer"
+                          target="_blank">
                         領収書
-                      </a>
-                    )}
-                </td>
-              </tr>)
-            : <tr><th colSpan={7}>決済情報はありません</th></tr>
-          }
+                        </a>
+                      )}
+                  </td>
+                </tr>
+              ))
+            : <tr><th colSpan={7}>決済情報はありません</th></tr>}
         </tbody>
       </table>
     </>

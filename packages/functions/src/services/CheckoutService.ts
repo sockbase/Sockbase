@@ -111,7 +111,8 @@ const applyCheckoutCompletedAsync =
     if (!paymentId) {
       res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
       return
-    } else if (typeof paymentId !== 'string') {
+    }
+    else if (typeof paymentId !== 'string') {
       res.status(500).send({ error: 'MissingType', detail: 'paymentId type is missing' })
       return
     }
@@ -231,7 +232,8 @@ const applyResultAsync = async (res: Response, now: Date, stripe: Stripe, charge
   if (!paymentId) {
     res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
     return
-  } else if (typeof paymentId !== 'string') {
+  }
+  else if (typeof paymentId !== 'string') {
     res.status(500).send({ error: 'MissingType', detail: 'paymentId type is missing' })
     return
   }

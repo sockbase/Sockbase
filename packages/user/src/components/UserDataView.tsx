@@ -7,7 +7,7 @@ interface Props {
   userData: SockbaseAccountSecure | undefined
   isTicketAssignPage?: boolean
 }
-const UserDataView: React.FC<Props> = (props) => {
+const UserDataView: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   const displayGender = useMemo(() => {
@@ -15,7 +15,8 @@ const UserDataView: React.FC<Props> = (props) => {
     if (!genderCode) return
     if (genderCode === 1) {
       return '男性'
-    } else if (genderCode === 2) {
+    }
+    else if (genderCode === 2) {
       return '女性'
     }
   }, [props.fetchedUserData, props.userData])

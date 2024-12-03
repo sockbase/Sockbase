@@ -10,7 +10,7 @@ const LicensePage: React.FC = () => {
   const { user, roles } = useFirebase()
 
   return (
-    <DefaultLayout title='権限'>
+    <DefaultLayout title="権限">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
@@ -42,11 +42,13 @@ const LicensePage: React.FC = () => {
         </thead>
         <tbody>
           {roles && Object.entries(roles)
-            .sort(([_a, a], [_b, b]) => b - a)
-            .map(([k, v]) => <tr key={k}>
-              <th>{k === 'system' ? 'システム管理' : k}</th>
-              <td>{sockbaseShared.constants.user.roleText[v]} (アクセスレベル: {v})</td>
-            </tr>)}
+            .sort(([, a], [, b]) => b - a)
+            .map(([k, v]) => (
+              <tr key={k}>
+                <th>{k === 'system' ? 'システム管理' : k}</th>
+                <td>{sockbaseShared.constants.user.roleText[v]} (アクセスレベル: {v})</td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </DefaultLayout>

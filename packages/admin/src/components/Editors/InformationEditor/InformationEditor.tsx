@@ -21,7 +21,7 @@ interface Props {
   handleChange: (information: SockbaseInformationDocument) => void
 }
 
-const InformationEditor: React.FC<Props> = (props) => {
+const InformationEditor: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
   const { deleteInformationAsync } = useInformation()
 
@@ -65,33 +65,33 @@ const InformationEditor: React.FC<Props> = (props) => {
         <FormSection>
           <FormItem>
             <FormCheckbox
-              name="isPublished"
-              label="公開"
               checked={editableInformation?.isPublished}
-              onChange={checked => setEditableInformation(s => ({ ...s, isPublished: checked }))}
-              disabled={!props.isNewInformation && !props.information} />
+              disabled={!props.isNewInformation && !props.information}
+              label="公開"
+              name="isPublished"
+              onChange={checked => setEditableInformation(s => ({ ...s, isPublished: checked }))} />
           </FormItem>
           <FormItem>
             <FormLabel>更新日</FormLabel>
             <FormInput
-              type="date"
-              value={editableInformation?.updatedAt}
+              disabled={!props.isNewInformation && !props.information}
               onChange={e => setEditableInformation(s => ({ ...s, updatedAt: e.target.value }))}
-              disabled={!props.isNewInformation && !props.information} />
+              type="date"
+              value={editableInformation?.updatedAt} />
           </FormItem>
           <FormItem>
             <FormLabel>タイトル</FormLabel>
             <FormInput
-              value={editableInformation?.title}
+              disabled={!props.isNewInformation && !props.information}
               onChange={e => setEditableInformation(s => ({ ...s, title: e.target.value }))}
-              disabled={!props.isNewInformation && !props.information} />
+              value={editableInformation?.title} />
           </FormItem>
           <FormItem>
             <FormLabel>内容</FormLabel>
             <FormTextarea
-              value={editableInformation?.body}
               onChange={e => setEditableInformation(s => ({ ...s, body: e.target.value }))}
-              style={{ height: '20em' }} />
+              style={{ height: '20em' }}
+              value={editableInformation?.body} />
           </FormItem>
         </FormSection>
       </>
@@ -108,13 +108,25 @@ const InformationEditor: React.FC<Props> = (props) => {
             <FormButton onClick={handleChange}>
               {
                 props.isNewInformation
-                  ? <IconLabel icon={<MdSave />} label='作成' />
-                  : <IconLabel icon={<MdSaveAs />} label='更新' />
+                  ? (
+                    <IconLabel
+                      icon={<MdSave />}
+                      label="作成" />
+                  )
+                  : (
+                    <IconLabel
+                      icon={<MdSaveAs />}
+                      label="更新" />
+                  )
               }
             </FormButton>
             {!props.isNewInformation && (
-              <FormButton onClick={handleDelete} color="danger">
-                <IconLabel icon={<MdDelete />} label='削除' />
+              <FormButton
+                color="danger"
+                onClick={handleDelete}>
+                <IconLabel
+                  icon={<MdDelete />}
+                  label="削除" />
               </FormButton>
             )}
           </FormItem>

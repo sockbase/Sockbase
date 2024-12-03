@@ -14,7 +14,7 @@ interface Props {
   children: React.ReactNode
   title: string
 }
-const DashboardBaseLayout: React.FC<Props> = (props) => {
+const DashboardBaseLayout: React.FC<Props> = props => {
   const {
     user,
     logoutAsync,
@@ -46,32 +46,41 @@ const DashboardBaseLayout: React.FC<Props> = (props) => {
   return (
     <Container>
       <RequiredLogin />
-      {user && <>
-        <HeadHelper title={props.title} />
-        <HeaderWrap>
-          <Link to="/dashboard">
-            <Logotype src={LogotypeSVG} alt="Sockbase Logotype" />
-          </Link>
-        </HeaderWrap>
-        <MainWrap isSlim={isSlim}>
-          {!user.emailVerified && <AlertArea>
-            <Alert>
+      {user && (
+        <>
+          <HeadHelper title={props.title} />
+          <HeaderWrap>
+            <Link to="/dashboard">
+              <Logotype
+                alt="Sockbase Logotype"
+                src={LogotypeSVG} />
+            </Link>
+          </HeaderWrap>
+          <MainWrap isSlim={isSlim}>
+            {!user.emailVerified && (
+              <AlertArea>
+                <Alert>
               メールアドレスの確認が必要です
-              <Button onClick={handleSendVerifyMail} disabled={sentVerifyMail}>確認メール送信</Button>
-            </Alert>
-          </AlertArea>}
-          <SidebarArea>
-            <Sidebar
-              logout={handleLogout}
-              user={user}
-              isSlim={isSlim}
-              setSlim={setSlim} />
-          </SidebarArea>
-          <MainArea>
-            <Main>{props.children}</Main>
-          </MainArea>
-        </MainWrap>
-      </>}
+                  <Button
+                    disabled={sentVerifyMail}
+                    onClick={handleSendVerifyMail}>確認メール送信
+                  </Button>
+                </Alert>
+              </AlertArea>
+            )}
+            <SidebarArea>
+              <Sidebar
+                isSlim={isSlim}
+                logout={handleLogout}
+                setSlim={setSlim}
+                user={user} />
+            </SidebarArea>
+            <MainArea>
+              <Main>{props.children}</Main>
+            </MainArea>
+          </MainWrap>
+        </>
+      )}
     </Container>
   )
 }

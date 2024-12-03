@@ -7,10 +7,15 @@ interface Props {
   }>
 }
 
-const StepProgress: React.FC<Props> = (props) => {
+const StepProgress: React.FC<Props> = props => {
   return (
     <Container>
-      {props.steps.map((i, k) => <li key={k} className={i.isActive ? 'active' : ''}>{i.text}</li>)}
+      {props.steps.map((i, k) => (
+        <li
+          className={i.isActive ? 'active' : ''}
+          key={k}>{i.text}
+        </li>
+      ))}
     </Container>
   )
 }

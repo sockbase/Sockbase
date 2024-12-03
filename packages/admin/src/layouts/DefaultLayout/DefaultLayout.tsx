@@ -18,7 +18,7 @@ interface Props {
   requireSystemRole?: SockbaseRole
   requireCommonRole?: SockbaseRole
 }
-const DefaultLayout: React.FC<Props> = (props) => {
+const DefaultLayout: React.FC<Props> = props => {
   const navigate = useNavigate()
   const { user, logoutAsync } = useFirebase()
   const { commonRole, systemRole } = useRole()
@@ -36,18 +36,21 @@ const DefaultLayout: React.FC<Props> = (props) => {
 
   return (
     <AuthenticateProvider
-      user={user}
-      commonRole={commonRole}
-      systemRole={systemRole}
       allowAnonymous={props.allowAnonymous}
+      commonRole={commonRole}
+      requireCommonRole={props.requireCommonRole}
       requireSystemRole={props.requireSystemRole}
-      requireCommonRole={props.requireCommonRole}>
+      systemRole={systemRole}
+      user={user}>
       <Root title={props.title}>
         <Container>
           <SidebarContainer>
             <HeaderWrap>
               <BrandArea>
-                <Link to="/"><BrandLogotype src={LogotypeSVG} alt="Logo" /></Link>
+                <Link to="/"><BrandLogotype
+                  alt="Logo"
+                  src={LogotypeSVG} />
+                </Link>
               </BrandArea>
               <MenuButtonArea>
                 {isSmallDisplay && (
@@ -59,12 +62,12 @@ const DefaultLayout: React.FC<Props> = (props) => {
             </HeaderWrap>
             <MenuWrap>
               <Sidebar
-                user={user}
-                logout={handleLogout}
+                closeMenu={() => setIsShowMenu(false)}
                 commonRole={commonRole}
-                systemRole={systemRole}
+                logout={handleLogout}
                 showMenu={isSmallDisplay === false || showMenu}
-                closeMenu={() => setIsShowMenu(false)}/>
+                systemRole={systemRole}
+                user={user} />
             </MenuWrap>
           </SidebarContainer>
           <MainWrap>

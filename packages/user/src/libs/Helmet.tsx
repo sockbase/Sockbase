@@ -4,7 +4,7 @@ interface Props {
   title?: string
 }
 
-const HeadHelper: React.FC<Props> = (props) => {
+const HeadHelper: React.FC<Props> = props => {
   const title = props.title ? `${props.title} - Sockbase` : 'Sockbase'
   return (
     <Helmet>

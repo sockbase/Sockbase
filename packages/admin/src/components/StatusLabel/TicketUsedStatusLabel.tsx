@@ -9,7 +9,7 @@ interface Props {
   isOnlyIcon?: boolean
 }
 
-const TicketUsedStatusLabel: React.FC<Props> = (props) => {
+const TicketUsedStatusLabel: React.FC<Props> = props => {
   const labelText = useMemo(() => {
     switch (props.used) {
       case false:
@@ -38,8 +38,8 @@ const TicketUsedStatusLabel: React.FC<Props> = (props) => {
         <Container used={props.used}>
           <IconLabel
             icon={iconElement}
-            label={labelText}
-            isOnlyIcon={props.isOnlyIcon} />
+            isOnlyIcon={props.isOnlyIcon}
+            label={labelText} />
         </Container>
       )
       : (

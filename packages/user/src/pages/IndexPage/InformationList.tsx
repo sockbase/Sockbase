@@ -25,16 +25,20 @@ const InformationList: React.FC = () => {
       {!informations && <p>お知らせ情報を取得中...</p>}
       {informations
         ? informations.length > 0
-          ? <table>
-            <tbody>
-              {informations
-                .sort((a, b) => b.updatedAt - a.updatedAt)
-                .map(i => <tr key={i.id}>
-                  <td style={{ width: '30%' }}>{formatByDate(i.updatedAt, 'YYYY年 M月 D日')}</td>
-                  <td><Link to={`/informations/${i.id}`}>{i.title}</Link></td>
-                </tr>)}
-            </tbody>
-          </table>
+          ? (
+            <table>
+              <tbody>
+                {informations
+                  .sort((a, b) => b.updatedAt - a.updatedAt)
+                  .map(i => (
+                    <tr key={i.id}>
+                      <td style={{ width: '30%' }}>{formatByDate(i.updatedAt, 'YYYY年 M月 D日')}</td>
+                      <td><Link to={`/informations/${i.id}`}>{i.title}</Link></td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          )
           : <p>お知らせはありません</p>
         : <></>}
     </>

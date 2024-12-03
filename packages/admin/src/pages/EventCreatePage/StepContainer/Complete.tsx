@@ -7,7 +7,7 @@ interface Props {
   eventId: string | null | undefined
   init: () => void
 }
-const Complete: React.FC<Props> = (props) => {
+const Complete: React.FC<Props> = props => {
   const handleInitialize = useCallback(() => {
     if (!confirm('新しいイベントを作るために入力フォームをリセットします。\nよろしいですか？')) return
     props.init()
@@ -19,7 +19,10 @@ const Complete: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem $inlined>
           <LinkButton to={`/events/${props.eventId}`}>イベント管理画面を開く</LinkButton>
-          <FormButton onClick={handleInitialize} color="default">新しいイベントを作成する</FormButton>
+          <FormButton
+            color="default"
+            onClick={handleInitialize}>新しいイベントを作成する
+          </FormButton>
         </FormItem>
       </FormSection>
     </>

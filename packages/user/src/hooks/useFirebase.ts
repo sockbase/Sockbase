@@ -97,7 +97,7 @@ const useFirebase = (): IUseFirebase => {
     async (email: string, password: string): Promise<User> => {
       const auth = getAuth()
       return await createUserWithEmailAndPassword(auth, email, password)
-        .then((cred) => cred.user)
+        .then(cred => cred.user)
         .catch(err => { throw err })
     }
 
@@ -143,7 +143,7 @@ const useFirebase = (): IUseFirebase => {
 
   useEffect((): Unsubscribe => {
     const auth = getAuth()
-    const unSubscribe = onIdTokenChanged(auth, (user) => {
+    const unSubscribe = onIdTokenChanged(auth, user => {
       setUser(user)
       setLoggedIn(!!user)
 

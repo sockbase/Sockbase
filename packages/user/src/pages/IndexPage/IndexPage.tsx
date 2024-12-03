@@ -37,7 +37,7 @@ const IndexPage: React.FC = () => {
 
     loginByEmailAsync(email, password)
       .then(() => navigate(fromPathName || '/dashboard', { replace: true }))
-      .catch((err) => {
+      .catch(err => {
         setErrorMessage(convertErrorMessage(err))
         throw err
       })
@@ -50,72 +50,88 @@ const IndexPage: React.FC = () => {
     <DefaultBaseLayout>
       <h2>Sockbase マイページにログイン</h2>
 
-      {fromPathName && <Alert type="warning" title="ログインが必要です">
+      {fromPathName && (
+        <Alert
+          title="ログインが必要です"
+          type="warning">
         このページにアクセスするにはログインが必要です。
-      </Alert>}
+        </Alert>
+      )}
 
       {user === undefined
-        ? <Loading text='認証情報' />
+        ? <Loading text="認証情報" />
         : user !== null
-          ? <Alert type='info' title={`${user.email} としてログイン中です`} />
-          : <Login
-            email={email}
-            password={password}
-            setEmail={email => setEmail(email)}
-            setPassword={password => setPassword(password)}
-            login={handleLogin}
-            isProcessing={isProccesing}
-            errorMessage={errorMessage} />
-      }
+          ? (
+            <Alert
+              title={`${user.email} としてログイン中です`}
+              type="info" />
+          )
+          : (
+            <Login
+              email={email}
+              errorMessage={errorMessage}
+              isProcessing={isProccesing}
+              login={handleLogin}
+              password={password}
+              setEmail={email => setEmail(email)}
+              setPassword={password => setPassword(password)} />
+          )}
 
       {user && (
         <FormSection>
           <FormItem>
-            <LinkButton color="primary" to="/dashboard">
-              <IconLabel icon={<MdHome />} label="マイページに進む" />
+            <LinkButton
+              color="primary"
+              to="/dashboard">
+              <IconLabel
+                icon={<MdHome />}
+                label="マイページに進む" />
             </LinkButton>
           </FormItem>
         </FormSection>
       )}
 
-      {!fromPathName && <>
-        <InformationList />
+      {!fromPathName && (
+        <>
+          <InformationList />
 
-        <h2>Sockbase とは？</h2>
-        <p>
-          <a href="https://nectarition.jp">ねくたりしょん</a>が提供するイベント申し込み情報管理サービスです。
-        </p>
+          <h2>Sockbase とは？</h2>
+          <p>
+            <a href="https://nectarition.jp">ねくたりしょん</a>が提供するイベント申し込み情報管理サービスです。
+          </p>
 
-        <h3>マイページへのアクセス方法</h3>
-        <p>
+          <h3>マイページへのアクセス方法</h3>
+          <p>
           サークル申し込み時, チケット購入時・受け取り時にアカウントを作成することができます。<br />
           作成したアカウントとパスワードを用いて、上のログイン画面からログインしてください。
-        </p>
+          </p>
 
-        <h3>お支払い方法</h3>
-        <p>
+          <h3>お支払い方法</h3>
+          <p>
           オンライン決済 (クレジットカード, Google Pay, Apple Pay) がご利用いただけます。<br />
           イベントによっては銀行振込もご利用いただけます。
-        </p>
+          </p>
 
-        <h3>イベントへの申し込み方法</h3>
-        <p>
+          <h3>イベントへの申し込み方法</h3>
+          <p>
           イベント主催者から提供されたURLを使用してください。
-        </p>
+          </p>
 
-        <h3>問い合わせ先</h3>
-        <ul>
-          <li>アカウント登録前のお問い合わせ: <code>support@sockbase.net</code></li>
-          <li>申し込み後に関するお問い合わせ: マイページメニューの「お問い合わせ」</li>
-        </ul>
+          <h3>問い合わせ先</h3>
+          <ul>
+            <li>アカウント登録前のお問い合わせ: <code>support@sockbase.net</code></li>
+            <li>申し込み後に関するお問い合わせ: マイページメニューの「お問い合わせ」</li>
+          </ul>
 
-        <h3>法律に基づく事項</h3>
-        <ul>
-          <li><Link to="/tos">利用規約・特定商取引法に基づく表記</Link></li>
-          <li><Link to="/privacy-policy">プライバシーポリシー</Link></li>
-        </ul>
-      </>}
-    </DefaultBaseLayout>)
+          <h3>法律に基づく事項</h3>
+          <ul>
+            <li><Link to="/tos">利用規約・特定商取引法に基づく表記</Link></li>
+            <li><Link to="/privacy-policy">プライバシーポリシー</Link></li>
+          </ul>
+        </>
+      )}
+    </DefaultBaseLayout>
+  )
 }
 
 export default IndexPage

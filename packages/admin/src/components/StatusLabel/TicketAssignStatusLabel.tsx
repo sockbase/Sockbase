@@ -9,7 +9,7 @@ interface Props {
   isOnlyIcon?: boolean
 }
 
-const TicketAssignStatusLabel: React.FC<Props> = (props) => {
+const TicketAssignStatusLabel: React.FC<Props> = props => {
   const labelText = useMemo(() => {
     switch (props.usableUserId) {
       case undefined:
@@ -38,8 +38,8 @@ const TicketAssignStatusLabel: React.FC<Props> = (props) => {
         <Container assigned={props.usableUserId === undefined ? undefined : !!props.usableUserId}>
           <IconLabel
             icon={iconElement}
-            label={labelText}
-            isOnlyIcon={props.isOnlyIcon} />
+            isOnlyIcon={props.isOnlyIcon}
+            label={labelText} />
         </Container>
       )
       : (

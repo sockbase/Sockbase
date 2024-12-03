@@ -83,8 +83,8 @@ const useStore = (): IUseStore => {
       const ticketsQuery = query(ticketsRef, where('storeId', '==', storeId))
       const ticketsSnapshot = await getDocs(ticketsQuery)
       const ticketsDocs = ticketsSnapshot.docs
-        .filter((doc) => doc.exists())
-        .map((doc) => doc.data())
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
       return ticketsDocs
     }, [])
 
@@ -200,7 +200,7 @@ const useStore = (): IUseStore => {
         ticketUsedStatusRef,
         { used },
         { merge: true })
-        .catch((err) => { throw err })
+        .catch(err => { throw err })
     }, [])
 
   return {
