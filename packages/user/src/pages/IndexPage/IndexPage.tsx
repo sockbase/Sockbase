@@ -164,15 +164,16 @@ const BrandHeader = styled.div`
   background-color: var(--brand-color);
   color: var(--white-color);
 `
-const BrandLogo = styled.div``
+const BrandLogo = styled.div`
+`
 const LogotypeImage = styled.img`
+  margin-bottom: -2px;
   height: 1.25em;
   svg {
     fill: var(--brand-primary-color);
   }
 `
 const BrandLabel = styled.div`
-  padding-bottom: 2px;
   font-weight: bold;
 `
 const LoginFormContent = styled.div`

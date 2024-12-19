@@ -5,12 +5,17 @@ import BlinkField from '../Parts/BlinkField'
 import IconLabel from '../Parts/IconLabel'
 
 interface Props {
+  isStandalone: boolean | undefined
   usableUserId: string | null | undefined
   isOnlyIcon?: boolean
 }
 
 const TicketAssignStatusLabel: React.FC<Props> = props => {
   const labelText = useMemo(() => {
+    switch (props.isStandalone) {
+      case true:
+        return 'スタンドアロン'
+    }
     switch (props.usableUserId) {
       case undefined:
         return '状態不明'
@@ -19,9 +24,13 @@ const TicketAssignStatusLabel: React.FC<Props> = props => {
       default:
         return '割当済み'
     }
-  }, [props.usableUserId])
+  }, [props.isStandalone, props.usableUserId])
 
   const iconElement = useMemo(() => {
+    switch (props.isStandalone) {
+      case true:
+        return <MdCheck />
+    }
     switch (props.usableUserId) {
       case undefined:
         return <MdOutlineQuestionMark />
@@ -30,12 +39,17 @@ const TicketAssignStatusLabel: React.FC<Props> = props => {
       default:
         return <MdCheck />
     }
-  }, [props.usableUserId])
+  }, [props.usableUserId, props.isStandalone])
+
+  const assigned = useMemo(() => {
+    if (props.usableUserId === undefined && props.isStandalone === undefined) return undefined
+    return props.usableUserId !== null || props.isStandalone
+  }, [props.usableUserId, props.isStandalone])
 
   return (
-    props.usableUserId !== undefined
+    props.usableUserId !== undefined || props.isStandalone !== undefined
       ? (
-        <Container assigned={props.usableUserId === undefined ? undefined : !!props.usableUserId}>
+        <Container assigned={assigned}>
           <IconLabel
             icon={iconElement}
             isOnlyIcon={props.isOnlyIcon}

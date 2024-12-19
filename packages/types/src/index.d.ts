@@ -318,11 +318,12 @@ export interface SockbaseTicket {
  */
 export type SockbaseTicketDocument = SockbaseTicket & {
   id: string
-  userId: string
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   hashId: string | null
   createdUserId: string | null
+  isStandalone: boolean
 }
 
 /**

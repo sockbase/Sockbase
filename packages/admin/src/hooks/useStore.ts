@@ -16,7 +16,7 @@ interface IUseStore {
   getTicketUserByHashIdNullableAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
   setTicketApplicationStatusAsync: (ticketId: string, status: SockbaseApplicationStatus) => Promise<void>
-  createTicketForAdminAsync: (storeId: string, createTicketData: { email: string, typeId: string }) => Promise<SockbaseTicketCreatedResult>
+  createTicketForAdminAsync: (storeId: string, createTicketData: { email: string | null, typeId: string }) => Promise<SockbaseTicketCreatedResult>
   deleteTicketAsync: (ticketHashId: string) => Promise<void>
   createStoreAsync: (storeId: string, store: SockbaseStore) => Promise<void>
   updateTicketUsedStatusByIdAsync: (ticketId: string, used: boolean) => Promise<void>
@@ -144,9 +144,9 @@ const useStore = (): IUseStore => {
     }, [])
 
   const createTicketForAdminAsync =
-    useCallback(async (storeId: string, createTicketData: { email: string, typeId: string }): Promise<SockbaseTicketCreatedResult> => {
+    useCallback(async (storeId: string, createTicketData: { email: string | null, typeId: string }): Promise<SockbaseTicketCreatedResult> => {
       const createTicketForAdminFunction = httpsCallable<
-        { storeId: string, createTicketData: { email: string, typeId: string } },
+        { storeId: string, createTicketData: { email: string | null, typeId: string } },
         SockbaseTicketCreatedResult
       >(functions, 'store-createTicketForAdmin')
 

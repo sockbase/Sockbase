@@ -77,7 +77,7 @@ const DashboardTicketViewPage: React.FC = () => {
   [ticketHash])
 
   const handleAssignMe = useCallback(() => {
-    if (!ticket || !ticketHash) return
+    if (!ticket || !ticketHash || !ticket.userId) return
     setProgressForAssignMe(true)
 
     assignTicketUserAsync(ticket.userId, ticketHash.hashId)
@@ -156,20 +156,18 @@ const DashboardTicketViewPage: React.FC = () => {
   }, [ticketHash])
 
   useEffect(() => {
-    const fetchAsync = async (): Promise<void> => {
-      if (!ticket?.id) return
-
-      getStoreByIdAsync(ticket.storeId)
-        .then(setStore)
-        .catch(err => { throw err })
-
+    if (!ticket?.id) return
+    getStoreByIdAsync(ticket.storeId)
+      .then(setStore)
+      .catch(err => { throw err })
+    if (ticket.userId) {
       getUserDataByUserIdAndStoreIdOptionalAsync(ticket.userId, ticket.storeId)
-        .then(fetchedUserData => setUserData(fetchedUserData))
+        .then(setUserData)
         .catch(err => { throw err })
     }
-
-    fetchAsync()
-      .catch(err => { throw err })
+    else {
+      setUserData(null)
+    }
   }, [ticket])
 
   return (
