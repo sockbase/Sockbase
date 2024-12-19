@@ -62,16 +62,16 @@ const DashboardCircleViewLinksPage: React.FC = () => {
       </Breadcrumbs>
 
       <PageTitle
-        icon={<MdEdit />}
-        title={app?.circle.name}
         description="資料リンクを確認します"
-        isLoading={!app} />
+        icon={<MdEdit />}
+        isLoading={!app}
+        title={app?.circle.name} />
 
       <table>
         <thead>
           <tr>
             <th style={{ width: '75%' }}>タイトル</th>
-            <th></th>
+            <th />
           </tr>
         </thead>
         <tbody>
@@ -91,11 +91,13 @@ const DashboardCircleViewLinksPage: React.FC = () => {
                 <td>{docLink.name}</td>
                 <td>
                   <AnchorButton
-                    href={docLink.url}
                     $isSlim={true}
-                    target="_blank"
-                    rel="noopener noreferrer">
-                    <IconLabel icon={<MdOpenInNew />} label="開く" />
+                    href={docLink.url}
+                    rel="noopener noreferrer"
+                    target="_blank">
+                    <IconLabel
+                      icon={<MdOpenInNew />}
+                      label="開く" />
                   </AnchorButton>
                 </td>
               </tr>

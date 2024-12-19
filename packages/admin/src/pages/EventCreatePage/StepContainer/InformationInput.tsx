@@ -22,7 +22,7 @@ interface Props {
     eyecatchData: string | undefined) => void
 }
 
-const InformationImport: React.FC<Props> = (props) => {
+const InformationImport: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   const [eventPackageJSON, setEventPackageJSON] = useState('')
@@ -322,15 +322,15 @@ const InformationImport: React.FC<Props> = (props) => {
     if (spaceCount < 1) return
 
     const lastSpace = editableSpaces[spaceCount - 1]
-    if (lastSpace.id ||
-      lastSpace.name ||
-      lastSpace.description ||
-      lastSpace.price ||
-      lastSpace.paymentURL ||
-      lastSpace.productId ||
-      lastSpace.isDualSpace ||
-      lastSpace.passCount ||
-      !lastSpace.acceptApplication) {
+    if (lastSpace.id
+      || lastSpace.name
+      || lastSpace.description
+      || lastSpace.price
+      || lastSpace.paymentURL
+      || lastSpace.productId
+      || lastSpace.isDualSpace
+      || lastSpace.passCount
+      || !lastSpace.acceptApplication) {
       const newSpaces = [...editableSpaces, {
         id: '',
         name: '',
@@ -347,15 +347,15 @@ const InformationImport: React.FC<Props> = (props) => {
     }
 
     const inputedSpace = editableSpaces[spaceCount - 2]
-    if (inputedSpace?.id ||
-      inputedSpace?.name ||
-      inputedSpace?.description ||
-      inputedSpace?.price ||
-      inputedSpace?.paymentURL ||
-      inputedSpace?.productId ||
-      inputedSpace?.isDualSpace ||
-      inputedSpace?.passCount ||
-      !inputedSpace?.acceptApplication) return
+    if (inputedSpace?.id
+      || inputedSpace?.name
+      || inputedSpace?.description
+      || inputedSpace?.price
+      || inputedSpace?.paymentURL
+      || inputedSpace?.productId
+      || inputedSpace?.isDualSpace
+      || inputedSpace?.passCount
+      || !inputedSpace?.acceptApplication) return
 
     const trimedSpaces = editableSpaces.slice(undefined, -1)
     if (trimedSpaces.length < 1) return
@@ -374,11 +374,14 @@ const InformationImport: React.FC<Props> = (props) => {
           <FormItem>
             <FormLabel>イベント設定データ</FormLabel>
             <FormTextarea
-              value={eventPackageJSON}
-              onChange={e => setEventPackageJSON(e.target.value)}/>
+              onChange={e => setEventPackageJSON(e.target.value)}
+              value={eventPackageJSON} />
           </FormItem>
           <FormItem>
-            <FormButton onClick={handleImportEventPackage} disabled={!eventPackageJSON}>インポート</FormButton>
+            <FormButton
+              disabled={!eventPackageJSON}
+              onClick={handleImportEventPackage}>インポート
+            </FormButton>
           </FormItem>
         </FormSection>
       </details>
@@ -387,10 +390,10 @@ const InformationImport: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormCheckbox
+            checked={event.isPublic}
             label="イベントを公開する"
             name="is-public"
-            checked={event.isPublic}
-            onChange={checked => setEvent(s => ({ ...s, isPublic: checked }))}/>
+            onChange={checked => setEvent(s => ({ ...s, isPublic: checked }))} />
         </FormItem>
       </FormSection>
 
@@ -399,37 +402,39 @@ const InformationImport: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>イベント ID</FormLabel>
           <FormInput
-            value={eventId}
-            onChange={e => setEventId(e.target.value)} />
+            onChange={e => setEventId(e.target.value)}
+            value={eventId} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント名</FormLabel>
           <FormInput
-            value={event.name}
-            onChange={e => setEvent(s => ({ ...s, name: e.target.value }))}/>
+            onChange={e => setEvent(s => ({ ...s, name: e.target.value }))}
+            value={event.name} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント Web サイト</FormLabel>
           <FormInput
-            value={event.websiteURL}
-            onChange={e => setEvent(s => ({ ...s, websiteURL: e.target.value }))}/>
+            onChange={e => setEvent(s => ({ ...s, websiteURL: e.target.value }))}
+            value={event.websiteURL} />
         </FormItem>
         <FormItem>
           <FormLabel>会場名</FormLabel>
           <FormInput
-            value={event.venue.name}
-            onChange={e => setEvent(s => ({ ...s, venue: { ...s.venue, name: e.target.value } }))}/>
+            onChange={e => setEvent(s => ({ ...s, venue: { ...s.venue, name: e.target.value } }))}
+            value={event.venue.name} />
         </FormItem>
         <FormItem>
           <FormLabel>アイキャッチ画像</FormLabel>
           <FormInput
-            type="file"
             accept="image/*"
-            onChange={e => setEyecatchFile(e.target.files?.[0])} />
+            onChange={e => setEyecatchFile(e.target.files?.[0])}
+            type="file" />
         </FormItem>
-        {eyecatchData && <FormItem>
-          <EyecatchPreview src={eyecatchData} />
-        </FormItem>}
+        {eyecatchData && (
+          <FormItem>
+            <EyecatchPreview src={eyecatchData} />
+          </FormItem>
+        )}
       </FormSection>
 
       <h3>組織情報</h3>
@@ -437,20 +442,20 @@ const InformationImport: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>組織 ID</FormLabel>
           <FormInput
-            value={event._organization.id}
-            onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, id: e.target.value } }))}/>
+            onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, id: e.target.value } }))}
+            value={event._organization.id} />
         </FormItem>
         <FormItem>
           <FormLabel>組織名</FormLabel>
           <FormInput
-            value={event._organization.name}
-            onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, name: e.target.value } }))}/>
+            onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, name: e.target.value } }))}
+            value={event._organization.name} />
         </FormItem>
         <FormItem>
           <FormLabel>連絡先 URL</FormLabel>
           <FormInput
-            value={event._organization.contactUrl}
-            onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, contactUrl: e.target.value } }))}/>
+            onChange={e => setEvent(s => ({ ...s, _organization: { ...s._organization, contactUrl: e.target.value } }))}
+            value={event._organization.contactUrl} />
         </FormItem>
       </FormSection>
 
@@ -459,14 +464,14 @@ const InformationImport: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>チケットストア ID</FormLabel>
           <FormInput
-            value={event.passConfig?.storeId}
-            onChange={e => setEvent(s => ({ ...s, passConfig: s.passConfig && { ...s.passConfig, storeId: e.target.value } }))} />
+            onChange={e => setEvent(s => ({ ...s, passConfig: s.passConfig && { ...s.passConfig, storeId: e.target.value } }))}
+            value={event.passConfig?.storeId} />
         </FormItem>
         <FormItem>
           <FormLabel>チケットタイプ ID</FormLabel>
           <FormInput
-            value={event.passConfig?.typeId}
-            onChange={e => setEvent(s => ({ ...s, passConfig: s.passConfig && { ...s.passConfig, typeId: e.target.value } }))} />
+            onChange={e => setEvent(s => ({ ...s, passConfig: s.passConfig && { ...s.passConfig, typeId: e.target.value } }))}
+            value={event.passConfig?.typeId} />
         </FormItem>
       </FormSection>
       <h3>全体スケジュール</h3>
@@ -474,44 +479,44 @@ const InformationImport: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>申し込み受付開始</FormLabel>
           <FormInput
+            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, startApplication: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(event.schedules.startApplication, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, startApplication: new Date(e.target.value).getTime() } }))} />
+            value={formatByDate(event.schedules.startApplication, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
         <FormItem>
           <FormLabel>申し込み受付終了</FormLabel>
           <FormInput
+            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, endApplication: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(event.schedules.endApplication, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, endApplication: new Date(e.target.value).getTime() } }))} />
+            value={formatByDate(event.schedules.endApplication, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
         <FormItem>
           <FormLabel>サークル情報変更締切</FormLabel>
           <FormInput
+            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, overviewFixedAt: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(event.schedules.overviewFixedAt, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, overviewFixedAt: new Date(e.target.value).getTime() } }))} />
+            value={formatByDate(event.schedules.overviewFixedAt, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
         <FormItem>
           <FormLabel>配置発表</FormLabel>
           <FormInput
+            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, publishSpaces: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(event.schedules.publishSpaces, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, publishSpaces: new Date(e.target.value).getTime() } }))} />
+            value={formatByDate(event.schedules.publishSpaces, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント開始</FormLabel>
           <FormInput
+            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, startEvent: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(event.schedules.startEvent, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, startEvent: new Date(e.target.value).getTime() } }))} />
+            value={formatByDate(event.schedules.startEvent, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント終了</FormLabel>
           <FormInput
+            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, endEvent: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(event.schedules.endEvent, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setEvent(s => ({ ...s, schedules: { ...s.schedules, endEvent: new Date(e.target.value).getTime() } }))} />
+            value={formatByDate(event.schedules.endEvent, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
       </FormSection>
 
@@ -524,18 +529,20 @@ const InformationImport: React.FC<Props> = (props) => {
           </tr>
         </thead>
         <tbody>
-          {event.genres.map((g, i) => <tr key={i}>
-            <td>
-              <FormInput
-                value={g.id}
-                onChange={e => handleEditGenre(i, e.target.value, g.name)}/>
-            </td>
-            <td>
-              <FormInput
-                value={g.name}
-                onChange={e => handleEditGenre(i, g.id, e.target.value)}/>
-            </td>
-          </tr>)}
+          {event.genres.map((g, i) => (
+            <tr key={i}>
+              <td>
+                <FormInput
+                  onChange={e => handleEditGenre(i, e.target.value, g.name)}
+                  value={g.id} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditGenre(i, g.id, e.target.value)}
+                  value={g.name} />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
@@ -550,194 +557,198 @@ const InformationImport: React.FC<Props> = (props) => {
             <th>支払い URL</th>
             <th>商品 ID</th>
             <th>通行証枚数</th>
-            <th></th>
-            <th></th>
+            <th />
+            <th />
           </tr>
         </thead>
         <tbody>
-          {editableSpaces.map((s, i) => (<tr key={i}>
-            <td>
-              <FormInput
-                value={s.id}
-                onChange={e => handleEditSpace(
-                  i,
-                  e.target.value,
-                  s.name,
-                  s.description,
-                  s.price,
-                  s.paymentURL,
-                  s.productId,
-                  s.isDualSpace,
-                  s.passCount,
-                  s.acceptApplication)}/>
-            </td>
-            <td>
-              <FormInput
-                value={s.name}
-                onChange={e => handleEditSpace(
-                  i,
-                  s.id,
-                  e.target.value,
-                  s.description,
-                  s.price,
-                  s.paymentURL,
-                  s.productId,
-                  s.isDualSpace,
-                  s.passCount,
-                  s.acceptApplication)} />
-            </td>
-            <td>
-              <FormInput
-                value={s.description}
-                onChange={e => handleEditSpace(
-                  i,
-                  s.id,
-                  s.name,
-                  e.target.value,
-                  s.price,
-                  s.paymentURL,
-                  s.productId,
-                  s.isDualSpace,
-                  s.passCount,
-                  s.acceptApplication)} />
-            </td>
-            <td>
-              <FormInput
-                value={s.price}
-                onChange={e => handleEditSpace(
-                  i,
-                  s.id,
-                  s.name,
-                  s.description,
-                  e.target.value,
-                  s.paymentURL,
-                  s.productId,
-                  s.isDualSpace,
-                  s.passCount,
-                  s.acceptApplication)} />
-            </td>
-            <td>
-              <FormInput
-                value={s.paymentURL}
-                disabled={Number(s.price.replaceAll(/\D/g, '')) <= 0}
-                onChange={e => handleEditSpace(
-                  i,
-                  s.id,
-                  s.name,
-                  s.description,
-                  s.price,
-                  e.target.value,
-                  s.productId,
-                  s.isDualSpace,
-                  s.passCount,
-                  s.acceptApplication)} />
-            </td>
-            <td>
-              <FormInput
-                value={s.productId}
-                disabled={Number(s.price.replaceAll(/\D/g, '')) <= 0}
-                onChange={e => handleEditSpace(
-                  i,
-                  s.id,
-                  s.name,
-                  s.description,
-                  s.price,
-                  s.paymentURL,
-                  e.target.value,
-                  s.isDualSpace,
-                  s.passCount,
-                  s.acceptApplication)} />
-            </td>
-            <td>
-              <FormInput
-                value={s.passCount}
-                onChange={e => handleEditSpace(
-                  i,
-                  s.id,
-                  s.name,
-                  s.description,
-                  s.price,
-                  s.paymentURL,
-                  s.productId,
-                  s.isDualSpace,
-                  e.target.value,
-                  s.acceptApplication)} />
-            </td>
-            <td>
-              <FormCheckbox
-                name={`is-dualspace-${i}`}
-                label="2 スペース"
-                checked={s.isDualSpace}
-                onChange={checked => handleEditSpace(
-                  i,
-                  s.id,
-                  s.name,
-                  s.description,
-                  s.price,
-                  s.paymentURL,
-                  s.productId,
-                  checked,
-                  s.passCount,
-                  s.acceptApplication)} />
-            </td>
-            <td>
-              <FormCheckbox
-                name={`allow-application-${i}`}
-                label="受入"
-                checked={s.acceptApplication}
-                onChange={checked => handleEditSpace(
-                  i,
-                  s.id,
-                  s.name,
-                  s.description,
-                  s.price,
-                  s.paymentURL,
-                  s.productId,
-                  s.isDualSpace,
-                  s.passCount,
-                  checked)} />
-            </td>
-          </tr>))}
+          {editableSpaces.map((s, i) => (
+            <tr key={i}>
+              <td>
+                <FormInput
+                  onChange={e => handleEditSpace(
+                    i,
+                    e.target.value,
+                    s.name,
+                    s.description,
+                    s.price,
+                    s.paymentURL,
+                    s.productId,
+                    s.isDualSpace,
+                    s.passCount,
+                    s.acceptApplication)}
+                  value={s.id} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditSpace(
+                    i,
+                    s.id,
+                    e.target.value,
+                    s.description,
+                    s.price,
+                    s.paymentURL,
+                    s.productId,
+                    s.isDualSpace,
+                    s.passCount,
+                    s.acceptApplication)}
+                  value={s.name} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditSpace(
+                    i,
+                    s.id,
+                    s.name,
+                    e.target.value,
+                    s.price,
+                    s.paymentURL,
+                    s.productId,
+                    s.isDualSpace,
+                    s.passCount,
+                    s.acceptApplication)}
+                  value={s.description} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditSpace(
+                    i,
+                    s.id,
+                    s.name,
+                    s.description,
+                    e.target.value,
+                    s.paymentURL,
+                    s.productId,
+                    s.isDualSpace,
+                    s.passCount,
+                    s.acceptApplication)}
+                  value={s.price} />
+              </td>
+              <td>
+                <FormInput
+                  disabled={Number(s.price.replaceAll(/\D/g, '')) <= 0}
+                  onChange={e => handleEditSpace(
+                    i,
+                    s.id,
+                    s.name,
+                    s.description,
+                    s.price,
+                    e.target.value,
+                    s.productId,
+                    s.isDualSpace,
+                    s.passCount,
+                    s.acceptApplication)}
+                  value={s.paymentURL} />
+              </td>
+              <td>
+                <FormInput
+                  disabled={Number(s.price.replaceAll(/\D/g, '')) <= 0}
+                  onChange={e => handleEditSpace(
+                    i,
+                    s.id,
+                    s.name,
+                    s.description,
+                    s.price,
+                    s.paymentURL,
+                    e.target.value,
+                    s.isDualSpace,
+                    s.passCount,
+                    s.acceptApplication)}
+                  value={s.productId} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditSpace(
+                    i,
+                    s.id,
+                    s.name,
+                    s.description,
+                    s.price,
+                    s.paymentURL,
+                    s.productId,
+                    s.isDualSpace,
+                    e.target.value,
+                    s.acceptApplication)}
+                  value={s.passCount} />
+              </td>
+              <td>
+                <FormCheckbox
+                  checked={s.isDualSpace}
+                  label="2 スペース"
+                  name={`is-dualspace-${i}`}
+                  onChange={checked => handleEditSpace(
+                    i,
+                    s.id,
+                    s.name,
+                    s.description,
+                    s.price,
+                    s.paymentURL,
+                    s.productId,
+                    checked,
+                    s.passCount,
+                    s.acceptApplication)} />
+              </td>
+              <td>
+                <FormCheckbox
+                  checked={s.acceptApplication}
+                  label="受入"
+                  name={`allow-application-${i}`}
+                  onChange={checked => handleEditSpace(
+                    i,
+                    s.id,
+                    s.name,
+                    s.description,
+                    s.price,
+                    s.paymentURL,
+                    s.productId,
+                    s.isDualSpace,
+                    s.passCount,
+                    checked)} />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
       <h3>注意事項</h3>
       <FormSection>
-        {event.rules.map((r, i) =>
+        {event.rules.map((r, i) => (
           <FormItem key={i}>
             <FormLabel>注意事項 {i + 1}</FormLabel>
             <FormInput
-              value={r}
-              onChange={e => handleEditRule(i, e.target.value)} />
-          </FormItem>)}
+              onChange={e => handleEditRule(i, e.target.value)}
+              value={r} />
+          </FormItem>
+        ))}
       </FormSection>
 
       <h3>申し込み説明</h3>
       <FormSection>
-        {event.descriptions.map((d, i) =>
+        {event.descriptions.map((d, i) => (
           <FormItem key={i}>
             <FormLabel>申し込み説明 {i + 1}</FormLabel>
             <FormInput
-              value={d}
-              onChange={e => handleEditDescription(i, e.target.value)}/>
-          </FormItem>)}
+              onChange={e => handleEditDescription(i, e.target.value)}
+              value={d} />
+          </FormItem>
+        ))}
       </FormSection>
 
       <h3>制限設定</h3>
       <FormSection>
         <FormItem>
           <FormCheckbox
-            name="allowAdult"
-            label="成人向け頒布を許可する"
             checked={event.permissions.allowAdult}
-            onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, allowAdult: checked } })) }/>
+            label="成人向け頒布を許可する"
+            name="allowAdult"
+            onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, allowAdult: checked } }))} />
         </FormItem>
         <FormItem>
           <FormCheckbox
-            name="canUseBankTransfer"
-            label="参加費の銀行振込を許可する"
             checked={event.permissions.canUseBankTransfer}
-            onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } })) }/>
+            label="参加費の銀行振込を許可する"
+            name="canUseBankTransfer"
+            onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } }))} />
         </FormItem>
       </FormSection>
 

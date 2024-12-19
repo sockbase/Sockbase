@@ -44,7 +44,8 @@ const useUserData = (): IUseUserData => {
       const snap = await FirestoreDB.getDoc(userRef)
       if (snap.exists()) {
         return snap.data()
-      } else {
+      }
+      else {
         throw new Error('user not found')
       }
     }, [user])
@@ -57,7 +58,8 @@ const useUserData = (): IUseUserData => {
       const userDoc = await FirestoreDB.getDoc(userRef)
       if (userDoc.exists()) {
         return userDoc.data()
-      } else {
+      }
+      else {
         throw new Error('user not found')
       }
     }
@@ -96,7 +98,7 @@ const useUserData = (): IUseUserData => {
 
   const getUserDataByUserIdAndStoreIdOptionalAsync =
     async (userId: string, storeId: string): Promise<SockbaseAccount | null> =>
-      await getUserDataByUserIdAndStoreIdAsync(userId, storeId).catch((err) => {
+      await getUserDataByUserIdAndStoreIdAsync(userId, storeId).catch(err => {
         console.error(err)
         return null
       })

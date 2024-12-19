@@ -1,4 +1,3 @@
-
 import fetch from 'node-fetch'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import type { SockbaseOrganizationWithMeta } from 'sockbase'

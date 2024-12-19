@@ -20,13 +20,15 @@ interface Props {
   selectedPaymentMethod: { id: string, description: string } | undefined
   nextStep: () => void
 }
-const Payment: React.FC<Props> = (props) => {
+const Payment: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
   const [checkedPayment, setCheckedPayment] = useState(false)
 
   return (
     <>
-      <Alert type="success" title="申し込み情報の送信が完了しました">
+      <Alert
+        title="申し込み情報の送信が完了しました"
+        type="success">
       申し込みIDは「{props.addedResult?.hashId}」です。
       </Alert>
       <p>
@@ -35,110 +37,127 @@ const Payment: React.FC<Props> = (props) => {
       </p>
 
       {props.selectedType?.productInfo
-        ? <>
-          <h1>参加費のお支払い</h1>
-          <table>
-            <tbody>
-              <tr>
-                <th>お支払い方法</th>
-                <td>{props.selectedPaymentMethod?.description}</td>
-              </tr>
-              <tr>
-                <th>お支払い代金</th>
-                <td>{props.selectedType?.price.toLocaleString()}円</td>
-              </tr>
-              <tr>
-                <th>お支払い期限</th>
-                <td>{formatByDate(props.store.schedules.endApplication, 'YYYY年 M月 D日 H時mm分')}</td>
-              </tr>
-              <tr>
-                <th>お支払い補助番号</th>
-                <td>{props.addedResult?.bankTransferCode}</td>
-              </tr>
-            </tbody>
-          </table>
+        ? (
+          <>
+            <h1>参加費のお支払い</h1>
+            <table>
+              <tbody>
+                <tr>
+                  <th>お支払い方法</th>
+                  <td>{props.selectedPaymentMethod?.description}</td>
+                </tr>
+                <tr>
+                  <th>お支払い代金</th>
+                  <td>{props.selectedType?.price.toLocaleString()}円</td>
+                </tr>
+                <tr>
+                  <th>お支払い期限</th>
+                  <td>{formatByDate(props.store.schedules.endApplication, 'YYYY年 M月 D日 H時mm分')}</td>
+                </tr>
+                <tr>
+                  <th>お支払い補助番号</th>
+                  <td>{props.addedResult?.bankTransferCode}</td>
+                </tr>
+              </tbody>
+            </table>
 
-          <p>
+            <p>
             下に記載しているお支払い方法のご案内に従い、参加費のお支払いをお願いいたします。<br />
             決済が完了すると「決済完了のお知らせ」メールをご登録いただいたメールアドレスに送付いたしますので、必ずご確認ください。<br />
             銀行振込の場合、振り込みの確認が完了するまで1週間ほどお時間をいただきます。予めご了承ください。
-          </p>
+            </p>
 
-          {props.ticket?.paymentMethod === 'online'
-            ? <>
-              <h2>オンライン決済でのお支払い</h2>
-              <Alert type="warning" title="決済画面に表示されるメールアドレスは変更しないでください">
+            {props.ticket?.paymentMethod === 'online'
+              ? (
+                <>
+                  <h2>オンライン決済でのお支払い</h2>
+                  <Alert
+                    title="決済画面に表示されるメールアドレスは変更しないでください"
+                    type="warning">
                 決済画面のメールアドレスは自動入力されています。<br />
                 変更した場合、決済確認ができなくなる可能性がありますので絶対に変更しないでください。
-              </Alert>
-              <p>
+                  </Alert>
+                  <p>
                 「決済画面を開く」より決済を行ってください。
-              </p>
-              <FormSection>
-                <FormItem>
-                  <AnchorButton
-                    href={`${props.selectedType?.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(props.user?.email ?? '')}`}
-                    target="_blank"
-                    onClick={() => setCheckedPayment(true)}>決済画面を開く</AnchorButton>
-                </FormItem>
-              </FormSection>
-            </>
-            : <>
-              <h2>銀行振込でのお支払い</h2>
-              <p>
-                <b>{formatByDate(props.store.schedules.endApplication, 'YYYY年 M月 D日')}</b> までに以下の口座へ所定の金額のお振り込みをお願いいたします。
-              </p>
-              <Alert type="warning" title="お支払い補助番号について">
+                  </p>
+                  <FormSection>
+                    <FormItem>
+                      <AnchorButton
+                        href={`${props.selectedType?.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(props.user?.email ?? '')}`}
+                        onClick={() => setCheckedPayment(true)}
+                        target="_blank">決済画面を開く
+                      </AnchorButton>
+                    </FormItem>
+                  </FormSection>
+                </>
+              )
+              : (
+                <>
+                  <h2>銀行振込でのお支払い</h2>
+                  <p>
+                    <b>{formatByDate(props.store.schedules.endApplication, 'YYYY年 M月 D日')}</b> までに以下の口座へ所定の金額のお振り込みをお願いいたします。
+                  </p>
+                  <Alert
+                    title="お支払い補助番号について"
+                    type="warning">
                 お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「{props.addedResult?.bankTransferCode}」を入力してください。
-              </Alert>
+                  </Alert>
 
-              <table>
-                <tbody>
-                  <tr>
-                    <th>振込先銀行</th>
-                    <td>GMOあおぞらネット銀行(金融機関コード0310)</td>
-                  </tr>
-                  <tr>
-                    <th>加入者名</th>
-                    <td>サイグサトモタダ</td>
-                  </tr>
-                  <tr>
-                    <th>預金種目</th>
-                    <td>普通</td>
-                  </tr>
-                  <tr>
-                    <th>支店名</th>
-                    <td>チャイム支店</td>
-                  </tr>
-                  <tr>
-                    <th>口座番号</th>
-                    <td>4598308</td>
-                  </tr>
-                </tbody>
-              </table>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th>振込先銀行</th>
+                        <td>GMOあおぞらネット銀行(金融機関コード0310)</td>
+                      </tr>
+                      <tr>
+                        <th>加入者名</th>
+                        <td>サイグサトモタダ</td>
+                      </tr>
+                      <tr>
+                        <th>預金種目</th>
+                        <td>普通</td>
+                      </tr>
+                      <tr>
+                        <th>支店名</th>
+                        <td>チャイム支店</td>
+                      </tr>
+                      <tr>
+                        <th>口座番号</th>
+                        <td>4598308</td>
+                      </tr>
+                    </tbody>
+                  </table>
 
-              <Alert type="warning" title="振込みにかかる手数料は、お客様負担となります。" />
-              <FormSection>
-                <FormCheckbox
-                  name="check-payment"
-                  label="振込情報を確認しました"
-                  checked={checkedPayment}
-                  onChange={checked => setCheckedPayment(checked)} />
-              </FormSection>
-            </>}
-        </>
-        : <p>
+                  <Alert
+                    title="振込みにかかる手数料は、お客様負担となります。"
+                    type="warning" />
+                  <FormSection>
+                    <FormCheckbox
+                      checked={checkedPayment}
+                      label="振込情報を確認しました"
+                      name="check-payment"
+                      onChange={checked => setCheckedPayment(checked)} />
+                  </FormSection>
+                </>
+              )}
+          </>
+        )
+        : (
+          <p>
           今回、事前にお支払いいただく必要はありません。<br />
           このまま次に進んでください。
-        </p>}
+          </p>
+        )}
 
       <FormSection>
         <FormItem>
           <FormButton
             color="primary"
-            onClick={props.nextStep}
-            disabled={!!props.selectedType?.productInfo && !checkedPayment}>
-            <IconLabel icon={<MdArrowForward />} label="次へ進む" />
+            disabled={!!props.selectedType?.productInfo && !checkedPayment}
+            onClick={props.nextStep}>
+            <IconLabel
+              icon={<MdArrowForward />}
+              label="次へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>

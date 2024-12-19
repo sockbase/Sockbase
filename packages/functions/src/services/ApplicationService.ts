@@ -51,7 +51,8 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     const unionApp = await getApplicationByIdAsync(unionAppHashDoc.applicationId)
     if (unionApp?.unionCircleId) {
       throw new https.HttpsError('already-exists', 'application_already_union')
-    } else if (unionApp.eventId !== payload.app.eventId) {
+    }
+    else if (unionApp.eventId !== payload.app.eventId) {
       throw new https.HttpsError('invalid-argument', 'invalid_union_different_event')
     }
   }
@@ -64,11 +65,14 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
 
   if (event.schedules.startApplication > timestamp || timestamp > event.schedules.endApplication) {
     throw new https.HttpsError('deadline-exceeded', 'application_out_of_term')
-  } else if (!event.permissions.allowAdult && payload.app.circle.hasAdult) {
+  }
+  else if (!event.permissions.allowAdult && payload.app.circle.hasAdult) {
     throw new https.HttpsError('invalid-argument', 'invalid_argument_adult')
-  } else if (!event.permissions.canUseBankTransfer && payload.app.paymentMethod === 'bankTransfer') {
+  }
+  else if (!event.permissions.canUseBankTransfer && payload.app.paymentMethod === 'bankTransfer') {
     throw new https.HttpsError('invalid-argument', 'invalid_argument_bankTransfer')
-  } else if (!space.acceptApplication) {
+  }
+  else if (!space.acceptApplication) {
     throw new https.HttpsError('invalid-argument', 'invalid_argument_acceptApplication')
   }
 

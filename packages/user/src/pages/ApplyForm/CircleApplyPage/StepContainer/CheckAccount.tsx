@@ -21,7 +21,7 @@ interface Props {
   logoutAsync: () => Promise<void>
   nextStep: () => void
 }
-const CheckAccount: React.FC<Props> = (props) => {
+const CheckAccount: React.FC<Props> = props => {
   const appliedApp = useMemo(() => {
     if (!props.pastApps || !props.event) return
     const pastApps = props.pastApps.filter(a => a.eventId === props.event?.id)
@@ -44,46 +44,64 @@ const CheckAccount: React.FC<Props> = (props) => {
 
       <h1>Sockbase アカウントはお持ちですか？</h1>
 
-      {props.user === null && <>
-        <h2>Sockbase アカウントを持っている場合</h2>
-        <p>
+      {props.user === null && (
+        <>
+          <h2>Sockbase アカウントを持っている場合</h2>
+          <p>
             以前の申し込み時に使用したアカウントでログインしてください。
-        </p>
+          </p>
 
-        <LoginForm />
+          <LoginForm />
 
-        <h2>Sockbase アカウントを持っていない場合</h2>
-        <p>
+          <h2>Sockbase アカウントを持っていない場合</h2>
+          <p>
           申し込み手続き中にアカウントを作成します。<br />
           「申し込み説明画面へ進む」を押して次の画面に進んでください。
-        </p>
-      </>}
+          </p>
+        </>
+      )}
 
-      {props.user && <>
-        <p>
+      {props.user && (
+        <>
+          <p>
           現在、<b>{props.user.email}</b> としてログインしています。<br />
-        </p>
-        {appliedApp && <Alert type="error" title="二重申し込みはできません">
+          </p>
+          {appliedApp && (
+            <Alert
+              title="二重申し込みはできません"
+              type="error">
           このイベントには申し込み済みです。<br />
           申し込み情報は <Link to={`/dashboard/applications/${appliedApp.hashId}`}>こちら</Link> からご確認いただけます。
-        </Alert>}
-        <Alert type="info" title="別のアカウントで申し込みを行うには、ログアウトしてください。" />
+            </Alert>
+          )}
+          <Alert
+            title="別のアカウントで申し込みを行うには、ログアウトしてください。"
+            type="info" />
+          <FormSection>
+            <FormItem>
+              <FormButton onClick={handleLogout}>
+                <IconLabel
+                  icon={<MdLogout />}
+                  label="ログアウト" />
+              </FormButton>
+            </FormItem>
+          </FormSection>
+        </>
+      )}
+
+      {(!props.user || appliedApp === null) && (
         <FormSection>
           <FormItem>
-            <FormButton onClick={handleLogout}>
-              <IconLabel icon={<MdLogout />} label="ログアウト" />
+            <FormButton
+              color="primary"
+              onClick={props.nextStep}>
+              <IconLabel
+                icon={<MdArrowForward />}
+                label="申し込み説明画面へ進む" />
             </FormButton>
           </FormItem>
         </FormSection>
-      </>}
-
-      {(!props.user || appliedApp === null) && <FormSection>
-        <FormItem>
-          <FormButton onClick={props.nextStep} color="primary">
-            <IconLabel icon={<MdArrowForward />} label="申し込み説明画面へ進む" />
-          </FormButton>
-        </FormItem>
-      </FormSection>}
+      )}
     </>
   )
 }

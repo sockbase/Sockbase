@@ -36,21 +36,28 @@ const TicketViewPage: React.FC = () => {
   useEffect(onInitialize, [ticketHashId])
 
   return (
-    <TicketBaseLayout ticketUser={ticketUser} store={store}>
-      {(!ticketUser || !store) &&
+    <TicketBaseLayout
+      store={store}
+      ticketUser={ticketUser}>
+      {(!ticketUser || !store) && (
         <LoadingContainer>
           {ticketUser === undefined && <Loading text="チケット情報" />}
-          {ticketUser === null &&
-            <Alert type="error" title="チケットの取得に失敗しました">
+          {ticketUser === null && (
+            <Alert
+              title="チケットの取得に失敗しました"
+              type="error">
               URL が間違っている可能性があります。
-            </Alert>}
-        </LoadingContainer>}
-      {ticketHashId && ticketUser && store && user !== undefined &&
+            </Alert>
+          )}
+        </LoadingContainer>
+      )}
+      {ticketHashId && ticketUser && store && user !== undefined && (
         <TicketView
+          store={store}
           ticketHashId={ticketHashId}
           ticketUser={ticketUser}
-          store={store}
-          userId={user?.uid ?? null} />}
+          userId={user?.uid ?? null} />
+      )}
     </TicketBaseLayout >
   )
 }

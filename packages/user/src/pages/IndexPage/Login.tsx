@@ -17,7 +17,7 @@ interface Props {
   isProcessing: boolean
   errorMessage: string | null | undefined
 }
-const Login: React.FC<Props> = (props) => {
+const Login: React.FC<Props> = props => {
   return (
     <>
       <p>
@@ -26,35 +26,43 @@ const Login: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormLabel>メールアドレス</FormLabel>
-          <FormInput type="email"
-            value={props.email}
-            onChange={e => props.setEmail(e.target.value)} />
+          <FormInput
+            onChange={e => props.setEmail(e.target.value)}
+            type="email"
+            value={props.email} />
         </FormItem>
         <FormItem>
           <FormLabel>パスワード</FormLabel>
-          <FormInput type="password"
-            value={props.password}
+          <FormInput
             onChange={e => props.setPassword(e.target.value)}
-            onKeyDown={e => e.code === 'Enter' && props.login()} />
+            onKeyDown={e => e.code === 'Enter' && props.login()}
+            type="password"
+            value={props.password} />
         </FormItem>
       </FormSection>
       <FormSection>
         <FormItem $inlined>
           <FormButton
-            color='primary'
-            onClick={props.login}
-            disabled={!props.email || !props.password || props.isProcessing}>
-            <IconLabel icon={<MdLogin />} label="ログイン" />
+            color="primary"
+            disabled={!props.email || !props.password || props.isProcessing}
+            onClick={props.login}>
+            <IconLabel
+              icon={<MdLogin />}
+              label="ログイン" />
           </FormButton>
           <LinkButton
-            to="/reset-password"
-            disabled={props.isProcessing}>
-            <IconLabel icon={<MdQuestionMark />} label="パスワードを忘れた場合" />
+            disabled={props.isProcessing}
+            to="/reset-password">
+            <IconLabel
+              icon={<MdQuestionMark />}
+              label="パスワードを忘れた場合" />
           </LinkButton>
         </FormItem>
         {props.errorMessage && (
           <FormItem>
-            <Alert type="error" title="エラーが発生しました">
+            <Alert
+              title="エラーが発生しました"
+              type="error">
               {props.errorMessage}
             </Alert>
           </FormItem>

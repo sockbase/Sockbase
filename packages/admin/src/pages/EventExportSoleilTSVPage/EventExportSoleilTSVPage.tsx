@@ -4,9 +4,9 @@ import { Link, useParams } from 'react-router-dom'
 import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
+import FormTextarea from '../../components/Form/FormTextarea'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
-import FormTextarea from '../../components/Form/FormTextarea'
 import IconLabel from '../../components/Parts/IconLabel'
 import PageTitle from '../../components/Parts/PageTitle'
 import useApplication from '../../hooks/useApplication'
@@ -93,7 +93,9 @@ const EventExportSoleilPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DefaultLayout title="Soleil 出力" requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title="Soleil 出力">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
@@ -102,8 +104,8 @@ const EventExportSoleilPage: React.FC = () => {
       </Breadcrumbs>
 
       <PageTitle
-        title="Soleil 出力"
-        icon={<MdListAlt />} />
+        icon={<MdListAlt />}
+        title="Soleil 出力" />
 
       <FormSection>
         <FormItem>

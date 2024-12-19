@@ -37,24 +37,26 @@ const InquiryListPage: React.FC = () => {
         .map(async i => ({
           id: i.id,
           data: await getInquiryMetaByInquiryIdAsync(i.id)
-            .then((fetchedMeta) => fetchedMeta)
+            .then(fetchedMeta => fetchedMeta)
             .catch(() => null)
         })))
-        .then((fetchedMetas) => {
+        .then(fetchedMetas => {
           const mappedMetas = fetchedMetas.reduce<Record<string, SockbaseInquiryMetaDocument | null>>((p, c) => ({
             ...p,
             [c.id]: c.data
           }), {})
           setInquiryMetas(mappedMetas)
         })
-        .catch((err) => { throw err })
+        .catch(err => { throw err })
     }
     fetchAsync()
       .catch(err => { throw err })
   }, [])
 
   return (
-    <DefaultLayout title='問い合わせ管理' requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title="問い合わせ管理">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
@@ -66,10 +68,10 @@ const InquiryListPage: React.FC = () => {
       <FormSection>
         <FormItem>
           <FormCheckbox
-            name='showClosedInquiries'
-            label='クローズしたお問い合わせを表示'
             checked={showClosedInquiries}
-            onChange={checked => setShowClosedInquiries(checked)}/>
+            label="クローズしたお問い合わせを表示"
+            name="showClosedInquiries"
+            onChange={checked => setShowClosedInquiries(checked)} />
         </FormItem>
       </FormSection>
 
@@ -90,9 +92,12 @@ const InquiryListPage: React.FC = () => {
               </th>
             </tr>
           )}
-          {filteredInquiries?.map((i) => (
+          {filteredInquiries?.map(i => (
             <tr key={i.id}>
-              <td><InquiryStatusLabel status={inquiryMetas?.[i.id]?.status ?? i.status} isOnlyIcon={true} /></td>
+              <td><InquiryStatusLabel
+                isOnlyIcon={true}
+                status={inquiryMetas?.[i.id]?.status ?? i.status} />
+              </td>
               <td>{getInquiryType(i.inquiryType).name}</td>
               <td><Link to={`/inquiries/${i.id}`}>{i.id}</Link></td>
               <td>{formatByDate(inquiryMetas?.[i.id]?.createdAt, 'YYYY/M/D H:mm')}</td>

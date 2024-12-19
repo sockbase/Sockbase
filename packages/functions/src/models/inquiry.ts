@@ -1,16 +1,21 @@
 export const convertTypeText: (type: string) => string =
-  (type) => {
+  type => {
     if (type === 'changeCircleInfo') {
       return 'サークル申し込み情報変更, サークルカット変更'
-    } else if (type === 'payment') {
+    }
+    else if (type === 'payment') {
       return '決済に関する相談'
-    } else if (type === 'changePassword') {
+    }
+    else if (type === 'changePassword') {
       return 'パスワード再設定依頼'
-    } else if (type === 'removeAccount') {
+    }
+    else if (type === 'removeAccount') {
       return 'アカウント消去依頼'
-    } else if (type === 'other') {
+    }
+    else if (type === 'other') {
       return 'その他'
-    } else {
+    }
+    else {
       return type
     }
   }

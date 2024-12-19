@@ -41,10 +41,10 @@ const StepContainer: React.FC = () => {
   useEffect(() => {
     setStepComponents([
       <InformationImport
-        key="information-import"
-        eventId={eventId}
         event={event}
+        eventId={eventId}
         eyecatchFile={eyecatchFile}
+        key="information-import"
         nextStep={(eventId: string, event: SockbaseEvent, eyecatchFile: File | undefined, eyecatchData: string | undefined) => {
           setEventId(eventId)
           setEvent(event)
@@ -53,17 +53,17 @@ const StepContainer: React.FC = () => {
           setStep(1)
         }} />,
       <InformationConfirm
-        key="information-confirm"
-        eventId={eventId}
         event={event}
-        eyecatchData={eyecatchData}
-        prevStep={() => setStep(0)}
-        nextStep={() => setStep(2)}
-        handleCreateAsync={handleCreateAsync} />,
-      <Complete
-        key="complete"
         eventId={eventId}
-        init={handleInitialize} />
+        eyecatchData={eyecatchData}
+        handleCreateAsync={handleCreateAsync}
+        key="information-confirm"
+        nextStep={() => setStep(2)}
+        prevStep={() => setStep(0)} />,
+      <Complete
+        eventId={eventId}
+        init={handleInitialize}
+        key="complete" />
     ])
   }, [eventId, event, eyecatchFile, eyecatchData, handleCreateAsync])
 

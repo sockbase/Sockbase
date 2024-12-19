@@ -89,7 +89,8 @@ const TicketViewPage: React.FC = () => {
     const promptAppId = prompt(`この申し込みを削除するには ${hashId} と入力してください`)
     if (promptAppId === null) {
       return
-    } else if (promptAppId !== hashId) {
+    }
+    else if (promptAppId !== hashId) {
       alert('入力が間違っています')
       return
     }
@@ -143,7 +144,8 @@ const TicketViewPage: React.FC = () => {
       getPaymentByIdAsync(ticketHash.paymentId)
         .then(setPayment)
         .catch(err => { throw err })
-    } else {
+    }
+    else {
       setPayment(null)
     }
   }, [ticketHash])
@@ -164,13 +166,16 @@ const TicketViewPage: React.FC = () => {
       getUserDataByUserIdAndStoreIdAsync(ticketUser.usableUserId, ticketUser.storeId)
         .then(setTicketUserData)
         .catch(err => { throw err })
-    } else {
+    }
+    else {
       setTicketUserData(null)
     }
   }, [ticketUser])
 
   return (
-    <DefaultLayout title={pageTitle ?? 'チケット情報照会'} requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title={pageTitle ?? 'チケット情報照会'}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/stores">チケットストア一覧</Link></li>
@@ -180,8 +185,8 @@ const TicketViewPage: React.FC = () => {
 
       <PageTitle
         icon={<MdWallet />}
-        title={pageTitle}
-        isLoading={!pageTitle} />
+        isLoading={!pageTitle}
+        title={pageTitle} />
 
       <TwoColumnLayout>
         <>
@@ -200,7 +205,11 @@ const TicketViewPage: React.FC = () => {
                       ? <BlinkField />
                       : payment === null
                         ? '支払い必要なし'
-                        : <PaymentStatusLabel payment={payment} isShowBrand />
+                        : (
+                          <PaymentStatusLabel
+                            isShowBrand
+                            payment={payment} />
+                        )
                   }
                 </td>
               </tr>
@@ -265,17 +274,23 @@ const TicketViewPage: React.FC = () => {
             <FormItem $inlined>
               {ticketMeta?.applicationStatus !== 2 && (
                 <FormButton onClick={() => handleSetApplicationStatus(2)}>
-                  <IconLabel icon={<MdCheck />} label="申し込み確定状態にする" />
+                  <IconLabel
+                    icon={<MdCheck />}
+                    label="申し込み確定状態にする" />
                 </FormButton>
               )}
               {ticketMeta?.applicationStatus !== 0 && (
                 <FormButton onClick={() => handleSetApplicationStatus(0)}>
-                  <IconLabel icon={<MdPendingActions />} label='仮申し込み状態にする' />
+                  <IconLabel
+                    icon={<MdPendingActions />}
+                    label="仮申し込み状態にする" />
                 </FormButton>
               )}
               {ticketMeta?.applicationStatus !== 1 && (
                 <FormButton onClick={() => handleSetApplicationStatus(1)}>
-                  <IconLabel icon={<MdClose />} label='キャンセル状態にする' />
+                  <IconLabel
+                    icon={<MdClose />}
+                    label="キャンセル状態にする" />
                 </FormButton>
               )}
             </FormItem>
@@ -299,20 +314,24 @@ const TicketViewPage: React.FC = () => {
             : <BlinkField />}
 
           <PaymentStatusController
-            paymentId={ticketHash?.paymentId}
-            status={payment?.status}
             onChange={st => {
               setPayment(s => s && ({ ...s, status: st }))
               alert('支払いステータスを変更しました')
-            }} />
+            }}
+            paymentId={ticketHash?.paymentId}
+            status={payment?.status} />
         </>
         {isSystemAdmin && (
           <>
             <h3>システム操作</h3>
             <FormSection>
               <FormItem>
-                <FormButton onClick={handleDeleteApplication} disabled={isDeletedTicket}>
-                  <IconLabel icon={<MdOutlineDeleteForever />} label='申し込み情報を削除する' />
+                <FormButton
+                  disabled={isDeletedTicket}
+                  onClick={handleDeleteApplication}>
+                  <IconLabel
+                    icon={<MdOutlineDeleteForever />}
+                    label="申し込み情報を削除する" />
                 </FormButton>
               </FormItem>
             </FormSection>

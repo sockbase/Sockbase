@@ -5,7 +5,7 @@ import BlinkField from '../BlinkField'
 interface Props {
   type: SockbaseStoreType | undefined
 }
-const StoreTypeLabel: React.FC<Props> = (props) => {
+const StoreTypeLabel: React.FC<Props> = props => {
   return (
     <Container bgColor={props.type?.color || 'var(--pending-color)'}>
       {props.type?.name ?? <BlinkField />}

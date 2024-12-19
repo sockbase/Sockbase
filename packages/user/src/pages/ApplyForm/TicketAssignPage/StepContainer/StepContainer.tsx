@@ -30,7 +30,7 @@ interface Props {
   updateUserDataWithStoreIdAsync: (userId: string, storeId: string, userData: SockbaseAccount) => Promise<void>
   assignTicketUserAsync: (userId: string, ticketHashId: string) => Promise<void>
 }
-const StepContainer: React.FC<Props> = (props) => {
+const StepContainer: React.FC<Props> = props => {
   const [step, setStep] = useState(0)
 
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
@@ -71,59 +71,69 @@ const StepContainer: React.FC<Props> = (props) => {
     return ([
       <CheckAccount
         key="checkAccount"
-        user={props.user}
         loginAsync={props.loginAsync}
         logoutAsync={props.logoutAsync}
-        nextStep={() => setStep(1)} />,
+        nextStep={() => setStep(1)}
+        user={props.user} />,
       <Input
-        key="input"
-        store={props.store}
-        selectedType={selectedType}
         fetchedUserData={props.userData}
-        userData={userData}
-        prevStep={() => setStep(0)}
+        key="input"
         nextStep={u => {
           setUserData(u)
           setStep(2)
-        }} />,
-      <Confirm
-        key="confirm"
-        store={props.store}
+        }}
+        prevStep={() => setStep(0)}
         selectedType={selectedType}
+        store={props.store}
+        userData={userData} />,
+      <Confirm
         fetchedUserData={props.userData}
-        userData={userData}
-        submitAsync={handleSubmitAsync}
+        key="confirm"
+        nextStep={() => setStep(3)}
         prevStep={() => setStep(1)}
-        nextStep={() => setStep(3)} />,
+        selectedType={selectedType}
+        store={props.store}
+        submitAsync={handleSubmitAsync}
+        userData={userData} />,
       <Complete
         key="complete"
-        ticketHashId={props.ticketHashId}
+        selectedType={selectedType}
         store={props.store}
-        selectedType={selectedType} />
+        ticketHashId={props.ticketHashId} />
     ])
   }, [props.user, props.store, props.userData, selectedType, userData])
 
   return (
     <>
-      {props.ticketUser.usableUserId && <>
-        <Alert type="error" title="受け取り済みのチケットです">
+      {props.ticketUser.usableUserId && (
+        <>
+          <Alert
+            title="受け取り済みのチケットです"
+            type="error">
           このチケットは既に受け取り済みです。
-        </Alert>
-        {props.user?.uid === props.ticketUser.usableUserId && (
-          <FormSection>
-            <FormItem>
-              <LinkButton color="primary" to={`/tickets/${props.ticketHashId}`}>
-                <IconLabel icon={<MdBookOnline />} label="チケットを開く" />
-              </LinkButton>
-            </FormItem>
-          </FormSection>
-        )}
-      </>}
+          </Alert>
+          {props.user?.uid === props.ticketUser.usableUserId && (
+            <FormSection>
+              <FormItem>
+                <LinkButton
+                  color="primary"
+                  to={`/tickets/${props.ticketHashId}`}>
+                  <IconLabel
+                    icon={<MdBookOnline />}
+                    label="チケットを開く" />
+                </LinkButton>
+              </FormItem>
+            </FormSection>
+          )}
+        </>
+      )}
 
-      {!props.ticketUser.usableUserId && <>
-        <h1>{props.store.name} チケット受け取りページ</h1>
-        {steps?.[step]}
-      </>}
+      {!props.ticketUser.usableUserId && (
+        <>
+          <h1>{props.store.name} チケット受け取りページ</h1>
+          {steps?.[step]}
+        </>
+      )}
     </>
   )
 }

@@ -10,7 +10,7 @@ import PasswordInputForm from './PasswordInputForm'
 interface Props {
   oobCode: string
 }
-const PasswordReset: React.FC<Props> = (props) => {
+const PasswordReset: React.FC<Props> = props => {
   const { verifyPasswordResetCodeAsync, confirmPasswordResetAsync } = useFirebase()
   const { convertErrorMessage } = useError()
 
@@ -38,23 +38,33 @@ const PasswordReset: React.FC<Props> = (props) => {
 
   return (
     <>
-      {errorMessage && <Alert title="エラーが発生しました" type="error">
-        {errorMessage}
-      </Alert>}
-
-      {isReady && !isChangedPassword && <PasswordInputForm
-        submitAsync={handleSubmitAsync} />}
-
-      {isChangedPassword && <>
-        <Alert title="パスワードを変更しました" type="success">
-          次回からは新しいパスワードでログインしてください。
+      {errorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">
+          {errorMessage}
         </Alert>
-        <FormSection>
-          <FormItem>
-            <LinkButton to="/">ログイン画面へ進む</LinkButton>
-          </FormItem>
-        </FormSection>
-      </>}
+      )}
+
+      {isReady && !isChangedPassword && (
+        <PasswordInputForm
+          submitAsync={handleSubmitAsync} />
+      )}
+
+      {isChangedPassword && (
+        <>
+          <Alert
+            title="パスワードを変更しました"
+            type="success">
+            次回からは新しいパスワードでログインしてください。
+          </Alert>
+          <FormSection>
+            <FormItem>
+              <LinkButton to="/">ログイン画面へ進む</LinkButton>
+            </FormItem>
+          </FormSection>
+        </>
+      )}
     </>
   )
 }

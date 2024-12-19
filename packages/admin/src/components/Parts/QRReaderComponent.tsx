@@ -5,7 +5,7 @@ import type { Result } from '@zxing/library'
 interface Props {
   onScan: (data: Result) => void
 }
-const QRReaderComponent: React.FC<Props> = (props) => {
+const QRReaderComponent: React.FC<Props> = props => {
   const mountedRef = useRef<boolean>(false)
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
@@ -37,7 +37,9 @@ const QRReaderComponent: React.FC<Props> = (props) => {
 
   return (
     <>
-      <video style={{ maxWidth: '100%' }} ref={videoRef} />
+      <video
+        ref={videoRef}
+        style={{ maxWidth: '100%' }} />
     </>
   )
 }

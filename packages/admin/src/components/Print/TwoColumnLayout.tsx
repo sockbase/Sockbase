@@ -3,7 +3,7 @@ import styled from 'styled-components'
 interface Props {
   children: React.ReactNode[]
 }
-const TwoColumnLayout: React.FC<Props> = (props) => {
+const TwoColumnLayout: React.FC<Props> = props => {
   return (
     <Container>
       {props.children.map((c, i) => (

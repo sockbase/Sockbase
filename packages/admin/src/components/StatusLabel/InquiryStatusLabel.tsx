@@ -10,7 +10,7 @@ interface Props {
   isOnlyIcon?: boolean
 }
 
-const InquiryStatusLabel: React.FC<Props> = (props) => {
+const InquiryStatusLabel: React.FC<Props> = props => {
   const labelText = useMemo(() => {
     switch (props.status) {
       case 0:
@@ -43,8 +43,8 @@ const InquiryStatusLabel: React.FC<Props> = (props) => {
         <Container status={props.status}>
           <IconLabel
             icon={iconElement}
-            label={labelText}
-            isOnlyIcon={props.isOnlyIcon} />
+            isOnlyIcon={props.isOnlyIcon}
+            label={labelText} />
         </Container>
       )
       : (

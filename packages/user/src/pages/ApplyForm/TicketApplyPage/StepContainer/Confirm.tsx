@@ -21,7 +21,7 @@ interface Props {
   prevStep: () => void
   nextStep: () => void
 }
-const Confirm: React.FC<Props> = (props) => {
+const Confirm: React.FC<Props> = props => {
   const { convertErrorMessage } = useError()
 
   const [isProgress, setProgress] = useState(false)
@@ -43,31 +43,33 @@ const Confirm: React.FC<Props> = (props) => {
     <>
       <h1>入力内容確認</h1>
 
-      {props.selectedType?.productInfo && <>
-        <h2>参加費</h2>
-        <h3>選択された参加種別</h3>
-        <table>
-          <tbody>
-            <tr>
-              <th>参加種別</th>
-              <td>{props.selectedType.name}</td>
-            </tr>
-            <tr>
-              <th>詳細</th>
-              <td>{props.selectedType.description}</td>
-            </tr>
-            <tr>
-              <th>参加費</th>
-              <td>{props.selectedType.price.toLocaleString()}円</td>
-            </tr>
-          </tbody>
-        </table>
+      {props.selectedType?.productInfo && (
+        <>
+          <h2>参加費</h2>
+          <h3>選択された参加種別</h3>
+          <table>
+            <tbody>
+              <tr>
+                <th>参加種別</th>
+                <td>{props.selectedType.name}</td>
+              </tr>
+              <tr>
+                <th>詳細</th>
+                <td>{props.selectedType.description}</td>
+              </tr>
+              <tr>
+                <th>参加費</th>
+                <td>{props.selectedType.price.toLocaleString()}円</td>
+              </tr>
+            </tbody>
+          </table>
 
-        <h3>決済方法</h3>
-        <p>
-          {props.selectedPaymentMethod?.description}
-        </p>
-      </>}
+          <h3>決済方法</h3>
+          <p>
+            {props.selectedPaymentMethod?.description}
+          </p>
+        </>
+      )}
 
       <UserDataView
         fetchedUserData={props.fetchedUserData}
@@ -81,40 +83,54 @@ const Confirm: React.FC<Props> = (props) => {
         修正する場合は「修正」ボタンを押してください。
       </p>
 
-      {errorMessage && <Alert type="error" title="エラーが発生しました">
-        {errorMessage}
-      </Alert>}
+      {errorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">
+          {errorMessage}
+        </Alert>
+      )}
 
       <FormSection>
         <FormItem>
           <FormButton
             color="default"
-            onClick={props.prevStep}
-            disabled={isProgress}>
-            <IconLabel icon={<MdArrowBack />} label="修正する" />
+            disabled={isProgress}
+            onClick={props.prevStep}>
+            <IconLabel
+              icon={<MdArrowBack />}
+              label="修正する" />
           </FormButton>
         </FormItem>
       </FormSection>
       <FormSection>
         <FormItem>
-          <LoadingCircleWrapper isLoading={isProgress} inlined>
+          <LoadingCircleWrapper
+            inlined
+            isLoading={isProgress}>
             <FormButton
               color="primary"
-              onClick={handleSubmit}
-              disabled={isProgress}>
-              <IconLabel icon={<MdArrowForward />} label="決済に進む (申し込み情報送信)" />
+              disabled={isProgress}
+              onClick={handleSubmit}>
+              <IconLabel
+                icon={<MdArrowForward />}
+                label="決済に進む (申し込み情報送信)" />
             </FormButton>
           </LoadingCircleWrapper>
         </FormItem>
       </FormSection>
 
-      {isProgress && <>
-        <ProgressBar percent={props.submitProgressPercent}/>
-        <Alert type="info" title="申し込み情報を送信中です">
+      {isProgress && (
+        <>
+          <ProgressBar percent={props.submitProgressPercent} />
+          <Alert
+            title="申し込み情報を送信中です"
+            type="info">
           送信処理に時間がかかる場合がございます。<br />
           進捗率が 100% になるまでそのままでお待ちください。
-        </Alert>
-      </>}
+          </Alert>
+        </>
+      )}
     </>
   )
 }

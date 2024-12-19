@@ -5,7 +5,9 @@ const Footer: React.FC = () => {
   return (
     <StyledFooter>
       <Logo>
-        <LogoImage src={LogotypeSVG} alt="Powered by Sockbase" />
+        <LogoImage
+          alt="Powered by Sockbase"
+          src={LogotypeSVG} />
       </Logo>
     </StyledFooter>
   )

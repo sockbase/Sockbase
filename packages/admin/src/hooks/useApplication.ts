@@ -111,7 +111,7 @@ const useApplication = (): IUseApplication => {
         .withConverter(applicationMetaConverter)
 
       setDoc(metaRef, { applicationStatus: status }, { merge: true })
-        .catch((err) => { throw err })
+        .catch(err => { throw err })
     }, [])
 
   const deleteApplicationAsync =

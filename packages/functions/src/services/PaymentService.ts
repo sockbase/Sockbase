@@ -41,7 +41,7 @@ const createPaymentAsync = async (
 }
 
 const generateBankTransferCode: (now: Date) => string =
-  (now) => dayjs(now).tz().format('DDHHmm')
+  now => dayjs(now).tz().format('DDHHmm')
 
 export default {
   createPaymentAsync,

@@ -13,7 +13,7 @@ interface Props {
   nextStep: () => void
   handleCreateAsync: () => Promise<void>
 }
-const InformationConfirm: React.FC<Props> = (props) => {
+const InformationConfirm: React.FC<Props> = props => {
   const [isProcess, setProcess] = useState(false)
 
   const handleCreate = useCallback(() => {
@@ -31,14 +31,21 @@ const InformationConfirm: React.FC<Props> = (props) => {
       <h2>STEP2: 入力内容の確認</h2>
 
       <EventInfo
-        eventId={props.eventId}
         event={props.event}
+        eventId={props.eventId}
         eyecatchData={props.eyecatchData} />
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={handleCreate} disabled={isProcess}>作成する</FormButton>
-          <FormButton onClick={props.prevStep} color="default" disabled={isProcess}>修正する</FormButton>
+          <FormButton
+            disabled={isProcess}
+            onClick={handleCreate}>作成する
+          </FormButton>
+          <FormButton
+            color="default"
+            disabled={isProcess}
+            onClick={props.prevStep}>修正する
+          </FormButton>
         </FormItem>
       </FormSection>
     </>

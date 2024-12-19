@@ -12,7 +12,7 @@ interface Props {
   isOnlyIcon?: boolean
 }
 
-const PaymentStatusLabel: React.FC<Props> = (props) => {
+const PaymentStatusLabel: React.FC<Props> = props => {
   const labelText = useMemo(() => {
     switch (props.payment?.status) {
       case 0:
@@ -62,7 +62,8 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
         default:
           return <MdCreditCard />
       }
-    } else {
+    }
+    else {
       switch (props.payment?.paymentMethod) {
         case 1:
           return <MdCreditCard />
@@ -81,8 +82,8 @@ const PaymentStatusLabel: React.FC<Props> = (props) => {
           <IconLabel
             icon={iconElement}
             icon2={icon2Element}
-            label={labelText}
-            isOnlyIcon={props.isOnlyIcon} />
+            isOnlyIcon={props.isOnlyIcon}
+            label={labelText} />
         </Container>
       )
       : (

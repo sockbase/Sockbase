@@ -17,7 +17,7 @@ interface Props {
   petitOnlyAppCount: number
   unionAppCount: number
 }
-const EventAtamagami: React.FC<Props> = (props) => {
+const EventAtamagami: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   return (

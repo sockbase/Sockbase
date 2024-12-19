@@ -35,12 +35,12 @@ const buttonStyle = css<{ color?: ColorType, disabled?: boolean, $isSlim?: boole
     padding: 5px 10px;
   `}
 
-  &:disabled {
+  ${props => props.disabled && `
     background-color: var(--disabled-background-color);
     color: var(--disabled-text-color);
     cursor: auto;
     pointer-events: none;
-  }
+  `}
 `
 
 export default buttonStyle

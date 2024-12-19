@@ -103,42 +103,53 @@ const DashboardTicketListPage: React.FC = () => {
       <Breadcrumbs>
         <li><Link to="/dashboard/">マイページ</Link></li>
       </Breadcrumbs>
-      <PageTitle title="購入済みチケット" icon={<MdWallet />} description="あなたが購入したチケットを表示中" />
+      <PageTitle
+        description="あなたが購入したチケットを表示中"
+        icon={<MdWallet />}
+        title="購入済みチケット" />
 
-      <Alert type="info" title="受け取ったチケットが見つからない場合">
+      <Alert
+        title="受け取ったチケットが見つからない場合"
+        type="info">
         受け取ったチケットは <Link to="/dashboard/mytickets">マイチケット</Link> で確認できます。
       </Alert>
 
       {tickets && ticketMetas && ticketUsers
-        ? <table>
-          <thead>
-            <tr>
-              <th>チケットストア</th>
-              <th>割り当て状態</th>
-              <th>参加種別</th>
-              <th>申し込み状態</th>
-              <th>購入日時</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tickets?.length > 0
-              ? tickets
-                .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
-                .map((t) => <tr key={t.id}>
-                  <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getname(t.storeId)}</Link></th>
-                  <td>{t.hashId && <TicketAssignStatusLabel status={!!getTicketUser(t.hashId)?.usableUserId} />}</td>
-                  <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
-                  <td>{t.id && <ApplicationStatusLabel status={getTicketApplicationStatus(t.id)} />}</td>
-                  <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年 M月 D日 H時mm分')}</td>
-                </tr>)
-              : <tr>
-                <td colSpan={5}>
+        ? (
+          <table>
+            <thead>
+              <tr>
+                <th>チケットストア</th>
+                <th>割り当て状態</th>
+                <th>参加種別</th>
+                <th>申し込み状態</th>
+                <th>購入日時</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tickets?.length > 0
+                ? tickets
+                  .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
+                  .map(t => (
+                    <tr key={t.id}>
+                      <th><Link to={`/dashboard/tickets/${t.hashId}`}>{getname(t.storeId)}</Link></th>
+                      <td>{t.hashId && <TicketAssignStatusLabel status={!!getTicketUser(t.hashId)?.usableUserId} />}</td>
+                      <td><StoreTypeLabel type={getType(t.storeId, t.typeId)} /></td>
+                      <td>{t.id && <ApplicationStatusLabel status={getTicketApplicationStatus(t.id)} />}</td>
+                      <td>{t.createdAt && formatByDate(t.createdAt, 'YYYY年 M月 D日 H時mm分')}</td>
+                    </tr>
+                  ))
+                : (
+                  <tr>
+                    <td colSpan={5}>
                   購入したチケットはありません。<br />
                   他のユーザーから譲り受けたチケットは <Link to="/dashboard/mytickets">マイチケット</Link> からご確認ください。
-                </td>
-              </tr>}
-          </tbody>
-        </table>
+                    </td>
+                  </tr>
+                )}
+            </tbody>
+          </table>
+        )
         : <Loading text="チケット一覧" />}
     </DashboardBaseLayout>
   )
