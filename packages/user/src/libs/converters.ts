@@ -258,7 +258,8 @@ export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
         ? new Date(data.updatedAt.seconds * 1000)
         : null,
       hashId: data.hashId,
-      createdUserId: data.createdUserId
+      createdUserId: data.createdUserId,
+      isStandalone: data.isStandalone ?? false
     }
   }
 }
