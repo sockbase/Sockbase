@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { MdHome } from 'react-icons/md'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
+import LogotypeSVG from '../../assets/logotype.svg'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import Alert from '../../components/Parts/Alert'
@@ -47,26 +49,24 @@ const IndexPage: React.FC = () => {
   }, [email, password])
 
   return (
-    <DefaultBaseLayout>
-      <h2>Sockbase マイページにログイン</h2>
-
-      {fromPathName && (
-        <Alert
-          title="ログインが必要です"
-          type="warning">
-        このページにアクセスするにはログインが必要です。
-        </Alert>
-      )}
-
-      {user === undefined
-        ? <Loading text="認証情報" />
-        : user !== null
-          ? (
+    <DefaultBaseLayout isZeroPadding>
+      <LoginFormArea>
+        <BrandHeader>
+          <BrandLogo>
+            <LogotypeImage src={LogotypeSVG} />
+          </BrandLogo>
+          <BrandLabel>マイページ</BrandLabel>
+        </BrandHeader>
+        <LoginFormContent>
+          {fromPathName && (
             <Alert
-              title={`${user.email} としてログイン中です`}
-              type="info" />
-          )
-          : (
+              title="ログインが必要です"
+              type="warning">
+                このページにアクセスするにはログインが必要です。
+            </Alert>
+          )}
+
+          {user === null && (
             <Login
               email={email}
               errorMessage={errorMessage}
@@ -77,22 +77,39 @@ const IndexPage: React.FC = () => {
               setPassword={password => setPassword(password)} />
           )}
 
-      {user && (
-        <FormSection>
-          <FormItem>
-            <LinkButton
-              color="primary"
-              to="/dashboard">
-              <IconLabel
-                icon={<MdHome />}
-                label="マイページに進む" />
-            </LinkButton>
-          </FormItem>
-        </FormSection>
-      )}
+          {user !== null && (
+            <FormSection>
+              {user === undefined && (
+                <FormItem>
+                  <Loading text="認証情報" />
+                </FormItem>
+              )}
+              {user && (
+                <FormItem>
+                  <Alert
+                    title={`${user.email} としてログイン中です`}
+                    type="info" />
+                </FormItem>
+              )}
+              {user !== null && (
+                <FormItem>
+                  <LinkButton
+                    color="primary"
+                    disabled={!user}
+                    to="/dashboard">
+                    <IconLabel
+                      icon={<MdHome />}
+                      label="マイページに進む" />
+                  </LinkButton>
+                </FormItem>
+              )}
+            </FormSection>
+          )}
+        </LoginFormContent>
+      </LoginFormArea>
 
       {!fromPathName && (
-        <>
+        <IntroductionArea>
           <InformationList />
 
           <h2>Sockbase とは？</h2>
@@ -102,19 +119,19 @@ const IndexPage: React.FC = () => {
 
           <h3>マイページへのアクセス方法</h3>
           <p>
-          サークル申し込み時, チケット購入時・受け取り時にアカウントを作成することができます。<br />
-          作成したアカウントとパスワードを用いて、上のログイン画面からログインしてください。
+            サークル申し込み時, チケット購入時・受け取り時にアカウントを作成することができます。<br />
+            作成したアカウントとパスワードを用いて、上のログイン画面からログインしてください。
           </p>
 
           <h3>お支払い方法</h3>
           <p>
-          オンライン決済 (クレジットカード, Google Pay, Apple Pay) がご利用いただけます。<br />
-          イベントによっては銀行振込もご利用いただけます。
+            オンライン決済 (クレジットカード, Google Pay, Apple Pay) がご利用いただけます。<br />
+            イベントによっては銀行振込もご利用いただけます。
           </p>
 
           <h3>イベントへの申し込み方法</h3>
           <p>
-          イベント主催者から提供されたURLを使用してください。
+            イベント主催者から提供されたURLを使用してください。
           </p>
 
           <h3>問い合わせ先</h3>
@@ -128,10 +145,42 @@ const IndexPage: React.FC = () => {
             <li><Link to="/tos">利用規約・特定商取引法に基づく表記</Link></li>
             <li><Link to="/privacy-policy">プライバシーポリシー</Link></li>
           </ul>
-        </>
+        </IntroductionArea>
       )}
     </DefaultBaseLayout>
   )
 }
 
 export default IndexPage
+
+const LoginFormArea = styled.div`
+  background-color: var(--panel2-background-color);
+`
+const BrandHeader = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  padding: 20px;
+  background-color: var(--brand-color);
+  color: var(--white-color);
+`
+const BrandLogo = styled.div``
+const LogotypeImage = styled.img`
+  height: 1.25em;
+  svg {
+    fill: var(--brand-primary-color);
+  }
+`
+const BrandLabel = styled.div`
+  padding-bottom: 2px;
+  font-weight: bold;
+`
+const LoginFormContent = styled.div`
+  padding: 20px;
+`
+const IntroductionArea = styled.div`
+  padding: 40px;
+  @media screen and (max-width: 840px) {
+    padding: 20px;
+  }
+`
