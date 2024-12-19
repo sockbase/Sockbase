@@ -49,7 +49,7 @@ export const createTicket = https.onCall(
   })
 
 export const createTicketForAdmin = https.onCall(
-  async (param: { storeId: string, createTicketData: { email: string, typeId: string } }, context: https.CallableContext): Promise<SockbaseTicketCreatedResult> => {
+  async (param: { storeId: string, createTicketData: { email: string | null, typeId: string } }, context: https.CallableContext): Promise<SockbaseTicketCreatedResult> => {
     if (!context.auth?.token.roles) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }
@@ -67,7 +67,12 @@ export const createTicketForAdmin = https.onCall(
 
     const userId = context.auth.uid
 
-    const result = await StoreService.createTicketForAdminAsync(userId, param.storeId, param.createTicketData.typeId, param.createTicketData.email)
+    const result = await StoreService.createTicketForAdminAsync(
+      userId,
+      param.storeId,
+      param.createTicketData.typeId,
+      param.createTicketData.email
+    )
     return result
   }
 )

@@ -148,7 +148,9 @@ const StoreViewPage: React.FC = () => {
     Promise.all(ticketHashIds.map(getTicketIdByHashIdAsync))
       .then(setTicketHashes)
       .catch(err => { throw err })
-    Promise.all(ticketHashIds.map(async hashId => ({
+
+    const ticketHashIdsWithoutStandalone = tickets.filter(t => !t.isStandalone).map(t => t.hashId ?? '')
+    Promise.all(ticketHashIdsWithoutStandalone.map(async hashId => ({
       hashId,
       data: await getTicketUserByHashIdAsync(hashId)
     })))
@@ -160,7 +162,10 @@ const StoreViewPage: React.FC = () => {
 
   useEffect(() => {
     if (!storeId || !tickets || !ticketUsers) return
-    const userIds = [...tickets.map(ticket => ticket.userId), ...Object.values(ticketUsers).map(user => user.userId)]
+    const userIds = [
+      ...tickets.filter(t => t.userId).map(ticket => ticket.userId ?? ''),
+      ...Object.values(ticketUsers).map(user => user.userId)
+    ]
     const userIdSet = [...new Set(userIds)]
     Promise.all(userIdSet.map(async userId => ({
       userId,
@@ -379,7 +384,8 @@ const StoreViewPage: React.FC = () => {
                     ? (
                       <TicketAssignStatusLabel
                         isOnlyIcon
-                        usableUserId={ticketUsers?.[ticket.hashId].usableUserId} />
+                        isStandalone={ticket.isStandalone}
+                        usableUserId={ticketUsers?.[ticket.hashId]?.usableUserId} />
                     )
                     : <BlinkField />}
                 </td>
@@ -393,11 +399,19 @@ const StoreViewPage: React.FC = () => {
                     store={store}
                     typeId={ticket.typeId} />
                 </td>
-                <td>{userDataSet?.[ticket.userId].name}</td>
                 <td>
-                  {ticket.hashId && ticketUsers && userDataSet
-                    ? userDataSet[ticketUsers[ticket.hashId].userId].name
-                    : <BlinkField />}
+                  {ticket.isStandalone
+                    ? '(SA)'
+                    : ticket.userId
+                      ? userDataSet?.[ticket.userId].name
+                      : '---'}
+                </td>
+                <td>
+                  {ticket.isStandalone
+                    ? '(SA)'
+                    : ticket.hashId && userDataSet && ticketUsers?.[ticket?.hashId].userId
+                      ? userDataSet[ticketUsers[ticket.hashId].userId].name
+                      : <BlinkField />}
                 </td>
                 <td><Link to={`/tickets/${ticket.hashId}`}>{ticket.hashId ?? '---'}</Link></td>
                 <td>{formatByDate(ticket.createdAt, 'M/D H:m')}</td>

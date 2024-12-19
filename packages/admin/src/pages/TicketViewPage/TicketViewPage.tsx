@@ -56,7 +56,7 @@ const TicketViewPage: React.FC = () => {
   const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
   const [ticketUsed, setTicketUsed] = useState<SockbaseTicketUsedStatus>()
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
-  const [userData, setUserData] = useState<SockbaseAccount>()
+  const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [ticketUserData, setTicketUserData] = useState<SockbaseAccount | null>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
@@ -155,9 +155,14 @@ const TicketViewPage: React.FC = () => {
     getStoreByIdAsync(ticket.storeId)
       .then(setStore)
       .catch(err => { throw err })
-    getUserDataByUserIdAndStoreIdAsync(ticket.userId, ticket.storeId)
-      .then(setUserData)
-      .catch(err => { throw err })
+    if (ticket.userId) {
+      getUserDataByUserIdAndStoreIdAsync(ticket.userId, ticket.storeId)
+        .then(setUserData)
+        .catch(err => { throw err })
+    }
+    else {
+      setUserData(null)
+    }
   }, [ticket])
 
   useEffect(() => {
@@ -215,7 +220,11 @@ const TicketViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>割り当て状況</th>
-                <td><TicketAssignStatusLabel usableUserId={ticketUser?.usableUserId} /></td>
+                <td>
+                  <TicketAssignStatusLabel
+                    isStandalone={ticket?.isStandalone}
+                    usableUserId={ticketUser?.usableUserId} />
+                </td>
               </tr>
               <tr>
                 <th>使用状況</th>
@@ -229,20 +238,40 @@ const TicketViewPage: React.FC = () => {
           <table>
             <tbody>
               <tr>
+                <th>スタンドアロン？</th>
+                <td>{ticket ? ticket?.isStandalone ? 'はい' : 'いいえ' : <BlinkField />}</td>
+              </tr>
+              <tr>
                 <th>購入者氏名</th>
-                <td>{userData?.name}</td>
+                <td>{(!ticket?.isStandalone && userData?.name) || '---'}</td>
               </tr>
               <tr>
                 <th>購入者メールアドレス</th>
-                <td>{userData?.email}</td>
+                <td>{(!ticket?.isStandalone && userData?.email) || '---'}</td>
               </tr>
               <tr>
                 <th>使用者氏名</th>
-                <td>{ticketUserData ? ticketUserData.name ?? '未割当' : <BlinkField />}</td>
+                <td>
+                  {ticket
+                    ? !ticket.isStandalone
+                      ? ticketUserData
+                        ? ticketUserData.name
+                        : '未割当'
+                      : '---'
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>使用者メールアドレス</th>
-                <td>{ticketUserData ? ticketUserData.email ?? '---' : <BlinkField />}</td>
+                <td>
+                  {ticket
+                    ? !ticket.isStandalone
+                      ? ticketUserData
+                        ? ticketUserData.email
+                        : '未割当'
+                      : '---'
+                    : <BlinkField />}
+                </td>
               </tr>
             </tbody>
           </table>
