@@ -5,13 +5,14 @@ import Footer from './Footer'
 interface Props {
   children: React.ReactNode
   title?: string
+  isZeroPadding?: boolean
 }
 const DefaultBaseLayout: React.FC<Props> = props => {
   return (
     <Layout>
       <HeadHelper title={props.title} />
       <Container>
-        <Wrapper>
+        <Wrapper $isZeroPadding={props.isZeroPadding ?? false}>
           {props.children}
         </Wrapper>
       </Container>
@@ -35,10 +36,10 @@ const Container = styled.main`
     margin: 0;
   }
 `
-const Wrapper = styled.div`
-  padding: 40px;
+const Wrapper = styled.div<{ $isZeroPadding: boolean }>`
+  padding: ${props => !props.$isZeroPadding ? '40px' : 0};
   background-color: var(--body-background-color);
   @media screen and (max-width: 840px) {
-    padding: 20px;
+    padding: ${props => !props.$isZeroPadding ? '20px' : 0};
   }
 `
