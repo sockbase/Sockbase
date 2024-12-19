@@ -142,17 +142,30 @@ const EventEditLinkPage: React.FC = () => {
                 .map(docLink => (
                   <tr key={docLink.id}>
                     <td>{docLink.name}</td>
-                    <td><a href={docLink.url} target="_blank" rel="noreferrer">{docLink.url}</a></td>
+                    <td>
+                      <a
+                        href={docLink.url}
+                        rel="noreferrer"
+                        target="_blank">
+                        {docLink.url}
+                      </a>
+                    </td>
                     <td>
                       <FormItem $inlined>
                         <FormButton onClick={() => handleSwapLink(docLink.id, true)}>
-                          <IconLabel icon={<MdArrowUpward />} isOnlyIcon />
+                          <IconLabel
+                            icon={<MdArrowUpward />}
+                            isOnlyIcon />
                         </FormButton>
                         <FormButton onClick={() => handleSwapLink(docLink.id, false)}>
-                          <IconLabel icon={<MdArrowDownward />} isOnlyIcon />
+                          <IconLabel
+                            icon={<MdArrowDownward />}
+                            isOnlyIcon />
                         </FormButton>
                         <FormButton onClick={() => handleDeleteDocLink(docLink.id)}>
-                          <IconLabel icon={<MdDelete />} isOnlyIcon />
+                          <IconLabel
+                            icon={<MdDelete />}
+                            isOnlyIcon />
                         </FormButton>
                       </FormItem>
                     </td>
@@ -163,7 +176,9 @@ const EventEditLinkPage: React.FC = () => {
           <FormSection>
             <FormItem>
               <FormButton onClick={handleUpdateDocLink}>
-                <IconLabel icon={<MdSave />} label="リンク情報を更新" />
+                <IconLabel
+                  icon={<MdSave />}
+                  label="リンク情報を更新" />
               </FormButton>
             </FormItem>
           </FormSection>
@@ -174,20 +189,22 @@ const EventEditLinkPage: React.FC = () => {
             <FormItem>
               <FormLabel>リンク名</FormLabel>
               <FormInput
-                value={editableDocLink.name}
-                onChange={e => setEditableDocLink(s => ({ ...s, name: e.target.value }))}/>
+                onChange={e => setEditableDocLink(s => ({ ...s, name: e.target.value }))}
+                value={editableDocLink.name} />
             </FormItem>
             <FormItem>
               <FormLabel>URL</FormLabel>
               <FormInput
-                value={editableDocLink.url}
-                onChange={e => setEditableDocLink(s => ({ ...s, url: e.target.value }))}/>
+                onChange={e => setEditableDocLink(s => ({ ...s, url: e.target.value }))}
+                value={editableDocLink.url} />
             </FormItem>
           </FormSection>
           <FormSection>
             <FormItem>
               <FormButton onClick={handleAddDocLink}>
-                <IconLabel icon={<MdAddLink />} label="リンクを追加" />
+                <IconLabel
+                  icon={<MdAddLink />}
+                  label="リンクを追加" />
               </FormButton>
             </FormItem>
           </FormSection>

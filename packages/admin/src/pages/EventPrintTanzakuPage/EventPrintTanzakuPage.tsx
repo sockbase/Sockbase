@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { MdPrint } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { type SockbaseApplicationLinksDocument, type SockbaseAccount, type SockbaseApplicationDocument, type SockbaseApplicationMeta, type SockbaseEventDocument, type SockbaseApplicationOverviewDocument } from 'sockbase'
 import FormButton from '../../components/Form/FormButton'
 import FormInput from '../../components/Form/FormInput'
 import FormItem from '../../components/Form/FormItem'
@@ -21,6 +20,14 @@ import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import useUserData from '../../hooks/useUserData'
 import PrintLayout from '../../layouts/PrintLayout/PrintLayout'
+import type {
+  SockbaseApplicationLinksDocument,
+  SockbaseAccount,
+  SockbaseApplicationDocument,
+  SockbaseApplicationMeta,
+  SockbaseEventDocument,
+  SockbaseApplicationOverviewDocument
+} from 'sockbase'
 
 const EventPrintTanzakuPage: React.FC = () => {
   const { eventId } = useParams()
@@ -113,7 +120,9 @@ const EventPrintTanzakuPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <PrintLayout title="配置短冊印刷" requireCommonRole={2}>
+    <PrintLayout
+      requireCommonRole={2}
+      title="配置短冊印刷">
       <Container>
         <Breadcrumbs>
           <li><Link to="/">ホーム</Link></li>
@@ -123,8 +132,8 @@ const EventPrintTanzakuPage: React.FC = () => {
         </Breadcrumbs>
 
         <PageTitle
-          title="配置短冊印刷"
-          icon={<MdPrint />} />
+          icon={<MdPrint />}
+          title="配置短冊印刷" />
 
         <table>
           <tbody>
@@ -147,13 +156,15 @@ const EventPrintTanzakuPage: React.FC = () => {
           <FormItem>
             <FormLabel>準備会スペース</FormLabel>
             <FormInput
+              onChange={e => setBlankTanzakuCount(e.target.value)}
               type="number"
-              value={blankTanzakuCount}
-              onChange={e => setBlankTanzakuCount(e.target.value)} />
+              value={blankTanzakuCount} />
           </FormItem>
           <FormItem>
             <FormButton onClick={window.print}>
-              <IconLabel icon={<MdPrint />} label="印刷プレビューを開く" />
+              <IconLabel
+                icon={<MdPrint />}
+                label="印刷プレビューを開く" />
             </FormButton>
           </FormItem>
         </FormSection>
@@ -162,12 +173,12 @@ const EventPrintTanzakuPage: React.FC = () => {
       <PrintOnlyArea>
         {event && (
           <EventAtamagami
-            now={now}
-            event={event}
             confirmedAppCount={confirmedAppCount}
-            totalSpaceCount={totalSpaceCount}
+            event={event}
             hasAdultAppCount={hasAdultAppCount}
+            now={now}
             petitOnlyAppCount={petitOnlyAppCount}
+            totalSpaceCount={totalSpaceCount}
             unionAppCount={unionAppCount} />
         )}
         {event && confirmedApps?.map((a, i) => {
@@ -182,27 +193,26 @@ const EventPrintTanzakuPage: React.FC = () => {
 
           return (
             <CircleTanzaku
+              app={a}
+              appIndex={i}
+              appLink={appLink}
+              circleCutURL={circleCutURL}
+              confirmedAppCount={confirmedAppCount}
+              event={event}
               key={a.id}
               now={now}
-              event={event}
-              app={a}
               overview={overview}
-              appLink={appLink}
               unionApp={unionApp}
-              circleCutURL={circleCutURL}
-              userData={users[a.userId]}
-              appIndex={i}
-              confirmedAppCount={confirmedAppCount} />
+              userData={users[a.userId]} />
           )
         })}
         {event && Array.from({ length: Number(blankTanzakuCount) ?? 0 }).map((_, i) => (
           <BlankTanzaku
-            key={`blank-${i}`}
-            now={now}
-            event={event}
             blankIndex={i}
             blankTanzakuCount={Number(blankTanzakuCount) ?? 0}
-          />
+            event={event}
+            key={`blank-${i}`}
+            now={now} />
         ))}
       </PrintOnlyArea>
     </PrintLayout>

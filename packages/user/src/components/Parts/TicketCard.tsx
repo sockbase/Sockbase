@@ -12,11 +12,13 @@ interface Props {
   store: SockbaseStoreDocument | undefined
   type: SockbaseStoreType | undefined
 }
-const TicketCard: React.FC<Props> = (props) => {
+const TicketCard: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   return (
-    <Container key={props.ticketUser.hashId} to={`/dashboard/mytickets/${props.ticketUser.hashId}`}>
+    <Container
+      key={props.ticketUser.hashId}
+      to={`/dashboard/mytickets/${props.ticketUser.hashId}`}>
       <Header color={props.ticketUser.used ? 'var(--pending-color)' : props.type?.color ?? 'var(--background-disabled-color)'}>
         {props.store?.name}
       </Header>

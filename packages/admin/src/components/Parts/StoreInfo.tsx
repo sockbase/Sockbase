@@ -7,14 +7,22 @@ interface Props {
   storeId: string | null | undefined
   store: SockbaseStore | null | undefined
 }
-const StoreInfo: React.FC<Props> = (props) => {
+const StoreInfo: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   return (
     <>
       {props.store && (props.store.isPublic
-        ? <Alert type="success" title="チケットストア: 公開" />
-        : <Alert type="warning" title="チケットストア: 非公開" />)}
+        ? (
+          <Alert
+            title="チケットストア: 公開"
+            type="success" />
+        )
+        : (
+          <Alert
+            title="チケットストア: 非公開"
+            type="warning" />
+        ))}
 
       <h3>チケットストア基礎情報</h3>
       <table>
@@ -95,20 +103,27 @@ const StoreInfo: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {props.store?.types.length
-            ? props.store.types.map((t, i) => <tr key={i}>
-              <td>{t.id}</td>
-              <td><TicketTypeLabel store={props.store} typeId={t.id}/></td>
-              <td>{t.description}</td>
-              <td>{t.price.toLocaleString()}円</td>
-              <td>{t.productInfo?.paymentURL}</td>
-              <td>{t.productInfo?.productId}</td>
-              <td>{t.anotherTicket?.storeId}</td>
-              <td>{t.anotherTicket?.typeId}</td>
-              <td>{t.isPublic ? '公開' : '非公開'}</td>
-            </tr>)
-            : <tr>
-              <td colSpan={8}>チケットタイプ情報が入力されていません</td>
-            </tr>}
+            ? props.store.types.map((t, i) => (
+              <tr key={i}>
+                <td>{t.id}</td>
+                <td><TicketTypeLabel
+                  store={props.store}
+                  typeId={t.id} />
+                </td>
+                <td>{t.description}</td>
+                <td>{t.price.toLocaleString()}円</td>
+                <td>{t.productInfo?.paymentURL}</td>
+                <td>{t.productInfo?.productId}</td>
+                <td>{t.anotherTicket?.storeId}</td>
+                <td>{t.anotherTicket?.typeId}</td>
+                <td>{t.isPublic ? '公開' : '非公開'}</td>
+              </tr>
+            ))
+            : (
+              <tr>
+                <td colSpan={8}>チケットタイプ情報が入力されていません</td>
+              </tr>
+            )}
         </tbody>
       </table>
 

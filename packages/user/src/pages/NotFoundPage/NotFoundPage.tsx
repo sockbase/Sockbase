@@ -15,7 +15,10 @@ const NotFoundPage: React.FC = () => {
       </StatusDescription>
       <FormSection>
         <FormItem>
-          <LinkButton to="/" color="default">トップへ戻る</LinkButton>
+          <LinkButton
+            color="default"
+            to="/">トップへ戻る
+          </LinkButton>
         </FormItem>
       </FormSection>
     </DefaultBaseLayout>

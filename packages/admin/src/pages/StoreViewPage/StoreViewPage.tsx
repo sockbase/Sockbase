@@ -90,7 +90,8 @@ const StoreViewPage: React.FC = () => {
   const handleSelectTicket = useCallback((ticketId: string, isAdd: boolean) => {
     if (isAdd) {
       setSelectedTicketIds(s => ([...s, ticketId]))
-    } else {
+    }
+    else {
       setSelectedTicketIds(s => s.filter(id => id !== ticketId))
     }
   }, [])
@@ -98,7 +99,8 @@ const StoreViewPage: React.FC = () => {
   const handleSelectAllTicket = useCallback((isAdd: boolean) => {
     if (isAdd) {
       setSelectedTicketIds(tickets?.map(t => t.id) ?? [])
-    } else {
+    }
+    else {
       setSelectedTicketIds([])
     }
   }, [tickets])
@@ -210,7 +212,9 @@ const StoreViewPage: React.FC = () => {
   }, [selectedTicketIds])
 
   return (
-    <DefaultLayout title={store?.name ?? 'チケットストア情報'} requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title={store?.name ?? 'チケットストア情報'}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/stores">チケットストア一覧</Link></li>
@@ -219,13 +223,17 @@ const StoreViewPage: React.FC = () => {
 
       <PageTitle
         icon={<MdStore />}
-        title={store?.name}
-        isLoading={!store} />
+        isLoading={!store}
+        title={store?.name} />
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={() => storeId && handleRefresh(storeId)} disabled={!storeId}>
-            <IconLabel icon={<MdRefresh />} label='最新の情報に更新' />
+          <FormButton
+            disabled={!storeId}
+            onClick={() => storeId && handleRefresh(storeId)}>
+            <IconLabel
+              icon={<MdRefresh />}
+              label="最新の情報に更新" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -233,13 +241,21 @@ const StoreViewPage: React.FC = () => {
       <FormSection>
         <FormItem $inlined>
           <LinkButton to={`/stores/${storeId}/create-tickets`}>
-            <IconLabel icon={<MdAddCircleOutline />} label='チケット手動発券' />
+            <IconLabel
+              icon={<MdAddCircleOutline />}
+              label="チケット手動発券" />
           </LinkButton>
           <LinkButton to={`/stores/${storeId}/view-meta`}>
-            <IconLabel icon={<MdDataset />} label='メタ情報参照' />
+            <IconLabel
+              icon={<MdDataset />}
+              label="メタ情報参照" />
           </LinkButton>
-          <AnchorButton href={`${envHelper.userAppURL}/stores/${storeId}`} target="_blank">
-            <IconLabel icon={<MdOpenInNew />} label='申し込みページを開く' />
+          <AnchorButton
+            href={`${envHelper.userAppURL}/stores/${storeId}`}
+            target="_blank">
+            <IconLabel
+              icon={<MdOpenInNew />}
+              label="申し込みページを開く" />
           </AnchorButton>
         </FormItem>
       </FormSection>
@@ -250,31 +266,34 @@ const StoreViewPage: React.FC = () => {
         </FormItem>
         <FormItem>
           <FormSelect
-            value={selectedTypeId}
-            onChange={e => setSelectedTypeId(e.target.value)}>
-            <option value=''>種別を選択</option>
+            onChange={e => setSelectedTypeId(e.target.value)}
+            value={selectedTypeId}>
+            <option value="">種別を選択</option>
             {store?.types.map(type => (
-              <option key={type.id} value={type.id}>{type.name}</option>
+              <option
+                key={type.id}
+                value={type.id}>{type.name}
+              </option>
             ))}
           </FormSelect>
         </FormItem>
         <FormItem>
           <FormSelect
-            value={selectedApplicationStatus}
-            onChange={e => setSelectedApplicationStatus(e.target.value)}>
-            <option value=''>ステータスを選択</option>
-            <option value='0'>確認待ち</option>
-            <option value='1'>キャンセル</option>
-            <option value='2'>確定</option>
+            onChange={e => setSelectedApplicationStatus(e.target.value)}
+            value={selectedApplicationStatus}>
+            <option value="">ステータスを選択</option>
+            <option value="0">確認待ち</option>
+            <option value="1">キャンセル</option>
+            <option value="2">確定</option>
           </FormSelect>
         </FormItem>
         <FormItem>
           <FormSelect
-            value={selectedAssignStatus}
-            onChange={e => setSelectedAssignStatus(e.target.value)}>
-            <option value=''>割当状況を選択</option>
-            <option value='0'>未割当</option>
-            <option value='1'>割当済</option>
+            onChange={e => setSelectedAssignStatus(e.target.value)}
+            value={selectedAssignStatus}>
+            <option value="">割当状況を選択</option>
+            <option value="0">未割当</option>
+            <option value="1">割当済</option>
           </FormSelect>
         </FormItem>
       </FormSection>
@@ -283,13 +302,13 @@ const StoreViewPage: React.FC = () => {
         <FormItem>
           <FormLabel>申し込みステータスを変更</FormLabel>
           <FormSelect
-            value=""
+            disabled={!selectedTicketIds.length || isProcessing}
             onChange={e => handleBulkChangeStatus(e.target.value)}
-            disabled={!selectedTicketIds.length || isProcessing}>
-            <option value=''>操作を選択</option>
-            <option value='0'>確認待ちに変更</option>
-            <option value='1'>キャンセルに変更</option>
-            <option value='2'>確定に変更</option>
+            value="">
+            <option value="">操作を選択</option>
+            <option value="0">確認待ちに変更</option>
+            <option value="1">キャンセルに変更</option>
+            <option value="2">確定に変更</option>
           </FormSelect>
         </FormItem>
       </FormSection>
@@ -299,8 +318,8 @@ const StoreViewPage: React.FC = () => {
           <tr>
             <th>
               <FormCheck
-                name='select-all'
                 checked={selectedTicketIds.length === tickets?.length}
+                name="select-all"
                 onChange={handleSelectAllTicket} />
             </th>
             <th>#</th>
@@ -328,43 +347,51 @@ const StoreViewPage: React.FC = () => {
           )}
           {filteredTickets?.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
             .map((ticket, index) => (
-              <ActiveTR key={ticket.id} active={selectedTicketIds.includes(ticket.id)}>
+              <ActiveTR
+                active={selectedTicketIds.includes(ticket.id)}
+                key={ticket.id}>
                 <td>
                   <FormCheck
-                    name={`select-${ticket.id}`}
                     checked={selectedTicketIds.includes(ticket.id)}
+                    name={`select-${ticket.id}`}
                     onChange={c => handleSelectTicket(ticket.id, c)} />
                 </td>
                 <td>{index + 1}</td>
                 <td>
                   <ApplicationStatusLabel
-                    status={ticketMetas?.[ticket.id].applicationStatus}
-                    isOnlyIcon />
+                    isOnlyIcon
+                    status={ticketMetas?.[ticket.id].applicationStatus} />
                 </td>
                 <td>
                   {payments
                     ? payments[ticket.id] !== null
-                      ? <PaymentStatusLabel
-                        payment={payments[ticket.id] ?? undefined}
-                        isOnlyIcon
-                        isShowBrand />
+                      ? (
+                        <PaymentStatusLabel
+                          isOnlyIcon
+                          isShowBrand
+                          payment={payments[ticket.id] ?? undefined} />
+                      )
                       : '不要'
                     : <BlinkField />}
                 </td>
                 <td>
                   {ticket.hashId
-                    ? <TicketAssignStatusLabel
-                      usableUserId={ticketUsers?.[ticket.hashId].usableUserId}
-                      isOnlyIcon />
+                    ? (
+                      <TicketAssignStatusLabel
+                        isOnlyIcon
+                        usableUserId={ticketUsers?.[ticket.hashId].usableUserId} />
+                    )
                     : <BlinkField />}
                 </td>
                 <td>
                   <TicketUsedStatusLabel
-                    used={ticketUsedStatuses?.[ticket.id].used}
-                    isOnlyIcon />
+                    isOnlyIcon
+                    used={ticketUsedStatuses?.[ticket.id].used} />
                 </td>
                 <td>
-                  <TicketTypeLabel store={store} typeId={ticket.typeId} />
+                  <TicketTypeLabel
+                    store={store}
+                    typeId={ticket.typeId} />
                 </td>
                 <td>{userDataSet?.[ticket.userId].name}</td>
                 <td>

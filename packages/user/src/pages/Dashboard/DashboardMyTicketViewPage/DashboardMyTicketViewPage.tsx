@@ -73,28 +73,40 @@ const DashboardMyTicketViewPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/mytickets">マイチケット</Link></li>
       </Breadcrumbs>
-      <PageTitle title={pageTitle} icon={<MdLocalPlay />} description="マイチケット情報" isLoading={!store} />
+      <PageTitle
+        description="マイチケット情報"
+        icon={<MdLocalPlay />}
+        isLoading={!store}
+        title={pageTitle} />
 
-      {user && ticketUser?.userId === user.uid && !ticketUser.usableUserId &&
-        <Alert type="warning" title="チケットの割り当てが完了していません">
+      {user && ticketUser?.userId === user.uid && !ticketUser.usableUserId && (
+        <Alert
+          title="チケットの割り当てが完了していません"
+          type="warning">
           購入したチケットを使用するためには、まずチケットの割り当てを行う必要があります。<br />
           <Link to={`/dashboard/tickets/${hashId}`}>こちら</Link> から割り当てを行ってください。
-        </Alert>}
-      {ticketUser === null || (ticketUser && user && (ticketUser.userId !== user.uid && ticketUser.usableUserId !== user.uid) &&
-        <Alert type="error" title="チケットの取得に失敗しました">
+        </Alert>
+      )}
+      {ticketUser === null || (ticketUser && user && (ticketUser.userId !== user.uid && ticketUser.usableUserId !== user.uid) && (
+        <Alert
+          title="チケットの取得に失敗しました"
+          type="error">
           自分が購入していない, 割り当てられていないチケットの情報は表示できません。
-        </Alert>)}
+        </Alert>
+      ))}
 
-      {user && ticketUser?.usableUserId &&
+      {user && ticketUser?.usableUserId && (
         <TwoColumnsLayout>
           <>
             {ticketUser.hashId && !ticketUser.used && (
               <FormSection>
                 <FormItem>
                   <LinkButton
-                    to={`/tickets/${ticketUser.hashId}`}
-                    color="primary">
-                    <IconLabel label="チケットを表示する" icon={<MdOpenInNew />} />
+                    color="primary"
+                    to={`/tickets/${ticketUser.hashId}`}>
+                    <IconLabel
+                      icon={<MdOpenInNew />}
+                      label="チケットを表示する" />
                   </LinkButton>
                 </FormItem>
               </FormSection>
@@ -127,7 +139,9 @@ const DashboardMyTicketViewPage: React.FC = () => {
               <FormSection>
                 <FormItem>
                   <LinkButton to={`/dashboard/tickets/${ticketUser.hashId}`}>
-                    <IconLabel label="チケットを管理する" icon={<MdTune />} />
+                    <IconLabel
+                      icon={<MdTune />}
+                      label="チケットを管理する" />
                   </LinkButton>
                 </FormItem>
               </FormSection>
@@ -135,7 +149,8 @@ const DashboardMyTicketViewPage: React.FC = () => {
           </>
           <>
           </>
-        </TwoColumnsLayout>}
+        </TwoColumnsLayout>
+      )}
     </DashboardBaseLayout>
   )
 }

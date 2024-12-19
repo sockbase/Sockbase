@@ -4,7 +4,7 @@ import Blink from '../Keyframes/Blink'
 interface Props {
   percent: number
 }
-const ProgressBar: React.FC<Props> = (props) => {
+const ProgressBar: React.FC<Props> = props => {
   return (
     <Container>
       <Progress percent={props.percent}>{props.percent}%</Progress>

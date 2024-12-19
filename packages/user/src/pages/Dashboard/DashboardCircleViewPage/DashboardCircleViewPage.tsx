@@ -136,46 +136,58 @@ const DashboardCircleViewPage: React.FC = () => {
       </Breadcrumbs>
 
       <PageTitle
-        icon={<MdEdit />}
-        title={app?.circle.name}
         description="申し込み情報"
-        isLoading={!app} />
+        icon={<MdEdit />}
+        isLoading={!app}
+        title={app?.circle.name} />
 
       <FormSection>
         <FormItem $inlined>
           <LinkButton to={`/dashboard/applications/${hashId}/view-links`}>
-            <IconLabel icon={<MdLink />} label="資料リンク確認" />
+            <IconLabel
+              icon={<MdLink />}
+              label="資料リンク確認" />
           </LinkButton>
         </FormItem>
       </FormSection>
 
       {payment?.status === 0 && (
-        <Alert type="warning" title="サークル参加費のお支払いをお願いいたします">
+        <Alert
+          title="サークル参加費のお支払いをお願いいたします"
+          type="warning">
           お支払いは <Link to="/dashboard/payments">決済履歴</Link> からお願いいたします。
         </Alert>
       )}
 
       {circleCutURL === null && event && (
-        <Alert type="warning" title="サークルカットを提出してください">
+        <Alert
+          title="サークルカットを提出してください"
+          type="warning">
           サークルカットは <Link to={`/dashboard/applications/${hashId}/cut`}>こちら</Link> から提出できます。
         </Alert>
       )}
 
       {!links && event && (
-        <Alert type="warning" title="カタログ掲載情報を入力してください">
+        <Alert
+          title="カタログ掲載情報を入力してください"
+          type="warning">
           カタログ掲載情報は <Link to={`/dashboard/applications/${hashId}/links`}>こちら</Link> から入力できます。
         </Alert>
       )}
 
       {event && event.schedules.overviewFixedAt > now && (
-        <Alert type="info" title="頒布物情報を最新の状態にしてください">
+        <Alert
+          title="頒布物情報を最新の状態にしてください"
+          type="info">
           <b>{formatByDate(event.schedules.overviewFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をカタログやイベント運営で使用いたします。<br />
           変更がある場合は、この日までに情報を更新してください。
         </Alert>
       )}
 
       {event && event.schedules.publishSpaces <= now && space && (
-        <Alert type="success" title="スペース配置情報">
+        <Alert
+          title="スペース配置情報"
+          type="success">
         あなたのサークル「{app?.circle.name}」は <b>{space.spaceName}</b> に配置されています。
         </Alert>
       )}
@@ -213,10 +225,12 @@ const DashboardCircleViewPage: React.FC = () => {
                 <th>サークル名</th>
                 <td>
                   {app
-                    ? <ruby>
-                      {app.circle.name}
-                      <rt>{app.circle.yomi}</rt>
-                    </ruby>
+                    ? (
+                      <ruby>
+                        {app.circle.name}
+                        <rt>{app.circle.yomi}</rt>
+                      </ruby>
+                    )
                     : <BlinkField />}
                 </td>
               </tr>
@@ -224,10 +238,12 @@ const DashboardCircleViewPage: React.FC = () => {
                 <th>ペンネーム</th>
                 <td>
                   {app
-                    ? <ruby>
-                      {app.circle.penName}
-                      <rt>{app.circle.penNameYomi}</rt>
-                    </ruby>
+                    ? (
+                      <ruby>
+                        {app.circle.penName}
+                        <rt>{app.circle.penNameYomi}</rt>
+                      </ruby>
+                    )
                     : <BlinkField />}
                 </td>
               </tr>
@@ -243,15 +259,18 @@ const DashboardCircleViewPage: React.FC = () => {
                       ? `配置発表は ${formatByDate(event.schedules.publishSpaces, 'YYYY年 M月 D日')} ごろを予定しています`
                       : space?.spaceName || '配置発表まで今しばらくお待ちください'
                     : <BlinkField />
-                }</td>
+                }
+                </td>
               </tr>
               <tr>
                 <th>申し込みID</th>
                 <td>
                   {app
-                    ? <>
-                      {app.hashId} {app.hashId && <CopyToClipboard content={app.hashId} />}
-                    </>
+                    ? (
+                      <>
+                        {app.hashId} {app.hashId && <CopyToClipboard content={app.hashId} />}
+                      </>
+                    )
                     : <BlinkField />}
                 </td>
               </tr>
@@ -266,9 +285,14 @@ const DashboardCircleViewPage: React.FC = () => {
                 <th>サークルカット</th>
                 <td>
                   {circleCutURL
-                    ? <a href={circleCutURL} target="_blank" rel="noreferrer">
-                      <CircleCutImage src={circleCutURL} />
-                    </a>
+                    ? (
+                      <a
+                        href={circleCutURL}
+                        rel="noreferrer"
+                        target="_blank">
+                        <CircleCutImage src={circleCutURL} />
+                      </a>
+                    )
                     : circleCutURL === null
                       ? <Link to={`/dashboard/applications/${hashId}/cut`}>サークルカットを提出</Link>
                       : <></>}
@@ -313,10 +337,16 @@ const DashboardCircleViewPage: React.FC = () => {
             <FormSection>
               <FormItem $inlined>
                 <LinkButton to={`/dashboard/applications/${hashId}/cut`}>
-                  <IconLabel label="サークルカットを差し替える" icon={<MdImage />} />
+                  <IconLabel
+                    icon={<MdImage />}
+                    label="サークルカットを差し替える" />
                 </LinkButton>
-                <LinkButton to={`/dashboard/applications/${hashId}/links`} color={(!links && 'primary') || undefined}>
-                  <IconLabel label={`カタログ掲載情報を${links ? '編集' : '入力'}する`} icon={<MdBookmarkAdd />} />
+                <LinkButton
+                  color={(!links && 'primary') || undefined}
+                  to={`/dashboard/applications/${hashId}/links`}>
+                  <IconLabel
+                    icon={<MdBookmarkAdd />}
+                    label={`カタログ掲載情報を${links ? '編集' : '入力'}する`} />
                 </LinkButton>
               </FormItem>
             </FormSection>
@@ -330,7 +360,8 @@ const DashboardCircleViewPage: React.FC = () => {
                 <th>成人向け頒布物の有無</th>
                 <td>{app
                   ? app.circle.hasAdult ? '成人向け頒布物があります' : '成人向け頒布物はありません'
-                  : <BlinkField />}</td>
+                  : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>配置希望ジャンル</th>
@@ -350,7 +381,9 @@ const DashboardCircleViewPage: React.FC = () => {
             <FormSection>
               <FormItem>
                 <LinkButton to={`/dashboard/applications/${hashId}/overview`}>
-                  <IconLabel label="頒布物情報を編集する" icon={<MdEdit />} />
+                  <IconLabel
+                    icon={<MdEdit />}
+                    label="頒布物情報を編集する" />
                 </LinkButton>
               </FormItem>
             </FormSection>
@@ -364,13 +397,15 @@ const DashboardCircleViewPage: React.FC = () => {
                 <th>合体希望サークル 合体申し込みID</th>
                 <td>{app
                   ? app.unionCircleId || '(空欄)'
-                  : <BlinkField />}</td>
+                  : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>プチオンリーコード</th>
                 <td>{app
                   ? app.petitCode || '(空欄)'
-                  : <BlinkField />}</td>
+                  : <BlinkField />}
+                </td>
               </tr>
             </tbody>
           </table>

@@ -21,7 +21,8 @@ export const createPasses = https.onCall(
     const event = eventDoc.data()
     if (!event) {
       throw new https.HttpsError('not-found', 'event')
-    } else if (context.auth.token.roles?.[event._organization.id] < 2) {
+    }
+    else if (context.auth.token.roles?.[event._organization.id] < 2) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }
 

@@ -93,7 +93,8 @@ const EventViewPage: React.FC = () => {
           if (!spaceA || !spaceB) return !spaceA ? 1 : -1
           return spaceA.localeCompare(spaceB, 'ja', { numeric: true })
         })
-    } else {
+    }
+    else {
       return apps.sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
     }
   }, [apps, isActiveSort])
@@ -136,7 +137,9 @@ const EventViewPage: React.FC = () => {
   }, [appHashes])
 
   return (
-    <DefaultLayout title={event?.name ?? 'イベント情報'} requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title={event?.name ?? 'イベント情報'}>
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
@@ -145,45 +148,71 @@ const EventViewPage: React.FC = () => {
 
       <PageTitle
         icon={<MdEditCalendar />}
-        title={event?.name}
-        isLoading={!event} />
+        isLoading={!event}
+        title={event?.name} />
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={() => eventId && handleRefresh(eventId)} disabled={!eventId}>
-            <IconLabel icon={<MdRefresh />} label='最新の情報に更新' />
+          <FormButton
+            disabled={!eventId}
+            onClick={() => eventId && handleRefresh(eventId)}>
+            <IconLabel
+              icon={<MdRefresh />}
+              label="最新の情報に更新" />
           </FormButton>
         </FormItem>
       </FormSection>
 
       <FormSection>
         <FormItem $inlined>
-          <AnchorButton href={`/events/${eventId}/print-tanzaku`} target="_blank">
-            <IconLabel icon={<MdPrint />} label='配置短冊印刷' />
+          <AnchorButton
+            href={`/events/${eventId}/print-tanzaku`}
+            target="_blank">
+            <IconLabel
+              icon={<MdPrint />}
+              label="配置短冊印刷" />
           </AnchorButton>
           <LinkButton to={`/events/${eventId}/manage-spaces`}>
-            <IconLabel icon={<MdAssignmentTurnedIn />} label='配置管理' />
+            <IconLabel
+              icon={<MdAssignmentTurnedIn />}
+              label="配置管理" />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/download-circlecuts`}>
-            <IconLabel icon={<MdImage />} label='サークルカット一覧' />
+            <IconLabel
+              icon={<MdImage />}
+              label="サークルカット一覧" />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/create-passes`}>
-            <IconLabel icon={<MdBookOnline />} label='サークル通行証発券' />
+            <IconLabel
+              icon={<MdBookOnline />}
+              label="サークル通行証発券" />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/export-soleil`}>
-            <IconLabel icon={<MdListAlt />} label='Soleil 出力' />
+            <IconLabel
+              icon={<MdListAlt />}
+              label="Soleil 出力" />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/send-mails`}>
-            <IconLabel icon={<MdMail />} label='メール送信' />
+            <IconLabel
+              icon={<MdMail />}
+              label="メール送信" />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/edit-links`}>
-            <IconLabel icon={<MdAddLink />} label='資料リンク編集' />
+            <IconLabel
+              icon={<MdAddLink />}
+              label="資料リンク編集" />
           </LinkButton>
           <LinkButton to={`/events/${eventId}/view-meta`}>
-            <IconLabel icon={<MdCalendarViewMonth />} label='メタ情報参照' />
+            <IconLabel
+              icon={<MdCalendarViewMonth />}
+              label="メタ情報参照" />
           </LinkButton>
-          <AnchorButton href={`${envHelper.userAppURL}/events/${eventId}`} target="_blank">
-            <IconLabel icon={<MdOpenInNew />} label='申し込みページを開く' />
+          <AnchorButton
+            href={`${envHelper.userAppURL}/events/${eventId}`}
+            target="_blank">
+            <IconLabel
+              icon={<MdOpenInNew />}
+              label="申し込みページを開く" />
           </AnchorButton>
         </FormItem>
       </FormSection>
@@ -224,14 +253,14 @@ const EventViewPage: React.FC = () => {
               <td>{i + 1}</td>
               <td>
                 <ApplicationStatusLabel
-                  status={app.meta.applicationStatus}
-                  isOnlyIcon />
+                  isOnlyIcon
+                  status={app.meta.applicationStatus} />
               </td>
               <td>
                 <PaymentStatusLabel
-                  payment={payments?.[app.id]}
                   isOnlyIcon
-                  isShowBrand />
+                  isShowBrand
+                  payment={payments?.[app.id]} />
               </td>
               <td>{app.hashId ? getSpace(app.hashId)?.spaceName ?? '---' : <BlinkField />}</td>
               <td>{app.circle.name}</td>

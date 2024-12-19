@@ -1,4 +1,3 @@
-
 import { type SockbaseTicketDocument } from 'sockbase'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { ticketConverter } from '../libs/converters'

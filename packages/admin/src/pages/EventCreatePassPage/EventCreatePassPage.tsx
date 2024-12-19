@@ -83,7 +83,9 @@ const EventCreatePassPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DefaultLayout title="サークル通行証発券" requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title="サークル通行証発券">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
@@ -92,9 +94,9 @@ const EventCreatePassPage: React.FC = () => {
       </Breadcrumbs>
 
       <PageTitle
-        title="サークル通行証発券"
         icon={<MdBookOnline />}
-        isLoading={!event} />
+        isLoading={!event}
+        title="サークル通行証発券" />
 
       <p>
         通行証の発券枚数を変更したい場合はシステム管理者までお問い合わせください。
@@ -111,34 +113,48 @@ const EventCreatePassPage: React.FC = () => {
             <tbody>
               {event?.spaces.map(s => {
                 const c = getPassCount(s.id)
-                return (<tr key={s.id}>
-                  <td>{s.name} ({s.passCount?.toLocaleString() ?? 0} 枚)</td>
-                  <td>{c?.appCount ?? 0} 件</td>
-                  <td>{c?.passCount ?? 0} 枚</td>
-                </tr>)
+                return (
+                  <tr key={s.id}>
+                    <td>{s.name} ({s.passCount?.toLocaleString() ?? 0} 枚)</td>
+                    <td>{c?.appCount ?? 0} 件</td>
+                    <td>{c?.passCount ?? 0} 枚</td>
+                  </tr>
+                )
               })}
-              {totalPassCount && <tr>
-                <td>- 合計 -</td>
-                <td>{totalPassCount.appCount} 件</td>
-                <td>{totalPassCount.passCount} 枚</td>
-              </tr>}
+              {totalPassCount && (
+                <tr>
+                  <td>- 合計 -</td>
+                  <td>{totalPassCount.appCount} 件</td>
+                  <td>{totalPassCount.passCount} 枚</td>
+                </tr>
+              )}
             </tbody>
           </table>
 
           <FormSection>
             <FormItem>
-              <LoadingCircleWrapper isLoading={isProgress && addedResult === undefined} inlined>
-                <FormButton onClick={handleCreate} disabled={isProgress}>
-                  <IconLabel label="通行証発券" icon={<MdBookOnline />} />
+              <LoadingCircleWrapper
+                inlined
+                isLoading={isProgress && addedResult === undefined}>
+                <FormButton
+                  disabled={isProgress}
+                  onClick={handleCreate}>
+                  <IconLabel
+                    icon={<MdBookOnline />}
+                    label="通行証発券" />
                 </FormButton>
               </LoadingCircleWrapper>
             </FormItem>
           </FormSection>
 
-          {addedResult !== undefined && <Alert type="success" title="サークル通行証を発行しました">
+          {addedResult !== undefined && (
+            <Alert
+              title="サークル通行証を発行しました"
+              type="success">
             サークル通行証: {addedResult.circlePassCount} 枚<br />
             アナザーチケット: {addedResult.anotherTicketCount} 枚
-          </Alert>}
+            </Alert>
+          )}
         </>
         <>
         </>

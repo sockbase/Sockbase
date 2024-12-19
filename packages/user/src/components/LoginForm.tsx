@@ -47,40 +47,48 @@ const LoginForm: React.FC = () => {
         <FormItem>
           <FormLabel>メールアドレス</FormLabel>
           <FormInput
-            type="email"
-            value={email}
+            disabled={isProgress}
             onChange={e => setEmail(e.target.value)}
-            disabled={isProgress} />
+            type="email"
+            value={email} />
         </FormItem>
         <FormItem>
           <FormLabel>パスワード</FormLabel>
           <FormInput
-            type="password"
-            value={password}
+            disabled={isProgress}
             onChange={e => setPassword(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleLogin}
-            disabled={isProgress}/>
+            type="password"
+            value={password} />
         </FormItem>
       </FormSection>
       <FormSection>
         <FormItem $inlined>
           <FormButton
             color="primary"
-            onClick={handleLogin}
-            disabled={isProgress || errorCount > 0}>
-            <IconLabel icon={<MdLogin />} label="ログイン" />
+            disabled={isProgress || errorCount > 0}
+            onClick={handleLogin}>
+            <IconLabel
+              icon={<MdLogin />}
+              label="ログイン" />
           </FormButton>
           <LinkButton
-            to="/reset-password"
-            disabled={isProgress}>
-            <IconLabel icon={<MdQuestionMark />} label="パスワードを忘れた場合" />
+            disabled={isProgress}
+            to="/reset-password">
+            <IconLabel
+              icon={<MdQuestionMark />}
+              label="パスワードを忘れた場合" />
           </LinkButton>
         </FormItem>
-        {error && <FormItem>
-          <Alert title="エラーが発生しました" type="error">
-            {error}
-          </Alert>
-        </FormItem>}
+        {error && (
+          <FormItem>
+            <Alert
+              title="エラーが発生しました"
+              type="error">
+              {error}
+            </Alert>
+          </FormItem>
+        )}
       </FormSection>
     </>
   )

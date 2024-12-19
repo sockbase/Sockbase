@@ -33,7 +33,7 @@ interface Props {
   prevStep: () => void
   nextStep: () => void
 }
-const Confirm: React.FC<Props> = (props) => {
+const Confirm: React.FC<Props> = props => {
   const { convertErrorMessage } = useError()
 
   const [isProgress, setProgress] = useState(false)
@@ -80,14 +80,16 @@ const Confirm: React.FC<Props> = (props) => {
       <h2>頒布物情報</h2>
       <table>
         <tbody>
-          {props.event?.permissions.allowAdult && <tr>
-            <th>成人向け頒布物の有無</th>
-            <td>
-              {props.app?.circle.hasAdult
-                ? '成人向け頒布物があります'
-                : '成人向け頒布物はありません'}
-            </td>
-          </tr>}
+          {props.event?.permissions.allowAdult && (
+            <tr>
+              <th>成人向け頒布物の有無</th>
+              <td>
+                {props.app?.circle.hasAdult
+                  ? '成人向け頒布物があります'
+                  : '成人向け頒布物はありません'}
+              </td>
+            </tr>
+          )}
           <tr>
             <th>配置希望ジャンル</th>
             <td>{props.selectedGenre?.name}</td>
@@ -180,39 +182,53 @@ const Confirm: React.FC<Props> = (props) => {
         修正する場合は「修正」ボタンを押してください。
       </p>
 
-      {errorMessage && <Alert type="error" title="エラーが発生しました">
-        {errorMessage}
-      </Alert>}
+      {errorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">
+          {errorMessage}
+        </Alert>
+      )}
 
       <FormSection>
         <FormItem>
           <FormButton
-            onClick={() => props.prevStep()}
-            disabled={isProgress}>
-            <IconLabel icon={<MdArrowBack />} label="修正する" />
+            disabled={isProgress}
+            onClick={() => props.prevStep()}>
+            <IconLabel
+              icon={<MdArrowBack />}
+              label="修正する" />
           </FormButton>
         </FormItem>
       </FormSection>
       <FormSection>
         <FormItem>
-          <LoadingCircleWrapper isLoading={isProgress} inlined>
+          <LoadingCircleWrapper
+            inlined
+            isLoading={isProgress}>
             <FormButton
               color="primary"
-              onClick={handleSubmit}
-              disabled={isProgress}>
-              <IconLabel icon={<MdArrowForward />} label="決済に進む (申し込み情報送信)" />
+              disabled={isProgress}
+              onClick={handleSubmit}>
+              <IconLabel
+                icon={<MdArrowForward />}
+                label="決済に進む (申し込み情報送信)" />
             </FormButton>
           </LoadingCircleWrapper>
         </FormItem>
       </FormSection>
 
-      {isProgress && <>
-        <ProgressBar percent={props.submitProgressPercent}/>
-        <Alert type="info" title="申し込み情報を送信中です">
-          送信処理に時間がかかる場合がございます。<br />
-          進捗率が 100% になるまでそのままでお待ちください。
-        </Alert>
-      </>}
+      {isProgress && (
+        <>
+          <ProgressBar percent={props.submitProgressPercent} />
+          <Alert
+            title="申し込み情報を送信中です"
+            type="info">
+            送信処理に時間がかかる場合がございます。<br />
+            進捗率が 100% になるまでそのままでお待ちください。
+          </Alert>
+        </>
+      )}
     </>
   )
 }

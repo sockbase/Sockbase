@@ -4,7 +4,7 @@ interface Props {
   icon: JSX.Element
   label: string
 }
-const IconLabel: React.FC<Props> = (props) => {
+const IconLabel: React.FC<Props> = props => {
   return (
     <Container>
       <Icon>{props.icon}</Icon>

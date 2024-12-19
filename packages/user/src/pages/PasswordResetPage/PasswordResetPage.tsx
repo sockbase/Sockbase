@@ -61,29 +61,45 @@ const PasswordResetPage: React.FC = () => {
         <FormItem>
           <FormLabel>メールアドレス</FormLabel>
           <FormInput
-            type="email"
-            value={email}
+            disabled={isProgress}
+            hasError={!validator.isEmpty(email) && !validator.isEmail(email)}
             onChange={e => setEmail(e.target.value)}
             placeholder="sumire@sockbase.net"
-            hasError={!validator.isEmpty(email) && !validator.isEmail(email)}
-            disabled={isProgress} />
+            type="email"
+            value={email} />
         </FormItem>
       </FormSection>
 
-      {errorCount > 0 && <Alert type="error" title={`${errorCount} 件の入力項目に不備があります。`}/>}
+      {errorCount > 0 && (
+        <Alert
+          title={`${errorCount} 件の入力項目に不備があります。`}
+          type="error" />
+      )}
 
       <FormSection>
         <FormItem>
-          <FormButton onClick={handleSubmit} disabled={isProgress || !!errorCount}>パスワードリセット URL を送付</FormButton>
+          <FormButton
+            disabled={isProgress || !!errorCount}
+            onClick={handleSubmit}>パスワードリセット URL を送付
+          </FormButton>
         </FormItem>
       </FormSection>
 
-      {isSuccess && <Alert type="success" title="リセット URL を送付しました">
+      {isSuccess && (
+        <Alert
+          title="リセット URL を送付しました"
+          type="success">
         入力したメールアドレス宛にリセットURLを送付しました。<br />
         メールボックスをご確認ください。
-      </Alert>}
+        </Alert>
+      )}
 
-      {errorMessage && <Alert type="error" title="エラーが発生しました">{errorMessage}</Alert>}
+      {errorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">{errorMessage}
+        </Alert>
+      )}
     </DefaultBaseLayout>
   )
 }

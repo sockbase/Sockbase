@@ -11,7 +11,7 @@ interface Props {
   prevStep: () => void
   nextStep: () => void
 }
-const Introduction: React.FC<Props> = (props) => {
+const Introduction: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   return (
@@ -19,7 +19,9 @@ const Introduction: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormButton onClick={props.prevStep}>
-            <IconLabel icon={<MdArrowBack />} label="アカウント確認画面へ戻る" />
+            <IconLabel
+              icon={<MdArrowBack />}
+              label="アカウント確認画面へ戻る" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -64,18 +66,22 @@ const Introduction: React.FC<Props> = (props) => {
 
       <h4>参加費のお支払い</h4>
       {props.store.permissions.canUseBankTransfer
-        ? <>
-          <p>
+        ? (
+          <>
+            <p>
             参加費のお支払いには、クレジットカード・デビットカード・プリペイドカードを利用したオンライン決済のほか、銀行振込がご利用いただけます。
-          </p>
-          <p>
+            </p>
+            <p>
             銀行振込の場合、手数料は申し込み者様によるご負担となります。<br />
             また、お振込みの確認までにお時間をいただく場合がございます。
-          </p>
-        </>
-        : <p>
+            </p>
+          </>
+        )
+        : (
+          <p>
             参加費のお支払いには、クレジットカード・デビットカード・プリペイドカードを利用したオンライン決済のみご利用いただけます。
-        </p>}
+          </p>
+        )}
 
       <h4>申し込み完了</h4>
       <p>
@@ -112,11 +118,13 @@ const Introduction: React.FC<Props> = (props) => {
         <tbody>
           {props.store.types
             .filter(t => t.isPublic)
-            .map(t => <tr key={t.id}>
-              <th>{t.name}</th>
-              <td>{t.price.toLocaleString()}円</td>
-              <td>{t.description}</td>
-            </tr>)}
+            .map(t => (
+              <tr key={t.id}>
+                <th>{t.name}</th>
+                <td>{t.price.toLocaleString()}円</td>
+                <td>{t.description}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
 
@@ -133,21 +141,35 @@ const Introduction: React.FC<Props> = (props) => {
       </p>
 
       {import.meta.env.VITE_SOCKBASE_MANAGE_ORGANIZATION_ID === props.store._organization.id
-        ? <p>
+        ? (
+          <p>
           申し込み情報はプライバシーポリシーに則って管理いたします。
-        </p>
-        : <p>
+          </p>
+        )
+        : (
+          <p>
           申し込み情報はねくたりしょんが保管し、イベント主催である「{props.store._organization.name}」に提供いたします。
-        </p>}
+          </p>
+        )}
 
       <p>
-        詳しくは <a href="/privacy-policy" target="_blank">プライバシーポリシー</a> をご確認ください。
+        詳しくは
+        <a
+          href="/privacy-policy"
+          target="_blank">
+          プライバシーポリシー
+        </a>
+        をご確認ください。
       </p>
 
       <FormSection>
         <FormItem>
-          <FormButton color="primary" onClick={props.nextStep}>
-            <IconLabel icon={<MdArrowForward />} label="情報入力画面へ進む" />
+          <FormButton
+            color="primary"
+            onClick={props.nextStep}>
+            <IconLabel
+              icon={<MdArrowForward />}
+              label="情報入力画面へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>

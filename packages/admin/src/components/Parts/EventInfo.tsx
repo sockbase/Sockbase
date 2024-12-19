@@ -8,14 +8,22 @@ interface Props {
   event: SockbaseEvent | null | undefined
   eyecatchData: string | null | undefined
 }
-const EventInfo: React.FC<Props> = (props) => {
+const EventInfo: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   return (
     <>
       {props.event && (props.event.isPublic
-        ? <Alert type="success" title="イベント: 公開" />
-        : <Alert type="warning" title="イベント: 非公開" />)}
+        ? (
+          <Alert
+            title="イベント: 公開"
+            type="success" />
+        )
+        : (
+          <Alert
+            title="イベント: 非公開"
+            type="warning" />
+        ))}
 
       <h3>イベント基礎情報</h3>
       <table>
@@ -38,7 +46,7 @@ const EventInfo: React.FC<Props> = (props) => {
           </tr>
           <tr>
             <th>アイキャッチ画像</th>
-            <td>{(props.eyecatchData && <EyecatchPreview src={props.eyecatchData}/>) || '(未指定)'}</td>
+            <td>{(props.eyecatchData && <EyecatchPreview src={props.eyecatchData} />) || '(未指定)'}</td>
           </tr>
         </tbody>
       </table>
@@ -115,13 +123,17 @@ const EventInfo: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {props.event?.genres.length
-            ? props.event?.genres.map((g, i) => <tr key={i}>
-              <td>{g.id}</td>
-              <td>{g.name}</td>
-            </tr>)
-            : <tr>
-              <td colSpan={2}>ジャンル情報が入力されていません</td>
-            </tr>}
+            ? props.event?.genres.map((g, i) => (
+              <tr key={i}>
+                <td>{g.id}</td>
+                <td>{g.name}</td>
+              </tr>
+            ))
+            : (
+              <tr>
+                <td colSpan={2}>ジャンル情報が入力されていません</td>
+              </tr>
+            )}
         </tbody>
       </table>
 
@@ -142,20 +154,24 @@ const EventInfo: React.FC<Props> = (props) => {
         </thead>
         <tbody>
           {props.event?.spaces.length
-            ? props.event.spaces.map((s, i) => <tr key={i}>
-              <td>{s.id}</td>
-              <td>{s.name}</td>
-              <td>{s.description}</td>
-              <td>{s.price.toLocaleString()}円</td>
-              <td>{s.productInfo?.paymentURL ?? '-'}</td>
-              <td>{s.productInfo?.productId ?? '-'}</td>
-              <td>{s.passCount?.toLocaleString() ?? 0}枚</td>
-              <td>{s.isDualSpace ? '2 スペース' : '-'}</td>
-              <td>{s.acceptApplication ? '受入' : '-'}</td>
-            </tr>)
-            : <tr>
-              <td colSpan={6}>スペース情報が入力されていません</td>
-            </tr>}
+            ? props.event.spaces.map((s, i) => (
+              <tr key={i}>
+                <td>{s.id}</td>
+                <td>{s.name}</td>
+                <td>{s.description}</td>
+                <td>{s.price.toLocaleString()}円</td>
+                <td>{s.productInfo?.paymentURL ?? '-'}</td>
+                <td>{s.productInfo?.productId ?? '-'}</td>
+                <td>{s.passCount?.toLocaleString() ?? 0}枚</td>
+                <td>{s.isDualSpace ? '2 スペース' : '-'}</td>
+                <td>{s.acceptApplication ? '受入' : '-'}</td>
+              </tr>
+            ))
+            : (
+              <tr>
+                <td colSpan={6}>スペース情報が入力されていません</td>
+              </tr>
+            )}
         </tbody>
       </table>
 

@@ -14,7 +14,7 @@ interface Props {
   status: PaymentStatus | undefined
   onChange: (status: PaymentStatus) => void
 }
-const PaymentStatusController: React.FC<Props> = (props) => {
+const PaymentStatusController: React.FC<Props> = props => {
   const { setPaymentStatusAsync } = usePayment()
 
   const handleSetPaymentStatus = useCallback((status: PaymentStatus) => {
@@ -34,26 +34,40 @@ const PaymentStatusController: React.FC<Props> = (props) => {
         )
         : props.paymentId === null
           ? (
-            <Alert type="warning" title="決済情報がないためステータスを変更できません。" />
+            <Alert
+              title="決済情報がないためステータスを変更できません。"
+              type="warning" />
           )
           : props.status === 0
             ? (
               <FormSection>
                 <FormItem $inlined>
                   <FormButton onClick={() => handleSetPaymentStatus(1)}>
-                    <IconLabel icon={<MdCheck />} label='支払い済みにする' />
+                    <IconLabel
+                      icon={<MdCheck />}
+                      label="支払い済みにする" />
                   </FormButton>
                   <FormButton onClick={() => handleSetPaymentStatus(2)}>
-                    <IconLabel icon={<MdOutlinePayments />} label='返金済みにする' />
+                    <IconLabel
+                      icon={<MdOutlinePayments />}
+                      label="返金済みにする" />
                   </FormButton>
                   <FormButton onClick={() => handleSetPaymentStatus(4)}>
-                    <IconLabel icon={<MdCancel />} label='キャンセルにする' />
+                    <IconLabel
+                      icon={<MdCancel />}
+                      label="キャンセルにする" />
                   </FormButton>
                 </FormItem>
               </FormSection>
             )
-            : <Alert type="warning" title="決済ステータスの変更がロックされています。Sockbase 管理者へお問い合わせください。" />}
-      <Alert type="info" title="決済ステータスは一度変更すると変更できません。" />
+            : (
+              <Alert
+                title="決済ステータスの変更がロックされています。Sockbase 管理者へお問い合わせください。"
+                type="warning" />
+            )}
+      <Alert
+        title="決済ステータスは一度変更すると変更できません。"
+        type="info" />
     </>
   )
 }

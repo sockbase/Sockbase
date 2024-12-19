@@ -55,10 +55,10 @@ const DashboardPaymentListPage: React.FC = () => {
           const ticketIds = [...ticketIdsSet]
 
           const fetchedApps = await Promise.all(
-            appIds.map(async (appId) => ({ appId, data: await getApplicationByIdOptionalAsync(appId) }))
+            appIds.map(async appId => ({ appId, data: await getApplicationByIdOptionalAsync(appId) }))
           )
           const fetchedTickets = await Promise.all(
-            ticketIds.map(async (ticketId) => ({ ticketId, data: await getTicketByIdOptionalAsync(ticketId) }))
+            ticketIds.map(async ticketId => ({ ticketId, data: await getTicketByIdOptionalAsync(ticketId) }))
           )
 
           const objectMappedApps = fetchedApps
@@ -84,10 +84,10 @@ const DashboardPaymentListPage: React.FC = () => {
           const storeIds = [...storeIdsSet]
 
           const fetchedEvents = await Promise.all(
-            eventIds.map(async (eventId) => ({ eventId, data: await getEventByIdAsync(eventId) }))
+            eventIds.map(async eventId => ({ eventId, data: await getEventByIdAsync(eventId) }))
           )
           const fetchedStores = await Promise.all(
-            storeIds.map(async (storeId) => ({ storeId, data: await getStoreByIdAsync(storeId) }))
+            storeIds.map(async storeId => ({ storeId, data: await getStoreByIdAsync(storeId) }))
           )
 
           const objectMappedEvents = fetchedEvents
@@ -117,18 +117,20 @@ const DashboardPaymentListPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
+        description="Sockbase でのお支払い状況の一覧を表示中"
         icon={<MdPayments />}
-        title="決済履歴"
-        description="Sockbase でのお支払い状況の一覧を表示中" />
+        title="決済履歴" />
 
       {payments && apps && events && tickets && stores && user?.email
-        ? <PaymentList
-          payments={payments}
-          apps={apps}
-          events={events}
-          tickets={tickets}
-          stores={stores}
-          email={user.email} />
+        ? (
+          <PaymentList
+            apps={apps}
+            email={user.email}
+            events={events}
+            payments={payments}
+            stores={stores}
+            tickets={tickets} />
+        )
         : <Loading text="決済一覧" />}
     </DashboardBaseLayout>
   )

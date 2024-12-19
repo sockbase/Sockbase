@@ -18,7 +18,7 @@ interface Props {
   prevStep: () => void
   nextStep: () => void
 }
-const Confirm: React.FC<Props> = (props) => {
+const Confirm: React.FC<Props> = props => {
   const { convertErrorMessage } = useError()
 
   const [isProgress, setProgress] = useState(false)
@@ -56,8 +56,8 @@ const Confirm: React.FC<Props> = (props) => {
 
       <UserDataView
         fetchedUserData={props.fetchedUserData}
-        userData={props.userData}
-        isTicketAssignPage={true} />
+        isTicketAssignPage={true}
+        userData={props.userData} />
 
       <h1>チケットを受け取る</h1>
       <p>
@@ -67,16 +67,22 @@ const Confirm: React.FC<Props> = (props) => {
         修正する場合は「修正」ボタンを押してください。
       </p>
 
-      {errorMessage && <Alert type="error" title="エラーが発生しました">
-        {errorMessage}
-      </Alert>}
+      {errorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">
+          {errorMessage}
+        </Alert>
+      )}
 
       <FormSection>
         <FormItem>
           <FormButton
-            onClick={props.prevStep}
-            disabled={isProgress}>
-            <IconLabel icon={<MdArrowBack />} label="修正する" />
+            disabled={isProgress}
+            onClick={props.prevStep}>
+            <IconLabel
+              icon={<MdArrowBack />}
+              label="修正する" />
           </FormButton>
         </FormItem>
       </FormSection>
@@ -84,9 +90,11 @@ const Confirm: React.FC<Props> = (props) => {
         <FormItem>
           <FormButton
             color="primary"
-            onClick={handleSubmit}
-            disabled={isProgress}>
-            <IconLabel icon={<MdCheck />} label="チケットを受け取る" />
+            disabled={isProgress}
+            onClick={handleSubmit}>
+            <IconLabel
+              icon={<MdCheck />}
+              label="チケットを受け取る" />
           </FormButton>
         </FormItem>
       </FormSection>

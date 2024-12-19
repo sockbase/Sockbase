@@ -130,117 +130,136 @@ const DashboardSettingPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
       </Breadcrumbs>
       <PageTitle
+        description="Sockbaseが共通で使用している設定はこのページで変更できます"
         icon={<MdSettings />}
-        title="マイページ設定"
-        description="Sockbaseが共通で使用している設定はこのページで変更できます" />
+        title="マイページ設定" />
 
       {userData
-        ? <TwoColumnsLayout>
-          <>
-            <FormSection>
-              <FormItem>
-                <FormLabel>メールアドレス</FormLabel>
-                <FormInput
-                  placeholder='sumire@sockbase.net'
-                  value={userData?.email}
-                  onChange={e => setUserData(s => s && ({ ...s, email: e.target.value }))}
-                  hasError={!validator.isEmail(userData.email)} />
-              </FormItem>
-              <FormItem>
-                <FormLabel>氏名</FormLabel>
-                <FormInput
-                  placeholder='速部 すみれ'
-                  value={userData?.name}
-                  onChange={e => setUserData(s => s && ({ ...s, name: e.target.value }))}
-                  hasError={validator.isEmpty(userData.name)} />
-              </FormItem>
-              <FormItem>
-                <FormLabel>生年月日</FormLabel>
-                <FormInput
-                  type="date"
-                  value={displayBirthday}
-                  onChange={e => setDisplayBirthday(e.target.value)}
-                  hasError={!validator.isDate(displayBirthday)} />
-              </FormItem>
-              <FormItem>
-                <FormLabel>性別</FormLabel>
-                <FormSelect
-                  value={displayGender}
-                  onChange={e => setDisplayGender(e.target.value)}>
-                  <option value="">選択してください</option>
-                  <option value="1">男性</option>
-                  <option value="2">女性</option>
-                </FormSelect>
-              </FormItem>
-              <FormItem>
-                <FormLabel>郵便番号</FormLabel>
-                <FormInput
-                  placeholder='0000000'
-                  value={userData?.postalCode}
-                  onChange={e => {
-                    if (e.target.value.length > 7) return
-                    handleFilledPostalCode(e.target.value)
-                    setUserData(s => (s && { ...s, postalCode: e.target.value }))
-                  }}
-                  hasError={!validator.isPostalCode(userData.postalCode)} />
-              </FormItem>
-              <FormItem>
-                <FormLabel>住所</FormLabel>
-                <FormInput
-                  placeholder='東京都千代田区外神田9-9-9'
-                  value={userData?.address}
-                  onChange={e => setUserData(s => s && ({ ...s, address: e.target.value }))}
-                  hasError={validator.isEmpty(userData.address)} />
-              </FormItem>
-              <FormItem>
-                <FormLabel>電話番号</FormLabel>
-                <FormInput
-                  placeholder='07001234567'
-                  value={userData?.telephone}
-                  onChange={e => setUserData(s => s && ({ ...s, telephone: e.target.value }))}
-                  hasError={validator.isEmpty(userData.telephone)} />
-              </FormItem>
-            </FormSection>
+        ? (
+          <TwoColumnsLayout>
+            <>
+              <FormSection>
+                <FormItem>
+                  <FormLabel>メールアドレス</FormLabel>
+                  <FormInput
+                    hasError={!validator.isEmail(userData.email)}
+                    onChange={e => setUserData(s => s && ({ ...s, email: e.target.value }))}
+                    placeholder="sumire@sockbase.net"
+                    value={userData?.email} />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>氏名</FormLabel>
+                  <FormInput
+                    hasError={validator.isEmpty(userData.name)}
+                    onChange={e => setUserData(s => s && ({ ...s, name: e.target.value }))}
+                    placeholder="速部 すみれ"
+                    value={userData?.name} />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>生年月日</FormLabel>
+                  <FormInput
+                    hasError={!validator.isDate(displayBirthday)}
+                    onChange={e => setDisplayBirthday(e.target.value)}
+                    type="date"
+                    value={displayBirthday} />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>性別</FormLabel>
+                  <FormSelect
+                    onChange={e => setDisplayGender(e.target.value)}
+                    value={displayGender}>
+                    <option value="">選択してください</option>
+                    <option value="1">男性</option>
+                    <option value="2">女性</option>
+                  </FormSelect>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>郵便番号</FormLabel>
+                  <FormInput
+                    hasError={!validator.isPostalCode(userData.postalCode)}
+                    onChange={e => {
+                      if (e.target.value.length > 7) return
+                      handleFilledPostalCode(e.target.value)
+                      setUserData(s => (s && { ...s, postalCode: e.target.value }))
+                    }}
+                    placeholder="0000000"
+                    value={userData?.postalCode} />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>住所</FormLabel>
+                  <FormInput
+                    hasError={validator.isEmpty(userData.address)}
+                    onChange={e => setUserData(s => s && ({ ...s, address: e.target.value }))}
+                    placeholder="東京都千代田区外神田9-9-9"
+                    value={userData?.address} />
+                </FormItem>
+                <FormItem>
+                  <FormLabel>電話番号</FormLabel>
+                  <FormInput
+                    hasError={validator.isEmpty(userData.telephone)}
+                    onChange={e => setUserData(s => s && ({ ...s, telephone: e.target.value }))}
+                    placeholder="07001234567"
+                    value={userData?.telephone} />
+                </FormItem>
+              </FormSection>
 
-            {errorMessage && <Alert type="error" title="エラーが発生しました">{errorMessage}</Alert>}
-            {errorCount !== 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
+              {errorMessage && (
+                <Alert
+                  title="エラーが発生しました"
+                  type="error">{errorMessage}
+                </Alert>
+              )}
+              {errorCount !== 0 && (
+                <Alert
+                  title={`${errorCount} 個の入力項目に不備があります。`}
+                  type="error" />
+              )}
 
-            <FormSection>
-              <FormItem>
-                <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
+              <FormSection>
+                <FormItem>
+                  <LoadingCircleWrapper
+                    inlined={true}
+                    isLoading={isProgress}>
+                    <FormButton
+                      color="primary"
+                      disabled={isProgress || errorCount !== 0}
+                      onClick={handleUpdate}>
+                      <IconLabel
+                        icon={<MdSave />}
+                        label="情報を更新する" />
+                    </FormButton>
+                  </LoadingCircleWrapper>
+                </FormItem>
+              </FormSection>
+            </>
+
+            <>
+              <h3>パスワードリセット</h3>
+              <FormSection>
+                <FormItem>
                   <FormButton
-                    disabled={isProgress || errorCount !== 0}
-                    onClick={handleUpdate}
-                    color="primary">
-                    <IconLabel icon={<MdSave />} label="情報を更新する" />
+                    disabled={sentPasswordResetUrl}
+                    onClick={handleClickPasswordReset}>
+                    <IconLabel
+                      icon={<MdSend />}
+                      label="パスワードリセットリンクを送付" />
                   </FormButton>
-                </LoadingCircleWrapper>
-              </FormItem>
-            </FormSection>
-          </>
-
-          <>
-            <h3>パスワードリセット</h3>
-            <FormSection>
-              <FormItem>
-                <FormButton
-                  onClick={handleClickPasswordReset}
-                  disabled={sentPasswordResetUrl}>
-                  <IconLabel icon={<MdSend />} label="パスワードリセットリンクを送付" />
-                </FormButton>
-              </FormItem>
-            </FormSection>
-            {sentPasswordResetUrl && <p>
+                </FormItem>
+              </FormSection>
+              {sentPasswordResetUrl && (
+                <p>
               パスワードリセットリンクは既に送付済みです。<br />
               受信トレイをご確認ください。
-            </p>}
+                </p>
+              )}
 
-            <h3>アカウント削除</h3>
-            <p>
+              <h3>アカウント削除</h3>
+              <p>
               アカウント削除を希望される方は <Link to="/contact">お問い合わせ</Link> よりご連絡ください。
-            </p>
-          </>
-        </TwoColumnsLayout>
+              </p>
+            </>
+          </TwoColumnsLayout>
+        )
         : <Loading text="ユーザ情報" />}
     </DashboardBaseLayout>
   )

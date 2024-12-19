@@ -8,7 +8,7 @@ interface Props {
   metas: Record<string, SockbaseApplicationMeta>
   events: Record<string, SockbaseEvent>
 }
-const CircleApplicationList: React.FC<Props> = (props) => {
+const CircleApplicationList: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   return (
@@ -16,7 +16,7 @@ const CircleApplicationList: React.FC<Props> = (props) => {
       <table>
         <thead>
           <tr>
-            <th></th>
+            <th />
             <th>イベント名</th>
             <th>開催日</th>
             <th>会場</th>
@@ -29,12 +29,14 @@ const CircleApplicationList: React.FC<Props> = (props) => {
                 .filter(([_, app]) => !!app.hashId)
                 .sort(([, a], [, b]) => props.events[b.eventId].schedules.startEvent - props.events[a.eventId].schedules.startEvent)
                 .map(([appId, app]) => (
-                  app.hashId && <tr key={app.hashId}>
-                    <td><ApplicationStatusLabel status={props.metas[appId].applicationStatus} /></td>
-                    <td style={{ width: '40%' }}><Link to={`/dashboard/applications/${app.hashId}`}>{props.events[app.eventId].name}</Link></td>
-                    <td>{formatByDate(props.events[app.eventId].schedules.startEvent, 'YYYY/MM/DD')}</td>
-                    <td>{props.events[app.eventId].venue.name}</td>
-                  </tr>
+                  app.hashId && (
+                    <tr key={app.hashId}>
+                      <td><ApplicationStatusLabel status={props.metas[appId].applicationStatus} /></td>
+                      <td style={{ width: '40%' }}><Link to={`/dashboard/applications/${app.hashId}`}>{props.events[app.eventId].name}</Link></td>
+                      <td>{formatByDate(props.events[app.eventId].schedules.startEvent, 'YYYY/MM/DD')}</td>
+                      <td>{props.events[app.eventId].venue.name}</td>
+                    </tr>
+                  )
                 ))
               : <tr><th colSpan={5}>申し込み情報はありません</th></tr>
           }

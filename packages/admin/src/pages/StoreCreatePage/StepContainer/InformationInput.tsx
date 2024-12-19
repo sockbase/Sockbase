@@ -14,7 +14,7 @@ interface Props {
   store: SockbaseStore | null | undefined
   nextStep: (storeId: string, store: SockbaseStore) => void
 }
-const InformationInput: React.FC<Props> = (props) => {
+const InformationInput: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   const [storePackageJSON, setStorePackageJSON] = useState<string>()
@@ -248,16 +248,16 @@ const InformationInput: React.FC<Props> = (props) => {
     if (typeCount < 1) return
 
     const lastType = editableTypes[typeCount - 1]
-    if (lastType.id ||
-      lastType.name ||
-      lastType.description ||
-      lastType.price ||
-      lastType.paymentURL ||
-      lastType.productId ||
-      lastType.color ||
-      !lastType.isPublic ||
-      lastType.anotherTicketStoreId ||
-      lastType.anotherTicketTypeId) {
+    if (lastType.id
+      || lastType.name
+      || lastType.description
+      || lastType.price
+      || lastType.paymentURL
+      || lastType.productId
+      || lastType.color
+      || !lastType.isPublic
+      || lastType.anotherTicketStoreId
+      || lastType.anotherTicketTypeId) {
       const newRules = [...editableTypes, {
         id: '',
         name: '',
@@ -275,16 +275,16 @@ const InformationInput: React.FC<Props> = (props) => {
     }
 
     const inputedType = editableTypes[typeCount - 2]
-    if (inputedType?.id ||
-      inputedType?.name ||
-      inputedType?.description ||
-      inputedType?.price ||
-      inputedType?.paymentURL ||
-      inputedType?.productId ||
-      inputedType?.color ||
-      !inputedType?.isPublic ||
-      inputedType?.anotherTicketStoreId ||
-      inputedType?.anotherTicketTypeId) {
+    if (inputedType?.id
+      || inputedType?.name
+      || inputedType?.description
+      || inputedType?.price
+      || inputedType?.paymentURL
+      || inputedType?.productId
+      || inputedType?.color
+      || !inputedType?.isPublic
+      || inputedType?.anotherTicketStoreId
+      || inputedType?.anotherTicketTypeId) {
       return
     }
 
@@ -305,11 +305,14 @@ const InformationInput: React.FC<Props> = (props) => {
           <FormItem>
             <FormLabel>チケットストア設定データ</FormLabel>
             <FormTextarea
-              value={storePackageJSON}
-              onChange={e => setStorePackageJSON(e.target.value)}/>
+              onChange={e => setStorePackageJSON(e.target.value)}
+              value={storePackageJSON} />
           </FormItem>
           <FormItem>
-            <FormButton onClick={handleImportStorePackage} disabled={!storePackageJSON}>インポート</FormButton>
+            <FormButton
+              disabled={!storePackageJSON}
+              onClick={handleImportStorePackage}>インポート
+            </FormButton>
           </FormItem>
         </FormSection>
       </details>
@@ -318,10 +321,10 @@ const InformationInput: React.FC<Props> = (props) => {
       <FormSection>
         <FormItem>
           <FormCheckbox
+            checked={store.isPublic}
             label="イベントを公開する"
             name="is-public"
-            checked={store.isPublic}
-            onChange={checked => setStore(s => ({ ...s, isPublic: checked }))}/>
+            onChange={checked => setStore(s => ({ ...s, isPublic: checked }))} />
         </FormItem>
       </FormSection>
 
@@ -330,34 +333,34 @@ const InformationInput: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>チケットストア ID</FormLabel>
           <FormInput
-            value={storeId}
-            onChange={e => setStoreId(e.target.value)} />
+            onChange={e => setStoreId(e.target.value)}
+            value={storeId} />
         </FormItem>
         <FormItem>
           <FormLabel>チケットストア名</FormLabel>
           <FormInput
-            value={store.name}
-            onChange={e => setStore(s => ({ ...s, name: e.target.value }))}/>
+            onChange={e => setStore(s => ({ ...s, name: e.target.value }))}
+            value={store.name} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント Web サイト</FormLabel>
           <FormInput
-            value={store.websiteURL}
-            onChange={e => setStore(s => ({ ...s, websiteURL: e.target.value }))}/>
+            onChange={e => setStore(s => ({ ...s, websiteURL: e.target.value }))}
+            value={store.websiteURL} />
         </FormItem>
         <FormItem>
           <FormLabel>会場名</FormLabel>
           <FormCheckbox
-            name={'show-venue-name'}
-            label={'会場名を表示する'}
             checked={showVenueName}
+            label="会場名を表示する"
+            name="show-venue-name"
             onChange={checked => setShowVenueName(checked)} />
         </FormItem>
         <FormItem>
           <FormInput
-            value={store.venue?.name}
+            disabled={!showVenueName}
             onChange={e => setStore(s => ({ ...s, venue: { ...s.venue, name: e.target.value } }))}
-            disabled={!showVenueName} />
+            value={store.venue?.name} />
         </FormItem>
       </FormSection>
 
@@ -366,20 +369,20 @@ const InformationInput: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>組織 ID</FormLabel>
           <FormInput
-            value={store._organization.id}
-            onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, id: e.target.value } }))}/>
+            onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, id: e.target.value } }))}
+            value={store._organization.id} />
         </FormItem>
         <FormItem>
           <FormLabel>組織名</FormLabel>
           <FormInput
-            value={store._organization.name}
-            onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, name: e.target.value } }))}/>
+            onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, name: e.target.value } }))}
+            value={store._organization.name} />
         </FormItem>
         <FormItem>
           <FormLabel>連絡先 URL</FormLabel>
           <FormInput
-            value={store._organization.contactUrl}
-            onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, contactUrl: e.target.value } }))}/>
+            onChange={e => setStore(s => ({ ...s, _organization: { ...s._organization, contactUrl: e.target.value } }))}
+            value={store._organization.contactUrl} />
         </FormItem>
       </FormSection>
 
@@ -388,30 +391,30 @@ const InformationInput: React.FC<Props> = (props) => {
         <FormItem>
           <FormLabel>申し込み受付開始</FormLabel>
           <FormInput
+            onChange={e => setStore(s => ({ ...s, schedules: { ...s.schedules, startApplication: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(store.schedules.startApplication, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setStore(s => ({ ...s, schedules: { ...s.schedules, startApplication: new Date(e.target.value).getTime() } }))}/>
+            value={formatByDate(store.schedules.startApplication, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
         <FormItem>
           <FormLabel>申し込み受付終了</FormLabel>
           <FormInput
+            onChange={e => setStore(s => ({ ...s, schedules: { ...s.schedules, endApplication: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(store.schedules.endApplication, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setStore(s => ({ ...s, schedules: { ...s.schedules, endApplication: new Date(e.target.value).getTime() } }))}/>
+            value={formatByDate(store.schedules.endApplication, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント開始</FormLabel>
           <FormInput
+            onChange={e => setStore(s => ({ ...s, schedules: { ...s.schedules, startEvent: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(store.schedules.startEvent, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setStore(s => ({ ...s, schedules: { ...s.schedules, startEvent: new Date(e.target.value).getTime() } }))}/>
+            value={formatByDate(store.schedules.startEvent, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
         <FormItem>
           <FormLabel>イベント終了</FormLabel>
           <FormInput
+            onChange={e => setStore(s => ({ ...s, schedules: { ...s.schedules, endEvent: new Date(e.target.value).getTime() } }))}
             type="datetime-local"
-            value={formatByDate(store.schedules.endEvent, 'YYYY-MM-DDTHH:mm')}
-            onChange={e => setStore(s => ({ ...s, schedules: { ...s.schedules, endEvent: new Date(e.target.value).getTime() } }))}/>
+            value={formatByDate(store.schedules.endEvent, 'YYYY-MM-DDTHH:mm')} />
         </FormItem>
       </FormSection>
 
@@ -432,210 +435,216 @@ const InformationInput: React.FC<Props> = (props) => {
           </tr>
         </thead>
         <tbody>
-          {editableTypes.map((t, i) => <tr key={i}>
-            <td>
-              <FormInput
-                value={t.id}
-                onChange={e => handleEditType(
-                  i,
-                  e.target.value,
-                  t.name,
-                  t.description,
-                  t.price,
-                  t.productId,
-                  t.paymentURL,
-                  t.color,
-                  t.anotherTicketStoreId,
-                  t.anotherTicketTypeId,
-                  t.isPublic)}/>
-            </td>
-            <td>
-              <FormInput
-                value={t.name}
-                onChange={e => handleEditType(
-                  i,
-                  t.id,
-                  e.target.value,
-                  t.description,
-                  t.price,
-                  t.productId,
-                  t.paymentURL,
-                  t.color,
-                  t.anotherTicketStoreId,
-                  t.anotherTicketTypeId,
-                  t.isPublic)}/>
-            </td>
-            <td>
-              <FormInput
-                value={t.description}
-                onChange={e => handleEditType(
-                  i,
-                  t.id,
-                  t.name,
-                  e.target.value,
-                  t.price,
-                  t.productId,
-                  t.paymentURL,
-                  t.color,
-                  t.anotherTicketStoreId,
-                  t.anotherTicketTypeId,
-                  t.isPublic)}/>
-            </td>
-            <td>
-              <FormInput
-                value={t.price}
-                onChange={e => handleEditType(
-                  i,
-                  t.id,
-                  t.name,
-                  t.description,
-                  e.target.value,
-                  t.productId,
-                  t.paymentURL,
-                  t.color,
-                  t.anotherTicketStoreId,
-                  t.anotherTicketTypeId,
-                  t.isPublic)}/>
-            </td>
-            <td>
-              <FormInput
-                value={t.paymentURL}
-                onChange={e => handleEditType(
-                  i,
-                  t.id,
-                  t.name,
-                  t.description,
-                  t.price,
-                  t.productId,
-                  e.target.value,
-                  t.color,
-                  t.anotherTicketStoreId,
-                  t.anotherTicketTypeId,
-                  t.isPublic)}/>
-            </td>
-            <td>
-              <FormInput
-                value={t.productId}
-                onChange={e => handleEditType(
-                  i,
-                  t.id,
-                  t.name,
-                  t.description,
-                  t.price,
-                  e.target.value,
-                  t.paymentURL,
-                  t.color,
-                  t.anotherTicketStoreId,
-                  t.anotherTicketTypeId,
-                  t.isPublic)}/>
-            </td>
-            <td>
-              <FormInput
-                type="color"
-                value={t.color}
-                onChange={e => handleEditType(
-                  i,
-                  t.id,
-                  t.name,
-                  t.description,
-                  t.price,
-                  t.productId,
-                  t.paymentURL,
-                  e.target.value,
-                  t.anotherTicketStoreId,
-                  t.anotherTicketTypeId,
-                  t.isPublic
-                )}/>
-            </td>
-            <td>
-              <FormInput
-                value={t.anotherTicketStoreId}
-                onChange={e => handleEditType(
-                  i,
-                  t.id,
-                  t.name,
-                  t.description,
-                  t.price,
-                  t.productId,
-                  t.paymentURL,
-                  t.color,
-                  e.target.value,
-                  t.anotherTicketTypeId,
-                  t.isPublic)}/>
-            </td>
-            <td>
-              <FormInput
-                value={t.anotherTicketTypeId}
-                onChange={e => handleEditType(
-                  i,
-                  t.id,
-                  t.name,
-                  t.description,
-                  t.price,
-                  t.productId,
-                  t.paymentURL,
-                  t.color,
-                  t.anotherTicketStoreId,
-                  e.target.value,
-                  t.isPublic)}/>
-            </td>
-            <td>
-              <FormCheckbox
-                name={`public-${i}`}
-                label="公開"
-                checked={t.isPublic}
-                onChange={checked => handleEditType(
-                  i,
-                  t.id,
-                  t.name,
-                  t.description,
-                  t.price,
-                  t.productId,
-                  t.paymentURL,
-                  t.color,
-                  t.anotherTicketStoreId,
-                  t.anotherTicketTypeId,
-                  checked)} />
-            </td>
-          </tr>)}
+          {editableTypes.map((t, i) => (
+            <tr key={i}>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    e.target.value,
+                    t.name,
+                    t.description,
+                    t.price,
+                    t.productId,
+                    t.paymentURL,
+                    t.color,
+                    t.anotherTicketStoreId,
+                    t.anotherTicketTypeId,
+                    t.isPublic)}
+                  value={t.id} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    t.id,
+                    e.target.value,
+                    t.description,
+                    t.price,
+                    t.productId,
+                    t.paymentURL,
+                    t.color,
+                    t.anotherTicketStoreId,
+                    t.anotherTicketTypeId,
+                    t.isPublic)}
+                  value={t.name} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    t.id,
+                    t.name,
+                    e.target.value,
+                    t.price,
+                    t.productId,
+                    t.paymentURL,
+                    t.color,
+                    t.anotherTicketStoreId,
+                    t.anotherTicketTypeId,
+                    t.isPublic)}
+                  value={t.description} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    t.id,
+                    t.name,
+                    t.description,
+                    e.target.value,
+                    t.productId,
+                    t.paymentURL,
+                    t.color,
+                    t.anotherTicketStoreId,
+                    t.anotherTicketTypeId,
+                    t.isPublic)}
+                  value={t.price} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    t.id,
+                    t.name,
+                    t.description,
+                    t.price,
+                    t.productId,
+                    e.target.value,
+                    t.color,
+                    t.anotherTicketStoreId,
+                    t.anotherTicketTypeId,
+                    t.isPublic)}
+                  value={t.paymentURL} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    t.id,
+                    t.name,
+                    t.description,
+                    t.price,
+                    e.target.value,
+                    t.paymentURL,
+                    t.color,
+                    t.anotherTicketStoreId,
+                    t.anotherTicketTypeId,
+                    t.isPublic)}
+                  value={t.productId} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    t.id,
+                    t.name,
+                    t.description,
+                    t.price,
+                    t.productId,
+                    t.paymentURL,
+                    e.target.value,
+                    t.anotherTicketStoreId,
+                    t.anotherTicketTypeId,
+                    t.isPublic
+                  )}
+                  type="color"
+                  value={t.color} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    t.id,
+                    t.name,
+                    t.description,
+                    t.price,
+                    t.productId,
+                    t.paymentURL,
+                    t.color,
+                    e.target.value,
+                    t.anotherTicketTypeId,
+                    t.isPublic)}
+                  value={t.anotherTicketStoreId} />
+              </td>
+              <td>
+                <FormInput
+                  onChange={e => handleEditType(
+                    i,
+                    t.id,
+                    t.name,
+                    t.description,
+                    t.price,
+                    t.productId,
+                    t.paymentURL,
+                    t.color,
+                    t.anotherTicketStoreId,
+                    e.target.value,
+                    t.isPublic)}
+                  value={t.anotherTicketTypeId} />
+              </td>
+              <td>
+                <FormCheckbox
+                  checked={t.isPublic}
+                  label="公開"
+                  name={`public-${i}`}
+                  onChange={checked => handleEditType(
+                    i,
+                    t.id,
+                    t.name,
+                    t.description,
+                    t.price,
+                    t.productId,
+                    t.paymentURL,
+                    t.color,
+                    t.anotherTicketStoreId,
+                    t.anotherTicketTypeId,
+                    checked)} />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
       <h3>注意事項</h3>
       <FormSection>
-        {store.rules.map((r, i) => <FormItem key={i}>
-          <FormLabel>注意事項 {i + 1}</FormLabel>
-          <FormInput
-            value={r}
-            onChange={e => handleEditRule(i, e.target.value)} />
-        </FormItem>)}
+        {store.rules.map((r, i) => (
+          <FormItem key={i}>
+            <FormLabel>注意事項 {i + 1}</FormLabel>
+            <FormInput
+              onChange={e => handleEditRule(i, e.target.value)}
+              value={r} />
+          </FormItem>
+        ))}
       </FormSection>
 
       <h3>申し込み説明</h3>
       <FormSection>
-        {store.descriptions.map((d, i) => <FormItem key={i}>
-          <FormLabel>申し込み説明 {i + 1}</FormLabel>
-          <FormInput
-            value={d}
-            onChange={e => handleEditDescription(i, e.target.value)}/>
-        </FormItem>)}
+        {store.descriptions.map((d, i) => (
+          <FormItem key={i}>
+            <FormLabel>申し込み説明 {i + 1}</FormLabel>
+            <FormInput
+              onChange={e => handleEditDescription(i, e.target.value)}
+              value={d} />
+          </FormItem>
+        ))}
       </FormSection>
 
       <h3>制限設定</h3>
       <FormSection>
         <FormItem>
           <FormCheckbox
-            name="canUseBankTransfer"
-            label="参加費の銀行振込を許可する"
             checked={store.permissions.canUseBankTransfer}
-            onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } })) }/>
+            label="参加費の銀行振込を許可する"
+            name="canUseBankTransfer"
+            onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } }))} />
         </FormItem>
         <FormItem>
           <FormCheckbox
-            name="ticketUserAutoAssign"
-            label="チケット使用者を自動で割り当てる"
             checked={store.permissions.ticketUserAutoAssign}
-            onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, ticketUserAutoAssign: checked } })) }/>
+            label="チケット使用者を自動で割り当てる"
+            name="ticketUserAutoAssign"
+            onChange={checked => setStore(s => ({ ...s, permissions: { ...s.permissions, ticketUserAutoAssign: checked } }))} />
         </FormItem>
       </FormSection>
 

@@ -111,77 +111,93 @@ const DashboardCircleEditLinksPage: React.FC = () => {
           {(hashId && app && <Link to={`/dashboard/applications/${hashId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
-      <PageTitle title={app?.circle.name} description="カタログ掲載情報編集" icon={<MdBookmarkAdd />} isLoading={!app} />
+      <PageTitle
+        description="カタログ掲載情報編集"
+        icon={<MdBookmarkAdd />}
+        isLoading={!app}
+        title={app?.circle.name} />
       {app && event
-        ? <TwoColumnsLayout>
-          <>
-            {event && event.schedules.overviewFixedAt > now && (
-              <Alert type="info" title="頒布物情報を最新の状態にしてください">
-                <b>{formatByDate(event.schedules.overviewFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をカタログやイベント運営で使用いたします。<br />
+        ? (
+          <TwoColumnsLayout>
+            <>
+              {event && event.schedules.overviewFixedAt > now && (
+                <Alert
+                  title="頒布物情報を最新の状態にしてください"
+                  type="info">
+                  <b>{formatByDate(event.schedules.overviewFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点の情報をカタログやイベント運営で使用いたします。<br />
                 変更がある場合は、この日までに情報を更新してください。
-              </Alert>
-            )}
+                </Alert>
+              )}
 
-            <FormSection>
-              <FormItem>
-                <FormLabel>X (Twitter)</FormLabel>
-                <FormInput
-                  placeholder='xxxxxxx'
-                  value={links.twitterScreenName ?? ''}
-                  onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value }))} />
-                <FormHelp hasError={!!links.twitterScreenName && !validator.isTwitterScreenName(links.twitterScreenName)}>
+              <FormSection>
+                <FormItem>
+                  <FormLabel>X (Twitter)</FormLabel>
+                  <FormInput
+                    onChange={e => setLinks(s => ({ ...s, twitterScreenName: e.target.value }))}
+                    placeholder="xxxxxxx"
+                    value={links.twitterScreenName ?? ''} />
+                  <FormHelp hasError={!!links.twitterScreenName && !validator.isTwitterScreenName(links.twitterScreenName)}>
                   @ を除いて入力してください
-                </FormHelp>
-              </FormItem>
-              <FormItem>
-                <FormLabel>pixiv</FormLabel>
-                <FormInput
-                  placeholder='1234567890'
-                  value={links.pixivUserId ?? ''}
-                  onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value }))} />
-                <FormHelp hasError={!!links.pixivUserId && !validator.isOnlyNumber(links.pixivUserId)}>
+                  </FormHelp>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>pixiv</FormLabel>
+                  <FormInput
+                    onChange={e => setLinks(s => ({ ...s, pixivUserId: e.target.value }))}
+                    placeholder="1234567890"
+                    value={links.pixivUserId ?? ''} />
+                  <FormHelp hasError={!!links.pixivUserId && !validator.isOnlyNumber(links.pixivUserId)}>
                   ID 部分のみを入力してください
-                </FormHelp>
-              </FormItem>
-              <FormItem>
-                <FormLabel>Web サイト</FormLabel>
-                <FormInput
-                  placeholder='https://sumire.sockbase.net'
-                  value={links.websiteURL ?? ''}
-                  onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value }))} />
-                <FormHelp hasError={!!links.websiteURL && !validator.isURL(links.websiteURL)}>
+                  </FormHelp>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>Web サイト</FormLabel>
+                  <FormInput
+                    onChange={e => setLinks(s => ({ ...s, websiteURL: e.target.value }))}
+                    placeholder="https://sumire.sockbase.net"
+                    value={links.websiteURL ?? ''} />
+                  <FormHelp hasError={!!links.websiteURL && !validator.isURL(links.websiteURL)}>
                   http:// から始めてください
-                </FormHelp>
-              </FormItem>
-              <FormItem>
-                <FormLabel>お品書き URL</FormLabel>
-                <FormInput
-                  placeholder='https://oshina.sockbase.net'
-                  value={links.menuURL ?? ''}
-                  onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value }))} />
-                <FormHelp hasError={!!links.menuURL && !validator.isURL(links.menuURL)}>
+                  </FormHelp>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>お品書き URL</FormLabel>
+                  <FormInput
+                    onChange={e => setLinks(s => ({ ...s, menuURL: e.target.value }))}
+                    placeholder="https://oshina.sockbase.net"
+                    value={links.menuURL ?? ''} />
+                  <FormHelp hasError={!!links.menuURL && !validator.isURL(links.menuURL)}>
                   http:// から始めてください
-                </FormHelp>
-              </FormItem>
-            </FormSection>
+                  </FormHelp>
+                </FormItem>
+              </FormSection>
 
-            {errorCount !== 0 && <Alert type="error" title={`${errorCount} 個の入力項目に不備があります。`} />}
+              {errorCount !== 0 && (
+                <Alert
+                  title={`${errorCount} 個の入力項目に不備があります。`}
+                  type="error" />
+              )}
 
-            <FormSection>
-              <FormItem>
-                <LoadingCircleWrapper isLoading={isProgress} inlined={true}>
-                  <FormButton
-                    color='primary'
-                    disabled={isProgress || errorCount !== 0}
-                    onClick={handleSubmit}>
-                    <IconLabel icon={<MdEdit />} label="情報を更新する" />
-                  </FormButton>
-                </LoadingCircleWrapper>
-              </FormItem>
-            </FormSection>
-          </>
-          <></>
-        </TwoColumnsLayout>
+              <FormSection>
+                <FormItem>
+                  <LoadingCircleWrapper
+                    inlined={true}
+                    isLoading={isProgress}>
+                    <FormButton
+                      color="primary"
+                      disabled={isProgress || errorCount !== 0}
+                      onClick={handleSubmit}>
+                      <IconLabel
+                        icon={<MdEdit />}
+                        label="情報を更新する" />
+                    </FormButton>
+                  </LoadingCircleWrapper>
+                </FormItem>
+              </FormSection>
+            </>
+            <></>
+          </TwoColumnsLayout>
+        )
         : <Loading text="広報情報" />}
     </DashboardBaseLayout>
   )

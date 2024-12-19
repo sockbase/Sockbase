@@ -52,7 +52,7 @@ const useSpace = (): IUseSpace => {
           a.userId,
           users[a.userId]?.email
         ])
-        .map((a) => a.join('\t'))
+        .map(a => a.join('\t'))
         .join('\n')
 
       return `${header}\n${entries}\n`

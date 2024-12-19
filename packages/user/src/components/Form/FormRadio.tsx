@@ -11,21 +11,24 @@ interface Props {
   onChange: (value: string) => void
   hasError?: boolean
 }
-const FormRadio: React.FC<Props> = (props) => {
+const FormRadio: React.FC<Props> = props => {
   return (
     <>
-      {props.values.map(opt => <RadioItem key={`${props.name}-${opt.value}`}>
-        <Radio
-          name={props.name}
-          id={`${props.name}-${opt.value}`}
-          value={opt.value}
-          onChange={e => props.onChange(e.target.value)}
-          checked={props.value === opt.value}
-          defaultChecked={opt.checked} />
-        <RadioLabel
-          htmlFor={`${props.name}-${opt.value}`}
-          hasError={props.hasError}>{opt.text}</RadioLabel>
-      </RadioItem>)}
+      {props.values.map(opt => (
+        <RadioItem key={`${props.name}-${opt.value}`}>
+          <Radio
+            checked={props.value === opt.value}
+            defaultChecked={opt.checked}
+            id={`${props.name}-${opt.value}`}
+            name={props.name}
+            onChange={e => props.onChange(e.target.value)}
+            value={opt.value} />
+          <RadioLabel
+            hasError={props.hasError}
+            htmlFor={`${props.name}-${opt.value}`}>{opt.text}
+          </RadioLabel>
+        </RadioItem>
+      ))}
     </>
   )
 }

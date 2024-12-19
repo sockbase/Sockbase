@@ -14,7 +14,7 @@ interface Props {
   logoutAsync: () => Promise<void>
   nextStep: () => void
 }
-const CheckAccount: React.FC<Props> = (props) => {
+const CheckAccount: React.FC<Props> = props => {
   const handleLogout = useCallback(() => {
     props.logoutAsync()
       .catch(err => { throw err })
@@ -24,40 +24,50 @@ const CheckAccount: React.FC<Props> = (props) => {
     <>
       <h1>Sockbase アカウントはお持ちですか？</h1>
 
-      {props.user === null && <>
-        <h2>Sockbase アカウントを持っている場合</h2>
-        <p>
+      {props.user === null && (
+        <>
+          <h2>Sockbase アカウントを持っている場合</h2>
+          <p>
             以前の申し込み時に使用したアカウントでログインしてください。
-        </p>
+          </p>
 
-        <LoginForm />
+          <LoginForm />
 
-        <h2>Sockbase アカウントを持っていない場合</h2>
-        <p>
+          <h2>Sockbase アカウントを持っていない場合</h2>
+          <p>
           申し込み手続き中にアカウントを作成します。<br />
           「申し込み説明画面へ進む」を押して次の画面に進んでください。
-        </p>
-      </>}
+          </p>
+        </>
+      )}
 
-      {props.user && <>
-        <p>
+      {props.user && (
+        <>
+          <p>
           現在、<b>{props.user.email}</b> としてログインしています。<br />
-        </p>
-        <Alert type="info" title="別のアカウントで申し込みを行うには、ログアウトしてください。" />
-        <FormSection>
-          <FormItem>
-            <FormButton onClick={handleLogout}>
-              <IconLabel icon={<MdLogout />} label="ログアウト" />
-            </FormButton>
-          </FormItem>
-        </FormSection>
-      </>}
+          </p>
+          <Alert
+            title="別のアカウントで申し込みを行うには、ログアウトしてください。"
+            type="info" />
+          <FormSection>
+            <FormItem>
+              <FormButton onClick={handleLogout}>
+                <IconLabel
+                  icon={<MdLogout />}
+                  label="ログアウト" />
+              </FormButton>
+            </FormItem>
+          </FormSection>
+        </>
+      )}
       <FormSection>
         <FormItem>
           <FormButton
             color="primary"
             onClick={props.nextStep}>
-            <IconLabel icon={<MdArrowForward />} label="申し込み説明画面へ進む" />
+            <IconLabel
+              icon={<MdArrowForward />}
+              label="申し込み説明画面へ進む" />
           </FormButton>
         </FormItem>
       </FormSection>

@@ -6,12 +6,21 @@ import IconLabel from '../IconLabel'
 interface Props {
   status: boolean | undefined
 }
-const TicketUsedStatusLabel: React.FC<Props> = (props) => {
+const TicketUsedStatusLabel: React.FC<Props> = props => {
   const typeName = useMemo(() => {
     if (props.status) {
-      return <IconLabel label="使用済み" icon={<MdCheck />} />
-    } else {
-      return <IconLabel label="未使用" icon={<MdPendingActions />} />
+      return (
+        <IconLabel
+          icon={<MdCheck />}
+          label="使用済み" />
+      )
+    }
+    else {
+      return (
+        <IconLabel
+          icon={<MdPendingActions />}
+          label="未使用" />
+      )
     }
   }, [props.status])
 
@@ -34,7 +43,8 @@ const Container = styled.label<{ status: boolean }>`
   ${p => {
     if (p.status) {
       return 'background-color: var(--danger-color);'
-    } else {
+    }
+    else {
       return 'background-color: var(--pending-color);'
     }
   }};

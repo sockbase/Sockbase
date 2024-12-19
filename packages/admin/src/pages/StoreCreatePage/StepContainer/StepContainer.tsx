@@ -32,24 +32,24 @@ const StepContainer: React.FC = () => {
     setStepComponentes([
       <InformationInput
         key="information-input"
-        storeId={storeId}
-        store={store}
         nextStep={(storeId: string, store: SockbaseStore) => {
           setStoreId(storeId)
           setStore(store)
           setStep(1)
-        }} />,
-      <InformationConfirm
-        key="information-confirm"
-        storeId={storeId}
+        }}
         store={store}
-        prevStep={() => setStep(0)}
+        storeId={storeId} />,
+      <InformationConfirm
+        handleCreateAsync={handleCreateAsync}
+        key="information-confirm"
         nextStep={() => setStep(2)}
-        handleCreateAsync={handleCreateAsync} />,
+        prevStep={() => setStep(0)}
+        store={store}
+        storeId={storeId} />,
       <Complete
+        init={handleInitialize}
         key="complete"
-        storeId={storeId}
-        init={handleInitialize} />
+        storeId={storeId} />
     ])
   }, [storeId, store, handleCreateAsync])
 

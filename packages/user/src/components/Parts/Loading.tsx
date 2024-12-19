@@ -5,7 +5,7 @@ import Blink from '../Keyframes/Blink'
 interface Props {
   text?: string
 }
-const Loading: React.FC<Props> = (props) => {
+const Loading: React.FC<Props> = props => {
   return (
     <Container>
       <Icon><MdRefresh /></Icon>

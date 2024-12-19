@@ -20,7 +20,8 @@ const ActionPage: React.FC = () => {
         title: 'パスワード再設定',
         element: <PasswordReset oobCode={oobCode} />
       }
-    } else if (actionMode === 'verifyEmail') {
+    }
+    else if (actionMode === 'verifyEmail') {
       return {
         title: 'メールアドレス確認',
         element: <VerifyEmail oobCode={oobCode} />
@@ -41,14 +42,20 @@ const ActionPage: React.FC = () => {
 
   return (
     <DefaultBaseLayout title={form?.title}>
-      {errorMessage && <Alert title="エラーが発生しました" type="error">
-        {errorMessage}
-      </Alert>}
+      {errorMessage && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">
+          {errorMessage}
+        </Alert>
+      )}
 
-      {form && <>
-        <h1>{form.title}</h1>
-        {form.element}
-      </>}
+      {form && (
+        <>
+          <h1>{form.title}</h1>
+          {form.element}
+        </>
+      )}
     </DefaultBaseLayout>
   )
 }

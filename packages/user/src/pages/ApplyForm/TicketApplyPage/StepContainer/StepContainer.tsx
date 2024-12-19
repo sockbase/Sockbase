@@ -24,7 +24,7 @@ interface Props {
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
   createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
 }
-const StepContainer: React.FC<Props> = (props) => {
+const StepContainer: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   const [step, setStep] = useState(0)
@@ -57,7 +57,8 @@ const StepContainer: React.FC<Props> = (props) => {
       }
       const newUser = await props.createUserAsync(userData.email, userData.password)
       await props.updateUserDataAsync(newUser.uid, userData)
-    } else if (props.userData && !props.userData?.gender) {
+    }
+    else if (props.userData && !props.userData?.gender) {
       await props.updateUserDataAsync(props.user.uid, {
         ...props.userData,
         gender: userData?.gender
@@ -70,7 +71,7 @@ const StepContainer: React.FC<Props> = (props) => {
       .then(async result => {
         setAddedResult(result)
         setSubmitProgressPercent(100)
-        await (new Promise((resolve) => setTimeout(resolve, 2000)))
+        await (new Promise(resolve => setTimeout(resolve, 2000)))
       })
   }, [props.user, props.userData, ticket, userData])
 
@@ -81,49 +82,49 @@ const StepContainer: React.FC<Props> = (props) => {
     return ([
       <CheckAccount
         key="checkAccount"
-        user={props.user}
         loginAsync={props.loginAsync}
         logoutAsync={props.logoutAsync}
-        nextStep={() => setStep(1)} />,
+        nextStep={() => setStep(1)}
+        user={props.user} />,
       <Introduction
         key="introduction"
-        store={props.store}
+        nextStep={() => setStep(2)}
         prevStep={() => setStep(0)}
-        nextStep={() => setStep(2)} />,
+        store={props.store} />,
       <Input
-        key="input"
-        store={props.store}
-        ticket={ticket}
-        userData={userData}
         fetchedUserData={props.userData}
-        prevStep={() => setStep(1)}
+        key="input"
         nextStep={(t, u) => {
           setTicket(t)
           setUserData(u)
           setStep(3)
-        }}/>,
-      <Confirm
-        key="confirm"
-        fetchedUserData={props.userData}
-        userData={userData}
-        selectedType={selectedType}
-        selectedPaymentMethod={selectedPaymentMethod}
-        submitProgressPercent={submitProgressPercent}
-        submitAsync={handleSubmitAsync}
-        prevStep={() => setStep(2)}
-        nextStep={() => setStep(4)} />,
-      <Payment
-        key="payment"
-        user={props.user}
-        ticket={ticket}
+        }}
+        prevStep={() => setStep(1)}
         store={props.store}
-        addedResult={addedResult}
-        selectedType={selectedType}
+        ticket={ticket}
+        userData={userData} />,
+      <Confirm
+        fetchedUserData={props.userData}
+        key="confirm"
+        nextStep={() => setStep(4)}
+        prevStep={() => setStep(2)}
         selectedPaymentMethod={selectedPaymentMethod}
-        nextStep={() => setStep(5)} />,
+        selectedType={selectedType}
+        submitAsync={handleSubmitAsync}
+        submitProgressPercent={submitProgressPercent}
+        userData={userData} />,
+      <Payment
+        addedResult={addedResult}
+        key="payment"
+        nextStep={() => setStep(5)}
+        selectedPaymentMethod={selectedPaymentMethod}
+        selectedType={selectedType}
+        store={props.store}
+        ticket={ticket}
+        user={props.user} />,
       <Complete
-        key="complete"
-        addedResult={addedResult} />
+        addedResult={addedResult}
+        key="complete" />
     ])
   }, [
     props.store,
@@ -141,32 +142,48 @@ const StepContainer: React.FC<Props> = (props) => {
 
   return (
     <>
-      {props.store === null && <Alert title="チケットストアが見つかりません" type="error">
+      {props.store === null && (
+        <Alert
+          title="チケットストアが見つかりません"
+          type="error">
         指定された ID のチケットストアを見つけることができませんでした。<br />
         URL が正しく入力されていることを確認してください。
-      </Alert>}
+        </Alert>
+      )}
 
-      {props.store && <>
-        <h1>{props.store.name} 申し込み受付</h1>
+      {props.store && (
+        <>
+          <h1>{props.store.name} 申し込み受付</h1>
 
-        {now < props.store.schedules.startApplication && <Alert type="error" title="受付期間前です">
+          {now < props.store.schedules.startApplication && (
+            <Alert
+              title="受付期間前です"
+              type="error">
           このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.startApplication, 'YYYY年 M月 D日 H時mm分')}</b> から開始予定です。
-        </Alert>}
+            </Alert>
+          )}
 
-        {props.store.schedules.endApplication < now && <Alert type="error" title="受付を終了しました">
+          {props.store.schedules.endApplication < now && (
+            <Alert
+              title="受付を終了しました"
+              type="error">
           このチケットストアの申し込み受付は <b>{formatByDate(props.store.schedules.endApplication - 1, 'YYYY年 M月 D日')}</b> をもって終了しました。
-        </Alert>}
+            </Alert>
+          )}
 
-        {props.store.schedules.startApplication < now && now <= props.store.schedules.endApplication && <>
-          {props.store.descriptions.map((d, k) => <p key={k}>{d}</p>)}
-          <StepProgress
-            steps={stepProgresses.map((s, k) => ({
-              text: s,
-              isActive: k === step - 1
-            }))} />
-          {steps?.[step]}
-        </>}
-      </>}
+          {props.store.schedules.startApplication < now && now <= props.store.schedules.endApplication && (
+            <>
+              {props.store.descriptions.map((d, k) => <p key={k}>{d}</p>)}
+              <StepProgress
+                steps={stepProgresses.map((s, k) => ({
+                  text: s,
+                  isActive: k === step - 1
+                }))} />
+              {steps?.[step]}
+            </>
+          )}
+        </>
+      )}
     </>
   )
 }

@@ -37,7 +37,9 @@ const InformationViewPage: React.FC = () => {
   }, [informationId])
 
   return (
-    <DefaultLayout title="お知らせ情報照会" requireSystemRole={2}>
+    <DefaultLayout
+      requireSystemRole={2}
+      title="お知らせ情報照会">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/informations">お知らせ管理</Link></li>
@@ -48,8 +50,8 @@ const InformationViewPage: React.FC = () => {
         title="お知らせ情報照会" />
 
       <InformationEditor
-        information={information}
-        handleChange={handleEdit} />
+        handleChange={handleEdit}
+        information={information} />
     </DefaultLayout>
   )
 }

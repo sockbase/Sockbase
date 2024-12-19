@@ -1,4 +1,3 @@
-
 import { type SockbaseEvent } from 'sockbase'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { eventConverter } from '../libs/converters'

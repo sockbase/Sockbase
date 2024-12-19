@@ -29,7 +29,7 @@ interface Props {
   appIndex: number
   confirmedAppCount: number
 }
-const CircleTanzaku: React.FC<Props> = (props) => {
+const CircleTanzaku: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
 
   const spaceType = useMemo(() => {

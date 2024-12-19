@@ -82,7 +82,7 @@ const useSpace = (): IUseSpace => {
           a.userId,
           users[a.userId]?.email
         ])
-        .map((a) => a.join('\t'))
+        .map(a => a.join('\t'))
         .join('\n')
 
       return `${header}\n${entries}\n`
@@ -148,7 +148,8 @@ const useSpace = (): IUseSpace => {
       const actualEventId = sheetData.A1?.v
       if (!actualEventId) {
         throw new Error('イベントIDが入力されていません。配置データを再ダウンロードしデータを作成し直してください。')
-      } else if (eventId !== actualEventId) {
+      }
+      else if (eventId !== actualEventId) {
         throw new Error('異なるイベントの配置データが選択されました。')
       }
 

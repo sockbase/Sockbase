@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { MdCheck, MdQrCodeScanner, MdRefresh, MdSearch } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { type SockbaseTicketUserDocument, type SockbaseStoreDocument, type SockbaseTicketHashIdDocument, type SockbaseTicketUsedStatus, type SockbaseTicketDocument, type SockbaseTicketMeta, type SockbasePaymentDocument, type SockbaseAccount } from 'sockbase'
 import useSound from 'use-sound'
 import NGSound from '../../assets/se/ng.mp3'
 import OKSound from '../../assets/se/ok.mp3'
@@ -30,6 +29,16 @@ import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
 import useValidate from '../../hooks/useValidate'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
+import type {
+  SockbaseTicketUserDocument,
+  SockbaseStoreDocument,
+  SockbaseTicketHashIdDocument,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketDocument,
+  SockbaseTicketMeta,
+  SockbasePaymentDocument,
+  SockbaseAccount
+} from 'sockbase'
 
 const TicketTerminalPage: React.FC = () => {
   const { formatByDate } = useDayjs()
@@ -145,16 +154,19 @@ const TicketTerminalPage: React.FC = () => {
       setTicketHashId('')
       handleSearch()
       return
-    } else if (event.key === 'Escape') {
+    }
+    else if (event.key === 'Escape') {
       setTicketHashId('')
       setTicketUser(undefined)
       return
-    } else if (event.key === 'Backspace') {
+    }
+    else if (event.key === 'Backspace') {
       const idLength = ticketHashId.length
       const newTicketHashId = ticketHashId.slice(0, idLength - 1)
       setTicketHashId(newTicketHashId)
       return
-    } else if (event.key.length > 1) {
+    }
+    else if (event.key.length > 1) {
       return
     }
 
@@ -201,7 +213,8 @@ const TicketTerminalPage: React.FC = () => {
       getPaymentByIdAsync(ticketHash.paymentId)
         .then(setPayment)
         .catch(err => { throw err })
-    } else {
+    }
+    else {
       setPayment(null)
     }
   }, [ticketHash])
@@ -244,7 +257,9 @@ const TicketTerminalPage: React.FC = () => {
   }, [keyDownEvent])
 
   return (
-    <DefaultLayout title='チケット照会ターミナル' requireCommonRole={1}>
+    <DefaultLayout
+      requireCommonRole={1}
+      title="チケット照会ターミナル">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
@@ -261,44 +276,53 @@ const TicketTerminalPage: React.FC = () => {
           <FormSection>
             <FormItem>
               <FormCheckbox
-                name="isActiveQRReader"
-                label="QR リーダーを開く"
                 checked={isActiveQRReader}
-                onChange={(c) => setActiveQRReader(c)} />
+                label="QR リーダーを開く"
+                name="isActiveQRReader"
+                onChange={c => setActiveQRReader(c)} />
             </FormItem>
-            {isActiveQRReader && <FormItem>
-              <FormCheckbox
-                name="isHoldQRReader"
-                label="読み取り後に QR リーダを保持する"
-                checked={isHoldQRReader}
-                onChange={(c) => setHoldQRReader(c)} />
-            </FormItem>}
+            {isActiveQRReader && (
+              <FormItem>
+                <FormCheckbox
+                  checked={isHoldQRReader}
+                  label="読み取り後に QR リーダを保持する"
+                  name="isHoldQRReader"
+                  onChange={c => setHoldQRReader(c)} />
+              </FormItem>
+            )}
           </FormSection>
 
           <FormSection>
             <FormItem>
               <FormLabel>チケット ID</FormLabel>
               <FormInput
-                value={ticketHashId}
+                disabled
                 onChange={e => setTicketHashId(e.target.value)}
                 placeholder="チケット ID"
-                disabled/>
+                value={ticketHashId} />
             </FormItem>
             <FormItem>
-              <FormButton onClick={handleSearch} disabled={!ticketHashId} color="default">
-                <IconLabel label="検索" icon={<MdSearch />} />
+              <FormButton
+                color="default"
+                disabled={!ticketHashId}
+                onClick={handleSearch}>
+                <IconLabel
+                  icon={<MdSearch />}
+                  label="検索" />
               </FormButton>
             </FormItem>
           </FormSection>
           {ticketUser === null && (
-            <Alert type="error" title="チケット情報が見つかりませんでした">
+            <Alert
+              title="チケット情報が見つかりませんでした"
+              type="error">
               正しいチケット ID を入力してください。
             </Alert>
           )}
 
           {isActiveQRReader && (
             <ReaderWrap>
-              <QRReaderComponent onScan={r => setQRData(r.getText())}/>
+              <QRReaderComponent onScan={r => setQRData(r.getText())} />
             </ReaderWrap>
           )}
         </>
@@ -306,7 +330,9 @@ const TicketTerminalPage: React.FC = () => {
         <>
           <h2>チケット情報</h2>
           {ticketMeta && type && !canUseTicket && (
-            <Alert type="warning" title="このチケットは使用できません。">
+            <Alert
+              title="このチケットは使用できません。"
+              type="warning">
               <ul>
                 {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。管理者に問い合わせてください。</li>}
                 {!ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。自身で使用する場合は「チケットを有効化する」を押してください。</li>}
@@ -317,18 +343,28 @@ const TicketTerminalPage: React.FC = () => {
 
           {usedStatus && (
             <FormSection>
-              {!usedStatus.used && <FormItem>
-                <FormButton onClick={() => updateTicketUsedStatus(true)} disabled={isProgressForUsedStatus || !canUseTicket}>
-                  <IconLabel label="使用済みにする" icon={<MdCheck />} />
-                </FormButton>
-              </FormItem>}
+              {!usedStatus.used && (
+                <FormItem>
+                  <FormButton
+                    disabled={isProgressForUsedStatus || !canUseTicket}
+                    onClick={() => updateTicketUsedStatus(true)}>
+                    <IconLabel
+                      icon={<MdCheck />}
+                      label="使用済みにする" />
+                  </FormButton>
+                </FormItem>
+              )}
               {usedStatus.used && (
                 <>
-                  <Alert type="warning" title="このチケットは使用済みです。" />
-                  <FormButton onClick={() => handleReset(true)} color="default">
+                  <Alert
+                    title="このチケットは使用済みです。"
+                    type="warning" />
+                  <FormButton
+                    color="default"
+                    onClick={() => handleReset(true)}>
                     <IconLabel
-                      label="読み取りリセット"
-                      icon={<MdRefresh />} />
+                      icon={<MdRefresh />}
+                      label="読み取りリセット" />
                   </FormButton>
                 </>
               )}
@@ -336,7 +372,9 @@ const TicketTerminalPage: React.FC = () => {
           )}
 
           {usedStatusError && (
-            <Alert type="error" title="エラーが発生しました">
+            <Alert
+              title="エラーが発生しました"
+              type="error">
               {usedStatusError}
             </Alert>
           )}
@@ -374,7 +412,12 @@ const TicketTerminalPage: React.FC = () => {
               </tr>
               <tr>
                 <th>参加種別</th>
-                <td>{(type && <TicketTypeLabel store={store} typeId={type.id} />) ?? <BlinkField />}</td>
+                <td>{(type && (
+                  <TicketTypeLabel
+                    store={store}
+                    typeId={type.id} />
+                )) ?? <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>申し込みステータス</th>

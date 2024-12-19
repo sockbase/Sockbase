@@ -7,7 +7,7 @@ interface Props {
   isLoading?: boolean
 }
 
-const PageTitle: React.FC<Props> = (props) => {
+const PageTitle: React.FC<Props> = props => {
   return (
     <Container>
       <PageIcon>{props.icon}</PageIcon>

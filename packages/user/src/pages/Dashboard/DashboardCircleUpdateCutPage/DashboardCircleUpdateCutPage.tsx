@@ -106,12 +106,18 @@ const DashboardCircleUpdateCutPage: React.FC = () => {
           {(hashId && app && <Link to={`/dashboard/applications/${hashId}`}>{app.circle.name}</Link>) ?? <BlinkField />}
         </li>
       </Breadcrumbs>
-      <PageTitle title={app?.circle.name} description="サークルカット変更" icon={<MdPhoto />} isLoading={!app} />
+      <PageTitle
+        description="サークルカット変更"
+        icon={<MdPhoto />}
+        isLoading={!app}
+        title={app?.circle.name} />
 
       <TwoColumnsLayout>
         <>
           {event && event.schedules.overviewFixedAt > now && (
-            <Alert type="info" title="サークルカットは差し替えましたか？">
+            <Alert
+              title="サークルカットは差し替えましたか？"
+              type="info">
               <b>{formatByDate(event.schedules.overviewFixedAt - 1, 'YYYY年 M月 D日')}</b> 時点のサークルカットをカタログに掲載いたします。<br />
                 変更がある場合は、この日までに差し替えてください。
             </Alert>
@@ -126,20 +132,24 @@ const DashboardCircleUpdateCutPage: React.FC = () => {
             <FormItem>
               <FormLabel>サークルカット</FormLabel>
               <FormInput
-                type="file"
                 accept="image/*"
-                onChange={e => setCircleCutFile(e.target.files?.[0])} />
+                onChange={e => setCircleCutFile(e.target.files?.[0])}
+                type="file" />
             </FormItem>
-            {circleCutData && <FormItem>
-              <CircleCutImage src={circleCutData} />
-            </FormItem>}
+            {circleCutData && (
+              <FormItem>
+                <CircleCutImage src={circleCutData} />
+              </FormItem>
+            )}
             <FormItem>
               <LoadingCircleWrapper isLoading={isProgress}>
                 <FormButton
-                  color='primary'
-                  onClick={handleSubmit}
-                  disabled={!circleCutData || isProgress}>
-                  <IconLabel icon={<MdPhoto />} label='サークルカットを変更する' />
+                  color="primary"
+                  disabled={!circleCutData || isProgress}
+                  onClick={handleSubmit}>
+                  <IconLabel
+                    icon={<MdPhoto />}
+                    label="サークルカットを変更する" />
                 </FormButton>
               </LoadingCircleWrapper>
             </FormItem>

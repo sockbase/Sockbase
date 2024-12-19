@@ -8,7 +8,7 @@ import type { SockbaseTicketAddedResult } from 'sockbase'
 interface Props {
   addedResult: SockbaseTicketAddedResult | undefined
 }
-const Complete: React.FC<Props> = (props) => {
+const Complete: React.FC<Props> = props => {
   return (
     <>
       <h1>お申し込みが完了しました</h1>
@@ -44,9 +44,11 @@ const Complete: React.FC<Props> = (props) => {
           <AnchorButton
             color="primary"
             href={`/dashboard/tickets/${props.addedResult?.hashId}`}
-            target="_blank"
-            rel="noreferrer">
-            <IconLabel icon={<MdInfo />} label="チケット情報ページを開く" />
+            rel="noreferrer"
+            target="_blank">
+            <IconLabel
+              icon={<MdInfo />}
+              label="チケット情報ページを開く" />
           </AnchorButton>
         </FormItem>
       </FormSection>

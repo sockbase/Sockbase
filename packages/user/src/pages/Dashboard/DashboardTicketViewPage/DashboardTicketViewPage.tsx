@@ -178,7 +178,11 @@ const DashboardTicketViewPage: React.FC = () => {
         <li><Link to="/dashboard">マイページ</Link></li>
         <li><Link to="/dashboard/tickets">購入済みチケット一覧</Link></li>
       </Breadcrumbs>
-      <PageTitle title={pageTitle} icon={<MdWallet />} description="購入済みチケット情報" isLoading={!store} />
+      <PageTitle
+        description="購入済みチケット情報"
+        icon={<MdWallet />}
+        isLoading={!store}
+        title={pageTitle} />
 
       <TwoColumnsLayout>
         <>
@@ -188,9 +192,9 @@ const DashboardTicketViewPage: React.FC = () => {
               <tr>
                 <th>申し込み状況</th>
                 <td>
-                  {(ticketMeta?.applicationStatus !== undefined &&
-                    <ApplicationStatusLabel status={ticketMeta?.applicationStatus} />) ||
-                    <BlinkField />}
+                  {(ticketMeta?.applicationStatus !== undefined
+                  && <ApplicationStatusLabel status={ticketMeta?.applicationStatus} />)
+                  || <BlinkField />}
                 </td>
               </tr>
               <tr>
@@ -203,7 +207,9 @@ const DashboardTicketViewPage: React.FC = () => {
                       : payment.status === 0
                         ? (
                           <Link to="/dashboard/payments">
-                            <PaymentStatusLabel payment={payment} isLink={true}/>
+                            <PaymentStatusLabel
+                              isLink={true}
+                              payment={payment} />
                           </Link>
                         )
                         : (
@@ -260,43 +266,59 @@ const DashboardTicketViewPage: React.FC = () => {
         </>
 
         <>
-          {hashId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && !ticketUsedStatus?.used && <>
-            <h3>チケットを表示</h3>
-            <FormSection>
-              <FormItem>
-                <LinkButton to={`/tickets/${hashId}`}><IconLabel label="チケットを表示する" icon={<MdOpenInNew />} /></LinkButton>
-              </FormItem>
-            </FormSection>
-          </>}
+          {hashId && ticket && ticketUser && ticketUser.usableUserId === ticket.userId && !ticketUsedStatus?.used && (
+            <>
+              <h3>チケットを表示</h3>
+              <FormSection>
+                <FormItem>
+                  <LinkButton to={`/tickets/${hashId}`}><IconLabel
+                    icon={<MdOpenInNew />}
+                    label="チケットを表示する" />
+                  </LinkButton>
+                </FormItem>
+              </FormSection>
+            </>
+          )}
 
-          {ticketUser && !ticketUser.usableUserId && ticketUsedStatus && !ticketUsedStatus?.used && <>
-            <h3>チケット割り当て</h3>
-            <p>
+          {ticketUser && !ticketUser.usableUserId && ticketUsedStatus && !ticketUsedStatus?.used && (
+            <>
+              <h3>チケット割り当て</h3>
+              <p>
               チケットを使用するためにはチケット使用者の割り当てを行う必要があります。<br />
               このチケットを使う人を選択してください。
-            </p>
-            <FormSection>
-              <FormItem $inlined>
-                <FormButton color="primary" onClick={handleAssignMe} disabled={isProgressForAssignMe}>
-                  <IconLabel label="自分で使う" icon={<MdAccountCircle />} />
-                </FormButton>
-                <FormButton onClick={() => setOpenAssignPanel(s => !s)}>
-                  <IconLabel label="他の方へ割り当てる" icon={<MdOutlineSupervisorAccount />} />
-                </FormButton>
-              </FormItem>
-              {openAssignPanel && <>
-                <FormItem>
+              </p>
+              <FormSection>
+                <FormItem $inlined>
+                  <FormButton
+                    color="primary"
+                    disabled={isProgressForAssignMe}
+                    onClick={handleAssignMe}>
+                    <IconLabel
+                      icon={<MdAccountCircle />}
+                      label="自分で使う" />
+                  </FormButton>
+                  <FormButton onClick={() => setOpenAssignPanel(s => !s)}>
+                    <IconLabel
+                      icon={<MdOutlineSupervisorAccount />}
+                      label="他の方へ割り当てる" />
+                  </FormButton>
+                </FormItem>
+                {openAssignPanel && (
+                  <>
+                    <FormItem>
                   チケットを渡したい方へ以下の URL を送付してください。
-                </FormItem>
-                <FormItem>
-                  <FormInput value={assignURL} />
-                </FormItem>
-                <FormItem>
+                    </FormItem>
+                    <FormItem>
+                      <FormInput value={assignURL} />
+                    </FormItem>
+                    <FormItem>
                   リンクをコピー <CopyToClipboard content={assignURL} />
-                </FormItem>
-              </>}
-            </FormSection>
-          </>}
+                    </FormItem>
+                  </>
+                )}
+              </FormSection>
+            </>
+          )}
 
           {ticketUser?.usableUserId && ticket && !ticketUsedStatus?.used && (
             <FormSection>
@@ -307,9 +329,11 @@ const DashboardTicketViewPage: React.FC = () => {
               <FormItem>
                 <FormButton
                   color="danger"
-                  onClick={handleUnassign}
-                  disabled={isProgressForUnassign}>
-                  <IconLabel label="チケットの割り当てを解除する" icon={<MdLinkOff />} />
+                  disabled={isProgressForUnassign}
+                  onClick={handleUnassign}>
+                  <IconLabel
+                    icon={<MdLinkOff />}
+                    label="チケットの割り当てを解除する" />
                 </FormButton>
               </FormItem>
             </FormSection>

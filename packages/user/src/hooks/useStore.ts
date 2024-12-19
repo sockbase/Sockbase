@@ -68,7 +68,7 @@ const useStore = (): IUseStore => {
   const getStoreByIdOptionalAsync =
     async (storeId: string): Promise<SockbaseStoreDocument | null> =>
       await getStoreByIdAsync(storeId)
-        .then((store) => store)
+        .then(store => store)
         .catch(() => null)
 
   const getStoresByOrganizationIdAsync =
@@ -193,7 +193,7 @@ const useStore = (): IUseStore => {
         ticketUsedStatusRef,
         { used },
         { merge: true })
-        .catch((err) => { throw err })
+        .catch(err => { throw err })
     }
 
   const getTicketsByUserIdAsync =
@@ -208,8 +208,8 @@ const useStore = (): IUseStore => {
       )
       const ticketsSnapshot = await FirestoreDB.getDocs(ticketsQuery)
       const ticketsDocs = ticketsSnapshot.docs
-        .filter((doc) => doc.exists())
-        .map((doc) => doc.data())
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
 
       return ticketsDocs
     }
@@ -226,8 +226,8 @@ const useStore = (): IUseStore => {
       )
       const ticketsSnapshot = await FirestoreDB.getDocs(ticketsQuery)
       const ticketsDocs = ticketsSnapshot.docs
-        .filter((doc) => doc.exists())
-        .map((doc) => doc.data())
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
 
       return ticketsDocs
     }
@@ -252,8 +252,8 @@ const useStore = (): IUseStore => {
       )
       const ticketUsersSnapshot = await FirestoreDB.getDocs(ticketUsersQuery)
       const ticketUsersDocs = ticketUsersSnapshot.docs
-        .filter((doc) => doc.exists())
-        .map((doc) => doc.data())
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
 
       return ticketUsersDocs
     }, [user])
@@ -290,7 +290,7 @@ const useStore = (): IUseStore => {
     const headers = 'hashId,type,name,postalCode,address,telephone'
     return [
       headers,
-      ...tickets.map((t) => {
+      ...tickets.map(t => {
         const usableUserId = t.hashId && ticketUsers[t.hashId].usableUserId
 
         return [

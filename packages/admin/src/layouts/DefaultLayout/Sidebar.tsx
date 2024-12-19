@@ -65,56 +65,61 @@ interface Props {
   closeMenu: () => void
 }
 
-const Sidebar: React.FC<Props> = (props) => {
+const Sidebar: React.FC<Props> = props => {
   return (
     props.showMenu
-      ? <Container>
-        <MenuWrap>
-          {props.user === null && (
-            <MenuSection>
-              <MenuLinkItem to="/login">
-                <MenuIcon><MdLogin /></MenuIcon>
-                <MenuLabel>ログイン</MenuLabel>
-              </MenuLinkItem>
-            </MenuSection>
-          )}
-          {props.user && (
-            <>
+      ? (
+        <Container>
+          <MenuWrap>
+            {props.user === null && (
               <MenuSection>
-                <MenuItemCard>
-                  <MenuItemCardTitle>ログイン中ユーザ</MenuItemCardTitle>
-                  <MenuItemCardContent>
-                    {props.user.email}
-                  </MenuItemCardContent>
-                </MenuItemCard>
-                <MenuButtonItem onClick={props.logout}>
-                  <MenuIcon><MdLogout /></MenuIcon>
-                  <MenuLabel>ログアウト</MenuLabel>
-                </MenuButtonItem>
+                <MenuLinkItem to="/login">
+                  <MenuIcon><MdLogin /></MenuIcon>
+                  <MenuLabel>ログイン</MenuLabel>
+                </MenuLinkItem>
               </MenuSection>
-              {menuLinks
-                .filter(menuLink =>
-                  (menuLink.requireCommonRole === null || (props.commonRole ?? 0) >= menuLink.requireCommonRole) &&
-                  (menuLink.requireSystemRole === null || (props.systemRole ?? 0) >= menuLink.requireSystemRole))
-                .map((menuLink, index) => (
-                  <MenuSection key={index}>
-                    {menuLink.sectionName && (
-                      <MenuSectionTitle>{menuLink.sectionName}</MenuSectionTitle>
-                    )}
-                    <MenuItemRack>
-                      {menuLink.items.map((item, index) => (
-                        <MenuLinkItem key={index} to={item.to} onClick={props.closeMenu}>
-                          <MenuIcon>{item.icon}</MenuIcon>
-                          <MenuLabel>{item.label}</MenuLabel>
-                        </MenuLinkItem>
-                      ))}
-                    </MenuItemRack>
-                  </MenuSection>
-                ))}
-            </>
-          )}
-        </MenuWrap>
-      </Container>
+            )}
+            {props.user && (
+              <>
+                <MenuSection>
+                  <MenuItemCard>
+                    <MenuItemCardTitle>ログイン中ユーザ</MenuItemCardTitle>
+                    <MenuItemCardContent>
+                      {props.user.email}
+                    </MenuItemCardContent>
+                  </MenuItemCard>
+                  <MenuButtonItem onClick={props.logout}>
+                    <MenuIcon><MdLogout /></MenuIcon>
+                    <MenuLabel>ログアウト</MenuLabel>
+                  </MenuButtonItem>
+                </MenuSection>
+                {menuLinks
+                  .filter(menuLink =>
+                    (menuLink.requireCommonRole === null || (props.commonRole ?? 0) >= menuLink.requireCommonRole)
+                    && (menuLink.requireSystemRole === null || (props.systemRole ?? 0) >= menuLink.requireSystemRole))
+                  .map((menuLink, index) => (
+                    <MenuSection key={index}>
+                      {menuLink.sectionName && (
+                        <MenuSectionTitle>{menuLink.sectionName}</MenuSectionTitle>
+                      )}
+                      <MenuItemRack>
+                        {menuLink.items.map((item, index) => (
+                          <MenuLinkItem
+                            key={index}
+                            onClick={props.closeMenu}
+                            to={item.to}>
+                            <MenuIcon>{item.icon}</MenuIcon>
+                            <MenuLabel>{item.label}</MenuLabel>
+                          </MenuLinkItem>
+                        ))}
+                      </MenuItemRack>
+                    </MenuSection>
+                  ))}
+              </>
+            )}
+          </MenuWrap>
+        </Container>
+      )
       : <></>
   )
 }

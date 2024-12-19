@@ -35,7 +35,8 @@ const EventDownloadCircleCutPage: React.FC = () => {
 
     if (add) {
       setDownloadCutHashIds(s => ([...s, hashId]))
-    } else {
+    }
+    else {
       const newQueue = downloadCutHashIds
         .filter(id => id !== hashId)
       setDownloadCutHashIds(newQueue)
@@ -104,7 +105,8 @@ const EventDownloadCircleCutPage: React.FC = () => {
         .filter(([, v]) => v)
         .map(([k]) => k)
       setDownloadCutHashIds(downloadableCutHashIds)
-    } else {
+    }
+    else {
       setDownloadCutHashIds([])
     }
   }, [cutURLs, allSelect])
@@ -134,7 +136,7 @@ const EventDownloadCircleCutPage: React.FC = () => {
         hashId,
         data: await getCircleCutURLByHashIdNullableAsync(hashId)
       })))
-        .then((fetchedCutURLs) => {
+        .then(fetchedCutURLs => {
           const mappedCutURLs = fetchedCutURLs.reduce<Record<string, string | null>>((p, c) => ({ ...p, [c.hashId]: c.data }), {})
           setCutURLs(mappedCutURLs)
         })
@@ -145,7 +147,9 @@ const EventDownloadCircleCutPage: React.FC = () => {
   }, [eventId])
 
   return (
-    <DefaultLayout title="サークルカットダウンロード" requireCommonRole={2}>
+    <DefaultLayout
+      requireCommonRole={2}
+      title="サークルカットダウンロード">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/events">イベント一覧</Link></li>
@@ -154,55 +158,61 @@ const EventDownloadCircleCutPage: React.FC = () => {
       </Breadcrumbs>
 
       <PageTitle
-        title="サークルカットダウンロード"
-        icon={<MdImage />} />
+        icon={<MdImage />}
+        title="サークルカットダウンロード" />
 
       <FormSection>
         <FormItem>
           <FormCheckbox
-            name="all-select"
             checked={allSelect}
-            onChange={checked => setAllSelect(checked)}
+            inlined
             label="すべて選択"
-            inlined />
+            name="all-select"
+            onChange={checked => setAllSelect(checked)} />
         </FormItem>
       </FormSection>
 
       <table>
         <thead>
           <tr>
-            <th style={{ width: '10%' }}></th>
+            <th style={{ width: '10%' }} />
             <th>申し込み ID</th>
             <th>サークル名</th>
             <th>サークルカット</th>
           </tr>
         </thead>
         <tbody>
-          {apps && apps.length > 0 &&
-            apps.map(a => {
-              const circleCutURL = a.hashId && getCircleCutURL(a.hashId)
+          {apps && apps.length > 0
+          && apps.map(a => {
+            const circleCutURL = a.hashId && getCircleCutURL(a.hashId)
 
-              return <tr key={a.id}>
+            return (
+              <tr key={a.id}>
                 <td>
                   <FormCheckbox
-                    label='DL'
-                    name={`cutDownload-${a.id}`}
                     checked={(a.hashId && downloadCutHashIds.includes(a.hashId)) || false}
-                    onChange={checked => setDownloadQueue(a.hashId, checked)}
-                    disabled={!circleCutURL} />
+                    disabled={!circleCutURL}
+                    label="DL"
+                    name={`cutDownload-${a.id}`}
+                    onChange={checked => setDownloadQueue(a.hashId, checked)} />
                 </td>
                 <td>{a.hashId}</td>
                 <td>{a.circle.name}</td>
                 <td>
                   {circleCutURL
-                    ? <a href={circleCutURL} target="_blank" rel="noreferrer">
-                      <CircleCutImage src={circleCutURL} />
-                    </a>
+                    ? (
+                      <a
+                        href={circleCutURL}
+                        rel="noreferrer"
+                        target="_blank">
+                        <CircleCutImage src={circleCutURL} />
+                      </a>
+                    )
                     : <>-</>}
                 </td>
               </tr>
-            })
-          }
+            )
+          })}
         </tbody>
       </table>
 
@@ -213,9 +223,11 @@ const EventDownloadCircleCutPage: React.FC = () => {
       <FormSection>
         <FormItem>
           <FormButton
-            onClick={handleDownload}
-            disabled={downloadCutHashIds.length <= 0}>
-            <IconLabel label="ダウンロード" icon={<MdDownload />} />
+            disabled={downloadCutHashIds.length <= 0}
+            onClick={handleDownload}>
+            <IconLabel
+              icon={<MdDownload />}
+              label="ダウンロード" />
           </FormButton>
         </FormItem>
       </FormSection>
