@@ -253,18 +253,17 @@ const createTicketCoreAsync =
         applicationStatus: isAdmin || isStandalone ? 2 : 0
       })
 
-    if (!isStandalone) {
-      await firestore
-        .doc(`/_ticketUsers/${hashId}`)
-        .set({
-          userId,
-          storeId: store.id,
-          typeId: type.id,
-          usableUserId: store.permissions.ticketUserAutoAssign ? userId : null,
-          used: false,
-          usedAt: null
-        })
-    }
+    await firestore
+      .doc(`/_ticketUsers/${hashId}`)
+      .set({
+        userId,
+        storeId: store.id,
+        typeId: type.id,
+        usableUserId: store.permissions.ticketUserAutoAssign ? userId : null,
+        used: false,
+        usedAt: null,
+        isStandalone
+      })
 
     return {
       ticketId,

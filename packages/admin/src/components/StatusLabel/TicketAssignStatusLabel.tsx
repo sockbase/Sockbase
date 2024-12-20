@@ -1,22 +1,22 @@
 import { useMemo } from 'react'
-import { MdCheck, MdOutlineQuestionMark, MdPendingActions } from 'react-icons/md'
+import { MdCheck, MdHowToReg, MdOutlineQuestionMark, MdPendingActions } from 'react-icons/md'
 import styled from 'styled-components'
 import BlinkField from '../Parts/BlinkField'
 import IconLabel from '../Parts/IconLabel'
+import type { SockbaseTicketUserDocument } from 'packages/types/src'
 
 interface Props {
-  isStandalone: boolean | undefined
-  usableUserId: string | null | undefined
+  ticketUser: SockbaseTicketUserDocument | undefined
   isOnlyIcon?: boolean
 }
 
 const TicketAssignStatusLabel: React.FC<Props> = props => {
   const labelText = useMemo(() => {
-    switch (props.isStandalone) {
+    switch (props.ticketUser?.isStandalone) {
       case true:
         return 'スタンドアロン'
     }
-    switch (props.usableUserId) {
+    switch (props.ticketUser?.usableUserId) {
       case undefined:
         return '状態不明'
       case null:
@@ -24,14 +24,14 @@ const TicketAssignStatusLabel: React.FC<Props> = props => {
       default:
         return '割当済み'
     }
-  }, [props.isStandalone, props.usableUserId])
+  }, [props.ticketUser])
 
   const iconElement = useMemo(() => {
-    switch (props.isStandalone) {
+    switch (props.ticketUser?.isStandalone) {
       case true:
-        return <MdCheck />
+        return <MdHowToReg />
     }
-    switch (props.usableUserId) {
+    switch (props.ticketUser?.usableUserId) {
       case undefined:
         return <MdOutlineQuestionMark />
       case null:
@@ -39,15 +39,15 @@ const TicketAssignStatusLabel: React.FC<Props> = props => {
       default:
         return <MdCheck />
     }
-  }, [props.usableUserId, props.isStandalone])
+  }, [props.ticketUser])
 
   const assigned = useMemo(() => {
-    if (props.usableUserId === undefined && props.isStandalone === undefined) return undefined
-    return props.usableUserId !== null || props.isStandalone
-  }, [props.usableUserId, props.isStandalone])
+    if (!props.ticketUser) return undefined
+    return props.ticketUser.usableUserId !== null || props.ticketUser.isStandalone
+  }, [props.ticketUser])
 
   return (
-    props.usableUserId !== undefined || props.isStandalone !== undefined
+    props.ticketUser
       ? (
         <Container assigned={assigned}>
           <IconLabel

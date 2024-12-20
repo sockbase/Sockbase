@@ -221,9 +221,7 @@ const TicketViewPage: React.FC = () => {
               <tr>
                 <th>割り当て状況</th>
                 <td>
-                  <TicketAssignStatusLabel
-                    isStandalone={ticket?.isStandalone}
-                    usableUserId={ticketUser?.usableUserId} />
+                  <TicketAssignStatusLabel ticketUser={ticketUser} />
                 </td>
               </tr>
               <tr>
@@ -252,24 +250,24 @@ const TicketViewPage: React.FC = () => {
               <tr>
                 <th>使用者氏名</th>
                 <td>
-                  {ticket
-                    ? !ticket.isStandalone
-                      ? ticketUserData
+                  {ticketUser
+                    ? ticketUser.isStandalone
+                      ? '---'
+                      : ticketUserData
                         ? ticketUserData.name
                         : '未割当'
-                      : '---'
                     : <BlinkField />}
                 </td>
               </tr>
               <tr>
                 <th>使用者メールアドレス</th>
                 <td>
-                  {ticket
-                    ? !ticket.isStandalone
-                      ? ticketUserData
-                        ? ticketUserData.email
+                  {ticketUser
+                    ? ticketUser.isStandalone
+                      ? '---'
+                      : ticketUserData
+                        ? ticketUserData.name
                         : '未割当'
-                      : '---'
                     : <BlinkField />}
                 </td>
               </tr>
