@@ -412,7 +412,7 @@ const StoreViewPage: React.FC = () => {
                       : <BlinkField />}
                 </td>
                 <td><Link to={`/tickets/${ticket.hashId}`}>{ticket.hashId ?? '---'}</Link></td>
-                <td>{formatByDate(ticket.createdAt, 'M/D H:m')}</td>
+                <td>{formatByDate(ticket.createdAt, 'M/D H:mm')}</td>
               </ActiveTR>
             ))}
         </tbody>
