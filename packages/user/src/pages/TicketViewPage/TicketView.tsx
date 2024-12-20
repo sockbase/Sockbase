@@ -46,7 +46,7 @@ const TicketView: React.FC<Props> = props => {
     }
 
     return true
-  }, [])
+  }, [ticketUser, props.userId])
 
   const handleAssignMe = useCallback(() => {
     if (!ticketUser || ticketUser.isStandalone || ticketUser.userId !== props.userId) return
