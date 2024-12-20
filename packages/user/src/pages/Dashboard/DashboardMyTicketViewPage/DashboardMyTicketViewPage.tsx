@@ -26,11 +26,11 @@ const DashboardMyTicketViewPage: React.FC = () => {
   const { user } = useFirebase()
   const { formatByDate } = useDayjs()
   const {
-    getTicketUserByHashIdOptionalAsync,
+    getTicketUserByHashIdAsync,
     getStoreByIdAsync
   } = useStore()
 
-  const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
+  const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
 
   const pageTitle = useMemo(() => {
@@ -45,7 +45,7 @@ const DashboardMyTicketViewPage: React.FC = () => {
     const fetchAsync = async (): Promise<void> => {
       if (!hashId) return
 
-      getTicketUserByHashIdOptionalAsync(hashId)
+      getTicketUserByHashIdAsync(hashId)
         .then(fetchedTicketUser => setTicketUser(fetchedTicketUser))
         .catch(err => { throw err })
     }

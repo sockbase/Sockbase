@@ -258,7 +258,8 @@ export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
         ? new Date(data.updatedAt.seconds * 1000)
         : null,
       hashId: data.hashId,
-      createdUserId: data.createdUserId
+      createdUserId: data.createdUserId,
+      isStandalone: data.isStandalone ?? false
     }
   }
 }
@@ -290,7 +291,8 @@ export const ticketUserConverter: FirestoreDataConverter<SockbaseTicketUserDocum
       typeId: data.typeId,
       usableUserId: data.usableUserId,
       used: data.used,
-      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null
+      usedAt: data.usedAt ? new Date(data.usedAt.seconds * 1000) : null,
+      isStandalone: data.isStandalone ?? false
     }
   }
 }

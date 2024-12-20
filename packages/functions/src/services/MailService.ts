@@ -28,7 +28,7 @@ const sendMailAcceptCircleApplicationAsync = async (app: SockbaseApplicationDocu
 }
 
 const sendMailAcceptTicketAsync = async (ticket: SockbaseTicketDocument): Promise<void> => {
-  if (ticket.createdUserId) return
+  if (ticket.createdUserId || !ticket.userId) return
 
   const email = await getEmail(ticket.userId)
   const store = await getStoreByIdAsync(ticket.storeId)

@@ -34,10 +34,11 @@ const TicketCreatePage: React.FC = () => {
   const [store, setStore] = useState<SockbaseStoreDocument>()
 
   const [createdTickets, setCreatedTickets] = useState<SockbaseTicketCreatedResult[]>([])
-  const [createTicketData, setCreateTicketData] = useState({
+  const [createTicketData, setCreateTicketData] = useState<{ email: string | null, typeId: string }>({
     email: '',
     typeId: ''
   })
+  const [isStandalone, setIsStandalone] = useState(false)
 
   const [isClearEmail, setIsClearEmail] = useState(false)
 
@@ -46,13 +47,13 @@ const TicketCreatePage: React.FC = () => {
 
   const errorCount = useMemo(() => {
     const validators = [
-      validator.isEmail(createTicketData.email),
-      !validator.isEmpty(createTicketData.typeId)
+      (isStandalone && !createTicketData.email) || (createTicketData.email && validator.isEmail(createTicketData.email)),
+      validator.isNotEmpty(createTicketData.typeId)
     ]
     return validators
       .filter(v => !v)
       .length
-  }, [createTicketData])
+  }, [createTicketData, isStandalone])
 
   const getType = useCallback((typeId: string) => {
     return store?.types.find(t => t.id === typeId)
@@ -63,15 +64,20 @@ const TicketCreatePage: React.FC = () => {
   }, [envHelper.userAppURL])
 
   const createTicket = useCallback(() => {
-    if (!storeId || !createTicketData.email || !createTicketData.typeId) return
+    if (!storeId || !createTicketData.typeId) return
 
     const typeName = getType(createTicketData.typeId)?.name
-    if (!confirm(`以下のチケットを作成します\n\nメールアドレス: ${createTicketData.email}\nチケット種別: ${typeName}\n\nよろしいですか？`)) return
+    if (!confirm(`以下のチケットを作成します\n\nメールアドレス: ${createTicketData.email || 'スタンドアロン'}\nチケット種別: ${typeName}\n\nよろしいですか？`)) return
 
     setProgress(true)
     setError(null)
 
-    createTicketForAdminAsync(storeId, createTicketData)
+    const sanitizedTicketData = {
+      ...createTicketData,
+      email: isStandalone ? null : createTicketData.email
+    }
+
+    createTicketForAdminAsync(storeId, sanitizedTicketData)
       .then(ticket => {
         alert('追加しました')
         setCreatedTickets(s => ([...s, ticket]))
@@ -87,7 +93,7 @@ const TicketCreatePage: React.FC = () => {
         throw err
       })
       .finally(() => setProgress(false))
-  }, [storeId, createTicketData, isClearEmail])
+  }, [storeId, createTicketData, isClearEmail, isStandalone])
 
   useEffect(() => {
     if (!storeId) return
@@ -116,14 +122,6 @@ const TicketCreatePage: React.FC = () => {
           <h2>チケット作成</h2>
           <FormSection>
             <FormItem>
-              <FormLabel>メールアドレス</FormLabel>
-              <FormInput
-                onChange={e => setCreateTicketData(s => ({ ...s, email: e.target.value }))}
-                placeholder="sumire@sockbase.net"
-                value={createTicketData.email} />
-              <FormHelp>ユーザが存在する必要があります</FormHelp>
-            </FormItem>
-            <FormItem>
               <FormLabel>発行するチケット種別</FormLabel>
               <FormSelect
                 onChange={e => setCreateTicketData(s => ({ ...s, typeId: e.target.value }))}
@@ -142,6 +140,22 @@ const TicketCreatePage: React.FC = () => {
               <FormHelp>
                 決済が必要ないチケット種別のみ発行できます
               </FormHelp>
+            </FormItem>
+            <FormItem>
+              <FormCheckbox
+                checked={isStandalone}
+                label="スタンドアロンチケットとして発券する"
+                name="isStandalone"
+                onChange={setIsStandalone} />
+            </FormItem>
+            <FormItem>
+              <FormLabel>メールアドレス</FormLabel>
+              <FormInput
+                disabled={isStandalone}
+                onChange={e => setCreateTicketData(s => ({ ...s, email: e.target.value }))}
+                placeholder="sumire@sockbase.net"
+                value={createTicketData.email ?? ''} />
+              <FormHelp>ユーザが存在する必要があります</FormHelp>
             </FormItem>
           </FormSection>
 
@@ -197,7 +211,7 @@ const TicketCreatePage: React.FC = () => {
                           {getType(t.typeId)?.name}
                         </a>
                       </td>
-                      <td>{t.email}</td>
+                      <td>{t.email || 'スタンドアロン'}</td>
                       <td>{formatByDate(t.createdAt, 'H時mm分ss秒')}</td>
                       <td><CopyToClipboard content={(t.hashId && getAssignURL(t.hashId)) ?? ''} /></td>
                     </tr>

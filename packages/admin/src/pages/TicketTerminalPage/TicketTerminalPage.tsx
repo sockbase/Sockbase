@@ -25,6 +25,7 @@ import TwoColumnLayout from '../../components/TwoColumnLayout'
 import useDayjs from '../../hooks/useDayjs'
 import useFirebaseError from '../../hooks/useFirebaseError'
 import usePayment from '../../hooks/usePayment'
+import useRole from '../../hooks/useRole'
 import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
 import useValidate from '../../hooks/useValidate'
@@ -55,6 +56,7 @@ const TicketTerminalPage: React.FC = () => {
   const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
   const validator = useValidate()
+  const { commonRole } = useRole()
 
   const [playSEOK] = useSound(OKSound)
   const [playSENG] = useSound(NGSound)
@@ -69,8 +71,8 @@ const TicketTerminalPage: React.FC = () => {
   const [ticket, setTicket] = useState<SockbaseTicketDocument>()
   const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
-  const [ownerUser, setOwnerUser] = useState<SockbaseAccount>()
-  const [usableUser, setUsableUser] = useState<SockbaseAccount>()
+  const [ownerUser, setOwnerUser] = useState<SockbaseAccount | null>()
+  const [usableUser, setUsableUser] = useState<SockbaseAccount | null>()
 
   const [isProgressForUsedStatus, setProgressForUsedStatus] = useState(false)
   const [usedStatusError, setUsedStatusError] = useState<string | null>()
@@ -79,16 +81,16 @@ const TicketTerminalPage: React.FC = () => {
   const [isHoldQRReader, setHoldQRReader] = useState(false)
 
   const type = useMemo(() => {
-    if (!ticketUser || !store) return
-    return store.types.find(t => t.id === ticketUser.typeId)
-  }, [ticketUser, store])
+    if (!ticket || !store) return
+    return store.types.find(t => t.id === ticket.typeId)
+  }, [ticket, store])
 
   const canUseTicket = useMemo(() => {
     if (ticketMeta?.applicationStatus !== 2) return false
-    if (!ticketUser?.usableUserId) return false
+    if (!ticket?.isStandalone && !ticketUser?.usableUserId) return false
     if (payment && payment.status !== 1) return false
     return true
-  }, [ticketMeta, ticketUser, type, payment])
+  }, [ticket, ticketMeta, ticketUser, type, payment])
 
   const searchTicketAsync = useCallback(async (hashId: string) => {
     const fetchAsync = async (): Promise<void> => {
@@ -102,25 +104,70 @@ const TicketTerminalPage: React.FC = () => {
       setOwnerUser(undefined)
       setUsableUser(undefined)
 
-      const fetchedTicketUser = await getTicketUserByHashIdNullableAsync(hashId)
-      setTicketUser(fetchedTicketUser)
+      const fetchedTicketHash = await getTicketIdByHashIdAsync(hashId)
+        .catch(err => { throw err })
+      setTicketHash(fetchedTicketHash)
 
-      if (!fetchedTicketUser) return
-      getStoreByIdAsync(fetchedTicketUser.storeId)
-        .then(setStore)
+      getTicketUserByHashIdNullableAsync(fetchedTicketHash.hashId)
+        .then(setTicketUser)
         .catch(err => { throw err })
-      getTicketIdByHashIdAsync(fetchedTicketUser.hashId)
-        .then(setTicketHash)
+      getTicketByIdAsync(fetchedTicketHash.ticketId)
+        .then(fetchedTicket => setTicket(fetchedTicket))
         .catch(err => { throw err })
-      if (fetchedTicketUser.usableUserId) {
-        getUserDataByUserIdAndStoreIdAsync(fetchedTicketUser.usableUserId, fetchedTicketUser.storeId)
-          .then(setUsableUser)
+
+      getTicketUsedStatusByIdAsync(fetchedTicketHash.ticketId)
+        .then(fetchedUsedStatus => setUsedStatus(fetchedUsedStatus))
+        .catch(err => { throw err })
+      getTicketMetaByIdAsync(fetchedTicketHash.ticketId)
+        .then(fetchedMeta => setTicketMeta(fetchedMeta))
+        .catch(err => { throw err })
+
+      if (fetchedTicketHash.paymentId) {
+        getPaymentByIdAsync(fetchedTicketHash.paymentId)
+          .then(setPayment)
           .catch(err => { throw err })
+      }
+      else {
+        setPayment(null)
       }
     }
     fetchAsync()
       .catch(err => { throw err })
   }, [])
+
+  const handleReset = useCallback((showDialog: boolean) => {
+    if (showDialog && !confirm('読み取り結果をリセットします。\nよろしいですか？')) return
+
+    setUsedStatusError(undefined)
+    setTicketUser(undefined)
+    setStore(undefined)
+    setTicketHash(undefined)
+    setUsedStatus(undefined)
+    setTicketMeta(undefined)
+    setTicket(undefined)
+    setPayment(undefined)
+    setOwnerUser(undefined)
+    setUsableUser(undefined)
+  }, [])
+
+  useEffect(() => {
+    if (!ticket) return
+    getStoreByIdAsync(ticket.storeId)
+      .then(setStore)
+      .catch(err => { throw err })
+  }, [ticket])
+
+  useEffect(() => {
+    if (!ticketUser) return
+    if (ticketUser.usableUserId) {
+      getUserDataByUserIdAndStoreIdAsync(ticketUser.usableUserId, ticketUser.storeId)
+        .then(setUsableUser)
+        .catch(err => { throw err })
+    }
+    else {
+      setUsableUser(null)
+    }
+  }, [ticketUser])
 
   const updateTicketUsedStatus = useCallback((used: boolean) => {
     if (!ticketHash) return
@@ -176,55 +223,21 @@ const TicketTerminalPage: React.FC = () => {
     setTicketHashId(s => `${s}${event.key}`)
   }, [ticketUser, ticketHashId])
 
-  const handleReset = useCallback((showDialog: boolean) => {
-    if (showDialog && !confirm('読み取り結果をリセットします。\nよろしいですか？')) return
-
-    setUsedStatusError(undefined)
-    setTicketUser(undefined)
-    setStore(undefined)
-    setTicketHash(undefined)
-    setUsedStatus(undefined)
-    setTicketMeta(undefined)
-    setTicket(undefined)
-    setPayment(undefined)
-    setOwnerUser(undefined)
-    setUsableUser(undefined)
-  }, [])
-
   useEffect(() => {
     if (ticketHashId) return
     handleReset(false)
   }, [ticketHashId])
 
   useEffect(() => {
-    if (!ticketHash) return
-
-    getTicketByIdAsync(ticketHash.ticketId)
-      .then(fetchedTicket => setTicket(fetchedTicket))
-      .catch(err => { throw err })
-    getTicketUsedStatusByIdAsync(ticketHash.ticketId)
-      .then(fetchedUsedStatus => setUsedStatus(fetchedUsedStatus))
-      .catch(err => { throw err })
-    getTicketMetaByIdAsync(ticketHash.ticketId)
-      .then(fetchedMeta => setTicketMeta(fetchedMeta))
-      .catch(err => { throw err })
-
-    if (ticketHash.paymentId) {
-      getPaymentByIdAsync(ticketHash.paymentId)
-        .then(setPayment)
+    if (!ticket) return
+    if (ticket.userId) {
+      getUserDataByUserIdAndStoreIdAsync(ticket.userId, ticket.storeId)
+        .then(fetchedUser => setOwnerUser(fetchedUser))
         .catch(err => { throw err })
     }
     else {
-      setPayment(null)
+      setOwnerUser(null)
     }
-  }, [ticketHash])
-
-  useEffect(() => {
-    if (!ticket) return
-
-    getUserDataByUserIdAndStoreIdAsync(ticket.userId, ticket.storeId)
-      .then(fetchedUser => setOwnerUser(fetchedUser))
-      .catch(err => { throw err })
   }, [ticket])
 
   useEffect(() => {
@@ -335,7 +348,7 @@ const TicketTerminalPage: React.FC = () => {
               type="warning">
               <ul>
                 {ticketMeta.applicationStatus !== 2 && <li>申し込みが確定していません。管理者に問い合わせてください。</li>}
-                {!ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。自身で使用する場合は「チケットを有効化する」を押してください。</li>}
+                {!ticket?.isStandalone && !ticketUser?.usableUserId && <li>チケットの割り当てが行われていません。自身で使用する場合は「チケットを有効化する」を押してください。</li>}
                 {payment && payment.status !== 1 && <li>支払いが完了していません。管理者に問い合わせてください。</li>}
               </ul>
             </Alert>
@@ -382,16 +395,21 @@ const TicketTerminalPage: React.FC = () => {
           <table>
             <tbody>
               <tr>
+                <th>参加種別</th>
+                <td>{(type && (
+                  <TicketTypeLabel
+                    store={store}
+                    typeId={type.id} />
+                )) ?? <BlinkField />}
+                </td>
+              </tr>
+              <tr>
                 <th>使用ステータス</th>
                 <td>
                   {ticketUser !== undefined && ticketUser !== null
                     ? <TicketUsedStatusLabel used={ticketUser?.used} />
                     : <BlinkField />}
                 </td>
-              </tr>
-              <tr>
-                <th>使用者</th>
-                <td>{ticketUser !== undefined && usableUser !== null ? usableUser?.name : <BlinkField />}</td>
               </tr>
               <tr>
                 <th>使用日時</th>
@@ -411,15 +429,6 @@ const TicketTerminalPage: React.FC = () => {
                 <td>{ticketUser !== undefined && store !== null ? store?.name : <BlinkField />}</td>
               </tr>
               <tr>
-                <th>参加種別</th>
-                <td>{(type && (
-                  <TicketTypeLabel
-                    store={store}
-                    typeId={type.id} />
-                )) ?? <BlinkField />}
-                </td>
-              </tr>
-              <tr>
                 <th>申し込みステータス</th>
                 <td>
                   {ticketUser !== undefined && ticketMeta !== null
@@ -437,18 +446,38 @@ const TicketTerminalPage: React.FC = () => {
                     : <BlinkField />}
                 </td>
               </tr>
-              <tr>
-                <th>申し込み日時</th>
-                <td>
-                  {ticketUser !== undefined && ticket !== null
-                    ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年 M月 D日 H時mm分')
-                    : <BlinkField />}
-                </td>
-              </tr>
-              <tr>
-                <th>購入者</th>
-                <td>{ticketUser !== undefined && ownerUser !== null ? ownerUser?.name : <BlinkField />}</td>
-              </tr>
+              {commonRole && commonRole >= 2 && (
+                <>
+                  <tr>
+                    <th>購入者</th>
+                    <td>
+                      {ticket
+                        ? ticket.isStandalone
+                          ? 'スタンドアロン'
+                          : ticketUser !== undefined && ownerUser !== null && ownerUser?.name
+                        : <BlinkField />}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>使用者</th>
+                    <td>
+                      {ticket
+                        ? ticket.isStandalone
+                          ? 'スタンドアロン'
+                          : ticketUser !== undefined && usableUser !== null && usableUser?.name
+                        : <BlinkField />}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>申し込み日時</th>
+                    <td>
+                      {ticketUser !== undefined && ticket !== null
+                        ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年 M月 D日 H時mm分')
+                        : <BlinkField />}
+                    </td>
+                  </tr>
+                </>
+              )}
             </tbody>
           </table>
         </>
