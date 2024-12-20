@@ -137,6 +137,16 @@ const TicketView: React.FC<Props> = props => {
                 このチケットは既に使用されています。
             </Alert>
           )}
+          {ticketUser?.usableUserId === props.userId && (
+            <>
+              <p>
+                上の QR コードを入口スタッフまでご提示ください。
+              </p>
+              <p>
+                QR コードを提示できない場合は、この画面を印刷しご持参ください。
+              </p>
+            </>
+          )}
           {!ticketUser && (
             <Loading text="チケット情報" />
           )}
@@ -185,6 +195,7 @@ const TicketStatusContainer = styled.div`
 `
 const UsedTicketAlert = styled.div`
   background-color: var(--danger-color);
+  color: var(--white-color);
   padding: 10px;
   text-align: center;
 `
