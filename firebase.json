@@ -47,6 +47,24 @@
           "destination": "/index.html"
         }
       ]
+    },
+    {
+      "target": "scanner",
+      "public": "./packages/scanner/dist",
+      "predeploy": [
+        "yarn workspace scanner build"
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ],
   "functions": {
