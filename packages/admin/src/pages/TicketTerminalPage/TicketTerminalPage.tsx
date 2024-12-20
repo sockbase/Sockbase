@@ -25,6 +25,7 @@ import TwoColumnLayout from '../../components/TwoColumnLayout'
 import useDayjs from '../../hooks/useDayjs'
 import useFirebaseError from '../../hooks/useFirebaseError'
 import usePayment from '../../hooks/usePayment'
+import useRole from '../../hooks/useRole'
 import useStore from '../../hooks/useStore'
 import useUserData from '../../hooks/useUserData'
 import useValidate from '../../hooks/useValidate'
@@ -55,6 +56,7 @@ const TicketTerminalPage: React.FC = () => {
   const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndStoreIdAsync } = useUserData()
   const validator = useValidate()
+  const { commonRole } = useRole()
 
   const [playSEOK] = useSound(OKSound)
   const [playSENG] = useSound(NGSound)
@@ -393,20 +395,19 @@ const TicketTerminalPage: React.FC = () => {
           <table>
             <tbody>
               <tr>
+                <th>参加種別</th>
+                <td>{(type && (
+                  <TicketTypeLabel
+                    store={store}
+                    typeId={type.id} />
+                )) ?? <BlinkField />}
+                </td>
+              </tr>
+              <tr>
                 <th>使用ステータス</th>
                 <td>
                   {ticketUser !== undefined && ticketUser !== null
                     ? <TicketUsedStatusLabel used={ticketUser?.used} />
-                    : <BlinkField />}
-                </td>
-              </tr>
-              <tr>
-                <th>使用者</th>
-                <td>
-                  {ticket
-                    ? ticket.isStandalone
-                      ? 'スタンドアロン'
-                      : ticketUser !== undefined && usableUser !== null && usableUser?.name
                     : <BlinkField />}
                 </td>
               </tr>
@@ -428,15 +429,6 @@ const TicketTerminalPage: React.FC = () => {
                 <td>{ticketUser !== undefined && store !== null ? store?.name : <BlinkField />}</td>
               </tr>
               <tr>
-                <th>参加種別</th>
-                <td>{(type && (
-                  <TicketTypeLabel
-                    store={store}
-                    typeId={type.id} />
-                )) ?? <BlinkField />}
-                </td>
-              </tr>
-              <tr>
                 <th>申し込みステータス</th>
                 <td>
                   {ticketUser !== undefined && ticketMeta !== null
@@ -454,24 +446,38 @@ const TicketTerminalPage: React.FC = () => {
                     : <BlinkField />}
                 </td>
               </tr>
-              <tr>
-                <th>申し込み日時</th>
-                <td>
-                  {ticketUser !== undefined && ticket !== null
-                    ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年 M月 D日 H時mm分')
-                    : <BlinkField />}
-                </td>
-              </tr>
-              <tr>
-                <th>購入者</th>
-                <td>
-                  {ticket
-                    ? ticket.isStandalone
-                      ? 'スタンドアロン'
-                      : ticketUser !== undefined && ownerUser !== null && ownerUser?.name
-                    : <BlinkField />}
-                </td>
-              </tr>
+              {commonRole && commonRole >= 2 && (
+                <>
+                  <tr>
+                    <th>購入者</th>
+                    <td>
+                      {ticket
+                        ? ticket.isStandalone
+                          ? 'スタンドアロン'
+                          : ticketUser !== undefined && ownerUser !== null && ownerUser?.name
+                        : <BlinkField />}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>使用者</th>
+                    <td>
+                      {ticket
+                        ? ticket.isStandalone
+                          ? 'スタンドアロン'
+                          : ticketUser !== undefined && usableUser !== null && usableUser?.name
+                        : <BlinkField />}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>申し込み日時</th>
+                    <td>
+                      {ticketUser !== undefined && ticket !== null
+                        ? ticket?.createdAt && formatByDate(ticket.createdAt, 'YYYY年 M月 D日 H時mm分')
+                        : <BlinkField />}
+                    </td>
+                  </tr>
+                </>
+              )}
             </tbody>
           </table>
         </>
