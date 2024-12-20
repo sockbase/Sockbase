@@ -348,10 +348,11 @@ export type SockbaseTicketStatusType = 0 | 1 | 2
  * 情報はチケットハッシュIDで引く
  */
 export interface SockbaseTicketUser {
-  userId: string
+  userId: string | null
   storeId: string
   typeId: string
   usableUserId: string | null
+  isStandalone: boolean
 }
 
 /**

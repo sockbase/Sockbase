@@ -14,15 +14,16 @@ const TicketBaseLayout: React.FC<Props> = props => {
     if (!props.store || !props.ticketUser) return ''
 
     const typeId = props.ticketUser.typeId
-    const type = props.store.types
-      .filter(t => t.id === typeId)[0]
+    const type = props.store.types.find(t => t.id === typeId)
+    if (!type) return ''
+
     return type.name
   }, [props.ticketUser, props.store])
 
   const pageTitle = useMemo(() => {
-    if (!props.ticketUser || !props.store) return '読み込み中'
+    if (!props.ticketUser || !props.store || !typeName) return '読み込み中'
     return `${props.store.name}(${typeName})`
-  }, [props.ticketUser, props.store])
+  }, [props.ticketUser, props.store, typeName])
 
   return (
     <TicketBaseLayoutContainer>

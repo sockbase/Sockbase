@@ -8,6 +8,7 @@ import FormButton from '../../components/Form/FormButton'
 import FormItem from '../../components/Form/FormItem'
 import FormSection from '../../components/Form/FormSection'
 import Alert from '../../components/Parts/Alert'
+import Loading from '../../components/Parts/Loading'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 import useDayjs from '../../hooks/useDayjs'
 import useStore from '../../hooks/useStore'
@@ -16,7 +17,7 @@ interface Props {
   ticketHashId: string
   ticketUser: SockbaseTicketUserDocument
   store: SockbaseStoreDocument
-  userId: string | null
+  userId: string
 }
 const TicketView: React.FC<Props> = props => {
   const { assignTicketUserAsync } = useStore()
@@ -46,7 +47,7 @@ const TicketView: React.FC<Props> = props => {
   }, [props.ticketUser, props.store])
 
   const handleAssignMe = (): void => {
-    if (!ticketUser || ticketUser.userId !== props.userId) return
+    if (!ticketUser || ticketUser.isStandalone || ticketUser.userId !== props.userId) return
     setProgress(true)
     assignTicketUserAsync(props.userId, props.ticketHashId)
       .then(() => {
@@ -72,74 +73,73 @@ const TicketView: React.FC<Props> = props => {
             <StoreName>{props.store.name}</StoreName>
             <TypeName>{type?.name}</TypeName>
             <QRCodeArea>
-              <QRCode
-                size={192}
-                value={props.ticketHashId} />
+              {ticketUser?.isStandalone === false && (
+                <QRCode
+                  size={192}
+                  value={props.ticketHashId} />
+              )}
+              {ticketUser?.isStandalone === true && (
+                <DummyQRCode />
+              )}
             </QRCodeArea>
             <Code>{props.ticketHashId}</Code>
           </TitleContainer>
         </TitleWrapper>
         <ContentContainer>
-          {ticketUser && ticketUser.usableUserId === null
-            ? (
-              <>
-                <Alert
-                  title="チケットの割り当てが完了していません"
-                  type="error">
+          {ticketUser?.isStandalone && (
+            <Alert
+              title="このチケットは使用できません (スタンドアロン)"
+              type="error" />
+          )}
+          {ticketUser?.usableUserId === null && !ticketUser?.isStandalone && (
+            <Alert
+              title="チケットの割り当てが完了していません"
+              type="error">
                 このチケットを使うユーザの割り当てが完了していません。
-                  {props.userId !== ticketUser.userId && (
-                    <>
-                      <br />
-                    チケット購入者からチケット受け取り URL を送付してもらい、情報を入力してください。
-                    </>
-                  )}
-                </Alert>
-                {props.userId === ticketUser.userId && (
-                  <>
-                    <p>
+              {props.userId !== ticketUser.userId && (
+                <>
+                  <br />
+                  チケット購入者からチケット受け取り URL を送付してもらい、情報を入力してください。
+                </>
+              )}
+              {props.userId === ticketUser.userId && (
+                <>
+                  <p>
                     自分でこのチケットを使う場合は「チケットを有効化する」を押してください。<br />
                     他の方にチケットを渡す場合は、<Link to={`/dashboard/tickets/${props.ticketHashId}`}>チケット情報表示ページ</Link> から チケット受け取り URL を渡してください。
-                    </p>
-                    <FormSection>
-                      <FormItem>
-                        <LoadingCircleWrapper isLoading={isProgress}>
-                          <FormButton
-                            disabled={isProgress}
-                            onClick={handleAssignMe}>チケットを有効化する
-                          </FormButton>
-                        </LoadingCircleWrapper>
-                      </FormItem>
-                    </FormSection>
-                  </>
-                )}
-              </>
-            )
-            : (
-              <>
-                {props.ticketUser.used
-                  ? (
-                    <Alert
-                      title="使用済みです"
-                      type="error">
-                  このチケットは既に使用されています。
-                    </Alert>
-                  )
-                  : ticketUser && props.userId !== ticketUser.usableUserId && (
-                    <Alert
-                      title="他の方に割り当てられているチケットです"
-                      type="warning">
+                  </p>
+                  <FormSection>
+                    <FormItem>
+                      <LoadingCircleWrapper isLoading={isProgress}>
+                        <FormButton
+                          disabled={isProgress}
+                          onClick={handleAssignMe}>チケットを有効化する
+                        </FormButton>
+                      </LoadingCircleWrapper>
+                    </FormItem>
+                  </FormSection>
+                </>
+              )}
+            </Alert>
+          )}
+          {props.userId !== ticketUser?.usableUserId && !ticketUser?.isStandalone && (
+            <Alert
+              title="他の方に割り当てられているチケットです"
+              type="warning">
                   あなたが使用すると、割り当てた方が使用できなくなります。<br />
                   自分のチケットは <Link to="/dashboard/mytickets">マイチケット</Link> から確認できます。
-                    </Alert>
-                  )}
-                <p>
-                上の QR コードを入口スタッフまでご提示ください。
-                </p>
-                <p>
-                QR コードを提示できない場合は、この画面を印刷しご持参ください。
-                </p>
-              </>
-            )}
+            </Alert>
+          )}
+          {ticketUser?.used && (
+            <Alert
+              title="使用済みです"
+              type="error">
+                このチケットは既に使用されています。
+            </Alert>
+          )}
+          {!ticketUser && (
+            <Loading text="チケット情報" />
+          )}
         </ContentContainer>
         <Footer>
           <UpdatedDate>
@@ -220,6 +220,13 @@ const QRCodeArea = styled.section`
 `
 const QRCode = styled(ReactQRCode)`
   padding: 20px;
+  background-color: #ffffff;
+`
+const DummyQRCode = styled.div`
+  display: inline-block;
+  padding: 20px;
+  width: 192px;
+  height: 192px;
   background-color: #ffffff;
 `
 const Code = styled.div`

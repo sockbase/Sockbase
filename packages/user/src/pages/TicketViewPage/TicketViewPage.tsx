@@ -11,29 +11,25 @@ import TicketView from './TicketView'
 
 const TicketViewPage: React.FC = () => {
   const { ticketHashId } = useParams<{ ticketHashId: string }>()
-  const { getTicketUserByHashIdOptionalAsync, getStoreByIdAsync } = useStore()
+  const { getTicketUserByHashIdNullableAsync, getStoreByIdAsync } = useStore()
   const { user } = useFirebase()
 
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
   const [store, setStore] = useState<SockbaseStoreDocument>()
 
-  const onInitialize = (): void => {
-    const fetchAsync = async (): Promise<void> => {
-      if (!ticketHashId) return
-
-      const fetchedTicketUser = await getTicketUserByHashIdOptionalAsync(ticketHashId)
-      setTicketUser(fetchedTicketUser)
-      if (!fetchedTicketUser) return
-
-      getStoreByIdAsync(fetchedTicketUser.storeId)
-        .then(fetchedStore => setStore(fetchedStore))
-        .catch(err => { throw err })
-    }
-
-    fetchAsync()
+  useEffect(() => {
+    if (!ticketHashId) return
+    getTicketUserByHashIdNullableAsync(ticketHashId)
+      .then(setTicketUser)
       .catch(err => { throw err })
-  }
-  useEffect(onInitialize, [ticketHashId])
+  }, [ticketHashId])
+
+  useEffect(() => {
+    if (!ticketUser) return
+    getStoreByIdAsync(ticketUser.storeId)
+      .then(setStore)
+      .catch(err => { throw err })
+  }, [ticketUser])
 
   return (
     <TicketBaseLayout
@@ -51,12 +47,12 @@ const TicketViewPage: React.FC = () => {
           )}
         </LoadingContainer>
       )}
-      {ticketHashId && ticketUser && store && user !== undefined && (
+      {ticketHashId && ticketUser && store && user?.uid && (
         <TicketView
           store={store}
           ticketHashId={ticketHashId}
           ticketUser={ticketUser}
-          userId={user?.uid ?? null} />
+          userId={user.uid} />
       )}
     </TicketBaseLayout >
   )
