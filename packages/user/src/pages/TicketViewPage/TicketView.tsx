@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import ReactQRCode from 'react-qr-code'
@@ -27,18 +27,6 @@ const TicketView: React.FC<Props> = props => {
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument>()
   const [updatedDate, setUpdatedDate] = useState<Date>()
 
-  const onInitialize = (): () => void => {
-    setTicketUser(props.ticketUser)
-    const cancelToken = setInterval(() => {
-      setUpdatedDate(new Date())
-    }, 1000)
-
-    return () => {
-      clearInterval(cancelToken)
-    }
-  }
-  useEffect(onInitialize, [props.ticketUser])
-
   const type = useMemo(() => {
     if (!props.ticketUser || !props.store) return
 
@@ -46,7 +34,14 @@ const TicketView: React.FC<Props> = props => {
       .filter(t => t.id === props.ticketUser.typeId)[0]
   }, [props.ticketUser, props.store])
 
-  const handleAssignMe = (): void => {
+  const showQRCode = useMemo(() => {
+    if (ticketUser?.usableUserId === null && !ticketUser?.isStandalone) {
+      return false
+    }
+    return ticketUser?.isStandalone === false
+  }, [])
+
+  const handleAssignMe = useCallback(() => {
     if (!ticketUser || ticketUser.isStandalone || ticketUser.userId !== props.userId) return
     setProgress(true)
     assignTicketUserAsync(props.userId, props.ticketHashId)
@@ -58,7 +53,18 @@ const TicketView: React.FC<Props> = props => {
         throw err
       })
       .finally(() => setProgress(false))
-  }
+  }, [props.ticketHashId, props.userId, ticketUser])
+
+  useEffect(() => {
+    setTicketUser(props.ticketUser)
+    const cancelToken = setInterval(() => {
+      setUpdatedDate(new Date())
+    }, 1000)
+
+    return () => {
+      clearInterval(cancelToken)
+    }
+  }, [props.ticketUser])
 
   return (
     <Container>
@@ -73,14 +79,20 @@ const TicketView: React.FC<Props> = props => {
             <StoreName>{props.store.name}</StoreName>
             <TypeName>{type?.name}</TypeName>
             <QRCodeArea>
-              {ticketUser?.isStandalone === false && (
-                <QRCode
-                  size={192}
-                  value={props.ticketHashId} />
-              )}
-              {ticketUser?.isStandalone === true && (
-                <DummyQRCode />
-              )}
+              {showQRCode
+                ? (
+                  <QRCode
+                    size={192}
+                    value={props.ticketHashId} />
+                )
+                : (
+                  <DummyQRCode>
+                    <DummyQRCodeTextArea>
+                      ご利用<br />
+                      いただけません
+                    </DummyQRCodeTextArea>
+                  </DummyQRCode>
+                )}
             </QRCodeArea>
             <Code>{props.ticketHashId}</Code>
           </TitleContainer>
@@ -122,7 +134,7 @@ const TicketView: React.FC<Props> = props => {
               )}
             </Alert>
           )}
-          {props.userId !== ticketUser?.usableUserId && !ticketUser?.isStandalone && (
+          {ticketUser?.usableUserId && !ticketUser?.isStandalone && props.userId !== ticketUser?.usableUserId && (
             <Alert
               title="他の方に割り当てられているチケットです"
               type="warning">
@@ -140,9 +152,7 @@ const TicketView: React.FC<Props> = props => {
           {ticketUser?.usableUserId === props.userId && (
             <>
               <p>
-                上の QR コードを入口スタッフまでご提示ください。
-              </p>
-              <p>
+                上の QR コードを入口スタッフまでご提示ください。<br />
                 QR コードを提示できない場合は、この画面を印刷しご持参ください。
               </p>
             </>
@@ -239,6 +249,15 @@ const DummyQRCode = styled.div`
   width: 192px;
   height: 192px;
   background-color: #ffffff;
+`
+const DummyQRCodeTextArea = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--black-color);
+  font-weight: bold;
+  font-size: 1.25em;
 `
 const Code = styled.div`
   margin-top: 20px;
