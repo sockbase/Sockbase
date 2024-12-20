@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   MdAddCircleOutline,
   MdDataset,
+  MdHowToReg,
   MdOpenInNew,
   MdRefresh,
   MdStore
@@ -39,7 +40,7 @@ import type {
   SockbaseTicketHashIdDocument,
   SockbaseTicketMeta,
   SockbaseTicketUsedStatus,
-  SockbaseTicketUser
+  SockbaseTicketUserDocument
 } from 'sockbase'
 
 const StoreViewPage: React.FC = () => {
@@ -62,7 +63,7 @@ const StoreViewPage: React.FC = () => {
   const [tickets, setTickets] = useState<SockbaseTicketDocument[]>()
   const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
   const [ticketHashes, setTicketHashes] = useState<SockbaseTicketHashIdDocument[]>()
-  const [ticketUsers, setTicketUsers] = useState<Record<string, SockbaseTicketUser>>()
+  const [ticketUsers, setTicketUsers] = useState<Record<string, SockbaseTicketUserDocument>>()
   const [ticketUsedStatuses, setTicketUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [userDataSet, setUserDataSet] = useState<Record<string, SockbaseAccount>>()
   const [payments, setPayments] = useState<Record<string, SockbasePaymentDocument | null>>()
@@ -148,9 +149,7 @@ const StoreViewPage: React.FC = () => {
     Promise.all(ticketHashIds.map(getTicketIdByHashIdAsync))
       .then(setTicketHashes)
       .catch(err => { throw err })
-
-    const ticketHashIdsWithoutStandalone = tickets.filter(t => !t.isStandalone).map(t => t.hashId ?? '')
-    Promise.all(ticketHashIdsWithoutStandalone.map(async hashId => ({
+    Promise.all(ticketHashIds.map(async hashId => ({
       hashId,
       data: await getTicketUserByHashIdAsync(hashId)
     })))
@@ -166,7 +165,7 @@ const StoreViewPage: React.FC = () => {
       ...tickets.filter(t => t.userId).map(ticket => ticket.userId ?? ''),
       ...Object.values(ticketUsers).map(user => user.userId)
     ]
-    const userIdSet = [...new Set(userIds)]
+    const userIdSet = [...new Set(userIds)].filter(id => id).map(id => id ?? '')
     Promise.all(userIdSet.map(async userId => ({
       userId,
       data: await getUserDataByUserIdAndStoreIdAsync(userId, storeId)
@@ -384,8 +383,7 @@ const StoreViewPage: React.FC = () => {
                     ? (
                       <TicketAssignStatusLabel
                         isOnlyIcon
-                        isStandalone={ticket.isStandalone}
-                        usableUserId={ticketUsers?.[ticket.hashId]?.usableUserId} />
+                        ticketUser={ticketUsers?.[ticket.hashId]} />
                     )
                     : <BlinkField />}
                 </td>
@@ -400,17 +398,17 @@ const StoreViewPage: React.FC = () => {
                     typeId={ticket.typeId} />
                 </td>
                 <td>
-                  {ticket.isStandalone
-                    ? '(SA)'
-                    : ticket.userId
-                      ? userDataSet?.[ticket.userId].name
-                      : '---'}
+                  {ticket.hashId && ticketUsers?.[ticket.hashId]?.isStandalone
+                    ? <MdHowToReg />
+                    : ticket.hashId && ticketUsers && ticket.userId && userDataSet
+                      ? userDataSet[ticket.userId].name
+                      : <BlinkField />}
                 </td>
                 <td>
-                  {ticket.isStandalone
-                    ? '(SA)'
-                    : ticket.hashId && userDataSet && ticketUsers?.[ticket?.hashId].userId
-                      ? userDataSet[ticketUsers[ticket.hashId].userId].name
+                  {ticket.hashId && ticketUsers?.[ticket.hashId]?.isStandalone
+                    ? <MdHowToReg />
+                    : ticket.hashId && ticketUsers && ticketUsers[ticket.hashId]?.userId && userDataSet
+                      ? userDataSet[ticketUsers[ticket.hashId].userId ?? ''].name
                       : <BlinkField />}
                 </td>
                 <td><Link to={`/tickets/${ticket.hashId}`}>{ticket.hashId ?? '---'}</Link></td>
