@@ -28,11 +28,12 @@ interface IUseStore {
   getStoresByOrganizationIdAsync: (organizationId: string) => Promise<SockbaseStoreDocument[]>
   createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
+  getTicketIdByHashIdNullableAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument | null>
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
   getTicketByIdOptionalAsync: (ticketId: string) => Promise<SockbaseTicketDocument | null>
   getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
-  getTicketUserByHashIdOptionalAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
+  getTicketUserByHashIdNullableAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
   updateTicketUsedStatusByIdAsync: (ticketId: string, used: boolean) => Promise<void>
   getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
@@ -112,6 +113,14 @@ const useStore = (): IUseStore => {
       return ticketHash
     }
 
+  const getTicketIdByHashIdNullableAsync =
+    async (ticketHashId: string): Promise<SockbaseTicketHashIdDocument | null> =>
+      await getTicketIdByHashIdAsync(ticketHashId)
+        .catch(err => {
+          console.error(err)
+          return null
+        })
+
   const getTicketByIdAsync =
     async (ticketId: string): Promise<SockbaseTicketDocument> => {
       const db = getFirestore()
@@ -164,7 +173,7 @@ const useStore = (): IUseStore => {
       return ticketUser
     }
 
-  const getTicketUserByHashIdOptionalAsync =
+  const getTicketUserByHashIdNullableAsync =
     async (ticketHashId: string): Promise<SockbaseTicketUserDocument | null> =>
       await getTicketUserByHashIdAsync(ticketHashId).catch(() => null)
 
@@ -311,11 +320,12 @@ const useStore = (): IUseStore => {
     getStoresByOrganizationIdAsync,
     createTicketAsync,
     getTicketIdByHashIdAsync,
+    getTicketIdByHashIdNullableAsync,
     getTicketByIdAsync,
     getTicketByIdOptionalAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
-    getTicketUserByHashIdOptionalAsync,
+    getTicketUserByHashIdNullableAsync,
     getTicketUsedStatusByIdAsync,
     updateTicketUsedStatusByIdAsync,
     getTicketsByUserIdAsync,

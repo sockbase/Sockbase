@@ -289,7 +289,8 @@ export const ticketUserConverter: FirestoreDataConverter<SockbaseTicketUserDocum
       usableUserId: ticketUserDoc.usableUserId,
       used: ticketUserDoc.used,
       usedAt: ticketUserDoc.usedAt ? new Date(ticketUserDoc.usedAt.seconds * 1000) : null,
-      userId: ticketUserDoc.userId
+      userId: ticketUserDoc.userId,
+      isStandalone: ticketUserDoc.isStandalone ?? false
     }
   }
 }
