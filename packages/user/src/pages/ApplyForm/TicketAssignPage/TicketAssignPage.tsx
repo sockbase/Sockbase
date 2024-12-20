@@ -17,7 +17,7 @@ const TicketAssignPage: React.FC = () => {
     createUserAsync
   } = useFirebase()
   const {
-    getTicketUserByHashIdOptionalAsync,
+    getTicketUserByHashIdNullableAsync,
     getStoreByIdAsync,
     assignTicketUserAsync
   } = useStore()
@@ -48,7 +48,7 @@ const TicketAssignPage: React.FC = () => {
     const fetchAsync = async (): Promise<void> => {
       if (!ticketHashId) return
 
-      const fetchedTicketUser = await getTicketUserByHashIdOptionalAsync(ticketHashId)
+      const fetchedTicketUser = await getTicketUserByHashIdNullableAsync(ticketHashId)
       setTicketUser(fetchedTicketUser)
 
       if (!fetchedTicketUser) return
