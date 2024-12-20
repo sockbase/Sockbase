@@ -35,10 +35,17 @@ const TicketView: React.FC<Props> = props => {
   }, [props.ticketUser, props.store])
 
   const showQRCode = useMemo(() => {
-    if (ticketUser?.usableUserId === null && !ticketUser?.isStandalone) {
+    if (ticketUser?.isStandalone) {
       return false
     }
-    return ticketUser?.isStandalone === false
+    else if (ticketUser?.usableUserId === null) {
+      return false
+    }
+    else if (ticketUser?.usableUserId !== props.userId) {
+      return false
+    }
+
+    return true
   }, [])
 
   const handleAssignMe = useCallback(() => {
@@ -70,7 +77,9 @@ const TicketView: React.FC<Props> = props => {
     <Container>
       <TicketContainer>
         <TicketStatusContainer>
-          {props.ticketUser.used && <UsedTicketAlert>このチケットは使用済みです</UsedTicketAlert>}
+          {props.ticketUser.used && !ticketUser?.isStandalone && (
+            <UsedTicketAlert>このチケットは使用済みです</UsedTicketAlert>
+          )}
         </TicketStatusContainer>
         <TitleWrapper
           color={type?.color || 'var(--background-disabled-color)'}
@@ -142,7 +151,7 @@ const TicketView: React.FC<Props> = props => {
                   自分のチケットは <Link to="/dashboard/mytickets">マイチケット</Link> から確認できます。
             </Alert>
           )}
-          {ticketUser?.used && (
+          {ticketUser?.used && !ticketUser?.isStandalone && (
             <Alert
               title="使用済みです"
               type="error">
@@ -258,6 +267,7 @@ const DummyQRCodeTextArea = styled.div`
   color: var(--black-color);
   font-weight: bold;
   font-size: 1.25em;
+  line-height: 1.25em;
 `
 const Code = styled.div`
   margin-top: 20px;
