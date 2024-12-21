@@ -1,19 +1,15 @@
 import { useState } from 'react'
-import { PiGear, PiGearFill, PiHouse, PiHouseFill, PiQrCode, PiQrCodeFill } from 'react-icons/pi'
+import { PiGear, PiGearFill, PiQrCode, PiQrCodeFill } from 'react-icons/pi'
 import styled from 'styled-components'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { RouterContext } from './contexts/RouterContext'
 import useRouter from './hooks/useRouter'
+import { getFirebaseApp } from './libs/FirebaseApp'
 import RouterProvider from './pages/RouterProvider'
 
 const menuItems = [
   {
     to: '/',
-    ActiveIcon: PiHouseFill,
-    Icon: PiHouse
-  },
-  {
-    to: '/scanner',
     ActiveIcon: PiQrCodeFill,
     Icon: PiQrCode
   },
@@ -23,6 +19,8 @@ const menuItems = [
     Icon: PiGear
   }
 ]
+
+getFirebaseApp()
 
 const App: React.FC = () => {
   const router = useRouter()

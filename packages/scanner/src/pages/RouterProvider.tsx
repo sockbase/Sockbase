@@ -1,15 +1,10 @@
 import { useEffect, useMemo } from 'react'
-import IndexPage from './IndexPage/IndexPage'
 import ScannerPage from './ScannerPage/ScannerPage'
 import SettingsPage from './SettingsPage/SettingsPage'
 
 const router = {
   '/': {
     title: 'ホーム',
-    Element: IndexPage
-  },
-  '/scanner': {
-    title: 'もぎり',
     Element: ScannerPage
   },
   '/settings': {
@@ -29,7 +24,7 @@ const RouterProvider: React.FC<Props> = props => {
 
   useEffect(() => {
     if (!Page) return
-    props.setTitle(Page.title)
+    props.setTitle(`${Page.title} - Sockbase SCANNER`)
   }, [Page])
 
   return (
