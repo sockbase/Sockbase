@@ -7,7 +7,6 @@ interface Props {
   style: React.CSSProperties
 }
 const QRReaderComponent: React.FC<Props> = props => {
-  // const resultRef = useRef<string>('')
   const mountedRef = useRef<boolean>(false)
   const videoRef = useRef<HTMLVideoElement | null>(null)
 
@@ -28,7 +27,6 @@ const QRReaderComponent: React.FC<Props> = props => {
 
         if (result) {
           props.onScan(result)
-          // resultRef.current = result.getText()
         }
       })
       .catch(err => { throw err })
