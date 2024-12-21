@@ -2,10 +2,9 @@ import { useState } from 'react'
 import { PiGear, PiGearFill, PiQrCode, PiQrCodeFill } from 'react-icons/pi'
 import styled from 'styled-components'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
-import { RouterContext } from './contexts/RouterContext'
 import useRouter from './hooks/useRouter'
 import { getFirebaseApp } from './libs/FirebaseApp'
-import RouterProvider from './pages/RouterProvider'
+import Routes from './pages/Routes'
 
 const menuItems = [
   {
@@ -23,8 +22,8 @@ const menuItems = [
 getFirebaseApp()
 
 const App: React.FC = () => {
-  const router = useRouter()
   const [title, setTitle] = useState('')
+  const { path, navigate } = useRouter()
 
   return (
     <>
@@ -32,26 +31,24 @@ const App: React.FC = () => {
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <RouterContext.Provider value={router}>
-          <ContainerWrap>
-            <Container>
-              <RouterProvider
-                path={router.path}
-                setTitle={setTitle} />
-            </Container>
-            <Navbar>
-              {menuItems.map((item, index) => (
-                <LinkItem
-                  key={index}
-                  onClick={() => router.navigate(item.to)}>
-                  <LinkItemIcon>
-                    {router.path === item.to ? <item.ActiveIcon /> : <item.Icon />}
-                  </LinkItemIcon>
-                </LinkItem>
-              ))}
-            </Navbar>
-          </ContainerWrap>
-        </RouterContext.Provider>
+        <ContainerWrap>
+          <Container>
+            <Routes
+              path={path}
+              setTitle={setTitle} />
+          </Container>
+          <Navbar>
+            {menuItems.map((item, index) => (
+              <LinkItem
+                key={index}
+                onClick={() => navigate(item.to)}>
+                <LinkItemIcon>
+                  {path === item.to ? <item.ActiveIcon /> : <item.Icon />}
+                </LinkItemIcon>
+              </LinkItem>
+            ))}
+          </Navbar>
+        </ContainerWrap>
       </HelmetProvider>
     </>
   )
