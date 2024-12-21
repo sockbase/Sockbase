@@ -7,7 +7,7 @@ import useFirebase from '../../hooks/useFirebase'
 const ScannerPage: React.FC = () => {
   const { user, loginByEmailAsync } = useFirebase()
 
-  const [isMute, setIsMute] = useState(true)
+  const [isCameraOff, setisCameraOff] = useState(true)
   const [isConfirm, setIsConfirm] = useState(true)
   const [scanErrors, setScanErrors] = useState<string[] | null>()
 
@@ -66,7 +66,7 @@ const ScannerPage: React.FC = () => {
   return (
     <ReaderWrap>
       <CameraArea>
-        {!isMute
+        {!isCameraOff
           ? (
             <QRReaderComponent
               onScan={data => setQRData(data.getText())}
@@ -78,7 +78,7 @@ const ScannerPage: React.FC = () => {
                 <PiCameraSlash />
               </CameraMuteIcon>
               <CameraMuteText>
-                カメラはミュート中<br />
+                カメラオフ中<br />
                 復帰するには <PiCameraFill /> をタップ
               </CameraMuteText>
             </CameraMuteStatus>
@@ -86,13 +86,13 @@ const ScannerPage: React.FC = () => {
       </CameraArea>
       <ControlArea>
         <ControlTop>
-          QR コードを読み取ってください
+          {!user ? 'ログイン QR コードを読み取ってください' : 'QR コードを読み取ってください'}
         </ControlTop>
         <ControlBottom>
           <CameraControlButton
-            $isMute={isMute}
-            onClick={() => setIsMute(!isMute)}>
-            {!isMute ? <PiCameraSlash /> : <PiCameraFill />}
+            $isCameraOff={isCameraOff}
+            onClick={() => setisCameraOff(!isCameraOff)}>
+            {!isCameraOff ? <PiCameraSlash /> : <PiCameraFill />}
           </CameraControlButton>
         </ControlBottom>
       </ControlArea>
@@ -194,15 +194,15 @@ const ControlBottom = styled(IntroductionTextBase)`
   background-color: rgba(0, 0, 0, 0.4);
   color: white;
 `
-const CameraControlButton = styled.button<{ $isMute: boolean }>`
+const CameraControlButton = styled.button<{ $isCameraOff: boolean }>`
   display: inline-block;
   width: calc(32px + 19px * 2 + 1px * 2);
   height: calc(32px + 19px * 2 + 1px * 2);
   padding: 19px;
   border-radius: 10px;
   border: 1px solid white;
-  background-color: ${({ $isMute }) => $isMute ? 'white' : 'transparent'};
-  color: ${({ $isMute }) => $isMute ? '#404040' : 'white'};
+  background-color: ${({ $isCameraOff }) => $isCameraOff ? 'white' : 'transparent'};
+  color: ${({ $isCameraOff }) => $isCameraOff ? '#404040' : 'white'};
   svg {
     width: 32px;
     height: 32px;

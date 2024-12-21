@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useContext } from 'react'
+import RouterContext from '../contexts/RouterContext'
 
 interface IUseRouter {
   path: string
@@ -6,12 +7,7 @@ interface IUseRouter {
 }
 
 export const useRouter = (): IUseRouter => {
-  const [path, setPath] = useState('/')
-
-  return {
-    path,
-    navigate: setPath
-  }
+  return useContext(RouterContext)
 }
 
 export default useRouter

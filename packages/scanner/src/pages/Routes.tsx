@@ -17,7 +17,7 @@ interface Props {
   path: string
   setTitle: (title: string) => void
 }
-const RouterProvider: React.FC<Props> = props => {
+const Routes: React.FC<Props> = props => {
   const Page = useMemo(() => {
     return Object.entries(router).find(([key]) => key === props.path)?.[1]
   }, [router, props.path])
@@ -34,4 +34,4 @@ const RouterProvider: React.FC<Props> = props => {
   )
 }
 
-export default RouterProvider
+export default Routes
