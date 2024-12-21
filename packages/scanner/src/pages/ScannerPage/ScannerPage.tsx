@@ -10,8 +10,8 @@ import useFirebase from '../../hooks/useFirebase'
 const ScannerPage: React.FC = () => {
   const { user, loginByEmailAsync } = useFirebase()
 
-  const [playSEOK] = useSound(OKSoundWAV, { volume: 0.5 })
-  const [playSENG] = useSound(NGSoundWAV, { volume: 0.5 })
+  const [playSEOK] = useSound(OKSoundWAV, { volume: 0.2 })
+  const [playSENG] = useSound(NGSoundWAV, { volume: 0.2 })
 
   const [isCameraOff, setisCameraOff] = useState(true)
   const [isConfirm, setIsConfirm] = useState(true)
