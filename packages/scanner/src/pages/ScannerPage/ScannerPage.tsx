@@ -2,17 +2,52 @@ import { useCallback, useEffect, useState } from 'react'
 import { PiCameraFill, PiCameraSlash, PiCheckFatFill, PiX } from 'react-icons/pi'
 import styled from 'styled-components'
 import QRReaderComponent from '../../components/Parts/QRReaderComponent'
+import useFirebase from '../../hooks/useFirebase'
 
 const ScannerPage: React.FC = () => {
+  const { user, loginByEmailAsync } = useFirebase()
+
   const [isMute, setIsMute] = useState(true)
   const [isConfirm, setIsConfirm] = useState(true)
   const [scanErrors, setScanErrors] = useState<string[] | null>()
 
   const [qrData, setQRData] = useState('')
 
+  const handleConfirm = useCallback(() => {
+    setIsConfirm(true)
+    setScanErrors(null)
+    setQRData('')
+  }, [])
+
+  const handleLogin = useCallback((data: string) => {
+    const [email, password] = atob(data.slice(4)).split(':')
+    loginByEmailAsync(email, password)
+      .then(() => {
+        setScanErrors([])
+      })
+      .catch(err => {
+        setScanErrors(['ログインに失敗しました'])
+        throw err
+      })
+      .finally(() => setIsConfirm(false))
+  }, [])
+
   useEffect(() => {
-    if (!isConfirm || !qrData) return
-    setIsConfirm(false)
+    if (!isConfirm || !qrData || user === undefined) return
+    if (qrData.startsWith('U0ww')) {
+      if (user) {
+        setScanErrors(['ログイン済みです'])
+        setIsConfirm(false)
+        return
+      }
+      handleLogin(qrData)
+      return
+    }
+    else if (!user && !qrData.startsWith('U0ww')) {
+      setScanErrors(['最初にログインしてください'])
+      setIsConfirm(false)
+      return
+    }
 
     const isSuccess = Math.round(Math.random())
     if (isSuccess) {
@@ -23,13 +58,10 @@ const ScannerPage: React.FC = () => {
         '存在しない QR コードです'
       ])
     }
-  }, [qrData, isConfirm])
 
-  const handleConfirm = useCallback(() => {
-    setIsConfirm(true)
-    setScanErrors(null)
-    setQRData('')
-  }, [])
+    setIsConfirm(false)
+    return
+  }, [qrData, isConfirm, user])
 
   return (
     <ReaderWrap>
@@ -54,7 +86,7 @@ const ScannerPage: React.FC = () => {
       </CameraArea>
       <ControlArea>
         <ControlTop>
-          チケットの QR コードを読み取ってください
+          QR コードを読み取ってください
         </ControlTop>
         <ControlBottom>
           <CameraControlButton
