@@ -222,11 +222,11 @@ const StatusBase = styled.div`
   align-items: center;
 `
 const OKStatus = styled(StatusBase)`
-  background-color: rgba(32, 192, 32, 0.8);
+  background-color: rgba(32, 192, 32, 0.9);
 `
 const NGStatus = styled(StatusBase)`
   flex-direction: column;
-  background-color: rgba(192, 32, 32, 0.8);
+  background-color: rgba(192, 32, 32, 0.9);
 
   ul {
     margin: 0;
