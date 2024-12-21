@@ -2,9 +2,7 @@ import { createContext, useState } from 'react'
 
 const RouterContext = createContext({
   path: '/',
-  navigate: (_: string) => {
-    throw new Error('RouterContext is not provided')
-  }
+  navigate: (_: string) => {}
 })
 
 interface Props {
@@ -16,8 +14,6 @@ export const RouterProvider: React.FC<Props> = props => {
   const navigate = (path: string) => {
     setPath(path)
   }
-
-  console.log(path)
 
   return (
     <RouterContext.Provider value={{ path, navigate }}>
