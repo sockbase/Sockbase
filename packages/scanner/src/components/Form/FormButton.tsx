@@ -6,6 +6,7 @@ const FormButton = styled.button`
   background-color: #ffffff;
   color: #404040;
   border-radius: 5px;
+  font-size: 1rem;
 
   transition: background-color 0.2s;
 
