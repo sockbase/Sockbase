@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
 import { PiCameraFill, PiCameraSlash, PiCheckFatFill, PiX } from 'react-icons/pi'
 import styled from 'styled-components'
+import useSound from 'use-sound'
+import NGSoundWAV from '../../assets/se/ng.wav'
+import OKSoundWAV from '../../assets/se/ok.wav'
 import QRReaderComponent from '../../components/Parts/QRReaderComponent'
 import useFirebase from '../../hooks/useFirebase'
 
 const ScannerPage: React.FC = () => {
   const { user, loginByEmailAsync } = useFirebase()
+
+  const [playSEOK] = useSound(OKSoundWAV)
+  const [playSENG] = useSound(NGSoundWAV)
 
   const [isCameraOff, setisCameraOff] = useState(true)
   const [isConfirm, setIsConfirm] = useState(true)
@@ -57,11 +63,21 @@ const ScannerPage: React.FC = () => {
       setScanErrors([
         '存在しない QR コードです'
       ])
+      playSENG()
     }
 
     setIsConfirm(false)
     return
   }, [qrData, isConfirm, user])
+
+  useEffect(() => {
+    if (scanErrors?.length === 0) {
+      playSEOK()
+    }
+    else if (scanErrors && scanErrors.length > 0) {
+      playSENG()
+    }
+  }, [scanErrors])
 
   return (
     <ReaderWrap>
