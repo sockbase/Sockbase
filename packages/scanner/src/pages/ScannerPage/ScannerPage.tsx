@@ -6,9 +6,27 @@ import NGSoundWAV from '../../assets/se/ng.wav'
 import OKSoundWAV from '../../assets/se/ok.wav'
 import QRReaderComponent from '../../components/Parts/QRReaderComponent'
 import useFirebase from '../../hooks/useFirebase'
+import usePayment from '../../hooks/usePayment'
+import useStore from '../../hooks/useStore'
+import type {
+  SockbasePaymentDocument,
+  SockbaseTicketHashIdDocument,
+  SockbaseTicketMeta,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketUserDocument
+} from 'sockbase'
 
 const ScannerPage: React.FC = () => {
-  const { user, loginByEmailAsync } = useFirebase()
+  const { user,
+    loginByEmailAsync } = useFirebase()
+  const {
+    getTicketUserByHashIdAsync,
+    getTicketHashAsync,
+    getTicketUsedStatusByIdAsync,
+    getTicketMetaByIdAsync,
+    updateTicketUsedStatusByIdAsync
+  } = useStore()
+  const { getPaymentByIdAsync } = usePayment()
 
   const [playSEOK] = useSound(OKSoundWAV, { volume: 0.2 })
   const [playSENG] = useSound(NGSoundWAV, { volume: 0.2 })
@@ -18,11 +36,21 @@ const ScannerPage: React.FC = () => {
   const [scanErrors, setScanErrors] = useState<string[] | null>()
 
   const [qrData, setQRData] = useState('')
+  const [ticketHashId, setTicketHashId] = useState('')
+  const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
+  const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument | null>()
+  const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus | null>()
+  const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
+  const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
 
   const handleConfirm = useCallback(() => {
     setIsConfirm(true)
     setScanErrors(null)
     setQRData('')
+    setTicketHashId('')
+    setTicketUser(null)
+    setTicketUsedStatus(null)
+    setTicketHash(null)
   }, [])
 
   const handleLogin = useCallback((data: string) => {
@@ -43,7 +71,6 @@ const ScannerPage: React.FC = () => {
     if (qrData.startsWith('U0ww')) {
       if (user) {
         setScanErrors(['ログイン済みです'])
-        setIsConfirm(false)
         return
       }
       handleLogin(qrData)
@@ -51,32 +78,102 @@ const ScannerPage: React.FC = () => {
     }
     else if (!user && !qrData.startsWith('U0ww')) {
       setScanErrors(['最初にログインしてください'])
-      setIsConfirm(false)
       return
     }
 
-    const isSuccess = Math.round(Math.random())
-    if (isSuccess) {
-      setScanErrors([])
-    }
-    else {
-      setScanErrors([
-        '存在しない QR コードです'
-      ])
-      playSENG()
+    if (!qrData.startsWith('ST')) {
+      setScanErrors(['不正な QR コードです'])
+      return
     }
 
-    setIsConfirm(false)
-    return
+    setTicketHashId(qrData)
   }, [qrData, isConfirm, user])
 
   useEffect(() => {
+    if (!ticketHashId) return
+    getTicketUserByHashIdAsync(ticketHashId)
+      .then(setTicketUser)
+      .catch(err => {
+        setScanErrors(['存在しない QR コードです'])
+        throw err
+      })
+  }, [ticketHashId])
+
+  useEffect(() => {
+    if (!ticketUser) return
+    if (!ticketUser.isStandalone && !ticketUser.usableUserId) {
+      setScanErrors(['使用者割り当てを行なってください'])
+      return
+    }
+    getTicketHashAsync(ticketUser.hashId)
+      .then(setTicketHash)
+      .catch(err => {
+        setScanErrors(['内部エラーが発生しました (TicketHash)'])
+        throw err
+      })
+  }, [ticketUser])
+
+  useEffect(() => {
+    if (!ticketHash) return
+    getTicketUsedStatusByIdAsync(ticketHash.ticketId)
+      .then(setTicketUsedStatus)
+      .catch(err => {
+        setScanErrors(['内部エラーが発生しました (TicketUsedStatus)'])
+        throw err
+      })
+    getTicketMetaByIdAsync(ticketHash.ticketId)
+      .then(setTicketMeta)
+      .catch(err => {
+        setScanErrors(['内部エラーが発生しました (TicketMeta)'])
+        throw err
+      })
+    if (ticketHash.paymentId) {
+      getPaymentByIdAsync(ticketHash.paymentId)
+        .then(setPayment)
+        .catch(err => {
+          setScanErrors(['内部エラーが発生しました (Payment)'])
+          throw err
+        })
+    }
+    else {
+      setPayment(null)
+    }
+  }, [ticketHash])
+
+  useEffect(() => {
+    if (!ticketHash || !ticketUsedStatus || !ticketMeta || payment === undefined) return
+    if (ticketUsedStatus.used) {
+      setScanErrors(['既に使用済みの QR コードです'])
+      return
+    }
+    else if (ticketMeta.applicationStatus !== 2) {
+      setScanErrors(['申し込みが確定していません'])
+      return
+    }
+    else if (payment && payment.status !== 1) {
+      setScanErrors(['支払いが完了していません'])
+      return
+    }
+
+    updateTicketUsedStatusByIdAsync(ticketHash.ticketId, true)
+      .then(() => {
+        setScanErrors([])
+      })
+      .catch(err => {
+        setScanErrors(['消し込みに失敗しました'])
+        throw err
+      })
+  }, [ticketHash, ticketUsedStatus, ticketMeta, payment])
+
+  useEffect(() => {
+    if (!scanErrors) return
     if (scanErrors?.length === 0) {
       playSEOK()
     }
     else if (scanErrors && scanErrors.length > 0) {
       playSENG()
     }
+    setIsConfirm(false)
   }, [scanErrors])
 
   return (
@@ -119,6 +216,9 @@ const ScannerPage: React.FC = () => {
               <StatusIcon>
                 <PiCheckFatFill />
               </StatusIcon>
+              <StatusText>
+                タップして閉じる
+              </StatusText>
             </OKStatus>
           )}
           {scanErrors && scanErrors.length > 0 && (
@@ -132,7 +232,12 @@ const ScannerPage: React.FC = () => {
                     <li key={i}>{e}</li>
                   ))}
                 </ul>
+                <br />
+                タップして閉じる
               </StatusText>
+              <StatusSubText>
+                {qrData}
+              </StatusSubText>
             </NGStatus>
           )}
         </InformationArea>
@@ -236,12 +341,12 @@ const StatusBase = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 `
 const OKStatus = styled(StatusBase)`
   background-color: rgba(32, 192, 32, 0.9);
 `
 const NGStatus = styled(StatusBase)`
-  flex-direction: column;
   background-color: rgba(192, 32, 32, 0.9);
 
   ul {
@@ -261,5 +366,10 @@ const StatusIcon = styled.div`
 const StatusText = styled.div`
   font-size: 1.25em;
   font-weight: bold;
+  text-align: center;
+`
+const StatusSubText = styled.div`
+  font-size: 0.75em;
+  font-weight: normal;
   text-align: center;
 `
