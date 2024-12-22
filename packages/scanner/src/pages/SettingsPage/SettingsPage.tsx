@@ -6,6 +6,7 @@ import PageTitle from '../../components/Parts/PageTitle'
 import Section from '../../components/Parts/Section'
 import SectionBody from '../../components/Parts/SectionBody'
 import SectionTitle from '../../components/Parts/SectionTitle'
+import envHelper from '../../helpers/envHelper'
 import useFirebase from '../../hooks/useFirebase'
 import useModal from '../../hooks/useModal'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
@@ -57,7 +58,7 @@ const SettingsPage: React.FC = () => {
         <Section>
           <SectionTitle>ビルド番号</SectionTitle>
           <SectionBody>
-            v2024.12.0.1000
+            v{envHelper.version}.{envHelper.buildNumber}
           </SectionBody>
         </Section>
         <Section>
