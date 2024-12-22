@@ -32,6 +32,7 @@ const ScannerPage: React.FC = () => {
   const [playSENG] = useSound(NGSoundWAV, { volume: 0.2 })
 
   const [isCameraOff, setisCameraOff] = useState(true)
+  const [isLoading, setLoading] = useState(false)
   const [isConfirm, setIsConfirm] = useState(true)
   const [scanErrors, setScanErrors] = useState<string[] | null>()
 
@@ -40,7 +41,7 @@ const ScannerPage: React.FC = () => {
   const [ticketUser, setTicketUser] = useState<SockbaseTicketUserDocument | null>()
   const [ticketHash, setTicketHash] = useState<SockbaseTicketHashIdDocument | null>()
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus | null>()
-  const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta>()
+  const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta | null>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
 
   const handleConfirm = useCallback(() => {
@@ -49,6 +50,7 @@ const ScannerPage: React.FC = () => {
     setQRData('')
     setTicketHashId('')
     setTicketUser(null)
+    setTicketMeta(null)
     setTicketUsedStatus(null)
     setTicketHash(null)
   }, [])
@@ -68,6 +70,7 @@ const ScannerPage: React.FC = () => {
 
   useEffect(() => {
     if (!isConfirm || !qrData || user === undefined) return
+    setLoading(true)
     if (qrData.startsWith('U0ww')) {
       if (user) {
         setScanErrors(['ログイン済みです'])
@@ -174,6 +177,7 @@ const ScannerPage: React.FC = () => {
       playSENG()
     }
     setIsConfirm(false)
+    setLoading(false)
   }, [scanErrors])
 
   return (
@@ -209,6 +213,11 @@ const ScannerPage: React.FC = () => {
           </CameraControlButton>
         </ControlBottom>
       </ControlArea>
+      {isLoading && (
+        <LoadingArea>
+          <LoadingCircle />
+        </LoadingArea>
+      )}
       {!isConfirm && (
         <InformationArea>
           {scanErrors?.length === 0 && (
@@ -327,6 +336,27 @@ const CameraControlButton = styled.button<{ $isCameraOff: boolean }>`
   svg {
     width: 32px;
     height: 32px;
+  }
+`
+const LoadingArea = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+const LoadingCircle = styled.div`
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 4px solid white;
+  border-top-color: transparent;
+  animation: spin 0.75s linear infinite;
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `
 const InformationArea = styled.div`
