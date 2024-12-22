@@ -13,14 +13,6 @@ import {
   type Firestore,
   getFirestore as getFirebaseFirestore
 } from 'firebase/firestore'
-import {
-  type Functions,
-  getFunctions as getFirebaseFunctions
-} from 'firebase/functions'
-import {
-  type FirebaseStorage,
-  getStorage as getFirebaseStorage
-} from 'firebase/storage'
 import { getFirebaseApp } from '../libs/FirebaseApp'
 import type { SockbaseRole } from 'sockbase'
 
@@ -32,8 +24,6 @@ interface IUseFirebase {
   loginByEmailAsync: (email: string, password: string) => Promise<UserCredential>
   logoutAsync: () => Promise<void>
   getFirestore: () => Firestore
-  getStorage: () => FirebaseStorage
-  getFunctions: () => Functions
 }
 
 const useFirebase = (): IUseFirebase => {
@@ -77,14 +67,6 @@ const useFirebase = (): IUseFirebase => {
 
   const getFirestore = getFirebaseFirestore
 
-  const getStorage = getFirebaseStorage
-
-  const getFunctions =
-    useCallback(() => {
-      const app = getFirebaseApp()
-      return getFirebaseFunctions(app)
-    }, [])
-
   useEffect(() => {
     const auth = getAuth()
     const unSubscribe = onIdTokenChanged(auth, user => {
@@ -119,9 +101,7 @@ const useFirebase = (): IUseFirebase => {
     getAuth,
     loginByEmailAsync,
     logoutAsync,
-    getFirestore,
-    getStorage,
-    getFunctions
+    getFirestore
   }
 }
 

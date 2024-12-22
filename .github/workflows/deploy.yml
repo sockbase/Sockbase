@@ -28,6 +28,7 @@ jobs:
       VITE_USER_APP_URL: ${{ vars.VITE_USER_APP_URL }}
       GOOGLE_SERVICE_ACCOUNT_CREDENTIAL_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_CREDENTIAL_JSON }}
       FIREBASE_STORAGE_BUCKET: ${{ vars.VITE_FIREBASE_STORAGE_BUCKET }}
+      BUILD_NUMBER: ${{ github.run_number }}
 
     steps:
       - uses: actions/checkout@v4
@@ -60,4 +61,5 @@ jobs:
           firebase target:apply hosting user ${{ (github.ref == 'refs/heads/master' && 'sb-user-prod') || (github.ref == 'refs/heads/develop' && 'sb-user-staging') || '' }}
           firebase target:apply hosting admin ${{ (github.ref == 'refs/heads/master' && 'sb-admin-prod') || (github.ref == 'refs/heads/develop' && 'sb-admin-staging') || '' }}
           firebase target:apply hosting circlelist ${{ (github.ref == 'refs/heads/master' && 'sb-circlelist-prod') || (github.ref == 'refs/heads/develop' && 'sb-circlelist-staging') || '' }}
+          firebase target:apply hosting scanner ${{ (github.ref == 'refs/heads/master' && 'sb-scanner-prod') || (github.ref == 'refs/heads/develop' && 'sb-scanner-staging') || '' }}
           firebase deploy
