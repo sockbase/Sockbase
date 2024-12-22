@@ -34,7 +34,7 @@ const ScannerPage: React.FC = () => {
   const [isCameraOff, setisCameraOff] = useState(true)
   const [isLoading, setLoading] = useState(false)
   const [isConfirm, setIsConfirm] = useState(true)
-  const [scanErrors, setScanErrors] = useState<string[] | null>()
+  const [scanErrors, setScanErrors] = useState<{ error: string, detail?: string }[] | null>()
 
   const [qrData, setQRData] = useState('')
   const [ticketHashId, setTicketHashId] = useState('')
@@ -62,7 +62,7 @@ const ScannerPage: React.FC = () => {
         setScanErrors([])
       })
       .catch(err => {
-        setScanErrors(['ログインに失敗しました'])
+        setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/Login:${qrData}` }])
         throw err
       })
       .finally(() => setIsConfirm(false))
@@ -73,19 +73,19 @@ const ScannerPage: React.FC = () => {
     setLoading(true)
     if (qrData.startsWith('U0ww')) {
       if (user) {
-        setScanErrors(['ログイン済みです'])
+        setScanErrors([{ error: 'ログイン済み' }])
         return
       }
       handleLogin(qrData)
       return
     }
     else if (!user && !qrData.startsWith('U0ww')) {
-      setScanErrors(['最初にログインしてください'])
+      setScanErrors([{ error: 'ログインが必要', detail: 'ログイン QR コードを読み取ってください' }])
       return
     }
 
     if (!qrData.startsWith('ST')) {
-      setScanErrors(['不正な QR コードです'])
+      setScanErrors([{ error: '不明な QR コード', detail: qrData }])
       return
     }
 
@@ -97,7 +97,7 @@ const ScannerPage: React.FC = () => {
     getTicketUserByHashIdAsync(ticketHashId)
       .then(setTicketUser)
       .catch(err => {
-        setScanErrors(['存在しない QR コードです'])
+        setScanErrors([{ error: 'チケット情報が見つからない', detail: 'イベント名を確認してください' }])
         throw err
       })
   }, [ticketHashId])
@@ -105,13 +105,13 @@ const ScannerPage: React.FC = () => {
   useEffect(() => {
     if (!ticketUser) return
     if (!ticketUser.isStandalone && !ticketUser.usableUserId) {
-      setScanErrors(['使用者割り当てを行なってください'])
+      setScanErrors([{ error: '使用者設定が未完了', detail: 'チケット画面の「チケットを有効化する」をタップしてください' }])
       return
     }
     getTicketHashAsync(ticketUser.hashId)
       .then(setTicketHash)
       .catch(err => {
-        setScanErrors(['内部エラーが発生しました (TicketHash)'])
+        setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/GetTicketHash:${qrData}` }])
         throw err
       })
   }, [ticketUser])
@@ -121,20 +121,20 @@ const ScannerPage: React.FC = () => {
     getTicketUsedStatusByIdAsync(ticketHash.ticketId)
       .then(setTicketUsedStatus)
       .catch(err => {
-        setScanErrors(['内部エラーが発生しました (TicketUsedStatus)'])
+        setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/GetTicketUsedStatus:${qrData}` }])
         throw err
       })
     getTicketMetaByIdAsync(ticketHash.ticketId)
       .then(setTicketMeta)
       .catch(err => {
-        setScanErrors(['内部エラーが発生しました (TicketMeta)'])
+        setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/GetTicketMeta:${qrData}` }])
         throw err
       })
     if (ticketHash.paymentId) {
       getPaymentByIdAsync(ticketHash.paymentId)
         .then(setPayment)
         .catch(err => {
-          setScanErrors(['内部エラーが発生しました (Payment)'])
+          setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/GetPayment:${qrData}` }])
           throw err
         })
     }
@@ -146,15 +146,15 @@ const ScannerPage: React.FC = () => {
   useEffect(() => {
     if (!ticketHash || !ticketUsedStatus || !ticketMeta || payment === undefined) return
     if (ticketUsedStatus.used) {
-      setScanErrors(['既に使用済みの QR コードです'])
+      setScanErrors([{ error: '使用済み', detail: 'このチケットは使用済みです' }])
       return
     }
     else if (ticketMeta.applicationStatus !== 2) {
-      setScanErrors(['申し込みが確定していません'])
+      setScanErrors([{ error: '管理者に問い合わせてください', detail: `申込ステータス不正/${qrData}/${ticketMeta.applicationStatus}` }])
       return
     }
     else if (payment && payment.status !== 1) {
-      setScanErrors(['支払いが完了していません'])
+      setScanErrors([{ error: '管理者に問い合わせてください', detail: `決済ステータス不正/${qrData}/${payment.status}` }])
       return
     }
 
@@ -163,7 +163,7 @@ const ScannerPage: React.FC = () => {
         setScanErrors([])
       })
       .catch(err => {
-        setScanErrors(['消し込みに失敗しました'])
+        setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/UpdateTicketUsedStatus:${qrData}` }])
         throw err
       })
   }, [ticketHash, ticketUsedStatus, ticketMeta, payment])
@@ -222,31 +222,38 @@ const ScannerPage: React.FC = () => {
         <InformationArea>
           {scanErrors?.length === 0 && (
             <OKStatus onClick={handleConfirm}>
-              <StatusIcon>
-                <PiCheckFatFill />
-              </StatusIcon>
-              <StatusText>
-                タップして閉じる
-              </StatusText>
+              <StatusHeader>
+                <StatusIcon>
+                  <PiCheckFatFill />
+                </StatusIcon>
+              </StatusHeader>
+              <ActionHelp>
+                <ActionHelpText>
+                  タップして閉じる
+                </ActionHelpText>
+              </ActionHelp>
             </OKStatus>
           )}
           {scanErrors && scanErrors.length > 0 && (
             <NGStatus onClick={handleConfirm}>
-              <StatusIcon>
-                <PiX />
-              </StatusIcon>
-              <StatusText>
-                <ul>
+              <StatusHeader>
+                <StatusIcon>
+                  <PiX />
+                </StatusIcon>
+                <StatusText>
                   {scanErrors.map((e, i) => (
-                    <li key={i}>{e}</li>
+                    <>
+                      <StatusText key={`${i}-error`}>{e.error}</StatusText>
+                      {e.detail && <StatusSubText key={`${i}-detail`}>{e.detail}</StatusSubText>}
+                    </>
                   ))}
-                </ul>
-                <br />
-                タップして閉じる
-              </StatusText>
-              <StatusSubText>
-                {qrData}
-              </StatusSubText>
+                </StatusText>
+              </StatusHeader>
+              <ActionHelp>
+                <ActionHelpText>
+                  タップして閉じる
+                </ActionHelpText>
+              </ActionHelp>
             </NGStatus>
           )}
         </InformationArea>
@@ -372,6 +379,14 @@ const StatusBase = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  gap: 10px;
+`
+const StatusHeader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 40px;
 `
 const OKStatus = styled(StatusBase)`
   background-color: rgba(32, 192, 32, 0.9);
@@ -402,4 +417,18 @@ const StatusSubText = styled.div`
   font-size: 0.75em;
   font-weight: normal;
   text-align: center;
+`
+const ActionHelp = styled.div`
+  animation: blink 1.5s infinite;
+  @keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+`
+const ActionHelpText = styled.span`
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid white;
+  border-radius: 5px;
 `
