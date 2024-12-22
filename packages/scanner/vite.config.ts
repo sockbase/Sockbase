@@ -15,6 +15,9 @@ export default ({ mode }: { mode: string }): UserConfig => {
           cert: fs.readFileSync('../../certs/localhost.pem')
         }
       })
+    },
+    define: {
+      APP_VERSION: JSON.stringify(process.env.npm_package_version)
     }
   })
 }
