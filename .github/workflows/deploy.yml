@@ -61,4 +61,5 @@ jobs:
           firebase target:apply hosting user ${{ (github.ref == 'refs/heads/master' && 'sb-user-prod') || (github.ref == 'refs/heads/develop' && 'sb-user-staging') || '' }}
           firebase target:apply hosting admin ${{ (github.ref == 'refs/heads/master' && 'sb-admin-prod') || (github.ref == 'refs/heads/develop' && 'sb-admin-staging') || '' }}
           firebase target:apply hosting circlelist ${{ (github.ref == 'refs/heads/master' && 'sb-circlelist-prod') || (github.ref == 'refs/heads/develop' && 'sb-circlelist-staging') || '' }}
+          firebase target:apply hosting scanner ${{ (github.ref == 'refs/heads/master' && 'sb-scanner-prod') || (github.ref == 'refs/heads/develop' && 'sb-scanner-staging') || '' }}
           firebase deploy
