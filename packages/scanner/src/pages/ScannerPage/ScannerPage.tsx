@@ -65,7 +65,7 @@ const ScannerPage: React.FC = () => {
     const [email, password] = atob(data.slice(4)).split(':')
     loginByEmailAsync(email, password)
       .catch(err => {
-        setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/Login:${qrData}` }])
+        setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/Login:${data}` }])
         throw err
       })
   }, [])
