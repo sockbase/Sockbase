@@ -1,0 +1,40 @@
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  & {
+    width: 5px;
+    height: 5px;
+  }
+  &-thumb {
+    background-color: var(--scroll-thumb-color);
+    opacity: 10%;
+
+    &:hover {
+      background-color: var(--scroll-thumb-active-color);
+      opacity: 10%;
+    }
+  }
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  font-size: 14px;
+
+  background-color: var(--body-background-color);
+  color: var(--text-color);
+}
+
+#root {
+  height: 100%;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  padding-left: 1.5em;
+}

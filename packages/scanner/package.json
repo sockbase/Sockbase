@@ -1,0 +1,44 @@
+{
+  "name": "scanner",
+  "version": "2024.12.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@zxing/browser": "^0.1.5",
+    "@zxing/library": "^0.21.3",
+    "dayjs": "^1.11.7",
+    "file-saver": "^2.0.5",
+    "firebase": "^9.17.1",
+    "front-matter": "^4.0.2",
+    "jotai": "^2.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-helmet-async": "^1.3.0",
+    "react-icons": "^4.7.1",
+    "react-markdown": "^8.0.7",
+    "react-qr-code": "^2.0.11",
+    "react-router-dom": "^6.8.1",
+    "remark-gfm": "3.0.1",
+    "styled-components": "^5.3.6",
+    "use-sound": "^4.0.1",
+    "validator": "^13.9.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.7",
+    "@types/node": "^18.14.2",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@types/react-helmet": "^6.1.6",
+    "@types/styled-components": "^5.1.26",
+    "@types/validator": "^13.7.12",
+    "@vitejs/plugin-react-swc": "^3.0.0",
+    "sass": "^1.80.3",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0"
+  }
+}

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   MdAddCircleOutline,
   MdDataset,
+  MdHowToReg,
   MdOpenInNew,
   MdRefresh,
   MdStore
@@ -39,7 +40,7 @@ import type {
   SockbaseTicketHashIdDocument,
   SockbaseTicketMeta,
   SockbaseTicketUsedStatus,
-  SockbaseTicketUser
+  SockbaseTicketUserDocument
 } from 'sockbase'
 
 const StoreViewPage: React.FC = () => {
@@ -62,7 +63,7 @@ const StoreViewPage: React.FC = () => {
   const [tickets, setTickets] = useState<SockbaseTicketDocument[]>()
   const [ticketMetas, setTicketMetas] = useState<Record<string, SockbaseTicketMeta>>()
   const [ticketHashes, setTicketHashes] = useState<SockbaseTicketHashIdDocument[]>()
-  const [ticketUsers, setTicketUsers] = useState<Record<string, SockbaseTicketUser>>()
+  const [ticketUsers, setTicketUsers] = useState<Record<string, SockbaseTicketUserDocument>>()
   const [ticketUsedStatuses, setTicketUsedStatuses] = useState<Record<string, SockbaseTicketUsedStatus>>()
   const [userDataSet, setUserDataSet] = useState<Record<string, SockbaseAccount>>()
   const [payments, setPayments] = useState<Record<string, SockbasePaymentDocument | null>>()
@@ -160,8 +161,11 @@ const StoreViewPage: React.FC = () => {
 
   useEffect(() => {
     if (!storeId || !tickets || !ticketUsers) return
-    const userIds = [...tickets.map(ticket => ticket.userId), ...Object.values(ticketUsers).map(user => user.userId)]
-    const userIdSet = [...new Set(userIds)]
+    const userIds = [
+      ...tickets.filter(t => t.userId).map(ticket => ticket.userId ?? ''),
+      ...Object.values(ticketUsers).map(user => user.userId)
+    ]
+    const userIdSet = [...new Set(userIds)].filter(id => id).map(id => id ?? '')
     Promise.all(userIdSet.map(async userId => ({
       userId,
       data: await getUserDataByUserIdAndStoreIdAsync(userId, storeId)
@@ -379,7 +383,7 @@ const StoreViewPage: React.FC = () => {
                     ? (
                       <TicketAssignStatusLabel
                         isOnlyIcon
-                        usableUserId={ticketUsers?.[ticket.hashId].usableUserId} />
+                        ticketUser={ticketUsers?.[ticket.hashId]} />
                     )
                     : <BlinkField />}
                 </td>
@@ -393,14 +397,22 @@ const StoreViewPage: React.FC = () => {
                     store={store}
                     typeId={ticket.typeId} />
                 </td>
-                <td>{userDataSet?.[ticket.userId].name}</td>
                 <td>
-                  {ticket.hashId && ticketUsers && userDataSet
-                    ? userDataSet[ticketUsers[ticket.hashId].userId].name
-                    : <BlinkField />}
+                  {ticket.hashId && ticketUsers?.[ticket.hashId]?.isStandalone
+                    ? <MdHowToReg />
+                    : ticket.hashId && ticketUsers && ticket.userId && userDataSet
+                      ? userDataSet[ticket.userId].name
+                      : <BlinkField />}
+                </td>
+                <td>
+                  {ticket.hashId && ticketUsers?.[ticket.hashId]?.isStandalone
+                    ? <MdHowToReg />
+                    : ticket.hashId && ticketUsers && ticketUsers[ticket.hashId]?.userId && userDataSet
+                      ? userDataSet[ticketUsers[ticket.hashId].userId ?? ''].name
+                      : <BlinkField />}
                 </td>
                 <td><Link to={`/tickets/${ticket.hashId}`}>{ticket.hashId ?? '---'}</Link></td>
-                <td>{formatByDate(ticket.createdAt, 'M/D H:m')}</td>
+                <td>{formatByDate(ticket.createdAt, 'M/D H:mm')}</td>
               </ActiveTR>
             ))}
         </tbody>

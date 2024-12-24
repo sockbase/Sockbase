@@ -36,7 +36,7 @@ const InformationConfirm: React.FC<Props> = props => {
         eyecatchData={props.eyecatchData} />
 
       <FormSection>
-        <FormItem>
+        <FormItem $inlined>
           <FormButton
             disabled={isProcess}
             onClick={handleCreate}>作成する

@@ -318,11 +318,12 @@ export interface SockbaseTicket {
  */
 export type SockbaseTicketDocument = SockbaseTicket & {
   id: string
-  userId: string
+  userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
   hashId: string | null
   createdUserId: string | null
+  isStandalone: boolean
 }
 
 /**
@@ -347,10 +348,11 @@ export type SockbaseTicketStatusType = 0 | 1 | 2
  * 情報はチケットハッシュIDで引く
  */
 export interface SockbaseTicketUser {
-  userId: string
+  userId: string | null
   storeId: string
   typeId: string
   usableUserId: string | null
+  isStandalone: boolean
 }
 
 /**
