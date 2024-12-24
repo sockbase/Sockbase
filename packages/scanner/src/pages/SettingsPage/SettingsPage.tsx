@@ -46,19 +46,20 @@ const SettingsPage: React.FC = () => {
         <Section>
           <SectionTitle>組織情報</SectionTitle>
           <SectionBody>
-            <ul>
-              {roles && Object.entries(roles).map(([k, v]) => (
-                <li key={k}>
-                  {k === 'system' ? 'システム管理' : k}: {sockbaseShared.constants.user.roleText[v]} (アクセスレベル: {v})
-                </li>
-              ))}
-            </ul>
-          </SectionBody>
-        </Section>
-        <Section>
-          <SectionTitle>ビルド番号</SectionTitle>
-          <SectionBody>
-            v{envHelper.version}.{envHelper.buildNumber}
+            {user !== undefined
+              ? !user
+                ? '未ログイン'
+                : (
+                  <ul>
+                    {roles && Object.entries(roles).map(([k, v]) => (
+                      <li key={k}>
+                        {k === 'system' ? 'システム管理' : k}: {sockbaseShared.constants.user.roleText[v]} (アクセスレベル: {v})
+                      </li>
+                    ))}
+                  </ul>
+                )
+              : '認証中'}
+
           </SectionBody>
         </Section>
         <Section>
@@ -69,6 +70,14 @@ const SettingsPage: React.FC = () => {
                 <FormButton onClick={handleLogout}>ログアウト</FormButton>
               )
               : '未ログイン'}
+          </SectionBody>
+        </Section>
+      </Container>
+      <Container>
+        <Section>
+          <SectionTitle>ビルド番号</SectionTitle>
+          <SectionBody>
+            v{envHelper.version}.{envHelper.buildNumber}
           </SectionBody>
         </Section>
       </Container>
