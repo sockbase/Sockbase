@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { PiCameraFill, PiCameraSlash, PiCheckFatFill, PiX } from 'react-icons/pi'
 import styled from 'styled-components'
 import useSound from 'use-sound'
@@ -7,6 +7,7 @@ import OKSoundWAV from '../../assets/se/ok.wav'
 import QRReaderComponent from '../../components/Parts/QRReaderComponent'
 import useFirebase from '../../hooks/useFirebase'
 import usePayment from '../../hooks/usePayment'
+import useRole from '../../hooks/useRole'
 import useStore from '../../hooks/useStore'
 import type {
   SockbasePaymentDocument,
@@ -17,8 +18,8 @@ import type {
 } from 'sockbase'
 
 const ScannerPage: React.FC = () => {
-  const { user,
-    loginByEmailAsync } = useFirebase()
+  const { user, loginByEmailAsync } = useFirebase()
+  const { commonRole } = useRole()
   const {
     getTicketUserByHashIdAsync,
     getTicketHashAsync,
@@ -32,7 +33,7 @@ const ScannerPage: React.FC = () => {
   const [playSENG] = useSound(NGSoundWAV, { volume: 0.2 })
 
   const [isCameraOff, setisCameraOff] = useState(true)
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [isConfirm, setIsConfirm] = useState(true)
   const [scanErrors, setScanErrors] = useState<{ error: string, detail?: string }[] | null>()
 
@@ -43,6 +44,11 @@ const ScannerPage: React.FC = () => {
   const [ticketUsedStatus, setTicketUsedStatus] = useState<SockbaseTicketUsedStatus | null>()
   const [ticketMeta, setTicketMeta] = useState<SockbaseTicketMeta | null>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
+
+  const isValidRole = useMemo(() => {
+    if (commonRole === undefined) return undefined
+    return !!commonRole && commonRole >= 1
+  }, [commonRole])
 
   const handleConfirm = useCallback(() => {
     setIsConfirm(true)
@@ -58,26 +64,28 @@ const ScannerPage: React.FC = () => {
   const handleLogin = useCallback((data: string) => {
     const [email, password] = atob(data.slice(4)).split(':')
     loginByEmailAsync(email, password)
-      .then(() => {
-        setScanErrors([])
-      })
       .catch(err => {
         setScanErrors([{ error: '管理者に問い合わせてください', detail: `内部エラー/Login:${qrData}` }])
         throw err
       })
-      .finally(() => setIsConfirm(false))
   }, [])
 
   useEffect(() => {
-    if (!isConfirm || !qrData || user === undefined) return
-    setLoading(true)
+    if (!isConfirm || !qrData) return
+    setIsLoading(true)
     if (qrData.startsWith('U0ww')) {
-      if (user) {
-        setScanErrors([{ error: 'ログイン済み' }])
+      if (!user) {
+        handleLogin(qrData)
         return
       }
-      handleLogin(qrData)
-      return
+      else if (isValidRole) {
+        setScanErrors([])
+        return
+      }
+      else {
+        setScanErrors([{ error: '管理者に問い合わせてください', detail: `不正なアカウント/${user.uid}` }])
+        return
+      }
     }
     else if (!user && !qrData.startsWith('U0ww')) {
       setScanErrors([{ error: 'ログインが必要', detail: 'ログイン QR コードを読み取ってください' }])
@@ -90,7 +98,7 @@ const ScannerPage: React.FC = () => {
     }
 
     setTicketHashId(qrData)
-  }, [qrData, isConfirm, user])
+  }, [qrData, isConfirm, isValidRole, user])
 
   useEffect(() => {
     if (!ticketHashId) return
@@ -177,7 +185,7 @@ const ScannerPage: React.FC = () => {
       playSENG()
     }
     setIsConfirm(false)
-    setLoading(false)
+    setIsLoading(false)
   }, [scanErrors])
 
   return (
@@ -203,7 +211,7 @@ const ScannerPage: React.FC = () => {
       </CameraArea>
       <ControlArea>
         <ControlTop>
-          {!user ? 'ログイン QR コードを読み取ってください' : 'QR コードを読み取ってください'}
+          {!user && !isValidRole ? 'ログイン QR コードを読み取ってください' : 'QR コードを読み取ってください'}
         </ControlTop>
         <ControlBottom>
           <CameraControlButton
@@ -386,7 +394,7 @@ const StatusHeader = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding: 40px;
+  padding: 20px;
 `
 const OKStatus = styled(StatusBase)`
   background-color: rgba(32, 192, 32, 0.9);
