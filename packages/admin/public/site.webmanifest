@@ -1,6 +1,6 @@
 {
-    "name": "Sockbase SCAN",
-    "short_name": "SCAN",
+    "name": "Sockbase ADMIN",
+    "short_name": "ADMIN",
     "icons": [
         {
             "src": "/web-app-manifest-192x192.png",
