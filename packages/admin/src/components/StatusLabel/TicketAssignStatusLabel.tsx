@@ -1,17 +1,22 @@
 import { useMemo } from 'react'
-import { MdCheck, MdOutlineQuestionMark, MdPendingActions } from 'react-icons/md'
+import { MdCheck, MdHowToReg, MdOutlineQuestionMark, MdPendingActions } from 'react-icons/md'
 import styled from 'styled-components'
 import BlinkField from '../Parts/BlinkField'
 import IconLabel from '../Parts/IconLabel'
+import type { SockbaseTicketUserDocument } from 'packages/types/src'
 
 interface Props {
-  usableUserId: string | null | undefined
+  ticketUser: SockbaseTicketUserDocument | undefined
   isOnlyIcon?: boolean
 }
 
 const TicketAssignStatusLabel: React.FC<Props> = props => {
   const labelText = useMemo(() => {
-    switch (props.usableUserId) {
+    switch (props.ticketUser?.isStandalone) {
+      case true:
+        return 'スタンドアロン'
+    }
+    switch (props.ticketUser?.usableUserId) {
       case undefined:
         return '状態不明'
       case null:
@@ -19,10 +24,14 @@ const TicketAssignStatusLabel: React.FC<Props> = props => {
       default:
         return '割当済み'
     }
-  }, [props.usableUserId])
+  }, [props.ticketUser])
 
   const iconElement = useMemo(() => {
-    switch (props.usableUserId) {
+    switch (props.ticketUser?.isStandalone) {
+      case true:
+        return <MdHowToReg />
+    }
+    switch (props.ticketUser?.usableUserId) {
       case undefined:
         return <MdOutlineQuestionMark />
       case null:
@@ -30,12 +39,17 @@ const TicketAssignStatusLabel: React.FC<Props> = props => {
       default:
         return <MdCheck />
     }
-  }, [props.usableUserId])
+  }, [props.ticketUser])
+
+  const assigned = useMemo(() => {
+    if (!props.ticketUser) return undefined
+    return props.ticketUser.usableUserId !== null || props.ticketUser.isStandalone
+  }, [props.ticketUser])
 
   return (
-    props.usableUserId !== undefined
+    props.ticketUser
       ? (
-        <Container assigned={props.usableUserId === undefined ? undefined : !!props.usableUserId}>
+        <Container assigned={assigned}>
           <IconLabel
             icon={iconElement}
             isOnlyIcon={props.isOnlyIcon}

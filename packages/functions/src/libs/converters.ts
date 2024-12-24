@@ -237,7 +237,8 @@ export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
     createdAt: ticket.createdAt,
     updateAt: ticket.updatedAt,
     hashId: ticket.hashId,
-    createdUserId: ticket.createdUserId
+    createdUserId: ticket.createdUserId,
+    isStandalone: ticket.isStandalone
   }),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketDocument => {
     const ticketDoc = snapshot.data()
@@ -250,7 +251,8 @@ export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
       createdAt: ticketDoc.createdAt ? new Date(ticketDoc.createdAt.seconds * 1000) : null,
       updatedAt: ticketDoc.updatedAt ? new Date(ticketDoc.updatedAt.seconds * 1000) : null,
       hashId: ticketDoc.hashId,
-      createdUserId: ticketDoc.createdUserId
+      createdUserId: ticketDoc.createdUserId,
+      isStandalone: ticketDoc.isStandalone
     }
   }
 }
@@ -287,7 +289,8 @@ export const ticketUserConverter: FirestoreDataConverter<SockbaseTicketUserDocum
       usableUserId: ticketUserDoc.usableUserId,
       used: ticketUserDoc.used,
       usedAt: ticketUserDoc.usedAt ? new Date(ticketUserDoc.usedAt.seconds * 1000) : null,
-      userId: ticketUserDoc.userId
+      userId: ticketUserDoc.userId,
+      isStandalone: ticketUserDoc.isStandalone ?? false
     }
   }
 }

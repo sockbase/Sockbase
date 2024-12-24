@@ -28,5 +28,6 @@
     "typescript-eslint": "^8.17.0"
   },
   "packageManager": "yarn@1.22.1",
-  "type": "module"
+  "type": "module",
+  "version": "2024.12.0"
 }

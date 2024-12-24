@@ -7,18 +7,8 @@ import {
   getAuth as getFirebaseAuth,
   signInWithEmailAndPassword,
   signOut,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
-  onIdTokenChanged,
-  sendEmailVerification,
-  verifyPasswordResetCode,
-  confirmPasswordReset,
-  applyActionCode
+  onIdTokenChanged
 } from 'firebase/auth'
-import {
-  type Database,
-  getDatabase as getFirebaseDatabase
-} from 'firebase/database'
 import {
   type Firestore,
   getFirestore as getFirebaseFirestore
@@ -41,16 +31,9 @@ interface IUseFirebase {
   getAuth: () => Auth
   loginByEmailAsync: (email: string, password: string) => Promise<UserCredential>
   logoutAsync: () => Promise<void>
-  createUserAsync: (email: string, password: string) => Promise<User>
-  sendPasswordResetURLAsync: (email: string) => Promise<void>
-  sendVerifyMailAsync: () => Promise<void>
-  verifyPasswordResetCodeAsync: (code: string) => Promise<void>
-  confirmPasswordResetAsync: (code: string, password: string) => Promise<void>
-  applyActionCodeAsync: (code: string) => Promise<void>
   getFirestore: () => Firestore
   getStorage: () => FirebaseStorage
   getFunctions: () => Functions
-  getDatabase: () => Database
 }
 
 const useFirebase = (): IUseFirebase => {
@@ -92,46 +75,6 @@ const useFirebase = (): IUseFirebase => {
         .catch(err => { throw err })
     }, [])
 
-  const createUserAsync =
-    useCallback(async (email: string, password: string) => {
-      const auth = getAuth()
-      return await createUserWithEmailAndPassword(auth, email, password)
-        .then(cred => cred.user)
-        .catch(err => { throw err })
-    }, [])
-
-  const sendPasswordResetURLAsync =
-    useCallback(async (email: string) => {
-      const auth = getAuth()
-      await sendPasswordResetEmail(auth, email)
-        .catch(err => { throw err })
-    }, [])
-
-  const sendVerifyMailAsync =
-    useCallback(async () => {
-      if (!user) return
-      sendEmailVerification(user)
-        .catch(err => { throw err })
-    }, [user])
-
-  const verifyPasswordResetCodeAsync =
-    useCallback(async (code: string) => {
-      const auth = getAuth()
-      await verifyPasswordResetCode(auth, code)
-    }, [])
-
-  const confirmPasswordResetAsync =
-    useCallback(async (code: string, password: string): Promise<void> => {
-      const auth = getAuth()
-      await confirmPasswordReset(auth, code, password)
-    }, [])
-
-  const applyActionCodeAsync =
-    useCallback(async (code: string): Promise<void> => {
-      const auth = getAuth()
-      await applyActionCode(auth, code)
-    }, [])
-
   const getFirestore = getFirebaseFirestore
 
   const getStorage = getFirebaseStorage
@@ -141,8 +84,6 @@ const useFirebase = (): IUseFirebase => {
       const app = getFirebaseApp()
       return getFirebaseFunctions(app)
     }, [])
-
-  const getDatabase = getFirebaseDatabase
 
   useEffect(() => {
     const auth = getAuth()
@@ -178,16 +119,9 @@ const useFirebase = (): IUseFirebase => {
     getAuth,
     loginByEmailAsync,
     logoutAsync,
-    createUserAsync,
-    sendPasswordResetURLAsync,
-    sendVerifyMailAsync,
-    verifyPasswordResetCodeAsync,
-    confirmPasswordResetAsync,
-    applyActionCodeAsync,
     getFirestore,
     getStorage,
-    getFunctions,
-    getDatabase
+    getFunctions
   }
 }
 

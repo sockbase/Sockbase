@@ -27,7 +27,7 @@ export default tseslint.config([
   {
     rules: {
       ...stylistic.configs['recommended-flat'].rules,
-      '@stylistic/semi': 'off',
+      '@stylistic/semi': 'error',
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/eol-last': 'error',
       '@stylistic/multiline-ternary': ['error', 'always-multiline'],
