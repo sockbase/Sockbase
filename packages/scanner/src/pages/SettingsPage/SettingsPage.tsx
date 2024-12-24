@@ -36,14 +36,6 @@ const SettingsPage: React.FC = () => {
           </SectionBody>
         </Section>
         <Section>
-          <SectionTitle>ユーザ ID</SectionTitle>
-          <SectionBody>
-            {user !== undefined
-              ? user?.uid ?? '未ログイン'
-              : '認証中'}
-          </SectionBody>
-        </Section>
-        <Section>
           <SectionTitle>組織情報</SectionTitle>
           <SectionBody>
             {user !== undefined
