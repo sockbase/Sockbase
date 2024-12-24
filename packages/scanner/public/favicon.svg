@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_レイヤー_2" data-name="レイヤー 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #e6f6ff;
+      }
+
+      .cls-2, .cls-3 {
+        fill: #00a8ff;
+      }
+
+      .cls-4 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        font-family: DIN2014-ExtraBold, 'DIN 2014';
+        font-size: 106.61px;
+        font-weight: 700;
+      }
+    </style>
+  </defs>
+  <rect class="cls-1" y="0" width="512" height="512"/>
+  <g>
+    <polygon class="cls-2" points="350.34 164.35 359.37 117.86 170.57 117.86 139.39 278.4 372.51 278.4 350.34 164.35"/>
+    <polygon class="cls-4" points="188.41 137.16 164.73 259.1 310.34 259.1 334.03 137.16 188.41 137.16"/>
+  </g>
+  <text class="cls-3" transform="translate(124.93 394.87)"><tspan x="0" y="0">SCAN</tspan></text>
+</svg>
