@@ -62,7 +62,8 @@ const InformationImport: React.FC<Props> = props => {
     },
     permissions: {
       allowAdult: false,
-      canUseBankTransfer: true
+      canUseBankTransfer: true,
+      requirePetitCode: false
     },
     isPublic: false
   })
@@ -83,6 +84,7 @@ const InformationImport: React.FC<Props> = props => {
     data: eyecatchDataWithHook,
     openAsDataURL: openEyecatch
   } = useFile()
+
   const [eyecatchFile, setEyecatchFile] = useState<File>()
   const [eyecatchData, setEyecatchData] = useState<string>()
 
@@ -172,7 +174,8 @@ const InformationImport: React.FC<Props> = props => {
       }],
       permissions: {
         allowAdult: !!ev.permissions.allowAdult,
-        canUseBankTransfer: !!ev.permissions.canUseBankTransfer
+        canUseBankTransfer: !!ev.permissions.canUseBankTransfer,
+        requirePetitCode: !!ev.permissions.requirePetitCode
       },
       schedules: {
         startApplication: ev.schedules.startApplication ?? 0,
@@ -749,6 +752,13 @@ const InformationImport: React.FC<Props> = props => {
             label="参加費の銀行振込を許可する"
             name="canUseBankTransfer"
             onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, canUseBankTransfer: checked } }))} />
+        </FormItem>
+        <FormItem>
+          <FormCheckbox
+            checked={event.permissions.requirePetitCode}
+            label="プチオンリーコードの入力を必須とする"
+            name="requirePetitCode"
+            onChange={checked => setEvent(s => ({ ...s, permissions: { ...s.permissions, requirePetitCode: checked } }))} />
         </FormItem>
       </FormSection>
 
