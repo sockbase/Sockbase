@@ -294,8 +294,12 @@ const CircleViewPage: React.FC = () => {
                 </td>
               </tr>
               <tr>
-                <th>配置希望ジャンル</th>
+                <th>配置希望ジャンル・カテゴリ</th>
                 <td>{genreType?.name ?? <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>ジャンルコード・プチオンリーコード</th>
+                <td>{app ? app.petitCode || '(空欄)' : <BlinkField />}</td>
               </tr>
               <tr>
                 <th>頒布物概要</th>
@@ -315,10 +319,6 @@ const CircleViewPage: React.FC = () => {
               <tr>
                 <th>合体申し込み ID</th>
                 <td>{app ? app.unionCircleId || '(空欄)' : <BlinkField />}</td>
-              </tr>
-              <tr>
-                <th>プチオンリーコード</th>
-                <td>{app ? app.petitCode || '(空欄)' : <BlinkField />}</td>
               </tr>
             </tbody>
           </table>

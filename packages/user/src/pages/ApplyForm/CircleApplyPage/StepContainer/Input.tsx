@@ -352,8 +352,8 @@ const Input: React.FC<Props> = props => {
               <Alert
                 title="成人向け作品の頒布について"
                 type="warning">
-              成人向け作品を頒布する場合、イベント当日 ({formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}) 時点で 18 歳以上である必要があります。<br />
-              イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
+                成人向け作品を頒布する場合、イベント当日 ({formatByDate(props.event.schedules.startEvent, 'YYYY年 M月 D日')}) 時点で 18 歳以上である必要があります。<br />
+                イベント当日時点で未成年の場合、または「無: 成人向け頒布物はありません」を選んだ場合、成人向け作品を頒布することは出来ません。
               </Alert>
             </FormItem>
           </>
@@ -361,7 +361,7 @@ const Input: React.FC<Props> = props => {
       </FormSection>
       <FormSection>
         <FormItem>
-          <FormLabel>配置希望ジャンル</FormLabel>
+          <FormLabel>配置希望ジャンル・カテゴリ</FormLabel>
           <FormSelect
             hasError={isAppliedPastApp && !app.circle.genre}
             onChange={e => setApp(s => ({ ...s, circle: { ...s.circle, genre: e.target.value } }))}
@@ -374,6 +374,14 @@ const Input: React.FC<Props> = props => {
               </option>
             ))}
           </FormSelect>
+        </FormItem>
+        <FormItem>
+          <FormLabel>ジャンルコード・プチオンリーコード</FormLabel>
+          <FormInput
+            onChange={e => setApp(s => ({ ...s, petitCode: e.target.value.trim() }))}
+            placeholder="HOGEFUGA00"
+            value={app.petitCode} />
+          <FormHelp>イベント主催者から入力を指示された場合のみ入力してください。</FormHelp>
         </FormItem>
       </FormSection>
       <FormSection>
@@ -422,14 +430,6 @@ const Input: React.FC<Props> = props => {
             placeholder="SCXXXXABCDEFGHIJKL"
             value={app.unionCircleId} />
           <FormHelp>先に申し込んだ方から提供された申し込みIDを入力してください。</FormHelp>
-        </FormItem>
-        <FormItem>
-          <FormLabel>プチオンリーコード</FormLabel>
-          <FormInput
-            onChange={e => setApp(s => ({ ...s, petitCode: e.target.value.trim() }))}
-            placeholder="marukaku00"
-            value={app.petitCode} />
-          <FormHelp>プチオンリー主催から入力を指示された場合のみ入力してください。</FormHelp>
         </FormItem>
       </FormSection>
 
