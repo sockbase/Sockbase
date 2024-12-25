@@ -68,7 +68,7 @@ const CircleTanzaku: React.FC<Props> = props => {
                     <IndicatorIcon>合体</IndicatorIcon>
                   </Indicator>
                   <Indicator $active={!!props.app.petitCode}>
-                    <IndicatorIcon>ﾌﾟﾁｵﾝﾘｰ</IndicatorIcon>
+                    <IndicatorIcon>ｼﾞｬﾝﾙ/ﾌﾟﾁ</IndicatorIcon>
                   </Indicator>
                 </IndicatorRack>
                 <PrintTable>
@@ -84,7 +84,7 @@ const CircleTanzaku: React.FC<Props> = props => {
                       </td>
                     </tr>
                     <tr>
-                      <th>ﾌﾟﾁｵﾝﾘｰｺｰﾄﾞ</th>
+                      <th>ｼﾞｬﾝﾙ/ﾌﾟﾁｵﾝﾘｰｺｰﾄﾞ</th>
                       <td>{props.app.petitCode || '(空欄)'}</td>
                     </tr>
                   </tbody>
@@ -176,7 +176,7 @@ const CircleTanzaku: React.FC<Props> = props => {
                       <td>{props.app.circle.hasAdult ? '有り' : '無し'}</td>
                     </tr>
                     <tr>
-                      <th>ジャンル</th>
+                      <th>ｼﾞｬﾝﾙ･ｶﾃｺﾞﾘ</th>
                       <td>{genreType?.name}</td>
                     </tr>
                     <tr>
