@@ -103,9 +103,9 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
       passConfig: data.passConfig,
       schedules: data.schedules,
       permissions: {
-        allowAdult: event.permissions.allowAdult ?? false,
-        canUseBankTransfer: event.permissions.canUseBankTransfer ?? false,
-        requirePetitCode: event.permissions.requirePetitCode ?? false
+        allowAdult: data.permissions.allowAdult ?? false,
+        canUseBankTransfer: data.permissions.canUseBankTransfer ?? false,
+        requirePetitCode: data.permissions.requirePetitCode ?? false
       },
       isPublic: data.isPublic,
       _organization: data._organization
