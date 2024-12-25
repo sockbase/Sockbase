@@ -91,8 +91,12 @@ const Confirm: React.FC<Props> = props => {
             </tr>
           )}
           <tr>
-            <th>配置希望ジャンル</th>
+            <th>配置希望ジャンル・カテゴリ</th>
             <td>{props.selectedGenre?.name}</td>
+          </tr>
+          <tr>
+            <th>ジャンルコード・プチオンリーコード</th>
+            <td>{props.app?.petitCode || '(空欄)'}</td>
           </tr>
           <tr>
             <th>頒布物概要</th>
@@ -111,10 +115,6 @@ const Confirm: React.FC<Props> = props => {
           <tr>
             <th>合体希望サークル 合体申し込み ID</th>
             <td>{props.app?.unionCircleId || '(空欄)'}</td>
-          </tr>
-          <tr>
-            <th>プチオンリーコード</th>
-            <td>{props.app?.petitCode || '(空欄)'}</td>
           </tr>
         </tbody>
       </table>

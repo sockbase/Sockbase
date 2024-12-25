@@ -212,6 +212,10 @@ const EventInfo: React.FC<Props> = props => {
             <th>参加費の銀行振込を許可</th>
             <td>{props.event?.permissions.canUseBankTransfer ? '許可する' : '許可しない'}</td>
           </tr>
+          <tr>
+            <th>プチオンリーコードの入力</th>
+            <td>{props.event?.permissions.requirePetitCode ? '必須' : '任意'}</td>
+          </tr>
         </tbody>
       </table>
     </>
