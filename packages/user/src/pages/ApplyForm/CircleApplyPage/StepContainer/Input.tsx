@@ -378,10 +378,15 @@ const Input: React.FC<Props> = props => {
         <FormItem>
           <FormLabel>ジャンルコード・プチオンリーコード</FormLabel>
           <FormInput
+            hasError={props.event.permissions.requirePetitCode && validator.isEmpty(app.petitCode)}
             onChange={e => setApp(s => ({ ...s, petitCode: e.target.value.trim() }))}
             placeholder="HOGEFUGA00"
             value={app.petitCode} />
-          <FormHelp>イベント主催者から入力を指示された場合のみ入力してください。</FormHelp>
+          <FormHelp hasError={props.event.permissions.requirePetitCode && validator.isEmpty(app.petitCode)}>
+            {props.event.permissions.requirePetitCode
+              ? 'イベントサイトにて公開されているジャンルコード・プチオンリーを入力してください。'
+              : 'イベント主催者から入力を指示された場合のみ入力してください。'}
+          </FormHelp>
         </FormItem>
       </FormSection>
       <FormSection>

@@ -173,7 +173,11 @@ export const eventConverter: FirestoreDataConverter<SockbaseEvent> = {
         name: '',
         contactUrl: ''
       },
-      permissions: event.permissions,
+      permissions: {
+        allowAdult: event.permissions.allowAdult ?? false,
+        canUseBankTransfer: event.permissions.canUseBankTransfer ?? false,
+        requirePetitCode: event.permissions.requirePetitCode ?? false
+      },
       isPublic: event.isPublic
     }
   }
@@ -209,21 +213,22 @@ export const applicationHashIdConverter: FirestoreDataConverter<SockbaseApplicat
 export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
   toFirestore: () => ({}),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseStoreDocument => {
-    const storeDoc = snapshot.data()
+    const store = snapshot.data()
     return {
       id: snapshot.id,
-      name: storeDoc.name,
-      websiteURL: storeDoc.websiteURL,
-      venue: storeDoc.place,
-      descriptions: storeDoc.descriptions,
-      rules: storeDoc.rules,
-      types: storeDoc.types,
-      schedules: storeDoc.schedules,
-      _organization: storeDoc._organization,
+      name: store.name,
+      websiteURL: store.websiteURL,
+      venue: store.place,
+      descriptions: store.descriptions,
+      rules: store.rules,
+      types: store.types,
+      schedules: store.schedules,
+      _organization: store._organization,
       permissions: {
-        ...storeDoc.permissions
+        canUseBankTransfer: store.permissions.canUseBankTransfer ?? false,
+        ticketUserAutoAssign: store.permissions.ticketUserAutoAssign ?? false
       },
-      isPublic: storeDoc.isPublic
+      isPublic: store.isPublic
     }
   }
 }

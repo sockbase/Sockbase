@@ -166,7 +166,11 @@ export const eventConverter: FirestoreDataConverter<SockbaseEventDocument> = {
       schedules: event.schedules,
       passConfig: event.passConfig,
       _organization: event._organization,
-      permissions: event.permissions,
+      permissions: {
+        allowAdult: event.permissions.allowAdult ?? false,
+        canUseBankTransfer: event.permissions.canUseBankTransfer ?? false,
+        requirePetitCode: event.permissions.requirePetitCode ?? false
+      },
       isPublic: event.isPublic
     }
   }
@@ -230,7 +234,8 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
       schedules: store.schedules,
       _organization: store._organization,
       permissions: {
-        ...store.permissions
+        canUseBankTransfer: store.permissions.canUseBankTransfer ?? false,
+        ticketUserAutoAssign: store.permissions.ticketUserAutoAssign ?? false
       },
       types: store.types,
       isPublic: store.isPublic
