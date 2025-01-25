@@ -115,10 +115,12 @@ const Input: React.FC<Props> = props => {
       !links.pixivUserId || validator.isOnlyNumber(links.pixivUserId),
       !links.websiteURL || validator.isURL(links.websiteURL),
       !links.menuURL || validator.isURL(links.menuURL),
-      app.circle.hasAdult === 'no' || (props.event.permissions.allowAdult && app.circle.hasAdult === 'yes'),
+      !app.circle.hasAdult || app.circle.hasAdult === 'no' || (props.event.permissions.allowAdult && app.circle.hasAdult === 'yes'),
       props.event.permissions.canUseBankTransfer || app.paymentMethod === 'online',
       isAgreed
     ]
+
+    console.log(validators)
 
     let errorCount = validators.filter(v => !v).length
 
