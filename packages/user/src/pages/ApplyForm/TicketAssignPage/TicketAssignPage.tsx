@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Alert from '../../../components/Parts/Alert'
+import Loading from '../../../components/Parts/Loading'
 import useFirebase from '../../../hooks/useFirebase'
 import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
@@ -75,6 +76,10 @@ const TicketAssignPage: React.FC = () => {
 
   return (
     <DefaultBaseLayout title="チケット受け取りページ">
+      {(ticketHashId === undefined || store === undefined || ticketUser === undefined) && (
+        <Loading text="チケットストア情報" />
+      )}
+
       {(ticketUser === null || !ticketHashId) && (
         <Alert
           title="チケット情報が見つかりません"
@@ -83,6 +88,7 @@ const TicketAssignPage: React.FC = () => {
           URL をもう一度お確かめください。
         </Alert>
       )}
+
       {store && ticketHashId && ticketUser && (
         <StepContainer
           assignTicketUserAsync={assignTicketUserAsync}
