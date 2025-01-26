@@ -266,30 +266,32 @@ const spaces = props.listControl.type === 1
       )}
     </tbody>
   </table>
-  <h3>Webカタログβ</h3>
-  <p class="circleCutRack">
-    {spaces.filter(s => s.circleCutURL)
-    .map(s => {
-      const app = props.apps.find(a => a.id === s.appId);
-      const isDualSpace = props.event.spaces.find(s => s.id === app?.spaceId)?.isDualSpace;
-      return (
-        s.circleCutURL
-          ? (
-            <>
-              <a href={`#${s.spaceName}`} class={props.listControl.dualSpaceCircleCutType === 2 && isDualSpace ? 'dualSpace' :''}>
-                <img src={s.circleCutURL.url} class="circleCutImage" />
-              </a>
-              {props.listControl.dualSpaceCircleCutType === 1 && isDualSpace
-                ? <a href={`#${s.spaceName}`}>
+  {props.listControl.type === 1 && <>
+    <h3>Webカタログβ</h3>
+    <p class="circleCutRack">
+      {spaces.filter(s => s.circleCutURL)
+      .map(s => {
+        const app = props.apps.find(a => a.id === s.appId);
+        const isDualSpace = props.event.spaces.find(s => s.id === app?.spaceId)?.isDualSpace;
+        return (
+          s.circleCutURL
+            ? (
+              <>
+                <a href={`#${s.spaceName}`} class={props.listControl.dualSpaceCircleCutType === 2 && isDualSpace ? 'dualSpace' :''}>
                   <img src={s.circleCutURL.url} class="circleCutImage" />
                 </a>
-                : <></>}
-            </>
-          )
-          : <></>
-      )
-    })}
-  </p>
+                {props.listControl.dualSpaceCircleCutType === 1 && isDualSpace
+                  ? <a href={`#${s.spaceName}`}>
+                    <img src={s.circleCutURL.url} class="circleCutImage" />
+                  </a>
+                  : <></>}
+              </>
+            )
+            : <></>
+        )
+      })}
+    </p>
+  </>}
 </DefaultLayout>
 
 <style lang="scss">
