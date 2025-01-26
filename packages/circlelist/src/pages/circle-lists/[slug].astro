@@ -275,9 +275,16 @@ const spaces = props.listControl.type === 1
       return (
         s.circleCutURL
           ? (
-            <a href={`#${s.spaceName}`} class={isDualSpace ? 'dualSpace' :''}>
-              <img src={s.circleCutURL.url} class="circleCutImage" />
-            </a>
+            <>
+              <a href={`#${s.spaceName}`} class={props.listControl.dualSpaceCircleCutType === 2 && isDualSpace ? 'dualSpace' :''}>
+                <img src={s.circleCutURL.url} class="circleCutImage" />
+              </a>
+              {props.listControl.dualSpaceCircleCutType === 1 && isDualSpace
+                ? <a href={`#${s.spaceName}`}>
+                  <img src={s.circleCutURL.url} class="circleCutImage" />
+                </a>
+                : <></>}
+            </>
           )
           : <></>
       )
@@ -314,6 +321,7 @@ const spaces = props.listControl.type === 1
     }
   }
   :target {
+    animation: highlight 1s infinite alternate;
     @keyframes highlight {
       0% {
         background-color: inherit;
@@ -322,6 +330,5 @@ const spaces = props.listControl.type === 1
         background-color: #ba365140;
       }
     }
-    animation: highlight 1s infinite alternate;
   }
 </style>
