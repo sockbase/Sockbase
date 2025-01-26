@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import sockbaseShared from 'shared'
 import Alert from '../../../../components/Parts/Alert'
+import Loading from '../../../../components/Parts/Loading'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
 import CheckAccount from './CheckAccount'
@@ -142,6 +143,10 @@ const StepContainer: React.FC<Props> = props => {
 
   return (
     <>
+      {props.store === undefined && (
+        <Loading text="チケットストア情報" />
+      )}
+
       {props.store === null && (
         <Alert
           title="チケットストアが見つかりません"
