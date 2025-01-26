@@ -7,7 +7,7 @@ if (typeof document !== 'undefined') {
         background-color: #b14963;
         border: none;
         color: white;
-        padding: 5px 10px;
+        padding: 5px 20px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
