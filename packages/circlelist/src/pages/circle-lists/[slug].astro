@@ -259,9 +259,16 @@ const spaces = props.listControl.type === 1
       return (
         s.circleCutURL
           ? (
-            <a href={`#${s.spaceName}`} class={isDualSpace ? 'dualSpace' :''}>
-              <img src={s.circleCutURL.url} class="circleCutImage" />
-            </a>
+            <>
+              <a href={`#${s.spaceName}`} class={props.listControl.dualSpaceCircleCutType === 2 && isDualSpace ? 'dualSpace' :''}>
+                <img src={s.circleCutURL.url} class="circleCutImage" />
+              </a>
+              {props.listControl.dualSpaceCircleCutType === 1 && isDualSpace
+                ? <a href={`#${s.spaceName}`}>
+                  <img src={s.circleCutURL.url} class="circleCutImage" />
+                </a>
+                : <></>}
+            </>
           )
           : <></>
       )
