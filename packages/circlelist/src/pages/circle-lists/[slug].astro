@@ -163,6 +163,8 @@ const spaces = props.listControl.type === 1
       const appDoc = apps.find(app => app.id === hashDoc?.applicationId);
       if (!appDoc) {
         return {
+          id: s.id,
+          appId: '',
           spaceName: `(${s.spaceName})`,
           circleName: '',
           penName: '',
@@ -175,6 +177,8 @@ const spaces = props.listControl.type === 1
       const circleCutURL = props.circleCutURLs.find(circleCutURL => circleCutURL.id === appDoc.hashId);
 
       return {
+        id: s.id,
+        appId: appDoc.id,
         spaceName: s.spaceName,
         circleName: appDoc.circle.name,
         penName: appDoc.circle.penName,
@@ -184,11 +188,13 @@ const spaces = props.listControl.type === 1
       }
     })
   : apps.sort((a, b) => a.circle.yomi.localeCompare(b.circle.yomi))
-    .map(app => {
+    .map((app, i) => {
       const links = convertLinks(app);
       const circleCutURL = props.circleCutURLs.find(circleCutURL => circleCutURL.id === app.hashId);
 
       return {
+        id: i + 1,
+        appId: app.id,
         spaceName: null,
         circleName: app.circle.name,
         penName: app.circle.penName,
@@ -219,7 +225,6 @@ const spaces = props.listControl.type === 1
   <table>
     <thead>
       <tr>
-        <th>&nbsp;</th>
         {props.listControl.type === 1 && <th>スペース</th>}
         <th>サークル</th>
         <th>ペンネーム</th>
@@ -229,10 +234,7 @@ const spaces = props.listControl.type === 1
     </thead>
     <tbody>
       {spaces.map(s => (
-        <tr>
-          <td>
-            {s.circleCutURL && <a href={s.circleCutURL.url}><img src={s.circleCutURL.url} class="circleCutImage" /></a>}
-          </td>
+        <tr id={s.spaceName}>
           {props.listControl.type === 1 && <td>{s.spaceName}</td>}
           <td>{s.circleName}</td>
           <td>{s.penName}</td>
@@ -248,13 +250,51 @@ const spaces = props.listControl.type === 1
       )}
     </tbody>
   </table>
+  <h3>Webカタログβ</h3>
+  <p class="circleCutRack">
+    {spaces.filter(s => s.circleCutURL)
+    .map(s => {
+      const app = props.apps.find(a => a.id === s.appId);
+      const isDualSpace = props.event.spaces.find(s => s.id === app?.spaceId)?.isDualSpace;
+      return (
+        s.circleCutURL
+          ? (
+            <a href={`#${s.spaceName}`} class={isDualSpace ? 'dualSpace' :''}>
+              <img src={s.circleCutURL.url} class="circleCutImage" />
+            </a>
+          )
+          : <></>
+      )
+    })}
+  </p>
 </DefaultLayout>
 
 <style lang="scss">
   .date {
     margin-top: -10px;
   }
-  .circleCutImage {
-    height: 96px;
+  .circleCutRack {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+
+    a {
+      display: inline-block;
+      width: calc(100% / 8);
+      font-size: 0;
+      &.dualSpace {
+        width: calc(100% / 4);
+      }
+      @media screen and (max-width: 840px) {
+        width: calc(100% / 4);
+        &.dualSpace {
+          width: calc(100% / 2);
+        }
+      }
+      img {
+        width: 100%;
+        height: auto;
+      }
+    }
   }
 </style>
