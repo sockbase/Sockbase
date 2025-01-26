@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { MdGridView } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
+import FormInput from '../../components/Form/FormInput'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import EventInfo from '../../components/Parts/EventInfo'
 import PageTitle from '../../components/Parts/PageTitle'
 import TwoColumnLayout from '../../components/TwoColumnLayout'
+import envHelper from '../../helpers/envHelper'
 import useEvent from '../../hooks/useEvent'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 import type { SockbaseEvent } from 'sockbase'
@@ -53,6 +57,24 @@ const EventMetaViewPage: React.FC = () => {
           <p>
             設定データをコピー <CopyToClipboard content={JSON.stringify(event)} />
           </p>
+
+          <h2>タグをコピー</h2>
+          <p>
+            <script src={`${envHelper.userAppURL}/shared/sb-button.js`} />
+            <a
+              className="sb_button"
+              href={`${envHelper.userAppURL}/events/${eventId}`}
+              rel="noreferrer"
+              target="_blank">Sockbaseで申し込む
+            </a>
+          </p>
+          <FormSection>
+            <FormItem>
+              <FormInput
+                readOnly
+                value={`<script src="${envHelper.userAppURL}/shared/sb-button.js" /><a className="sb_button" href="${envHelper.userAppURL}/events/${eventId}" rel="noreferrer" target="_blank">Sockbaseで申し込む</a>`} />
+            </FormItem>
+          </FormSection>
         </>
       </TwoColumnLayout>
     </DefaultLayout>
