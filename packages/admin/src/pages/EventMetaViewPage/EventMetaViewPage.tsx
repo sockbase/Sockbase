@@ -58,21 +58,12 @@ const EventMetaViewPage: React.FC = () => {
             設定データをコピー <CopyToClipboard content={JSON.stringify(event)} />
           </p>
 
-          <h2>タグをコピー</h2>
-          <p>
-            <script src={`${envHelper.userAppURL}/shared/sb-button.js`} />
-            <a
-              className="sb_button"
-              href={`${envHelper.userAppURL}/events/${eventId}`}
-              rel="noreferrer"
-              target="_blank">Sockbaseで申し込む
-            </a>
-          </p>
+          <h2>申し込みタグ</h2>
           <FormSection>
             <FormItem>
               <FormInput
                 readOnly
-                value={`<script src="${envHelper.userAppURL}/shared/sb-button.js" /><a className="sb_button" href="${envHelper.userAppURL}/events/${eventId}" rel="noreferrer" target="_blank">Sockbaseで申し込む</a>`} />
+                value={`<a class="sb_button" href="${envHelper.userAppURL}/events/${eventId}" rel="noreferrer" target="_blank">Sockbaseで申し込む</a><script src="${envHelper.userAppURL}/shared/sb-button.js"></script>`} />
             </FormItem>
           </FormSection>
         </>
