@@ -4,4 +4,6 @@
     "source.fixAll.eslint": "explicit"
   },
   "eslint.useESLintClass": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.importModuleSpecifier": "relative",
 }

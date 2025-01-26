@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type User } from 'firebase/auth'
 import sockbaseShared from 'shared'
 import Alert from '../../../../components/Parts/Alert'
+import Loading from '../../../../components/Parts/Loading'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
 import CheckAccount from './CheckAccount'
@@ -189,6 +190,10 @@ const StepContainer: React.FC<Props> = props => {
 
   return (
     <>
+      {props.event === undefined && (
+        <Loading text="イベント情報" />
+      )}
+
       {props.event === null && (
         <Alert
           title="イベントが見つかりません"
