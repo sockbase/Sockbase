@@ -588,6 +588,7 @@ export interface SockbaseCircleListControl {
   eventId: string
   isPublic: boolean
   type: CircleListType
+  dualSpaceCircleCutType: DualSpaceCircleCutType
 }
 
 /**
@@ -603,6 +604,13 @@ export type SockbaseCircleListControlDocument = SockbaseCircleListControl & {
  * 1: 本公開用 (スペース番号順)
  */
 export type CircleListType = 0 | 1
+
+/**
+ * 2sp サークルカットの種類
+ * 1: 1sp 幅
+ * 2: 2sp 幅
+ */
+export type DualSpaceCircleCutType = 1 | 2
 
 /**
  * 資料リンク
