@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { MdGridView } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
+import FormInput from '../../components/Form/FormInput'
+import FormItem from '../../components/Form/FormItem'
+import FormSection from '../../components/Form/FormSection'
 import BlinkField from '../../components/Parts/BlinkField'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import CopyToClipboard from '../../components/Parts/CopyToClipboard'
 import PageTitle from '../../components/Parts/PageTitle'
 import StoreInfo from '../../components/Parts/StoreInfo'
 import TwoColumnLayout from '../../components/TwoColumnLayout'
+import envHelper from '../../helpers/envHelper'
 import useStore from '../../hooks/useStore'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
 import type { SockbaseStore } from 'sockbase'
@@ -52,6 +56,15 @@ const StoreMetaViewPage: React.FC = () => {
           <p>
             設定データをコピー <CopyToClipboard content={JSON.stringify(store)} />
           </p>
+
+          <h2>申し込みタグ</h2>
+          <FormSection>
+            <FormItem>
+              <FormInput
+                readOnly
+                value={`<a class="sb_button" href="${envHelper.userAppURL}/stores/${storeId}" rel="noreferrer" target="_blank">Sockbaseで申し込む</a><script src="${envHelper.userAppURL}/shared/sb-button.js"></script>`} />
+            </FormItem>
+          </FormSection>
         </>
       </TwoColumnLayout>
     </DefaultLayout>
