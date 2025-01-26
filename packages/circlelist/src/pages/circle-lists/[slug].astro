@@ -313,4 +313,15 @@ const spaces = props.listControl.type === 1
       }
     }
   }
+  :target {
+    @keyframes highlight {
+      0% {
+        background-color: inherit;
+      }
+      100% {
+        background-color: #ba365140;
+      }
+    }
+    animation: highlight 1s infinite alternate;
+  }
 </style>
