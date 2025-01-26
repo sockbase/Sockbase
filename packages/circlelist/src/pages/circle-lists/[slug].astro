@@ -305,6 +305,7 @@ const spaces = props.listControl.type === 1
     }
   }
   :target {
+    animation: highlight 1s infinite alternate;
     @keyframes highlight {
       0% {
         background-color: inherit;
@@ -313,6 +314,5 @@ const spaces = props.listControl.type === 1
         background-color: #ba365140;
       }
     }
-    animation: highlight 1s infinite alternate;
   }
 </style>
