@@ -3,6 +3,9 @@ import useDayjs from '../../hooks/useDayjs'
 import A5Page from '../Print/A5Page'
 import PrintContainer from '../Print/PrintContainer'
 import PrintPlaceHolderField from '../Print/PrintPlaceHolderField'
+import PrintSection from '../Print/PrintSection'
+import PrintTable from '../Print/PrintTable'
+import TwoColumnLayout from '../Print/TwoColumnLayout'
 import type { SockbaseEventDocument } from 'sockbase'
 
 interface Props {
@@ -17,12 +20,25 @@ const BlankTanzaku: React.FC<Props> = props => {
     <A5Page>
       <PrintContainer>
         <Header>
-          <OrganizationName>{props.event._organization.name}</OrganizationName>
-          <EventName>
-            {props.event.name} 準備会スペース用短冊 #{props.blankIndex + 1}
-          </EventName>
+          {props.event._organization.name} {props.event.name} 準備会スペース用短冊 #{props.blankIndex + 1}
         </Header>
         <Main>
+          <TwoColumnLayout>
+            <></>
+            <>
+              <PrintSection>
+                <PrintTable>
+                  <tbody>
+                    <tr>
+                      <td style={{ height: '15mm' }}>ブロック</td>
+                      <td style={{ height: '15mm' }}>スペース</td>
+                      <td style={{ height: '15mm' }}>a/b</td>
+                    </tr>
+                  </tbody>
+                </PrintTable>
+              </PrintSection>
+            </>
+          </TwoColumnLayout>
           <Blank>
             #{props.blankIndex + 1}
           </Blank>
@@ -39,14 +55,11 @@ const BlankTanzaku: React.FC<Props> = props => {
 export default BlankTanzaku
 
 const Header = styled.div`
-  margin-bottom: 2mm;
 `
-const OrganizationName = styled.div``
-const EventName = styled.div`
-  font-size: 2em;
-  font-weight: bold;
+const Main = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr;
 `
-const Main = styled.div``
 const Blank = styled(PrintPlaceHolderField)`
   height: 100%;
   display: flex;
