@@ -84,7 +84,7 @@ const CircleTanzaku: React.FC<Props> = props => {
                       </td>
                     </tr>
                     <tr>
-                      <th>ｼﾞｬﾝﾙ/ﾌﾟﾁｵﾝﾘｰｺｰﾄﾞ</th>
+                      <th>ｼﾞｬﾝﾙ/ﾌﾟﾁ</th>
                       <td>{props.app.petitCode || '(空欄)'}</td>
                     </tr>
                   </tbody>
