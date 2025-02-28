@@ -135,6 +135,8 @@ title: 'Sockbase利用規約'
 
 ## 事業者の名称・連絡先
 
+NCオフィス
+
 省略した記載については、電子メール等の請求により遅滞なく開示いたします。  
 宛先: [info@nectarition.jp](mailto:info@nectarition.jp)
 
