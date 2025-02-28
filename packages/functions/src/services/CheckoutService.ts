@@ -240,8 +240,8 @@ const applyResultAsync = async (res: Response, now: Date, stripe: Stripe, charge
 
   const payment = await getPaymentAsync(paymentId)
   if (!payment) {
-    noticeMessage(null, paymentId, 'payment document is not found')
-    res.status(404).send({ error: 'NotFound', detail: 'payment document is not found' })
+    noticeMessage(null, paymentId, 'payment document is not found', 1)
+    res.status(204).send()
     return
   }
 
@@ -276,16 +276,16 @@ const getPaymentAsync = async (paymentId: string): Promise<SockbasePaymentDocume
   return payments.length > 0 ? payments[0] : null
 }
 
-const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetail: string | null): void => {
+const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetail: string | null, noticeType?: number): void => {
   const body = errorDetail
     ? {
-      username: 'Sockbase: 決済エラー',
+      username: `Sockbase: ${noticeType === 1 ? '注意情報' : '決済エラー'}`,
       embeds: [
         {
-          title: '決済でエラーが発生しました！',
-          description: '決済でエラーが発生した可能性があります。Stripeダッシュボードを確認してください。',
+          title: noticeType === 1 ? '注意情報' : '決済でエラーが発生しました！',
+          description: '決済エラーが発生しました。Stripeダッシュボードを確認してください。',
           url: '',
-          color: 16711680,
+          color: noticeType === 1 ? 11917587 : 12922671,
           fields: [
             {
               name: '環境',
@@ -310,7 +310,7 @@ const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetai
           title: '決済が完了しました！',
           description: '以下の決済依頼ステータスを完了にしました。',
           url: '',
-          color: 65280,
+          color: 3130679,
           fields: [
             {
               name: '環境',
