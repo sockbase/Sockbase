@@ -20,22 +20,22 @@ const firestore = adminApp.firestore()
 const auth = adminApp.auth()
 
 const sendMailAcceptCircleApplicationAsync = async (app: SockbaseApplicationDocument): Promise<void> => {
-  const email = await getEmail(app.userId)
+  const emailAddress = await getEmailAddress(app.userId)
   const event = await getEventByIdAsync(app.eventId)
 
   const template = mailConfig.templates.acceptApplication(event, app)
-  await addQueueAsync(email, template)
+  await addQueueAsync(emailAddress, template)
 }
 
 const sendMailAcceptTicketAsync = async (ticket: SockbaseTicketDocument): Promise<void> => {
   if (ticket.createdUserId || !ticket.userId) return
 
-  const email = await getEmail(ticket.userId)
+  const emailAddress = await getEmailAddress(ticket.userId)
   const store = await getStoreByIdAsync(ticket.storeId)
   const type = store.types.filter(t => t.id === ticket.typeId)[0]
 
   const template = mailConfig.templates.acceptTicket(store, type, ticket)
-  await addQueueAsync(email, template)
+  await addQueueAsync(emailAddress, template)
 }
 
 const sendMailUpdateUnionCircleAsync = async (app: SockbaseApplicationDocument): Promise<void> => {
@@ -44,22 +44,22 @@ const sendMailUpdateUnionCircleAsync = async (app: SockbaseApplicationDocument):
   const unionAppHash = await getApplicaitonHashIdAsync(app.unionCircleId)
   const unionApp = await getApplicationByIdAsync(unionAppHash.applicationId)
   const event = await getEventByIdAsync(unionApp.eventId)
-  const unionUserEmail = await getEmail(unionApp.userId)
+  const unionUserEmailAddress = await getEmailAddress(unionApp.userId)
 
   const template = mailConfig.templates.updateUnionCircle(event, app, unionApp)
-  await addQueueAsync(unionUserEmail, template)
+  await addQueueAsync(unionUserEmailAddress, template)
 }
 
 const sendMailRequestPaymentAsync = async (payment: SockbasePaymentDocument): Promise<void> => {
-  const email = await getEmail(payment.userId)
+  const emailAddress = await getEmailAddress(payment.userId)
   const template = payment.applicationId
-    ? await requestCirclePaymentAsync(payment, payment.applicationId, email)
+    ? await requestCirclePaymentAsync(payment, payment.applicationId, emailAddress)
     : payment.ticketId
-      ? await requestTicketPaymentAsync(payment, payment.ticketId, email)
+      ? await requestTicketPaymentAsync(payment, payment.ticketId, emailAddress)
       : null
   if (!template) return
 
-  await addQueueAsync(email, template)
+  await addQueueAsync(emailAddress, template)
 }
 
 const requestCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId: string, email: string): Promise<{ subject: string, body: string[] }> => {
@@ -81,7 +81,7 @@ const requestTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticke
 const sendMailAcceptPaymentAsync = async (payment: SockbasePaymentDocument): Promise<void> => {
   if (payment.status !== 1) return
 
-  const email = await getEmail(payment.userId)
+  const emailAddress = await getEmailAddress(payment.userId)
   const template = payment.applicationId
     ? await acceptCirclePaymentAsync(payment, payment.applicationId)
     : payment.ticketId
@@ -89,7 +89,7 @@ const sendMailAcceptPaymentAsync = async (payment: SockbasePaymentDocument): Pro
       : null
   if (!template) return
 
-  await addQueueAsync(email, template)
+  await addQueueAsync(emailAddress, template)
 }
 
 const acceptCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId: string): Promise<{ subject: string, body: string[] }> => {
@@ -109,14 +109,14 @@ const acceptTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticket
 }
 
 const sendMailAcceptInquiryAsync = async (inquiry: SockbaseInquiryDocument): Promise<void> => {
-  const email = await getEmail(inquiry.userId)
+  const emailAddress = await getEmailAddress(inquiry.userId)
   const userData = await getUserDataAsync(inquiry.userId)
 
   const template = mailConfig.templates.acceptInquiry(inquiry, userData)
-  await addQueueAsync(email, template)
+  await addQueueAsync(emailAddress, template)
 }
 
-const getEmail = async (userId: string): Promise<string> => {
+const getEmailAddress = async (userId: string): Promise<string> => {
   const user = await auth.getUser(userId)
   if (!user.email) {
     throw new Error('email no set')
@@ -124,10 +124,10 @@ const getEmail = async (userId: string): Promise<string> => {
   return user.email
 }
 
-const addQueueAsync = async (email: string, content: { subject: string, body: string[] }): Promise<void> => {
+const addQueueAsync = async (emailAddress: string, content: { subject: string, body: string[] }): Promise<void> => {
   await firestore.collection('_mails')
     .add({
-      to: email,
+      to: emailAddress,
       message: {
         subject: content.subject,
         text: content.body.join('\n')
