@@ -284,18 +284,18 @@ const DashboardCircleViewPage: React.FC = () => {
               <tr>
                 <th>サークルカット</th>
                 <td>
-                  {circleCutURL
-                    ? (
-                      <a
-                        href={circleCutURL}
-                        rel="noreferrer"
-                        target="_blank">
-                        <CircleCutImage src={circleCutURL} />
-                      </a>
-                    )
-                    : circleCutURL === null
-                      ? <Link to={`/dashboard/applications/${hashId}/cut`}>サークルカットを提出</Link>
-                      : <></>}
+                  {circleCutURL !== undefined
+                    ? circleCutURL !== null
+                      ? (
+                        <a
+                          href={circleCutURL}
+                          rel="noreferrer"
+                          target="_blank">
+                          <CircleCutImage src={circleCutURL} />
+                        </a>
+                      )
+                      : <Link to={`/dashboard/applications/${hashId}/cut`}>サークルカットを提出</Link>
+                    : <BlinkField />}
                 </td>
               </tr>
               <tr>

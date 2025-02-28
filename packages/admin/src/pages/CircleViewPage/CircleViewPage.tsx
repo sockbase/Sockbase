@@ -261,7 +261,11 @@ const CircleViewPage: React.FC = () => {
               <tr>
                 <th>サークルカット</th>
                 <td>
-                  {circleCutURL ? <CircleCutImage src={circleCutURL} /> : '未提出'}
+                  {circleCutURL !== undefined
+                    ? circleCutURL !== null
+                      ? <CircleCutImage src={circleCutURL} />
+                      : '未提出'
+                    : <BlinkField />}
                 </td>
               </tr>
               <tr>
