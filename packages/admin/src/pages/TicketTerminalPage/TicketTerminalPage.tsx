@@ -272,14 +272,21 @@ const TicketTerminalPage: React.FC = () => {
   return (
     <DefaultLayout
       requireCommonRole={1}
-      title="チケット照会ターミナル">
+      title="チケット照会ターミナル (旧)">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>
 
       <PageTitle
         icon={<MdQrCodeScanner />}
-        title="チケット照会ターミナル" />
+        title="チケット照会ターミナル (旧)" />
+
+      <Alert
+        title="Sockbase SCANNER を使用してください"
+        type="warning">
+          チケット照会ターミナルは近日中に廃止されます。<br />
+          「<a href="https://scan.sockbase.net/">Sockbase SCANNER</a>」を使用してください。
+      </Alert>
 
       <TwoColumnLayout>
         <>

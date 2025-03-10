@@ -51,7 +51,7 @@ const menuLinks = [
     requireCommonRole: 1,
     requireSystemRole: null,
     items: [
-      { to: '/tickets/terminal', icon: <MdQrCodeScanner />, label: 'チケット照会ターミナル' }
+      { to: '/tickets/terminal', icon: <MdQrCodeScanner />, label: 'チケット照会ターミナル (旧)' }
     ]
   }
 ]
