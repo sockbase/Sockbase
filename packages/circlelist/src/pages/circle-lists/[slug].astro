@@ -12,6 +12,7 @@ import listLib from "../../libs/list";
 import eventLib from "../../libs/event";
 import DefaultLayout from "../../layouts/DefaultLayout.astro";
 import applicationLib from "../../libs/application";
+import ResponsiveTable from "../../components/ResponsiveTable.astro";
 import dayjs from "dayjs"
 
 type ListProp = {
@@ -222,10 +223,10 @@ const spaces = props.listControl.type === 1
     </p>
   )}
 
-  <table>
+  <ResponsiveTable>
     <thead>
       <tr>
-        {props.listControl.type === 1 && <th>スペース</th>}
+        {props.listControl.type === 1 && <th>配置番号</th>}
         <th>サークル</th>
         <th>ペンネーム</th>
         <th>成人向</th>
@@ -235,11 +236,11 @@ const spaces = props.listControl.type === 1
     <tbody>
       {spaces.map(s => (
         <tr id={s.spaceName}>
-          {props.listControl.type === 1 && <td>{s.spaceName}</td>}
-          <td>{s.circleName}</td>
-          <td>{s.penName}</td>
-          <td>{s.hasAdult ? '成人向' : '-'}</td>
-          <td>
+          {props.listControl.type === 1 && <td data-label="配置番号">{s.spaceName}</td>}
+          <td data-label="サークル">{s.circleName}</td>
+          <td data-label="ペンネーム">{s.penName}</td>
+          <td data-label="成人向">{s.hasAdult ? '成人向' : '-'}</td>
+          <td data-label="リンク">
             {s.links.length === 0 && '-'}
             {s.links.map((link, index) => (
               <><a href={link.path} target="_blank">{link.label}</a>{index < s.links.length - 1 && ' '}</>
@@ -249,7 +250,8 @@ const spaces = props.listControl.type === 1
         )
       )}
     </tbody>
-  </table>
+  </ResponsiveTable>
+  
   {props.listControl.type === 1 && <>
     <h3>Webカタログβ</h3>
     <p class="circleCutRack">
