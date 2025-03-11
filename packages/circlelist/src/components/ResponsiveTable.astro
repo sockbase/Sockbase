@@ -27,13 +27,16 @@
           }
 
           th, td {
-            display: block;
-            padding: 5px 0;
+            padding: 0;
+            display: flex;
+            gap: 10px;
 
             &[data-label]::before {
-              display: block;
-              content: attr(data-label);
+              display: inline-block;
+              margin-bottom: 4px;
               font-size: 0.8em;
+              min-width: 6em;
+              content: attr(data-label);
               color: var(--gray-color);
               border-bottom: 1px solid var(--border-color);
             }
