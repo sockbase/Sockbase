@@ -1,0 +1,48 @@
+<table class="responsiveTable">
+  <slot />
+</table>
+
+<style lang="scss" is:global>
+  .responsiveTable {
+    width: 100%;
+    border-collapse: collapse;
+
+    @media screen and (max-width: 840px) {
+      thead {
+        display: none;
+      }
+      tbody {
+        border: none;
+
+        tr {
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: column;
+          border: 2px solid var(--border-color);
+          border-bottom: none;
+          padding: 10px;
+
+          &:last-child {
+            border-bottom: 2px solid var(--border-color);
+          }
+
+          th, td {
+            padding: 0;
+            display: flex;
+            gap: 10px;
+
+            &[data-label]::before {
+              display: inline-block;
+              margin-bottom: 4px;
+              font-size: 0.8em;
+              min-width: 6em;
+              content: attr(data-label);
+              color: var(--gray-color);
+              border-bottom: 1px solid var(--border-color);
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
