@@ -16,6 +16,7 @@ export const circleListControlConverter: FirestoreDataConverter<SockbaseCircleLi
     return {
       id: snapshot.id,
       eventId: data.eventId,
+      eventIds: data.eventIds,
       isPublic: data.isPublic,
       type: data.type,
       dualSpaceCircleCutType: data.dualSpaceCircleCutType
