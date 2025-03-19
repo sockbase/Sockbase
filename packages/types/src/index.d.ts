@@ -590,6 +590,7 @@ export interface SockbaseCircleListControl {
   isPublic: boolean
   type: CircleListType
   dualSpaceCircleCutType: DualSpaceCircleCutType
+  showEventName: boolean
 }
 
 /**
