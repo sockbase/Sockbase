@@ -37,7 +37,6 @@ export const getStaticPaths = async () => {
     .filter(control => control.eventIds || control.eventId)
     .map((control) => control.eventIds ?? [control.eventId ?? ''])
     .flat();
-  console.log(eventIds)
 
   const events = await Promise.all(eventIds.map(async id => eventLib.getEventByIdAsync(id)))
   const spaces = await Promise.all(eventIds.map(async id => ({
@@ -184,7 +183,9 @@ const convertLinks = (app: SockbaseApplicationDocument) => {
 const props = Astro.props as ListProp
 const now = new Date();
 
+const eventIds = props.listControl.eventIds ?? [props.listControl.eventId ?? '']
 const eventName = props.events.map(e => e.name).join(', ')
+console.log(eventIds)
 
 const apps = props.apps
   .filter(a => props.appMetas[a.id].applicationStatus === 2)
@@ -224,7 +225,9 @@ const spaces = props.listControl.type === 1
         event: eventDoc
       }
     })
-  : apps.sort((a, b) => a.circle.yomi.localeCompare(b.circle.yomi))
+  : apps
+    .sort((a, b) => a.circle.yomi.localeCompare(b.circle.yomi))
+    .sort((a, b) => eventIds.indexOf(a.eventId) - eventIds.indexOf(b.eventId))
     .map((app, i) => {
       const links = convertLinks(app);
       const circleCutURL = props.circleCutURLs.find(circleCutURL => circleCutURL.id === app.hashId);
