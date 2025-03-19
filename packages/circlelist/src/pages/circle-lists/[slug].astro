@@ -18,7 +18,7 @@ import dayjs from "dayjs"
 type ListProp = {
   listControl: SockbaseCircleListControlDocument;
   events: SockbaseEventDocument[];
-  spaces: SockbaseSpaceDocument[];
+  spaces: (SockbaseSpaceDocument & { eventId: string })[];
   appHashes: SockbaseApplicationHashIdDocument[];
   apps: SockbaseApplicationDocument[];
   appMetas: Record<string, SockbaseApplicationMeta>;
@@ -37,7 +37,6 @@ export const getStaticPaths = async () => {
     .filter(control => control.eventIds || control.eventId)
     .map((control) => control.eventIds ?? [control.eventId ?? ''])
     .flat();
-  console.log(eventIds)
 
   const events = await Promise.all(eventIds.map(async id => eventLib.getEventByIdAsync(id)))
   const spaces = await Promise.all(eventIds.map(async id => ({
@@ -107,7 +106,13 @@ export const getStaticPaths = async () => {
         return event
       })
 
-      const spacesByControl = eventIds.map(id => spaces[id]).flat()
+      const spacesByControl = eventIds
+        .map(id => spaces[id])
+        .flat()
+        .map(space => ({
+          ...space,
+          eventId: space.eventId
+        }))
       const appHashesByControl = eventIds.map(id => appHashesByEvent[id]).flat()
       const appsByControl = eventIds.map(id => appsByEvent[id]).flat()
 
@@ -178,7 +183,9 @@ const convertLinks = (app: SockbaseApplicationDocument) => {
 const props = Astro.props as ListProp
 const now = new Date();
 
+const eventIds = props.listControl.eventIds ?? [props.listControl.eventId ?? '']
 const eventName = props.events.map(e => e.name).join(', ')
+console.log(eventIds)
 
 const apps = props.apps
   .filter(a => props.appMetas[a.id].applicationStatus === 2)
@@ -197,11 +204,13 @@ const spaces = props.listControl.type === 1
           circleName: '',
           penName: '',
           hasAdult: false,
-          links: []
+          links: [],
+          event: undefined
         }
       }
 
       const links = convertLinks(appDoc);
+      const eventDoc = props.events.find(e => e.id === s.eventId);
       const circleCutURL = props.circleCutURLs.find(circleCutURL => circleCutURL.id === appDoc.hashId);
 
       return {
@@ -212,13 +221,17 @@ const spaces = props.listControl.type === 1
         penName: appDoc.circle.penName,
         hasAdult: appDoc.circle.hasAdult,
         links,
-        circleCutURL
+        circleCutURL,
+        event: eventDoc
       }
     })
-  : apps.sort((a, b) => a.circle.yomi.localeCompare(b.circle.yomi))
+  : apps
+    .sort((a, b) => a.circle.yomi.localeCompare(b.circle.yomi))
+    .sort((a, b) => eventIds.indexOf(a.eventId) - eventIds.indexOf(b.eventId))
     .map((app, i) => {
       const links = convertLinks(app);
       const circleCutURL = props.circleCutURLs.find(circleCutURL => circleCutURL.id === app.hashId);
+      const eventDoc = props.events.find(e => e.id === app.eventId);
 
       return {
         id: i + 1,
@@ -228,7 +241,8 @@ const spaces = props.listControl.type === 1
         penName: app.circle.penName,
         hasAdult: app.circle.hasAdult,
         links,
-        circleCutURL
+        circleCutURL,
+        event: eventDoc
       }
     })
 ---
@@ -255,6 +269,7 @@ const spaces = props.listControl.type === 1
   <ResponsiveTable>
     <thead>
       <tr>
+        <th>イベント</th>
         {props.listControl.type === 1 && <th>配置番号</th>}
         <th>サークル</th>
         <th>ペンネーム</th>
@@ -265,6 +280,7 @@ const spaces = props.listControl.type === 1
     <tbody>
       {spaces.map(s => (
         <tr id={s.spaceName}>
+          {props.listControl.showEventName && <td data-label="イベント">{s.event?.name}</td>}
           {props.listControl.type === 1 && <td data-label="配置番号">{s.spaceName}</td>}
           <td data-label="サークル">{s.circleName}</td>
           <td data-label="ペンネーム">{s.penName}</td>
@@ -276,8 +292,7 @@ const spaces = props.listControl.type === 1
             ))}
           </td>
         </tr>
-        )
-      )}
+      ))}
     </tbody>
   </ResponsiveTable>
   
