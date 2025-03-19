@@ -585,7 +585,8 @@ export type SockbaseInformationDocument = SockbaseInformation & {
  * サークルリスト制御
  */
 export interface SockbaseCircleListControl {
-  eventId: string
+  eventId: string | null
+  eventIds: string[] | null
   isPublic: boolean
   type: CircleListType
   dualSpaceCircleCutType: DualSpaceCircleCutType
@@ -600,8 +601,8 @@ export type SockbaseCircleListControlDocument = SockbaseCircleListControl & {
 
 /**
  * サークルリストの種類
- * 0: 仮公開用 (50音順)
- * 1: 本公開用 (スペース番号順)
+ * 0: 50音順
+ * 1: スペース番号順
  */
 export type CircleListType = 0 | 1
 

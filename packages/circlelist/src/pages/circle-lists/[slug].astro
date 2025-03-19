@@ -17,7 +17,7 @@ import dayjs from "dayjs"
 
 type ListProp = {
   listControl: SockbaseCircleListControlDocument;
-  event: SockbaseEventDocument;
+  events: SockbaseEventDocument[];
   spaces: SockbaseSpaceDocument[];
   appHashes: SockbaseApplicationHashIdDocument[];
   apps: SockbaseApplicationDocument[];
@@ -33,7 +33,11 @@ export const getStaticPaths = async () => {
     return []
   }
 
-  const eventIds = controls.map((control) => control.eventId);
+  const eventIds = controls
+    .filter(control => control.eventIds || control.eventId)
+    .map((control) => control.eventIds ?? [control.eventId ?? ''])
+    .flat();
+  console.log(eventIds)
 
   const events = await Promise.all(eventIds.map(async id => eventLib.getEventByIdAsync(id)))
   const spaces = await Promise.all(eventIds.map(async id => ({
@@ -47,7 +51,7 @@ export const getStaticPaths = async () => {
       }), {} as Record<string, SockbaseSpaceDocument[]>)
     })
 
-  const appHashes = await Promise.all(eventIds.map(async id => ({
+  const appHashesByEvent = await Promise.all(eventIds.map(async id => ({
     id,
     data: await applicationLib.getApplicationHashIdByEventIdAsync(id)
   })))
@@ -58,7 +62,7 @@ export const getStaticPaths = async () => {
       }), {} as Record<string, SockbaseApplicationHashIdDocument[]>)
     })
 
-  const apps = await Promise.all(eventIds.map(async id => ({
+  const appsByEvent = await Promise.all(eventIds.map(async id => ({
     id,
     data: await applicationLib.getApplicationsByEventIdAsync(id)
   })))
@@ -69,8 +73,8 @@ export const getStaticPaths = async () => {
       }), {} as Record<string, SockbaseApplicationDocument[]>)
     })
 
-  const appIds = Object.values(apps).flat().map(a => a.id)
-  const appHashIds = Object.values(apps).flat().map(a => a.hashId)
+  const appIds = Object.values(appsByEvent).flat().map(a => a.id)
+  const appHashIds = Object.values(appsByEvent).flat().map(a => a.hashId)
   const appMetas = await Promise.all(appIds.map(async id => ({
     id,
     data: await applicationLib.getApplicationMetaByIdAsync(id)
@@ -81,6 +85,7 @@ export const getStaticPaths = async () => {
         [c.id]: c.data
       }), {} as Record<string, SockbaseApplicationMeta>)
     })
+
   const appLinks = await Promise.all(appIds.map(async id => await applicationLib.getApplicationLinksByIdAsync(id)))
   const circleCutURLs = await Promise.all(appHashIds
     .filter(id => id)
@@ -89,46 +94,66 @@ export const getStaticPaths = async () => {
       url: await applicationLib.getCircleCutURLByAppHashIdAsync(id ?? '')
     })))
 
-  const listProp = controls
+  const pageProps = controls
     .filter(c => c.isPublic)
+    .filter(c => c.eventIds || c.eventId)
     .reduce((p, c) => {
-      const event = events.find(e => e.id === c.eventId);
-      if (!event) {
-        return p;
-      }
+      const eventIds = c.eventIds ?? [c.eventId ?? '']
+      const eventsByControl = eventIds.map(id => {
+        const event = events.find(e => e.id === id)
+        if (!event) {
+          throw new Error(`Event not found: ${id}`)
+        }
+        return event
+      })
 
-      const spacesByEvent = spaces[c.eventId]
-      const appHashesByEvent = appHashes[c.eventId];
-      const appsByEvent = apps[c.eventId];
+      const spacesByControl = eventIds.map(id => spaces[id]).flat()
+      const appHashesByControl = eventIds.map(id => appHashesByEvent[id]).flat()
+      const appsByControl = eventIds.map(id => appsByEvent[id]).flat()
 
-      const appIdsByEvent = appsByEvent.map(a => a.id);
-      const appLinksByEvent = appLinks.filter(appLink => appIdsByEvent.includes(appLink.applicationId));
-      const appMetasByEvent = appIdsByEvent.reduce((p, c) => ({
-        ...p,
-        [c]: appMetas[c]
-      }), {} as Record<string, SockbaseApplicationMeta>)
-      
-      const appHashIdsByEvent = appsByEvent.map(a => a.hashId);
-      const circleCutURLsByEvent = circleCutURLs.filter(circleCutURL => appHashIdsByEvent.includes(circleCutURL.id));
+      const appMetasByControl = appsByControl.map(app => ({
+          id: app.id,
+          appMeta: appMetas[app.id]
+        }))
+        .reduce((p, c) => ({
+          ...p,
+          [c.id]: c.appMeta
+        }), {} as Record<string, SockbaseApplicationMeta>)
+
+        const appLinksByControl = appsByControl.map(app => {
+          const appLink = appLinks.find(link => link.applicationId === app.id)
+          if (!appLink) {
+            throw new Error(`AppLink not found: ${app.id}`)
+          }
+          return appLink
+        })
+
+        const circleCutURLsByControl = appsByControl.map(app => {
+          const circleCutURL = circleCutURLs.find(url => url.id === app.hashId)
+          if (!circleCutURL) {
+            throw new Error(`CircleCutURL not found: ${app.hashId}`)
+          }
+          return circleCutURL
+        })
 
       return {
         ...p,
-        [c.id] : {
+        [c.id]: {
           listControl: c,
-          event,
-          spaces: spacesByEvent,
-          appHashes: appHashesByEvent,
-          apps: appsByEvent,
-          appMetas: appMetasByEvent,
-          appLinks: appLinksByEvent,
-          circleCutURLs: circleCutURLsByEvent
+          events: eventsByControl,
+          spaces: spacesByControl,
+          appHashes: appHashesByControl,
+          apps: appsByControl,
+          appMetas: appMetasByControl,
+          appLinks: appLinksByControl,
+          circleCutURLs: circleCutURLsByControl
         }
       }
     }, {} as Record<string, ListProp>)
 
   return controls.map((control) => ({
     params: { slug: control.id },
-    props: listProp[control.id]
+    props: pageProps[control.id]
   }));
 }
 
@@ -153,12 +178,14 @@ const convertLinks = (app: SockbaseApplicationDocument) => {
 const props = Astro.props as ListProp
 const now = new Date();
 
+const eventName = props.events.map(e => e.name).join(', ')
+
 const apps = props.apps
   .filter(a => props.appMetas[a.id].applicationStatus === 2)
 
 const spaces = props.listControl.type === 1
   ? props.spaces
-    .sort((a, b) => (a.spaceGroupOrder * 100 + a.spaceOrder) - (b.spaceGroupOrder * 100 + b.spaceOrder))
+    .sort((a, b) => a.spaceName.localeCompare(b.spaceName))
     .map(s => {
       const hashDoc = props.appHashes.find(appHash => appHash.spaceId === s.id);
       const appDoc = apps.find(app => app.id === hashDoc?.applicationId);
@@ -206,12 +233,14 @@ const spaces = props.listControl.type === 1
     })
 ---
 
-<DefaultLayout title={`${props.event.name} サークルリスト`}>
-  <ul class="breadcrumbs">
-    <li><a href={props.event.websiteURL}>イベントサイト</a></li>
-  </ul>
+<DefaultLayout title={`${eventName} サークルリスト`}>
+    {props.events.map(e => (
+      <ul class="breadcrumbs">
+      <li><a href={e.websiteURL}>{e.name} Web サイト</a></li>
+    </ul>
+    ))}
 
-  <h1>{props.event.name} サークルリスト</h1>
+  <h1>{eventName} サークルリスト</h1>
 
   <p class="date">
     {dayjs(now).format("YYYY年 M月 D日")} 更新
@@ -258,7 +287,8 @@ const spaces = props.listControl.type === 1
       {spaces.filter(s => s.circleCutURL)
       .map(s => {
         const app = props.apps.find(a => a.id === s.appId);
-        const isDualSpace = props.event.spaces.find(s => s.id === app?.spaceId)?.isDualSpace;
+        const spaces = props.events.map(e => e.spaces).flat();
+        const isDualSpace = spaces.find(s => s.id === app?.spaceId)?.isDualSpace;
         return (
           s.circleCutURL
             ? (
