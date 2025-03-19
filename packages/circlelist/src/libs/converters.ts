@@ -19,7 +19,8 @@ export const circleListControlConverter: FirestoreDataConverter<SockbaseCircleLi
       eventIds: data.eventIds,
       isPublic: data.isPublic,
       type: data.type,
-      dualSpaceCircleCutType: data.dualSpaceCircleCutType
+      dualSpaceCircleCutType: data.dualSpaceCircleCutType,
+      showEventName: data.showEventName ?? false
     }
   }
 }
