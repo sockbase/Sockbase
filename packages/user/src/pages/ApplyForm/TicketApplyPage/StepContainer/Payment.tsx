@@ -9,13 +9,13 @@ import AnchorButton from '../../../../components/Parts/AnchorButton'
 import IconLabel from '../../../../components/Parts/IconLabel'
 import useDayjs from '../../../../hooks/useDayjs'
 import type { User } from 'firebase/auth'
-import type { SockbaseStore, SockbaseStoreType, SockbaseTicket, SockbaseTicketAddedResult } from 'sockbase'
+import type { SockbaseStore, SockbaseStoreType, SockbaseTicket, SockbaseTicketCreateResult } from 'sockbase'
 
 interface Props {
   user: User | null | undefined
   ticket: SockbaseTicket | undefined
   store: SockbaseStore
-  addedResult: SockbaseTicketAddedResult | undefined
+  addedResult: SockbaseTicketCreateResult | undefined
   selectedType: SockbaseStoreType | undefined
   selectedPaymentMethod: { id: string, description: string } | undefined
   nextStep: () => void

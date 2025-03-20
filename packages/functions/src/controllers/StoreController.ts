@@ -1,9 +1,9 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import { firestore, https, type Change, type EventContext } from 'firebase-functions/v1'
 import {
-  type SockbaseTicketAddedResult,
+  type SockbaseTicketCreateResult,
   type SockbaseTicket,
-  type SockbaseTicketCreatedResult,
+  type SockbaseAdminTicketCreateResult,
   type SockbaseTicketUsedStatus,
   type SockbaseTicketUserDocument
 } from 'sockbase'
@@ -37,7 +37,7 @@ export const onTicketUserAssigned = firestore
   })
 
 export const createTicket = https.onCall(
-  async (ticket: SockbaseTicket, context: https.CallableContext): Promise<SockbaseTicketAddedResult> => {
+  async (ticket: SockbaseTicket, context: https.CallableContext): Promise<SockbaseTicketCreateResult> => {
     if (!context.auth) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }
@@ -49,7 +49,7 @@ export const createTicket = https.onCall(
   })
 
 export const createTicketForAdmin = https.onCall(
-  async (param: { storeId: string, createTicketData: { email: string | null, typeId: string } }, context: https.CallableContext): Promise<SockbaseTicketCreatedResult> => {
+  async (param: { storeId: string, createTicketData: { email: string | null, typeId: string } }, context: https.CallableContext): Promise<SockbaseAdminTicketCreateResult> => {
     if (!context.auth?.token.roles) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }

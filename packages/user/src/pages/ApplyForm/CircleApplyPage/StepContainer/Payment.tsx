@@ -12,7 +12,7 @@ import useDayjs from '../../../../hooks/useDayjs'
 import type { User } from 'firebase/auth'
 import type {
   SockbaseEventSpace,
-  SockbaseApplicationAddedResult,
+  SockbaseApplicationCreateResult,
   SockbaseApplication,
   SockbaseEventDocument
 } from 'sockbase'
@@ -21,7 +21,7 @@ interface Props {
   user: User | null | undefined
   event: SockbaseEventDocument | undefined
   app: SockbaseApplication | undefined
-  addedResult: SockbaseApplicationAddedResult | undefined
+  addedResult: SockbaseApplicationCreateResult | undefined
   selectedSpace: SockbaseEventSpace | undefined
   nextStep: () => void
 }

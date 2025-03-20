@@ -12,12 +12,12 @@ import IconLabel from '../../../../components/Parts/IconLabel'
 import useApplication from '../../../../hooks/useApplication'
 import useDayjs from '../../../../hooks/useDayjs'
 import useFile from '../../../../hooks/useFile'
-import type { SockbaseApplication, SockbaseApplicationAddedResult, SockbaseEventDocument } from 'sockbase'
+import type { SockbaseApplication, SockbaseApplicationCreateResult, SockbaseEventDocument } from 'sockbase'
 
 interface Props {
   app: SockbaseApplication | undefined
   event: SockbaseEventDocument | null | undefined
-  addedResult: SockbaseApplicationAddedResult | undefined
+  addedResult: SockbaseApplicationCreateResult | undefined
   nextStep: () => void
 }
 const CircleCut: React.FC<Props> = props => {

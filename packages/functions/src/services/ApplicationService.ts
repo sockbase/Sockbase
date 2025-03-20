@@ -2,7 +2,7 @@ import { https } from 'firebase-functions'
 import {
   type SockbaseApplicationLinksDocument,
   type SockbaseAccount,
-  type SockbaseApplicationAddedResult,
+  type SockbaseApplicationCreateResult,
   type SockbaseApplicationDocument,
   type SockbaseApplicationPayload,
   type SockbaseApplicationOverviewDocument
@@ -32,7 +32,7 @@ const fetchUserDataForEventAsync = async (userId: string, eventId: string): Prom
     .set(userData)
 }
 
-const createApplicationAsync = async (userId: string, payload: SockbaseApplicationPayload): Promise<SockbaseApplicationAddedResult> => {
+const createApplicationAsync = async (userId: string, payload: SockbaseApplicationPayload): Promise<SockbaseApplicationCreateResult> => {
   const now = new Date()
   const timestamp = now.getTime()
 
@@ -206,7 +206,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .then(() => console.log('sent webhook'))
     .catch(err => { throw err })
 
-  const result: SockbaseApplicationAddedResult = {
+  const result: SockbaseApplicationCreateResult = {
     hashId,
     bankTransferCode
   }

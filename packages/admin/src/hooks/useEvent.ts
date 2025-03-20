@@ -5,7 +5,7 @@ import { ref, uploadBytes } from 'firebase/storage'
 import { docLinkConverter, eventConverter, spaceConverter, spaceHashConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
 import type {
-  SockbaseCirclePassCreatedResult,
+  SockbaseCirclePassCreateResult,
   SockbaseDocLink,
   SockbaseDocLinkDocument,
   SockbaseEvent,
@@ -23,7 +23,7 @@ interface IUseEvent {
   addDocLinkAsync: (docLink: SockbaseDocLink) => Promise<string>
   updateDocLinkAsync: (docLink: SockbaseDocLinkDocument) => Promise<void>
   deleteDocLinkAsync: (eventId: string, docLinkId: string) => Promise<void>
-  createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreatedResult>
+  createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreateResult>
   createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
   uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
 }
@@ -130,7 +130,7 @@ const useEvent = (): IUseEvent => {
 
   const createPassesAsync =
   useCallback(async (eventId: string) => {
-    const createPassesFunction = httpsCallable<string, SockbaseCirclePassCreatedResult>(
+    const createPassesFunction = httpsCallable<string, SockbaseCirclePassCreateResult>(
       functions,
       'event-createPasses')
     const createResult = await createPassesFunction(eventId)

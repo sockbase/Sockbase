@@ -11,7 +11,7 @@ import Input from './Input'
 import Introduction from './Introduction'
 import Payment from './Payment'
 import type { User } from 'firebase/auth'
-import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket, SockbaseTicketAddedResult } from 'sockbase'
+import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket, SockbaseTicketCreateResult } from 'sockbase'
 
 const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
 
@@ -23,7 +23,7 @@ interface Props {
   logoutAsync: () => Promise<void>
   createUserAsync: (email: string, password: string) => Promise<User>
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
-  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
+  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketCreateResult>
 }
 const StepContainer: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
@@ -34,7 +34,7 @@ const StepContainer: React.FC<Props> = props => {
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
-  const [addedResult, setAddedResult] = useState<SockbaseTicketAddedResult>()
+  const [addedResult, setAddedResult] = useState<SockbaseTicketCreateResult>()
 
   const selectedType = useMemo(() => {
     if (!props.store || !ticket) return

@@ -9,11 +9,11 @@ import AnchorButton from '../../../../components/Parts/AnchorButton'
 import IconLabel from '../../../../components/Parts/IconLabel'
 import LinkButton from '../../../../components/Parts/LinkButton'
 import useDayjs from '../../../../hooks/useDayjs'
-import type { SockbaseApplicationAddedResult, SockbaseEventDocument } from 'sockbase'
+import type { SockbaseApplicationCreateResult, SockbaseEventDocument } from 'sockbase'
 
 interface Props {
   event: SockbaseEventDocument | undefined
-  addedResult: SockbaseApplicationAddedResult | undefined
+  addedResult: SockbaseApplicationCreateResult | undefined
 }
 const Complete: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()

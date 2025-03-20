@@ -3,7 +3,7 @@ import { collection, query, where, getDocs, doc, getDoc, setDoc, runTransaction 
 import { httpsCallable } from 'firebase/functions'
 import { storeConverter, ticketConverter, ticketHashIdConverter, ticketMetaConverter, ticketUsedStatusConverter, ticketUserConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseApplicationStatus, SockbaseStore, SockbaseStoreDocument, SockbaseTicketCreatedResult, SockbaseTicketDocument, SockbaseTicketHashIdDocument, SockbaseTicketMeta, SockbaseTicketUsedStatus, SockbaseTicketUserDocument } from 'sockbase'
+import type { SockbaseApplicationStatus, SockbaseStore, SockbaseStoreDocument, SockbaseAdminTicketCreateResult, SockbaseTicketDocument, SockbaseTicketHashIdDocument, SockbaseTicketMeta, SockbaseTicketUsedStatus, SockbaseTicketUserDocument } from 'sockbase'
 
 interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
@@ -16,7 +16,7 @@ interface IUseStore {
   getTicketUserByHashIdNullableAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument | null>
   getTicketUsedStatusByIdAsync: (ticketId: string) => Promise<SockbaseTicketUsedStatus>
   setTicketApplicationStatusAsync: (ticketId: string, status: SockbaseApplicationStatus) => Promise<void>
-  createTicketForAdminAsync: (storeId: string, createTicketData: { email: string | null, typeId: string }) => Promise<SockbaseTicketCreatedResult>
+  createTicketForAdminAsync: (storeId: string, createTicketData: { email: string | null, typeId: string }) => Promise<SockbaseAdminTicketCreateResult>
   deleteTicketAsync: (ticketHashId: string) => Promise<void>
   createStoreAsync: (storeId: string, store: SockbaseStore) => Promise<void>
   updateTicketUsedStatusByIdAsync: (ticketId: string, used: boolean) => Promise<void>
@@ -144,10 +144,10 @@ const useStore = (): IUseStore => {
     }, [])
 
   const createTicketForAdminAsync =
-    useCallback(async (storeId: string, createTicketData: { email: string | null, typeId: string }): Promise<SockbaseTicketCreatedResult> => {
+    useCallback(async (storeId: string, createTicketData: { email: string | null, typeId: string }): Promise<SockbaseAdminTicketCreateResult> => {
       const createTicketForAdminFunction = httpsCallable<
         { storeId: string, createTicketData: { email: string | null, typeId: string } },
-        SockbaseTicketCreatedResult
+        SockbaseAdminTicketCreateResult
       >(functions, 'store-createTicketForAdmin')
 
       const ticketResult = await createTicketForAdminFunction({ storeId, createTicketData })
