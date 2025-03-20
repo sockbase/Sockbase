@@ -3,10 +3,10 @@ import FormItem from '../../../../components/Form/FormItem'
 import FormSection from '../../../../components/Form/FormSection'
 import AnchorButton from '../../../../components/Parts/AnchorButton'
 import IconLabel from '../../../../components/Parts/IconLabel'
-import type { SockbaseTicketAddedResult } from 'sockbase'
+import type { SockbaseTicketCreateResult } from 'sockbase'
 
 interface Props {
-  addedResult: SockbaseTicketAddedResult | undefined
+  addedResult: SockbaseTicketCreateResult | undefined
 }
 const Complete: React.FC<Props> = props => {
   return (

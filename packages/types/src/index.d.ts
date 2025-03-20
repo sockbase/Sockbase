@@ -194,7 +194,7 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
 /**
  * サークル申し込み作成リザルト
  */
-export interface SockbaseApplicationAddedResult {
+export interface SockbaseApplicationCreateResult {
   hashId: string
   bankTransferCode: string
 }
@@ -386,7 +386,7 @@ export interface SockbaseTicketHashIdDocument {
 /**
  * チケット作成リザルト
  */
-export interface SockbaseTicketAddedResult {
+export interface SockbaseTicketCreateResult {
   hashId: string
   bankTransferCode: string
 }
@@ -394,7 +394,7 @@ export interface SockbaseTicketAddedResult {
 /**
  * チケット作成リザルト(管理用)
  */
-export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
+export type SockbaseAdminTicketCreateResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
   email: string
   createdAt: number
 }
@@ -402,7 +402,7 @@ export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdA
 /**
  * サークル通行証発行リザルト
  */
-export interface SockbaseCirclePassCreatedResult {
+export interface SockbaseCirclePassCreateResult {
   circlePassCount: number
   anotherTicketCount: number
 }

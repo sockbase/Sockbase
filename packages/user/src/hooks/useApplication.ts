@@ -15,7 +15,7 @@ import type {
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
   SockbaseApplicationPayload,
-  SockbaseApplicationAddedResult,
+  SockbaseApplicationCreateResult,
   SockbaseApplicationLinksDocument,
   SockbaseApplicationLinks,
   SockbaseApplicationOverviewDocument,
@@ -29,7 +29,7 @@ interface IUseApplication {
   getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
   getApplicationsByUserIdWithIdAsync: (userId: string) => Promise<Record<string, SockbaseApplicationDocument>>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<Record<string, SockbaseApplicationDocument>>
-  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationAddedResult>
+  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationCreateResult>
   uploadCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
   getApplicationMetaByIdAsync: (appId: string) => Promise<SockbaseApplicationMeta>
   getCircleCutURLByHashIdAsync: (hashId: string) => Promise<string>
@@ -168,11 +168,11 @@ const useApplication = (): IUseApplication => {
     }
 
   const submitApplicationAsync =
-    async (payload: SockbaseApplicationPayload): Promise<SockbaseApplicationAddedResult> => {
+    async (payload: SockbaseApplicationPayload): Promise<SockbaseApplicationCreateResult> => {
       const functions = getFunctions()
       const createApplicationFunction = FirebaseFunctions.httpsCallable<
         SockbaseApplicationPayload,
-        SockbaseApplicationAddedResult
+        SockbaseApplicationCreateResult
       >(functions, 'application-createApplication')
 
       const appResult = await createApplicationFunction(payload)

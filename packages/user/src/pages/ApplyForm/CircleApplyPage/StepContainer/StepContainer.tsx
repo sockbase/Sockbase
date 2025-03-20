@@ -16,7 +16,7 @@ import type {
   SockbaseAccount,
   SockbaseAccountSecure,
   SockbaseApplication,
-  SockbaseApplicationAddedResult,
+  SockbaseApplicationCreateResult,
   SockbaseApplicationDocument,
   SockbaseApplicationLinks,
   SockbaseApplicationPayload,
@@ -37,7 +37,7 @@ interface Props {
   logoutAsync: () => Promise<void>
   createUserAsync: (email: string, password: string) => Promise<User>
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
-  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationAddedResult>
+  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationCreateResult>
   updateCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
 }
 const StepContainer: React.FC<Props> = props => {
@@ -50,7 +50,7 @@ const StepContainer: React.FC<Props> = props => {
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
-  const [addedResult, setAddedResult] = useState<SockbaseApplicationAddedResult>()
+  const [addedResult, setAddedResult] = useState<SockbaseApplicationCreateResult>()
 
   const selectedGenre = useMemo(() => {
     if (!props.event || !app) return

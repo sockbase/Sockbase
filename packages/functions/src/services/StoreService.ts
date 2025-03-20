@@ -3,8 +3,8 @@ import * as functions from 'firebase-functions'
 import {
   type SockbaseTicketDocument,
   type SockbaseTicket,
-  type SockbaseTicketAddedResult,
-  type SockbaseTicketCreatedResult,
+  type SockbaseTicketCreateResult,
+  type SockbaseAdminTicketCreateResult,
   type SockbaseTicketUsedStatus,
   type SockbaseStoreDocument,
   type SockbaseStoreType,
@@ -22,7 +22,7 @@ const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
 const auth = adminApp.auth()
 
-const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
+const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketCreateResult> => {
   const now = new Date()
   const timestamp = now.getTime()
 
@@ -113,7 +113,7 @@ const createTicketForAdminAsync =
     storeId: string,
     typeId: string,
     email: string | null
-  ): Promise<SockbaseTicketCreatedResult> => {
+  ): Promise<SockbaseAdminTicketCreateResult> => {
     const now = new Date()
 
     const user = email
@@ -191,7 +191,7 @@ const createTicketCoreAsync =
     isAnotherTicket: boolean,
     now: Date,
     createdUserId?: string
-  ): Promise<SockbaseTicketAddedResult & {
+  ): Promise<SockbaseTicketCreateResult & {
     ticketDoc: SockbaseTicketDocument
     ticketId: string
   }> => {
