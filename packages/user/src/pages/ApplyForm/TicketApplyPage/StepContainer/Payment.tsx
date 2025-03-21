@@ -27,16 +27,12 @@ const Payment: React.FC<Props> = props => {
   return (
     <>
       <Alert
-        title="申し込み情報の送信が完了しました"
+        title="申し込み情報を保存しました"
         type="success">
-      申し込みIDは「{props.addedResult?.hashId}」です。
+        申し込みIDは「{props.addedResult?.hashId}」です。
       </Alert>
-      <p>
-        お申し込みいただきましてありがとうございました。<br />
-        申込内容の控えを入力していただいたメールアドレスに送信しましたのでご確認ください。
-      </p>
 
-      {props.selectedType?.productInfo
+      {props.addedResult?.checkoutRequest
         ? (
           <>
             <h1>参加費のお支払い</h1>
@@ -44,11 +40,11 @@ const Payment: React.FC<Props> = props => {
               <tbody>
                 <tr>
                   <th>お支払い方法</th>
-                  <td>{props.selectedPaymentMethod?.description}</td>
+                  <td>{props.addedResult.checkoutRequest.paymentMethod === 1 ? 'オンライン決済' : '銀行振込'}</td>
                 </tr>
                 <tr>
                   <th>お支払い代金</th>
-                  <td>{props.selectedType?.price.toLocaleString()}円</td>
+                  <td>{props.addedResult?.checkoutRequest?.amount.toLocaleString()}円</td>
                 </tr>
                 <tr>
                   <th>お支払い期限</th>
@@ -62,30 +58,24 @@ const Payment: React.FC<Props> = props => {
             </table>
 
             <p>
-            下に記載しているお支払い方法のご案内に従い、参加費のお支払いをお願いいたします。<br />
-            決済が完了すると「決済完了のお知らせ」メールをご登録いただいたメールアドレスに送付いたしますので、必ずご確認ください。<br />
-            銀行振込の場合、振り込みの確認が完了するまで1週間ほどお時間をいただきます。予めご了承ください。
+              下に記載しているお支払い方法のご案内に従い、参加費のお支払いをお願いいたします。<br />
+              決済が完了すると「決済完了のお知らせ」メールをご登録いただいたメールアドレスに送付いたしますので、必ずご確認ください。<br />
+              銀行振込の場合、振り込みの確認が完了するまで1週間ほどお時間をいただきます。予めご了承ください。
             </p>
 
-            {props.ticket?.paymentMethod === 'online'
+            {props.addedResult.checkoutRequest.paymentMethod === 1
               ? (
                 <>
                   <h2>オンライン決済でのお支払い</h2>
-                  <Alert
-                    title="決済画面に表示されるメールアドレスは変更しないでください"
-                    type="warning">
-                決済画面のメールアドレスは自動入力されています。<br />
-                変更した場合、決済確認ができなくなる可能性がありますので絶対に変更しないでください。
-                  </Alert>
                   <p>
-                「決済画面を開く」より決済を行ってください。
+                    「決済画面を開く」より決済を行ってください。
                   </p>
                   <FormSection>
                     <FormItem>
                       <AnchorButton
-                        href={`${props.selectedType?.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(props.user?.email ?? '')}`}
-                        onClick={() => setCheckedPayment(true)}
-                        target="_blank">決済画面を開く
+                        color="primary"
+                        href={props.addedResult?.checkoutRequest?.checkoutURL}>
+                        決済画面を開く
                       </AnchorButton>
                     </FormItem>
                   </FormSection>
@@ -100,14 +90,14 @@ const Payment: React.FC<Props> = props => {
                   <Alert
                     title="お支払い補助番号について"
                     type="warning">
-                お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「{props.addedResult?.bankTransferCode}」を入力してください。
+                    お振り込みの特定を容易にするため、ご依頼人名の先頭にお支払い補助番号「{props.addedResult.bankTransferCode}」を入力してください。
                   </Alert>
 
                   <table>
                     <tbody>
                       <tr>
                         <th>振込先銀行</th>
-                        <td>GMOあおぞらネット銀行(金融機関コード0310)</td>
+                        <td>GMOあおぞらネット銀行 (金融機関コード0310)</td>
                       </tr>
                       <tr>
                         <th>加入者名</th>
@@ -144,23 +134,25 @@ const Payment: React.FC<Props> = props => {
         )
         : (
           <p>
-          今回、事前にお支払いいただく必要はありません。<br />
-          このまま次に進んでください。
+            今回、事前にお支払いいただく必要はありません。<br />
+            このまま次に進んでください。
           </p>
         )}
 
-      <FormSection>
-        <FormItem>
-          <FormButton
-            color="primary"
-            disabled={!!props.selectedType?.productInfo && !checkedPayment}
-            onClick={props.nextStep}>
-            <IconLabel
-              icon={<MdArrowForward />}
-              label="次へ進む" />
-          </FormButton>
-        </FormItem>
-      </FormSection>
+      {props.addedResult?.checkoutRequest?.paymentMethod !== 1 && (
+        <FormSection>
+          <FormItem>
+            <FormButton
+              color="primary"
+              disabled={!!props.addedResult?.checkoutRequest && !checkedPayment}
+              onClick={props.nextStep}>
+              <IconLabel
+                icon={<MdArrowForward />}
+                label="次へ進む" />
+            </FormButton>
+          </FormItem>
+        </FormSection>
+      )}
     </>
   )
 }

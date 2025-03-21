@@ -9,13 +9,14 @@ import {
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
 
-import random from '../helpers/random'
+import { generateRandomCharacters } from '../helpers/random'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { applicationConverter, applicationLinksConverter, overviewConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import { getApplicaitonHashIdAsync, getApplicationByIdAsync, getApplicationByUserIdAndEventIdAsync } from '../models/application'
 import { getEventByIdAsync } from '../models/event'
-import PaymentService from './PaymentService'
+import { createCheckoutSessionAsync } from './CheckoutService'
+import { generateBankTransferCode } from './PaymentService'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
@@ -121,17 +122,19 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .withConverter(overviewConverter)
     .set(overview)
 
-  const bankTransferCode = PaymentService.generateBankTransferCode(now)
-  const paymentId = space.productInfo
-    ? await PaymentService.createPaymentAsync(
+  const bankTransferCode = generateBankTransferCode(now)
+  const createResult = space.productInfo
+    ? await createCheckoutSessionAsync({
+      now,
       userId,
-      payload.app.paymentMethod === 'online' ? 1 : 2,
+      orgId: event._organization.id,
+      paymentMethod: payload.app.paymentMethod === 'online' ? 1 : 2,
+      paymentAmount: space.price,
       bankTransferCode,
-      space.productInfo.productId,
-      space.price,
-      'circle',
-      appId
-    )
+      targetType: 'circle',
+      targetId: appId,
+      name: `${event.name} - ${space.name}`
+    })
     : null
 
   const hashId = generateHashId(now)
@@ -147,7 +150,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
       userId,
       hashId,
       applicationId: appId,
-      paymentId,
+      paymentId: createResult?.paymentId ?? null,
       spaceId: null,
       eventId: payload.app.eventId,
       organizationId: event._organization.id
@@ -209,7 +212,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
   const result: SockbaseApplicationCreateResult = {
     hashId,
     bankTransferCode,
-    checkoutRequest: null
+    checkoutRequest: createResult?.checkoutRequest ?? null
   }
 
   return result
@@ -217,7 +220,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
 
 const generateHashId = (now: Date): string => {
   const codeDigit = 12
-  const randomId = random.generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+  const randomId = generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
   const formatedDateTime = dayjs(now).tz().format('MMDD')
   const hashId = `SC${formatedDateTime}${randomId}`
   return hashId

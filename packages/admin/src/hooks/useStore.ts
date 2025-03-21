@@ -3,6 +3,7 @@ import { collection, query, where, getDocs, doc, getDoc, setDoc, runTransaction 
 import { httpsCallable } from 'firebase/functions'
 import { storeConverter, ticketConverter, ticketHashIdConverter, ticketMetaConverter, ticketUsedStatusConverter, ticketUserConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
+import usePayment from './usePayment'
 import type { SockbaseApplicationStatus, SockbaseStore, SockbaseStoreDocument, SockbaseAdminTicketCreateResult, SockbaseTicketDocument, SockbaseTicketHashIdDocument, SockbaseTicketMeta, SockbaseTicketUsedStatus, SockbaseTicketUserDocument } from 'sockbase'
 
 interface IUseStore {
@@ -26,6 +27,7 @@ const useStore = (): IUseStore => {
   const { getFirestore, getFunctions } = useFirebase()
   const db = getFirestore()
   const functions = getFunctions()
+  const { getPaymentByIdAsync } = usePayment()
 
   const getStoreByIdAsync =
     useCallback(async (storeId: string) => {
@@ -159,13 +161,16 @@ const useStore = (): IUseStore => {
       const ticketHash = await getTicketIdByHashIdAsync(ticketHashId)
         .catch(err => { throw err })
 
+      const payment = ticketHash.paymentId ? await getPaymentByIdAsync(ticketHash.paymentId) : null
+
       const db = getFirestore()
       const ticketMetaRef = doc(db, `_tickets/${ticketHash.ticketId}/private/meta`)
       const ticketUsedStatusRef = doc(db, `_tickets/${ticketHash.ticketId}/private/usedStatus`)
       const ticketRef = doc(db, `_tickets/${ticketHash.ticketId}`)
       const ticketUserRef = doc(db, `_ticketUsers/${ticketHash.hashId}`)
       const ticketHashRef = doc(db, `_ticketHashIds/${ticketHash.hashId}`)
-      const paymentRef = (ticketHash.paymentId && doc(db, `_payments/${ticketHash.paymentId}`)) || null
+      const paymentRef = payment ? doc(db, `_payments/${payment.id}`) : null
+      const paymentHashRef = payment?.hashId ? doc(db, `_paymentHashes/${payment.hashId}`) : null
 
       await runTransaction(db, async tx => {
         tx.delete(ticketMetaRef)
@@ -176,6 +181,10 @@ const useStore = (): IUseStore => {
 
         if (paymentRef) {
           tx.delete(paymentRef)
+        }
+
+        if (paymentHashRef) {
+          tx.delete(paymentHashRef)
         }
       })
         .catch(err => { throw err })

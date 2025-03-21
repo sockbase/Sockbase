@@ -21,6 +21,8 @@ import DashboardContactPage from './pages/Dashboard/DashboardContactPage/Dashboa
 import DashboardMyTicketListPage from './pages/Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardMyTicketViewPage from './pages/Dashboard/DashboardMyTicketViewPage/DashboardMyTicketViewPage'
 import DashboardPaymentListPage from './pages/Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
+import DashboardPaymentViewPage from './pages/Dashboard/DashboardPaymentViewPage/DashboardPaymentViewPage'
+import DashboardReceiptViewPage from './pages/Dashboard/DashboardReceiptViewPage/DashboardReceiptViewPage'
 import DashboardSettingPage from './pages/Dashboard/DashboardSettingPage/DashboardSettingPage'
 import DashboardTicketListPage from './pages/Dashboard/DashboardTicketListPage/DashboardTicketListPage'
 import DashboardTicketViewPage from './pages/Dashboard/DashboardTicketViewPage/DashboardTicketViewPage'
@@ -206,6 +208,19 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <DashboardPaymentListPage />
+              },
+              {
+                path: ':hashId',
+                children: [
+                  {
+                    index: true,
+                    element: <DashboardPaymentViewPage />
+                  },
+                  {
+                    path: 'receipt',
+                    element: <DashboardReceiptViewPage />
+                  }
+                ]
               }
             ]
           }
