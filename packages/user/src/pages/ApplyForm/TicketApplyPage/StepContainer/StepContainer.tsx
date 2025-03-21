@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import sockbaseShared from 'shared'
+import TicketApplicationComplete from '../../../../components/CommonComplete/TicketApplicationComplete'
 import Alert from '../../../../components/Parts/Alert'
 import Loading from '../../../../components/Parts/Loading'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
 import CheckAccount from './CheckAccount'
-import Complete from './Complete'
 import Confirm from './Confirm'
 import Input from './Input'
 import Introduction from './Introduction'
@@ -123,8 +123,8 @@ const StepContainer: React.FC<Props> = props => {
         store={props.store}
         ticket={ticket}
         user={props.user} />,
-      <Complete
-        addedResult={addedResult}
+      <TicketApplicationComplete
+        hashId={addedResult?.hashId}
         key="complete" />
     ])
   }, [

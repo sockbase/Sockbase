@@ -103,7 +103,8 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
 
   return {
     hashId: createdResult.hashId,
-    bankTransferCode: createdResult.bankTransferCode
+    bankTransferCode: createdResult.bankTransferCode,
+    checkoutRequest: null
   }
 }
 
@@ -269,7 +270,8 @@ const createTicketCoreAsync =
       ticketId,
       ticketDoc,
       hashId,
-      bankTransferCode
+      bankTransferCode,
+      checkoutRequest: null
     }
   }
 

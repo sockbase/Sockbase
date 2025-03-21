@@ -208,7 +208,8 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
 
   const result: SockbaseApplicationCreateResult = {
     hashId,
-    bankTransferCode
+    bankTransferCode,
+    checkoutRequest: null
   }
 
   return result

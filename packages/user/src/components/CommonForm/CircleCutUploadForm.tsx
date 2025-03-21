@@ -1,26 +1,25 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MdArrowForward, MdUpload } from 'react-icons/md'
-import FormButton from '../../../../components/Form/FormButton'
-import FormCheckbox from '../../../../components/Form/FormCheckbox'
-import FormInput from '../../../../components/Form/FormInput'
-import FormItem from '../../../../components/Form/FormItem'
-import FormLabel from '../../../../components/Form/FormLabel'
-import FormSection from '../../../../components/Form/FormSection'
-import Alert from '../../../../components/Parts/Alert'
-import CircleCutImage from '../../../../components/Parts/CircleCutImage'
-import IconLabel from '../../../../components/Parts/IconLabel'
-import useApplication from '../../../../hooks/useApplication'
-import useDayjs from '../../../../hooks/useDayjs'
-import useFile from '../../../../hooks/useFile'
-import type { SockbaseApplication, SockbaseApplicationCreateResult, SockbaseEventDocument } from 'sockbase'
+import useApplication from '../../hooks/useApplication'
+import useDayjs from '../../hooks/useDayjs'
+import useFile from '../../hooks/useFile'
+import FormButton from '../Form/FormButton'
+import FormCheckbox from '../Form/FormCheckbox'
+import FormInput from '../Form/FormInput'
+import FormItem from '../Form/FormItem'
+import FormLabel from '../Form/FormLabel'
+import FormSection from '../Form/FormSection'
+import Alert from '../Parts/Alert'
+import CircleCutImage from '../Parts/CircleCutImage'
+import IconLabel from '../Parts/IconLabel'
+import type { SockbaseEventDocument } from 'sockbase'
 
 interface Props {
-  app: SockbaseApplication | undefined
   event: SockbaseEventDocument | null | undefined
-  addedResult: SockbaseApplicationCreateResult | undefined
+  hashId: string | undefined
   nextStep: () => void
 }
-const CircleCut: React.FC<Props> = props => {
+const CircleCutUploadForm: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
   const {
     data: circleCutDataWithHook,
@@ -36,11 +35,11 @@ const CircleCut: React.FC<Props> = props => {
   const [isUploaded, setUploaded] = useState(false)
 
   const uploadCircleCut = useCallback(() => {
-    if (!props.addedResult || !circleCutFile || isLaterUpload) return
+    if (!props.hashId || !circleCutFile || isLaterUpload) return
 
     setProgress(true)
 
-    uploadCircleCutFileAsync(props.addedResult.hashId, circleCutFile)
+    uploadCircleCutFileAsync(props.hashId, circleCutFile)
       .then(() => {
         alert('アップロードが完了しました')
         setUploaded(true)
@@ -49,7 +48,7 @@ const CircleCut: React.FC<Props> = props => {
         setProgress(false)
         throw err
       })
-  }, [props.addedResult, circleCutFile, isLaterUpload])
+  }, [props.hashId, circleCutFile, isLaterUpload])
 
   useEffect(() => {
     if (!circleCutFile) return
@@ -63,23 +62,6 @@ const CircleCut: React.FC<Props> = props => {
 
   return (
     <>
-      <h1>お支払いありがとうございます</h1>
-      {props.app?.paymentMethod === 'online'
-        ? (
-          <p>
-            オンライン決済の場合、決済が完了してから 1 日程度で自動的に反映されます。<br />
-            3 日経っても反映されない場合は、マイページ内のお問い合わせからご連絡ください。
-          </p>
-        )
-        : props.app?.paymentMethod === 'bankTransfer'
-          ? (
-            <p>
-              銀行振込の場合、お振込みいただいてから 1 週間程度お時間をいただくことがございます。<br />
-              1 週間経っても反映されない場合は、マイページ内のお問い合わせからご連絡ください。
-            </p>
-          )
-          : <></>}
-
       <h1>サークルカットの提出</h1>
       <ul>
         <li>テンプレートを使用し、<u>PNG 形式でのご提出をお願いいたします。</u></li>
@@ -145,4 +127,4 @@ const CircleCut: React.FC<Props> = props => {
   )
 }
 
-export default CircleCut
+export default CircleCutUploadForm

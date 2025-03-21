@@ -1,6 +1,6 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { MdHome } from 'react-icons/md'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import styled from 'styled-components'
 import LogotypeSVG from '../../assets/logotype.svg'
 import FormItem from '../../components/Form/FormItem'
@@ -21,8 +21,8 @@ export interface User {
 }
 
 const IndexPage: React.FC = () => {
+  const [searchParams] = useSearchParams({ redirect: '' })
   const navigate = useNavigate()
-  const location = useLocation()
   const { user, loginByEmailAsync } = useFirebase()
   const { convertErrorMessage } = useError()
 
@@ -31,14 +31,16 @@ const IndexPage: React.FC = () => {
   const [isProccesing, setProcessing] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>()
 
-  const fromPathName = location.state?.from?.pathname
+  const redirectTo = useMemo(() => {
+    return searchParams.get('redirect')
+  }, [searchParams])
 
   const handleLogin = useCallback(() => {
     setProcessing(true)
     setErrorMessage(null)
 
     loginByEmailAsync(email, password)
-      .then(() => navigate(fromPathName || '/dashboard', { replace: true }))
+      .then(() => navigate(redirectTo || '/dashboard', { replace: true }))
       .catch(err => {
         setErrorMessage(convertErrorMessage(err))
         throw err
@@ -58,7 +60,7 @@ const IndexPage: React.FC = () => {
           <BrandLabel>マイページ</BrandLabel>
         </BrandHeader>
         <LoginFormContent>
-          {fromPathName && (
+          {redirectTo && (
             <Alert
               title="ログインが必要です"
               type="warning">
@@ -108,7 +110,7 @@ const IndexPage: React.FC = () => {
         </LoginFormContent>
       </LoginFormArea>
 
-      {!fromPathName && (
+      {!redirectTo && (
         <IntroductionArea>
           <InformationList />
 

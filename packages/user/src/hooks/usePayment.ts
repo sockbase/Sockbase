@@ -1,16 +1,20 @@
+import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
 import { applicationHashIdConverter, paymentConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbasePaymentDocument } from 'sockbase'
+import type { SockbaseCheckoutGetPayload, SockbaseCheckoutRequest, SockbaseCheckoutResult, SockbasePaymentDocument } from 'sockbase'
 
 interface IUsePayment {
   getPaymentIdByHashId: (hashId: string) => Promise<string>
   getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]>
   getPaymentAsync: (paymentId: string) => Promise<SockbasePaymentDocument>
+  getCheckoutSessionAsync: (sessionId: string) => Promise<SockbaseCheckoutResult | null>
+  hoge: () => Promise<SockbaseCheckoutRequest>
 }
 
 const usePayment = (): IUsePayment => {
-  const { getFirestore } = useFirebase()
+  const { getFirestore, getFunctions } = useFirebase()
 
   const getPaymentIdByHashId =
     async (hashId: string): Promise<string> => {
@@ -58,10 +62,40 @@ const usePayment = (): IUsePayment => {
       return payment
     }
 
+  const getCheckoutSessionAsync =
+    useCallback(async (sessionId: string): Promise<SockbaseCheckoutResult | null> => {
+      const functions = getFunctions()
+      const getCheckoutFunction = httpsCallable<
+        SockbaseCheckoutGetPayload,
+        SockbaseCheckoutResult | null
+      >(functions, 'checkout-getCheckoutBySessionId')
+
+      const payload = {
+        sessionId
+      }
+
+      const checkoutResult = await getCheckoutFunction(payload)
+      return checkoutResult.data
+    }, [])
+
+  const hoge =
+    useCallback(async (): Promise<SockbaseCheckoutRequest> => {
+      const functions = getFunctions()
+      const createCheckoutFunction = httpsCallable<
+        void,
+        SockbaseCheckoutRequest
+      >(functions, 'checkout-hoge')
+
+      const checkoutResult = await createCheckoutFunction()
+      return checkoutResult.data
+    }, [])
+
   return {
     getPaymentIdByHashId,
     getPaymentsByUserId,
-    getPaymentAsync
+    getPaymentAsync,
+    getCheckoutSessionAsync,
+    hoge
   }
 }
 
