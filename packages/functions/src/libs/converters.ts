@@ -17,40 +17,65 @@ import type {
   SockbaseTicketDocument,
   SockbaseTicketUsedStatus,
   SockbaseTicketUserDocument,
-  SockbaseApplicationMeta
+  SockbaseApplicationMeta,
+  SockbaseTicketHashIdDocument,
+  SockbasePaymentHashDocument
 } from 'sockbase'
 
 export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> = {
-  toFirestore: (payment: SockbasePaymentDocument): DocumentData => ({
-    userId: payment.userId,
-    paymentProductId: payment.paymentProductId,
-    paymentMethod: payment.paymentMethod,
-    paymentId: payment.paymentId,
-    bankTransferCode: payment.bankTransferCode,
-    paymentAmount: payment.paymentAmount,
-    status: payment.status,
-    applicationId: payment.applicationId,
-    ticketId: payment.ticketId,
-    createdAt: payment.createdAt,
-    updatedAt: payment.updatedAt,
-    paymentResult: payment.paymentResult
-  }),
+  toFirestore: (payment: SockbasePaymentDocument): DocumentData => {
+    return {
+      userId: payment.userId,
+      hashId: payment.hashId,
+      paymentMethod: payment.paymentMethod,
+      paymentIntentId: payment.paymentIntentId,
+      checkoutSessionId: payment.checkoutSessionId,
+      bankTransferCode: payment.bankTransferCode,
+      paymentAmount: payment.paymentAmount,
+      status: payment.status,
+      checkoutStatus: payment.checkoutStatus,
+      cardBrand: payment.cardBrand,
+      applicationId: payment.applicationId,
+      ticketId: payment.ticketId,
+      createdAt: payment.createdAt,
+      updatedAt: payment.updatedAt
+    }
+  },
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbasePaymentDocument => {
     const data = snapshot.data()
     return {
       id: snapshot.id,
+      hashId: data.hashId,
       userId: data.userId,
-      paymentProductId: data.paymentProductId,
       paymentMethod: data.paymentMethod,
-      paymentId: data.paymentId,
+      paymentIntentId: data.paymentIntentId,
+      checkoutSessionId: data.checkoutSessionId,
       bankTransferCode: data.bankTransferCode,
       paymentAmount: data.paymentAmount,
       status: data.status,
+      checkoutStatus: data.checkoutStatus,
+      cardBrand: data.cardBrand,
       applicationId: data.applicationId,
       ticketId: data.ticketId,
       createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
-      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null,
-      paymentResult: data.paymentResult ?? null
+      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const paymentHashConverter: FirestoreDataConverter<SockbasePaymentHashDocument> = {
+  toFirestore: (data: SockbasePaymentHashDocument): DocumentData => ({
+    hashId: data.hashId,
+    paymentId: data.paymentId,
+    userId: data.userId
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbasePaymentHashDocument => {
+    const data = snapshot.data()
+    return {
+      id: snapshot.id,
+      hashId: data.hashId,
+      paymentId: data.paymentId,
+      userId: data.userId
     }
   }
 }
@@ -262,6 +287,17 @@ export const ticketConverter: FirestoreDataConverter<SockbaseTicketDocument> = {
   }
 }
 
+export const ticketHashIdConverter: FirestoreDataConverter<SockbaseTicketHashIdDocument> = {
+  toFirestore: () => ({}),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseTicketHashIdDocument => {
+    const data = snapshot.data()
+    return {
+      hashId: data.hashId,
+      ticketId: data.ticketId,
+      paymentId: data.paymentId
+    }
+  }
+}
 export const ticketUsedStatusConverter: FirestoreDataConverter<SockbaseTicketUsedStatus> = {
   toFirestore: (usedStatus: SockbaseTicketUsedStatus) => ({
     used: usedStatus.used,

@@ -195,8 +195,9 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
  * 決済リクエスト
  */
 export interface SockbaseCheckoutRequest {
-  sessionId: string
+  paymentMethod: PaymentMethod
   checkoutURL: string
+  amount: number
 }
 
 /**
@@ -210,7 +211,7 @@ export interface SockbaseCheckoutGetPayload {
  * 決済結果
  */
 export interface SockbaseCheckoutResult {
-  status: CheckoutStatusType | -1
+  status: CheckoutStatus | -1
   applicaitonHashId: string | null
   ticketHashId: string | null
 }
@@ -221,7 +222,7 @@ export interface SockbaseCheckoutResult {
  * 1: 決済完了
  * 2: 終了 (決済完了ページを踏んだ)
  */
-export type CheckoutStatusType = 0 | 1 | 2
+export type CheckoutStatus = 0 | 1 | 2
 
 /**
  * サークル申し込み作成リザルト
@@ -509,18 +510,11 @@ export type PaymentStatus = 0 | 1 | 2 | 3 | 4
  */
 export interface SockbasePayment {
   userId: string
-  paymentProductId: string
   paymentMethod: PaymentMethod
   paymentAmount: number
   bankTransferCode: string
   applicationId: string | null
   ticketId: string | null
-  paymentResult: SockbasePaymentResult | null
-}
-
-export interface SockbasePaymentResult {
-  cardBrand: string | null
-  receiptURL: string | null
 }
 
 /**
@@ -528,10 +522,26 @@ export interface SockbasePaymentResult {
  */
 export type SockbasePaymentDocument = SockbasePayment & {
   id: string
-  paymentId: string
+  hashId: string | null
+  checkoutSessionId: string
+  paymentIntentId: string
   status: PaymentStatus
+  checkoutStatus: CheckoutStatus
+  cardBrand: string | null
   createdAt: Date | null
   updatedAt: Date | null
+}
+
+/**
+ * 決済ハッシュ情報
+ */
+export interface SockbasePaymentHash {
+  userId: string
+  paymentId: string
+  hashId: string
+}
+export type SockbasePaymentHashDocument = SockbasePaymentHash & {
+  id: string
 }
 
 /**

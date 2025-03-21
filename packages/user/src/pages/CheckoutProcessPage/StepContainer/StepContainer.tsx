@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import CircleApplicationComplete from '../../../components/CommonComplete/CircleApplicationComplete'
+import Alert from '../../../components/Parts/Alert'
 import CheckoutComplete from './CheckoutComplete'
 import Loading from './Loading'
 import type { SockbaseCheckoutResult, SockbaseEventDocument } from 'sockbase'
 
 interface Props {
+  checkoutSessionId: string
   checkoutResult: SockbaseCheckoutResult | null | undefined
 }
 const StepContainer: React.FC<Props> = props => {
@@ -27,6 +30,14 @@ const StepContainer: React.FC<Props> = props => {
   return (
     <>
       {props.checkoutResult === undefined && <Loading />}
+      {props.checkoutResult === null && (
+        <Alert
+          title="エラーが発生しました"
+          type="error">
+          以下のコードを添えて<Link to="/dashboard/contact/">お問い合わせ</Link>ください。<br />
+          <code>{props.checkoutSessionId}</code>
+        </Alert>
+      )}
       {props.checkoutResult && stepContainer[step]}
     </>
   )

@@ -53,57 +53,15 @@ const PaymentList: React.FC<Props> = props => {
     return '-'
   }, [])
 
-  const getPaymentLink = useCallback((payment: SockbasePaymentDocument): React.ReactNode => {
-    if (payment.status !== 0 || payment.paymentMethod !== 1) return '-'
-
-    const emailLink = `?prefilled_email=${encodeURIComponent(props.email)}`
-
-    if (payment.applicationId) {
-      const app = props.apps[payment.applicationId]
-      if (!app) return '-'
-
-      const space = props.events[app.eventId].spaces
-        .filter(s => s.id === app.spaceId)[0]
-      if (!space.productInfo) return '-'
-
-      return (
-        <a
-          href={`${space.productInfo.paymentURL}${emailLink}`}
-          rel="noreferrer"
-          target="_blank">お支払いはこちら
-        </a>
-      )
-    }
-    else if (payment.ticketId) {
-      const ticket = props.tickets[payment.ticketId]
-      if (!ticket) return '-'
-
-      const typeInfo = props.stores[ticket.storeId].types
-        .filter(t => t.id === ticket.typeId)[0]
-      if (!typeInfo.productInfo) return '-'
-
-      return (
-        <a
-          href={`${typeInfo.productInfo.paymentURL}${emailLink}`}
-          rel="noreferrer"
-          target="_blank">お支払いはこちら
-        </a>
-      )
-    }
-
-    return '-'
-  }, [])
-
   return (
     <>
       <table>
         <thead>
           <tr>
             <th>決済状態</th>
-            <th>お支払い先</th>
+            <th>お支払い先 (補助番号)</th>
             <th>ご請求金額</th>
-            <th>補助番号</th>
-            <th>状態更新日時</th>
+            <th>お支払い日時</th>
             <th />
           </tr>
         </thead>
@@ -111,25 +69,13 @@ const PaymentList: React.FC<Props> = props => {
           {props.payments.length !== 0
             ? props.payments
               .sort((a, b) => (b.createdAt?.getTime() ?? 9) - (a.createdAt?.getTime() ?? 0))
-              .map(p => (
-                <tr key={p.id}>
-                  <td><PaymentStatusLabel payment={p} /></td>
-                  <td><Link to={linkTargetId(p.applicationId, p.ticketId)}>{getTargetName(p)}</Link></td>
-                  <td>{p.paymentAmount.toLocaleString()}円</td>
-                  <td>{p.bankTransferCode}</td>
-                  <td>{p.updatedAt?.toLocaleString() ?? '---'}</td>
-                  <td>
-                    {p.status === 0
-                      ? getPaymentLink(p)
-                      : p.paymentResult?.receiptURL && (
-                        <a
-                          href={p.paymentResult.receiptURL}
-                          rel="noreferrer"
-                          target="_blank">
-                        領収書
-                        </a>
-                      )}
-                  </td>
+              .map(payment => (
+                <tr key={payment.id}>
+                  <td><PaymentStatusLabel payment={payment} /></td>
+                  <td><Link to={linkTargetId(payment.applicationId, payment.ticketId)}>{getTargetName(payment)}</Link> ({payment.bankTransferCode})</td>
+                  <td>{payment.paymentAmount.toLocaleString()}円</td>
+                  <td>{payment.updatedAt?.toLocaleString() ?? '---'}</td>
+                  <td>{payment.hashId ? <Link to={`/dashboard/payments/${payment.hashId}`}>お支払い詳細</Link> : '---'}</td>
                 </tr>
               ))
             : <tr><th colSpan={7}>決済情報はありません</th></tr>}

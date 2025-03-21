@@ -8,6 +8,7 @@ import {
   applicationMetaConverter
 } from '../libs/converters'
 import useFirebase from './useFirebase'
+import usePayment from './usePayment'
 import type {
   SockbaseApplicationDocument,
   SockbaseApplicationHashIdDocument,
@@ -32,6 +33,7 @@ const useApplication = (): IUseApplication => {
   const { getFirestore, getStorage } = useFirebase()
   const db = getFirestore()
   const storage = getStorage()
+  const { getPaymentByIdAsync } = usePayment()
 
   const getApplicationIdByHashIdAsync =
     useCallback(async (appHashId: string) => {
@@ -119,13 +121,16 @@ const useApplication = (): IUseApplication => {
       const appHash = await getApplicationIdByHashIdAsync(appHashId)
         .catch(err => { throw err })
 
+      const payment = await getPaymentByIdAsync(appHash.paymentId)
+
       const db = getFirestore()
       const appOverviewRef = doc(db, `_applicationOverviews/${appHash.applicationId}`)
       const appLinksRef = doc(db, `_applicationLinks/${appHash.applicationId}`)
       const appMetaRef = doc(db, `_applications/${appHash.applicationId}/private/meta`)
       const appRef = doc(db, `_applications/${appHash.applicationId}`)
       const appHashRef = doc(db, `_applicationHashIds/${appHash.hashId}`)
-      const paymentRef = (appHash.paymentId && doc(db, `_payments/${appHash.paymentId}`)) || null
+      const paymentRef = doc(db, `_payments/${payment.id}`)
+      const paymentHashRef = payment.hashId ? doc(db, `_paymentHashes/${payment.hashId}`) : null
 
       await runTransaction(db, async tx => {
         tx.delete(appOverviewRef)
@@ -133,9 +138,10 @@ const useApplication = (): IUseApplication => {
         tx.delete(appMetaRef)
         tx.delete(appRef)
         tx.delete(appHashRef)
+        tx.delete(paymentRef)
 
-        if (paymentRef) {
-          tx.delete(paymentRef)
+        if (paymentHashRef) {
+          tx.delete(paymentHashRef)
         }
       })
         .catch(err => { throw err })

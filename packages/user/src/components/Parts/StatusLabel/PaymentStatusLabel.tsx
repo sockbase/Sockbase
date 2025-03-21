@@ -20,35 +20,35 @@ const PaymentStatusLabel: React.FC<Props> = props => {
         return (
           <IconLabel
             icon={<MdOutlinePendingActions />}
-            label={`お支払い待ち（${paymentMethod}）`} />
+            label={`お支払い待ち (${paymentMethod})`} />
         )
 
       case 1:
         return (
           <IconLabel
             icon={<MdCheck />}
-            label={`お支払い済み（${paymentMethod}）`} />
+            label={`お支払い済み (${paymentMethod})`} />
         )
 
       case 2:
         return (
           <IconLabel
             icon={<MdUndo />}
-            label={`返金済み（${paymentMethod}）`} />
+            label={`返金済み (${paymentMethod})`} />
         )
 
       case 3:
         return (
           <IconLabel
             icon={<MdClose />}
-            label={`お支払い失敗（${paymentMethod}）`} />
+            label={`お支払い失敗 (${paymentMethod})`} />
         )
 
       case 4:
         return (
           <IconLabel
             icon={<MdClose />}
-            label={`キャンセル済み（${paymentMethod}）`} />
+            label={`キャンセル済み (${paymentMethod})`} />
         )
     }
   }, [props.payment])

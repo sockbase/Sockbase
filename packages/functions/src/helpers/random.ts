@@ -14,6 +14,6 @@ const generateRandomCharacters = (length: number, baseCharacters?: string): stri
   return characters
 }
 
-export default {
+export {
   generateRandomCharacters
 }
