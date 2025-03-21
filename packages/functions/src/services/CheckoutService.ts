@@ -4,7 +4,9 @@ import { type https } from 'firebase-functions'
 import {
   type SockbasePaymentResult,
   type PaymentStatus,
-  type SockbasePaymentDocument
+  type SockbasePaymentDocument,
+  SockbaseCheckoutResult,
+  SockbaseCheckoutRequest
 } from 'sockbase'
 import { Stripe } from 'stripe'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
@@ -30,17 +32,20 @@ enum Status {
   PaymentFailure = 3
 }
 
-const processCoreAsync = async (req: https.Request, res: Response): Promise<void> => {
-  const now = new Date()
-  const event = req.body
-
-  const orgId = req.query.orgId?.toString() || null
-
-  const stripe = new Stripe(
+const getStripe = (orgId: string): Stripe => {
+  return new Stripe(
     orgId === 'npjpnet'
       ? process.env.STRIPE_SECRET_KEY_NPJPNET ?? ''
       : process.env.STRIPE_SECRET_KEY ?? '',
     { apiVersion: '2022-11-15' })
+}
+
+const processCoreAsync = async (req: https.Request, res: Response): Promise<void> => {
+  const now = new Date()
+  const event = req.body
+
+  const orgId = req.query.orgId?.toString() || ''
+  const stripe = getStripe(orgId)
 
   const eventType = event.type as string
 
@@ -276,6 +281,51 @@ const getPaymentAsync = async (paymentId: string): Promise<SockbasePaymentDocume
   return payments.length > 0 ? payments[0] : null
 }
 
+const createCheckoutSessionAsync = async (): Promise<SockbaseCheckoutRequest> => {
+  const stripe = getStripe('nectarition')
+
+  const session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [
+      {
+        price_data: {
+          currency: 'jpy',
+          product_data: {
+            name: 'Sample Product'
+          },
+          unit_amount: 1000
+        },
+        quantity: 1
+      }
+    ],
+    success_url: 'https://localhost:5173/checkout?cs={CHECKOUT_SESSION_ID}'
+  })
+
+  if (!session) {
+    throw new Error('session is not found')
+  }
+  else if (!session.url) {
+    throw new Error('session url is not found')
+  }
+
+  const dummmy: SockbaseCheckoutRequest = {
+    checkoutURL: session.url,
+    sessionId: session.id
+  }
+
+  return dummmy
+}
+
+const getCheckoutBySessionIdAsync = async (userId: string, sessionId: string): Promise<SockbaseCheckoutResult | null> => {
+  console.log('getCheckoutBySessionIdAsync', userId, sessionId)
+  const dummy: SockbaseCheckoutResult = {
+    status: -1,
+    ticketHashId: 'ST1101ZKGMTTBQC4P2',
+    applicaitonHashId: 'SC1120LIFX1YKF8KXJ'
+  }
+  return dummy
+}
+
 const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetail: string | null, noticeType?: number): void => {
   const body = errorDetail
     ? {
@@ -330,5 +380,7 @@ const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetai
 }
 
 export default {
-  processCoreAsync
+  processCoreAsync,
+  createCheckoutSessionAsync,
+  getCheckoutBySessionIdAsync
 }

@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type User } from 'firebase/auth'
 import sockbaseShared from 'shared'
+import CircleApplicationComplete from '../../../../components/CommonComplete/CircleApplicationComplete'
 import Alert from '../../../../components/Parts/Alert'
 import Loading from '../../../../components/Parts/Loading'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
 import CheckAccount from './CheckAccount'
-import CircleCut from './CircleCut'
-import Complete from './Complete'
 import Confirm from './Confirm'
 import Input from './Input'
 import Introduction from './Introduction'
 import Payment from './Payment'
+import ThankYouPayment from './ThankYouPayment'
 import type {
   SockbaseAccount,
   SockbaseAccountSecure,
@@ -156,15 +156,15 @@ const StepContainer: React.FC<Props> = props => {
         nextStep={() => setStep(5)}
         selectedSpace={selectedSpace}
         user={props.user} />,
-      <CircleCut
+      <ThankYouPayment
         addedResult={addedResult}
         app={app}
         event={props.event}
         key="circle-cut"
         nextStep={() => setStep(6)} />,
-      <Complete
-        addedResult={addedResult}
+      <CircleApplicationComplete
         event={props.event}
+        hashId={addedResult?.hashId}
         key="complete" />
     ])
   }, [

@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
-import * as FirebaseFunctions from 'firebase/functions'
+import { httpsCallable } from 'firebase/functions'
 import * as FirebaseStorage from 'firebase/storage'
 import {
   applicationConverter,
@@ -170,7 +170,7 @@ const useApplication = (): IUseApplication => {
   const submitApplicationAsync =
     async (payload: SockbaseApplicationPayload): Promise<SockbaseApplicationCreateResult> => {
       const functions = getFunctions()
-      const createApplicationFunction = FirebaseFunctions.httpsCallable<
+      const createApplicationFunction = httpsCallable<
         SockbaseApplicationPayload,
         SockbaseApplicationCreateResult
       >(functions, 'application-createApplication')

@@ -2,18 +2,18 @@ import { useMemo } from 'react'
 import { FaTwitter } from 'react-icons/fa6'
 import { MdInfo, MdWeb } from 'react-icons/md'
 import styled from 'styled-components'
-import ApplicationCompleteImage from '../../../../assets/application-complete.png'
-import FormItem from '../../../../components/Form/FormItem'
-import FormSection from '../../../../components/Form/FormSection'
-import AnchorButton from '../../../../components/Parts/AnchorButton'
-import IconLabel from '../../../../components/Parts/IconLabel'
-import LinkButton from '../../../../components/Parts/LinkButton'
-import useDayjs from '../../../../hooks/useDayjs'
-import type { SockbaseApplicationCreateResult, SockbaseEventDocument } from 'sockbase'
+import ApplicationCompleteImage from '../../assets/application-complete.png'
+import useDayjs from '../../hooks/useDayjs'
+import FormItem from '../Form/FormItem'
+import FormSection from '../Form/FormSection'
+import AnchorButton from '../Parts/AnchorButton'
+import IconLabel from '../Parts/IconLabel'
+import LinkButton from '../Parts/LinkButton'
+import type { SockbaseEventDocument } from 'sockbase'
 
 interface Props {
   event: SockbaseEventDocument | undefined
-  addedResult: SockbaseApplicationCreateResult | undefined
+  hashId: string | null | undefined
 }
 const Complete: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
@@ -27,6 +27,7 @@ const Complete: React.FC<Props> = props => {
 
   return (
     <>
+      <h1>お申し込みが完了しました！</h1>
       <ApplicationCompleteArea>
         <ApplicationCompleteLogotype src={ApplicationCompleteImage} />
         <p>
@@ -53,7 +54,7 @@ const Complete: React.FC<Props> = props => {
         <FormItem $inlined>
           <LinkButton
             color="primary"
-            to={`/dashboard/applications/${props.addedResult?.hashId}`}>
+            to={`/dashboard/applications/${props.hashId}`}>
             <IconLabel
               icon={<MdInfo />}
               label="申し込み内容を確認する" />

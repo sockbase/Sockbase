@@ -192,11 +192,44 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
 }
 
 /**
+ * 決済リクエスト
+ */
+export interface SockbaseCheckoutRequest {
+  sessionId: string
+  checkoutURL: string
+}
+
+/**
+ * 決済情報取得ペイロード
+ */
+export interface SockbaseCheckoutGetPayload {
+  sessionId: string
+}
+
+/**
+ * 決済結果
+ */
+export interface SockbaseCheckoutResult {
+  status: CheckoutStatusType | -1
+  applicaitonHashId: string | null
+  ticketHashId: string | null
+}
+
+/**
+ * 決済要求ステータス
+ * 0: 開始 (決済要求を作成した)
+ * 1: 決済完了
+ * 2: 終了 (決済完了ページを踏んだ)
+ */
+export type CheckoutStatusType = 0 | 1 | 2
+
+/**
  * サークル申し込み作成リザルト
  */
 export interface SockbaseApplicationCreateResult {
   hashId: string
   bankTransferCode: string
+  checkoutRequest: SockbaseCheckoutRequest | null
 }
 
 /**
@@ -389,6 +422,7 @@ export interface SockbaseTicketHashIdDocument {
 export interface SockbaseTicketCreateResult {
   hashId: string
   bankTransferCode: string
+  checkoutRequest: SockbaseCheckoutRequest | null
 }
 
 /**
