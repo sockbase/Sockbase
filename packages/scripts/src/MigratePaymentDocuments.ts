@@ -6,6 +6,14 @@ import { generateRandomCharacters } from './libs/random'
 const admin = getFirebaseAdmin()
 const db = admin.firestore()
 
+const generateHashId = (now: Date): string => {
+  const codeDigit = 12
+  const randomId = generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+  const formatedDateTime = dayjs(now).tz().format('MMDD')
+  const hashId = `SP${formatedDateTime}${randomId}`
+  return hashId
+}
+
 const mock = []
 
 const main = async () => {
@@ -14,20 +22,20 @@ const main = async () => {
   // fs.mkdirSync('out', { recursive: true })
   // fs.writeFile('out/payments.json', JSON.stringify(paymentsWithId, null, 2), () => {})
 
-  const targetPayments = mock.filter(p => !p.totalAmount)
-    .map(p => ({
-      id: p.id,
-      hashId: generateHashId(new Date(p.createdAt._seconds * 1000)),
-      purchasedAt: p.updatedAt ? new Date(p.updatedAt._seconds * 1000) : null,
-      userId: p.userId,
-      checkoutSessionId: p.checkoutSessionId ?? '',
-      paymentIntentId: p.paymentIntentId ?? '',
-      checkoutStatus: p.status === 0 ? 0 : 2,
-      totalAmount: p.paymentAmount,
-      voucherAmount: 0
-    }))
+  // const targetPayments = mock.filter(p => !p.totalAmount)
+  //   .map(p => ({
+  //     id: p.id,
+  //     hashId: generateHashId(new Date(p.createdAt._seconds * 1000)),
+  //     purchasedAt: p.updatedAt ? new Date(p.updatedAt._seconds * 1000) : null,
+  //     userId: p.userId,
+  //     checkoutSessionId: p.checkoutSessionId ?? '',
+  //     paymentIntentId: p.paymentIntentId ?? '',
+  //     checkoutStatus: p.status === 0 ? 0 : 2,
+  //     totalAmount: p.paymentAmount,
+  //     voucherAmount: 0
+  //   }))
 
-  console.log(targetPayments)
+  // console.log(targetPayments)
 
   // db.runTransaction(async tx => {
   //   targetPayments.forEach(p => {
