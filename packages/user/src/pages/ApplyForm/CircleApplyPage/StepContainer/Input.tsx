@@ -89,9 +89,9 @@ const Input: React.FC<Props> = props => {
     paymentMethod: (!props.event.permissions.canUseBankTransfer && 'online') || ''
   }), [props.event])
 
-  const [isProcessVoucher, setIsProcessVoucher] = useState(false)
   const [app, setApp] = useState(initialApp)
   const [links, setLinks] = useState(initialAppLinksBase)
+  const [isProcessVoucher, setIsProcessVoucher] = useState(false)
   const [voucherCode, setVoucherCode] = useState('')
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
   const [isAgreed, setIsAgreed] = useState(false)
@@ -543,7 +543,7 @@ const Input: React.FC<Props> = props => {
         setUserData={u => setUserData(u)}
         userData={props.userData} />
 
-      <h2>サークル参加費</h2>
+      <h2>お支払い情報</h2>
 
       <h3>バウチャー利用</h3>
       <p>
@@ -563,7 +563,7 @@ const Input: React.FC<Props> = props => {
             onClick={handleGetVoucher}>
             <IconLabel
               icon={<MdCheck />}
-              label="バウチャーを反映する" />
+              label="バウチャー反映" />
           </FormButton>
         </FormItem>
         <FormItem>
@@ -574,7 +574,7 @@ const Input: React.FC<Props> = props => {
           )}
           {props.voucher === undefined && !isProcessVoucher && selectedSpace && voucherCode && (
             <Alert
-              title="バウチャー反映を押してください"
+              title="「バウチャー反映」を押してください"
               type="info" />
           )}
           {props.voucher === null && (
@@ -595,7 +595,7 @@ const Input: React.FC<Props> = props => {
 
       {paymentAmount && paymentAmount.paymentAmount > 0 && (
         <>
-          <h3>サークル参加費お支払い方法</h3>
+          <h3>お支払い方法</h3>
 
           <FormSection>
             <FormItem>

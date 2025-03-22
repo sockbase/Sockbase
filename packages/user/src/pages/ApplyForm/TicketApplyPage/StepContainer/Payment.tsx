@@ -27,12 +27,12 @@ const Payment: React.FC<Props> = props => {
   return (
     <>
       <Alert
-        title="申し込み情報を保存しました"
+        title="申し込み情報の送信が完了しました"
         type="success">
         申し込みIDは「{props.addedResult?.hashId}」です。
       </Alert>
 
-      {props.addedResult?.checkoutRequest
+      {props.addedResult?.checkoutRequest && props.addedResult.checkoutRequest.amount > 0
         ? (
           <>
             <h1>参加費のお支払い</h1>
@@ -44,7 +44,7 @@ const Payment: React.FC<Props> = props => {
                 </tr>
                 <tr>
                   <th>お支払い代金</th>
-                  <td>{props.addedResult?.checkoutRequest?.amount.toLocaleString()}円</td>
+                  <td>{props.addedResult.checkoutRequest.amount.toLocaleString()}円</td>
                 </tr>
                 <tr>
                   <th>お支払い期限</th>
@@ -52,7 +52,7 @@ const Payment: React.FC<Props> = props => {
                 </tr>
                 <tr>
                   <th>お支払い補助番号</th>
-                  <td>{props.addedResult?.bankTransferCode}</td>
+                  <td>{props.addedResult.bankTransferCode}</td>
                 </tr>
               </tbody>
             </table>
@@ -74,7 +74,7 @@ const Payment: React.FC<Props> = props => {
                     <FormItem>
                       <AnchorButton
                         color="primary"
-                        href={props.addedResult?.checkoutRequest?.checkoutURL}>
+                        href={props.addedResult.checkoutRequest.checkoutURL}>
                         決済画面を開く
                       </AnchorButton>
                     </FormItem>
@@ -144,7 +144,7 @@ const Payment: React.FC<Props> = props => {
           <FormItem>
             <FormButton
               color="primary"
-              disabled={!!props.addedResult?.checkoutRequest && !checkedPayment}
+              disabled={!!props.addedResult?.checkoutRequest?.amount && !checkedPayment}
               onClick={props.nextStep}>
               <IconLabel
                 icon={<MdArrowForward />}

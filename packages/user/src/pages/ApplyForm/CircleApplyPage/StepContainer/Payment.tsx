@@ -68,7 +68,7 @@ const Payment: React.FC<Props> = props => {
                 </tr>
                 <tr>
                   <th>お支払い補助番号</th>
-                  <td>{props.addedResult?.bankTransferCode}</td>
+                  <td>{props.addedResult.bankTransferCode}</td>
                 </tr>
               </tbody>
             </table>
@@ -91,7 +91,7 @@ const Payment: React.FC<Props> = props => {
                       <AnchorButton
                         color="primary"
                         href={props.addedResult?.checkoutRequest?.checkoutURL}>
-                      決済画面を開く
+                        決済画面を開く
                       </AnchorButton>
                     </FormItem>
                   </FormSection>

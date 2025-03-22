@@ -153,17 +153,17 @@ const Confirm: React.FC<Props> = props => {
         {props.app?.remarks || '(空欄)'}
       </p>
 
-      <h2>サークル参加費</h2>
+      <h2>お支払い情報</h2>
 
       <h3>選択されたスペース</h3>
       <table>
         <tbody>
           <tr>
-            <th>申込むスペース</th>
+            <th>申し込むスペース</th>
             <td>{props.selectedSpace?.name ?? '---'}</td>
           </tr>
           <tr>
-            <th>スペース詳細情報</th>
+            <th>説明</th>
             <td>{props.selectedSpace?.description ?? '---'}</td>
           </tr>
           <AmountCalculator paymentAmount={props.paymentAmount} />
