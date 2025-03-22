@@ -150,10 +150,10 @@ const DashboardReceiptViewPage: React.FC = () => {
                       <th>ねくたりしょん (NCオフィス)</th>
                     </tr>
                     <tr>
-                      <td>info@nectarition.jp</td>
+                      <td>Web/ https://nectarition.jp/</td>
                     </tr>
                     <tr>
-                      <td>https://nectarition.jp/</td>
+                      <td>Mail/ contact@office.nectarition.jp</td>
                     </tr>
                   </tbody>
                 </ItemTable>
