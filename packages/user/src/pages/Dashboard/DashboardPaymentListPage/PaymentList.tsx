@@ -1,6 +1,10 @@
 import { useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import FormItem from '../../../components/Form/FormItem'
+import FormSection from '../../../components/Form/FormSection'
+import LinkButton from '../../../components/Parts/LinkButton'
 import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
+import useDayjs from '../../../hooks/useDayjs'
 import type {
   SockbaseApplicationDocument,
   SockbaseApplicationMeta,
@@ -19,6 +23,8 @@ interface Props {
   email: string
 }
 const PaymentList: React.FC<Props> = props => {
+  const { formatByDate } = useDayjs()
+
   const linkTargetId = useCallback((appId: string | null, ticketId: string | null): string => {
     if (appId) {
       const app = props.apps[appId]
@@ -74,8 +80,34 @@ const PaymentList: React.FC<Props> = props => {
                   <td><PaymentStatusLabel payment={payment} /></td>
                   <td><Link to={linkTargetId(payment.applicationId, payment.ticketId)}>{getTargetName(payment)}</Link> ({payment.bankTransferCode})</td>
                   <td>{payment.paymentAmount.toLocaleString()}円</td>
-                  <td>{payment.updatedAt?.toLocaleString() ?? '---'}</td>
-                  <td>{payment.hashId ? <Link to={`/dashboard/payments/${payment.hashId}`}>お支払い詳細</Link> : '---'}</td>
+                  <td>
+                    {payment.purchasedAt
+                      ? formatByDate(payment.purchasedAt)
+                      : payment.updatedAt
+                        ? formatByDate(payment.updatedAt)
+                        : '---'}
+                  </td>
+                  <td>
+                    <FormSection>
+                      <FormItem $inlined>
+                        {payment.hashId && payment.paymentMethod === 1 && payment.checkoutStatus === 0 && (
+                          <LinkButton
+                            $isSlim={true}
+                            color="primary"
+                            to={`/pay/${payment.hashId}`}>
+                            お支払い
+                          </LinkButton>
+                        )}
+                        {payment.hashId && (
+                          <LinkButton
+                            $isSlim={true}
+                            to={`/dashboard/payments/${payment.hashId}`}>
+                            詳細
+                          </LinkButton>
+                        )}
+                      </FormItem>
+                    </FormSection>
+                  </td>
                 </tr>
               ))
             : <tr><th colSpan={7}>決済情報はありません</th></tr>}

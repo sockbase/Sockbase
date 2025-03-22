@@ -522,7 +522,7 @@ export interface SockbasePayment {
  */
 export type SockbasePaymentDocument = SockbasePayment & {
   id: string
-  hashId: string | null
+  hashId: string
   checkoutSessionId: string
   paymentIntentId: string
   status: PaymentStatus
@@ -530,6 +530,7 @@ export type SockbasePaymentDocument = SockbasePayment & {
   cardBrand: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  purchasedAt: Date | null
 }
 
 /**

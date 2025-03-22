@@ -42,7 +42,7 @@ const CheckoutProcessPage: React.FC = () => {
   }, [checkoutSessionId])
 
   return (
-    <DefaultBaseLayout>
+    <DefaultBaseLayout title="決済処理">
       <RequiredLogin />
       {checkoutSessionId && (
         <StepContainer
