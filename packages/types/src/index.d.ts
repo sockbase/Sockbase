@@ -667,3 +667,13 @@ export interface SockbaseDocLink {
 export type SockbaseDocLinkDocument = SockbaseDocLink & {
   id: string
 }
+
+/**
+ * 領収書設定
+ */
+export interface SockbaseReceiptConfig {
+  name: string
+  websiteURL: string
+  email: string
+  registrationNumber: string
+}

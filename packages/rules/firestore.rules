@@ -237,6 +237,11 @@ service cloud.firestore {
         || isSystemAdmin(request.auth.uid);
       allow write: if isSystemAdmin(request.auth.uid);
     }
+
+    match /configs/{configId} {
+      allow read: if request.auth != null;
+      allow write: if isSystemAdmin(request.auth.uid);
+    }
     
     // match /{document=**} {
     //  allow read, write: if false;
