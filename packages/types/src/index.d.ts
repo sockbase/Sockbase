@@ -51,10 +51,6 @@ export interface SockbaseEventSpace {
   name: string
   description: string
   price: number
-  productInfo: {
-    productId: string
-    paymentURL: string
-  } | null
   isDualSpace: boolean
   passCount?: number
   acceptApplication: boolean | null
@@ -111,10 +107,6 @@ export interface SockbaseStoreType {
   name: string
   description: string
   price: number
-  productInfo: {
-    productId: string
-    paymentURL: string
-  } | null
   color: string
   isPublic: boolean
   anotherTicket: {

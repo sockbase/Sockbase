@@ -73,8 +73,6 @@ const InformationImport: React.FC<Props> = props => {
     name: '',
     description: '',
     price: '',
-    productId: '',
-    paymentURL: '',
     isDualSpace: false,
     passCount: '',
     acceptApplication: true
@@ -115,8 +113,6 @@ const InformationImport: React.FC<Props> = props => {
     name: string,
     description: string,
     price: string,
-    paymentURL: string,
-    productId: string,
     isDualSpace: boolean,
     passCount: string,
     acceptApplication: boolean) => {
@@ -126,8 +122,6 @@ const InformationImport: React.FC<Props> = props => {
       name,
       description,
       price,
-      productId,
-      paymentURL,
       isDualSpace,
       passCount,
       acceptApplication
@@ -144,16 +138,12 @@ const InformationImport: React.FC<Props> = props => {
         rules: event.rules.filter(r => r),
         genres: event.genres.filter(g => g.id || g.name),
         spaces: editableSpaces
-          .filter(s => s.id || s.name || s.description || s.price || s.paymentURL || s.productId)
+          .filter(s => s.id || s.name || s.description || s.price)
           .map<SockbaseEventSpace>(s => ({
           id: s.id,
           name: s.name,
           description: s.description,
           price: Number(s.price.replace(/\D/g, '')),
-          productInfo: (Number(s.price.replace(/\D/g, '')) > 0 && {
-            paymentURL: s.paymentURL,
-            productId: s.productId
-          }) || null,
           isDualSpace: s.isDualSpace,
           passCount: Number(s.passCount.replace(/\D/g, '')),
           acceptApplication: s.acceptApplication
@@ -200,8 +190,6 @@ const InformationImport: React.FC<Props> = props => {
           name: s.name,
           description: s.description,
           price: s.price.toString(),
-          productId: s.productInfo?.productId ?? '',
-          paymentURL: s.productInfo?.paymentURL ?? '',
           isDualSpace: !!s.isDualSpace,
           passCount: s.passCount?.toString() ?? '',
           acceptApplication: !!s.acceptApplication
@@ -329,8 +317,6 @@ const InformationImport: React.FC<Props> = props => {
       || lastSpace.name
       || lastSpace.description
       || lastSpace.price
-      || lastSpace.paymentURL
-      || lastSpace.productId
       || lastSpace.isDualSpace
       || lastSpace.passCount
       || !lastSpace.acceptApplication) {
@@ -354,8 +340,6 @@ const InformationImport: React.FC<Props> = props => {
       || inputedSpace?.name
       || inputedSpace?.description
       || inputedSpace?.price
-      || inputedSpace?.paymentURL
-      || inputedSpace?.productId
       || inputedSpace?.isDualSpace
       || inputedSpace?.passCount
       || !inputedSpace?.acceptApplication) return
@@ -575,8 +559,6 @@ const InformationImport: React.FC<Props> = props => {
                     s.name,
                     s.description,
                     s.price,
-                    s.paymentURL,
-                    s.productId,
                     s.isDualSpace,
                     s.passCount,
                     s.acceptApplication)}
@@ -590,8 +572,6 @@ const InformationImport: React.FC<Props> = props => {
                     e.target.value,
                     s.description,
                     s.price,
-                    s.paymentURL,
-                    s.productId,
                     s.isDualSpace,
                     s.passCount,
                     s.acceptApplication)}
@@ -605,8 +585,6 @@ const InformationImport: React.FC<Props> = props => {
                     s.name,
                     e.target.value,
                     s.price,
-                    s.paymentURL,
-                    s.productId,
                     s.isDualSpace,
                     s.passCount,
                     s.acceptApplication)}
@@ -620,8 +598,6 @@ const InformationImport: React.FC<Props> = props => {
                     s.name,
                     s.description,
                     e.target.value,
-                    s.paymentURL,
-                    s.productId,
                     s.isDualSpace,
                     s.passCount,
                     s.acceptApplication)}
@@ -629,46 +605,12 @@ const InformationImport: React.FC<Props> = props => {
               </td>
               <td>
                 <FormInput
-                  disabled={Number(s.price.replaceAll(/\D/g, '')) <= 0}
                   onChange={e => handleEditSpace(
                     i,
                     s.id,
                     s.name,
                     s.description,
                     s.price,
-                    e.target.value,
-                    s.productId,
-                    s.isDualSpace,
-                    s.passCount,
-                    s.acceptApplication)}
-                  value={s.paymentURL} />
-              </td>
-              <td>
-                <FormInput
-                  disabled={Number(s.price.replaceAll(/\D/g, '')) <= 0}
-                  onChange={e => handleEditSpace(
-                    i,
-                    s.id,
-                    s.name,
-                    s.description,
-                    s.price,
-                    s.paymentURL,
-                    e.target.value,
-                    s.isDualSpace,
-                    s.passCount,
-                    s.acceptApplication)}
-                  value={s.productId} />
-              </td>
-              <td>
-                <FormInput
-                  onChange={e => handleEditSpace(
-                    i,
-                    s.id,
-                    s.name,
-                    s.description,
-                    s.price,
-                    s.paymentURL,
-                    s.productId,
                     s.isDualSpace,
                     e.target.value,
                     s.acceptApplication)}
@@ -685,8 +627,6 @@ const InformationImport: React.FC<Props> = props => {
                     s.name,
                     s.description,
                     s.price,
-                    s.paymentURL,
-                    s.productId,
                     checked,
                     s.passCount,
                     s.acceptApplication)} />
@@ -702,8 +642,6 @@ const InformationImport: React.FC<Props> = props => {
                     s.name,
                     s.description,
                     s.price,
-                    s.paymentURL,
-                    s.productId,
                     s.isDualSpace,
                     s.passCount,
                     checked)} />

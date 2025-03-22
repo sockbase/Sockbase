@@ -52,8 +52,6 @@ const InformationInput: React.FC<Props> = props => {
     name: '',
     description: '',
     price: '',
-    productId: '',
-    paymentURL: '',
     color: '',
     isPublic: true,
     anotherTicketStoreId: '',
@@ -81,8 +79,6 @@ const InformationInput: React.FC<Props> = props => {
     name: string,
     description: string,
     price: string,
-    productId: string,
-    paymentURL: string,
     color: string,
     anotherTicketStoreId: string,
     anotherTicketTypeId: string,
@@ -93,8 +89,6 @@ const InformationInput: React.FC<Props> = props => {
       name,
       description,
       price,
-      productId,
-      paymentURL,
       color,
       isPublic,
       anotherTicketStoreId,
@@ -112,16 +106,12 @@ const InformationInput: React.FC<Props> = props => {
         descriptions: store.descriptions.filter(d => d),
         rules: store.rules.filter(r => r),
         types: editableTypes
-          .filter(t => t.id || t.name || t.description || t.price || t.paymentURL || t.productId || t.color || t.anotherTicketStoreId || t.anotherTicketTypeId)
+          .filter(t => t.id || t.name || t.description || t.price || t.color || t.anotherTicketStoreId || t.anotherTicketTypeId)
           .map<SockbaseStoreType>(t => ({
           id: t.id,
           name: t.name,
           description: t.description,
           price: Number(t.price),
-          productInfo: ((Number(t.price) > 0 && {
-            paymentURL: t.paymentURL,
-            productId: t.productId
-          })) || null,
           color: t.color || '#000000',
           isPublic: t.isPublic,
           anotherTicket: t.anotherTicketStoreId
@@ -157,8 +147,6 @@ const InformationInput: React.FC<Props> = props => {
           name: t.name,
           description: t.description,
           price: t.price.toString(),
-          paymentURL: t.productInfo?.paymentURL ?? '',
-          productId: t.productInfo?.productId ?? '',
           color: t.color,
           isPublic: !!t.isPublic,
           anotherTicketStoreId: t.anotherTicket?.storeId ?? '',
@@ -252,8 +240,6 @@ const InformationInput: React.FC<Props> = props => {
       || lastType.name
       || lastType.description
       || lastType.price
-      || lastType.paymentURL
-      || lastType.productId
       || lastType.color
       || !lastType.isPublic
       || lastType.anotherTicketStoreId
@@ -279,8 +265,6 @@ const InformationInput: React.FC<Props> = props => {
       || inputedType?.name
       || inputedType?.description
       || inputedType?.price
-      || inputedType?.paymentURL
-      || inputedType?.productId
       || inputedType?.color
       || !inputedType?.isPublic
       || inputedType?.anotherTicketStoreId
@@ -445,8 +429,6 @@ const InformationInput: React.FC<Props> = props => {
                     t.name,
                     t.description,
                     t.price,
-                    t.productId,
-                    t.paymentURL,
                     t.color,
                     t.anotherTicketStoreId,
                     t.anotherTicketTypeId,
@@ -461,8 +443,6 @@ const InformationInput: React.FC<Props> = props => {
                     e.target.value,
                     t.description,
                     t.price,
-                    t.productId,
-                    t.paymentURL,
                     t.color,
                     t.anotherTicketStoreId,
                     t.anotherTicketTypeId,
@@ -477,8 +457,6 @@ const InformationInput: React.FC<Props> = props => {
                     t.name,
                     e.target.value,
                     t.price,
-                    t.productId,
-                    t.paymentURL,
                     t.color,
                     t.anotherTicketStoreId,
                     t.anotherTicketTypeId,
@@ -493,8 +471,6 @@ const InformationInput: React.FC<Props> = props => {
                     t.name,
                     t.description,
                     e.target.value,
-                    t.productId,
-                    t.paymentURL,
                     t.color,
                     t.anotherTicketStoreId,
                     t.anotherTicketTypeId,
@@ -509,40 +485,6 @@ const InformationInput: React.FC<Props> = props => {
                     t.name,
                     t.description,
                     t.price,
-                    t.productId,
-                    e.target.value,
-                    t.color,
-                    t.anotherTicketStoreId,
-                    t.anotherTicketTypeId,
-                    t.isPublic)}
-                  value={t.paymentURL} />
-              </td>
-              <td>
-                <FormInput
-                  onChange={e => handleEditType(
-                    i,
-                    t.id,
-                    t.name,
-                    t.description,
-                    t.price,
-                    e.target.value,
-                    t.paymentURL,
-                    t.color,
-                    t.anotherTicketStoreId,
-                    t.anotherTicketTypeId,
-                    t.isPublic)}
-                  value={t.productId} />
-              </td>
-              <td>
-                <FormInput
-                  onChange={e => handleEditType(
-                    i,
-                    t.id,
-                    t.name,
-                    t.description,
-                    t.price,
-                    t.productId,
-                    t.paymentURL,
                     e.target.value,
                     t.anotherTicketStoreId,
                     t.anotherTicketTypeId,
@@ -559,8 +501,6 @@ const InformationInput: React.FC<Props> = props => {
                     t.name,
                     t.description,
                     t.price,
-                    t.productId,
-                    t.paymentURL,
                     t.color,
                     e.target.value,
                     t.anotherTicketTypeId,
@@ -575,8 +515,6 @@ const InformationInput: React.FC<Props> = props => {
                     t.name,
                     t.description,
                     t.price,
-                    t.productId,
-                    t.paymentURL,
                     t.color,
                     t.anotherTicketStoreId,
                     e.target.value,
@@ -594,8 +532,6 @@ const InformationInput: React.FC<Props> = props => {
                     t.name,
                     t.description,
                     t.price,
-                    t.productId,
-                    t.paymentURL,
                     t.color,
                     t.anotherTicketStoreId,
                     t.anotherTicketTypeId,
