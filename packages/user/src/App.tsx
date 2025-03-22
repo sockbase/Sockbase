@@ -10,7 +10,6 @@ import CircleApplyPage from './pages/ApplyForm/CircleApplyPage/CircleApplyPage'
 import TicketApplyPage from './pages/ApplyForm/TicketApplyPage/TicketApplyPage'
 import TicketAssignPage from './pages/ApplyForm/TicketAssignPage/TicketAssignPage'
 import CheckoutProcessPage from './pages/CheckoutProcessPage/CheckoutProcessPage'
-import HogePage from './pages/CheckoutProcessPage/HogePage'
 import DashboardCircleEditLinksPage from './pages/Dashboard/DashboardCircleEditLinksPage/DashboardCircleEditLinksPage'
 import DashboardCircleEditOverviewPage from './pages/Dashboard/DashboardCircleEditOverviewPage/DashboardCircleEditOverviewPage'
 import DashboardCircleListPage from './pages/Dashboard/DashboardCircleListPage/DashboardCircleListPage'
@@ -78,10 +77,6 @@ const router = createBrowserRouter([
       {
         path: 'action',
         element: <ActionPage />
-      },
-      {
-        path: 'hoge',
-        element: <HogePage />
       },
       {
         path: 'pay/:hashId',
