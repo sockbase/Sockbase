@@ -19,7 +19,7 @@ const main = async () => {
       purchasedAt: p.updatedAt ? new Date(p.updatedAt._seconds * 1000) : null,
       userId: p.userId,
       checkoutSessionId: '',
-      paymentIntentId: null,
+      paymentIntentId: '',
       checkoutStatus: p.status === 0 ? 0 : 2
     }))
 
