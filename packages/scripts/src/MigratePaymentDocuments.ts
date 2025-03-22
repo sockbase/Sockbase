@@ -1,3 +1,4 @@
+import fs from 'fs'
 import { getFirebaseAdmin } from './libs/FirebaseAdmin'
 import dayjs from './libs/dayjs'
 import { generateRandomCharacters } from './libs/random'
@@ -8,18 +9,18 @@ const db = admin.firestore()
 const mock = []
 
 const main = async () => {
-  const payments = await db.collection('_payments').get()
-  const paymentsWithId = payments.docs.map(doc => ({ ...doc.data(), id: doc.id }))
-  console.log(JSON.stringify(paymentsWithId, null, 2))
+  // const payments = await db.collection('_payments').get()
+  // const paymentsWithId = payments.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+  // fs.writeFile('payments.json', JSON.stringify(paymentsWithId, null, 2), () => {})
 
-  const targetPayments = mock.filter(p => !p.hashId)
+  const targetPayments = mock.filter(p => !p.paymentIntentId || !p.checkoutSessionId || !p.checkoutStatus)
     .map(p => ({
       id: p.id,
       hashId: generateHashId(new Date(p.createdAt._seconds * 1000)),
       purchasedAt: p.updatedAt ? new Date(p.updatedAt._seconds * 1000) : null,
       userId: p.userId,
-      checkoutSessionId: '',
-      paymentIntentId: '',
+      checkoutSessionId: p.checkoutSessionId ?? '',
+      paymentIntentId: p.paymentIntentId ?? '',
       checkoutStatus: p.status === 0 ? 0 : 2
     }))
 
