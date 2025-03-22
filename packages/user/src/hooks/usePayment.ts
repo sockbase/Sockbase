@@ -1,20 +1,25 @@
+import { useCallback } from 'react'
 import * as FirestoreDB from 'firebase/firestore'
+import { httpsCallable } from 'firebase/functions'
 import { applicationHashIdConverter, paymentConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbasePaymentDocument } from 'sockbase'
+import type { SockbaseCheckoutGetPayload, SockbaseCheckoutRequest, SockbaseCheckoutResult, SockbasePaymentDocument, SockbasePaymentHashDocument } from 'sockbase'
 
 interface IUsePayment {
   getPaymentIdByHashId: (hashId: string) => Promise<string>
   getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]>
   getPaymentAsync: (paymentId: string) => Promise<SockbasePaymentDocument>
+  getPaymentHashAsync: (hashId: string) => Promise<SockbasePaymentHashDocument>
+  getCheckoutSessionAsync: (sessionId: string) => Promise<SockbaseCheckoutResult | null>
+  refreshCheckoutSessionAsync: (paymentId: string) => Promise<SockbaseCheckoutRequest>
 }
 
 const usePayment = (): IUsePayment => {
-  const { getFirestore } = useFirebase()
+  const { getFirestore, getFunctions } = useFirebase()
+  const db = getFirestore()
 
   const getPaymentIdByHashId =
     async (hashId: string): Promise<string> => {
-      const db = getFirestore()
       const hashRef = FirestoreDB.doc(db, `/_applicationHashIds/${hashId}`)
         .withConverter(applicationHashIdConverter)
       const hashDoc = await FirestoreDB.getDoc(hashRef)
@@ -29,7 +34,6 @@ const usePayment = (): IUsePayment => {
 
   const getPaymentsByUserId =
     async (userId: string): Promise<SockbasePaymentDocument[]> => {
-      const db = getFirestore()
       const paymentsRef = FirestoreDB.collection(db, '_payments')
         .withConverter(paymentConverter)
 
@@ -47,7 +51,6 @@ const usePayment = (): IUsePayment => {
 
   const getPaymentAsync =
     async (paymentId: string): Promise<SockbasePaymentDocument> => {
-      const db = getFirestore()
       const paymentRef = FirestoreDB.doc(db, `/_payments/${paymentId}`)
         .withConverter(paymentConverter)
       const paymentDoc = await FirestoreDB.getDoc(paymentRef)
@@ -58,10 +61,52 @@ const usePayment = (): IUsePayment => {
       return payment
     }
 
+  const getPaymentHashAsync = async (hashId: string): Promise<SockbasePaymentHashDocument> => {
+    const hashRef = FirestoreDB.doc(db, `/_paymentHashes/${hashId}`)
+      .withConverter(applicationHashIdConverter)
+    const hashDoc = await FirestoreDB.getDoc(hashRef)
+    const hash = hashDoc.data()
+    if (!hash) {
+      throw new Error('hash not found')
+    }
+    return hash
+  }
+
+  const getCheckoutSessionAsync =
+    useCallback(async (sessionId: string): Promise<SockbaseCheckoutResult | null> => {
+      const functions = getFunctions()
+      const getCheckoutFunction = httpsCallable<
+        SockbaseCheckoutGetPayload,
+        SockbaseCheckoutResult | null
+      >(functions, 'checkout-getCheckoutBySessionId')
+
+      const payload = {
+        sessionId
+      }
+
+      const checkoutResult = await getCheckoutFunction(payload)
+      return checkoutResult.data
+    }, [])
+
+  const refreshCheckoutSessionAsync =
+    useCallback(async (paymentId: string): Promise<SockbaseCheckoutRequest> => {
+      const functions = getFunctions()
+      const refreshCheckoutSessionFunction = httpsCallable<
+        { paymentId: string },
+        SockbaseCheckoutRequest
+      >(functions, 'checkout-refreshCheckoutSession')
+
+      const checkoutResult = await refreshCheckoutSessionFunction({ paymentId })
+      return checkoutResult.data
+    }, [])
+
   return {
     getPaymentIdByHashId,
     getPaymentsByUserId,
-    getPaymentAsync
+    getPaymentAsync,
+    getPaymentHashAsync,
+    getCheckoutSessionAsync,
+    refreshCheckoutSessionAsync
   }
 }
 

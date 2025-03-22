@@ -1,5 +1,5 @@
 {
   "name": "@types/sockbase",
-  "version": "2024.12.1",
+  "version": "2025.3.0",
   "types": "src/index.d.ts"
 }

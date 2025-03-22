@@ -2,7 +2,7 @@ import { firestore, https } from 'firebase-functions/v1'
 import ApplicationService from '../services/ApplicationService'
 import type { QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import type {
-  SockbaseApplicationAddedResult,
+  SockbaseApplicationCreateResult,
   SockbaseApplicationDocument,
   SockbaseApplicationPayload
 } from 'sockbase'
@@ -17,7 +17,7 @@ export const onCreateApplication = firestore
   })
 
 export const createApplication = https.onCall(
-  async (payload: SockbaseApplicationPayload, context): Promise<SockbaseApplicationAddedResult> => {
+  async (payload: SockbaseApplicationPayload, context): Promise<SockbaseApplicationCreateResult> => {
     if (!context.auth) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }

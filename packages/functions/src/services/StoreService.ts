@@ -3,8 +3,8 @@ import * as functions from 'firebase-functions'
 import {
   type SockbaseTicketDocument,
   type SockbaseTicket,
-  type SockbaseTicketAddedResult,
-  type SockbaseTicketCreatedResult,
+  type SockbaseTicketCreateResult,
+  type SockbaseAdminTicketCreateResult,
   type SockbaseTicketUsedStatus,
   type SockbaseStoreDocument,
   type SockbaseStoreType,
@@ -12,17 +12,18 @@ import {
   type PaymentMethod
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
-import random from '../helpers/random'
+import { generateRandomCharacters } from '../helpers/random'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { storeConverter, ticketConverter, ticketUsedStatusConverter, ticketUserConverter, userConverter } from '../libs/converters'
+import { storeConverter, ticketConverter, ticketUserConverter, userConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
-import PaymentService from './PaymentService'
+import { createCheckoutSessionAsync } from './CheckoutService'
+import { generateBankTransferCode } from './PaymentService'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
 const auth = adminApp.auth()
 
-const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
+const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promise<SockbaseTicketCreateResult> => {
   const now = new Date()
   const timestamp = now.getTime()
 
@@ -103,7 +104,8 @@ const createTicketAsync = async (userId: string, ticket: SockbaseTicket): Promis
 
   return {
     hashId: createdResult.hashId,
-    bankTransferCode: createdResult.bankTransferCode
+    bankTransferCode: createdResult.bankTransferCode,
+    checkoutRequest: createdResult.checkoutRequest
   }
 }
 
@@ -113,7 +115,7 @@ const createTicketForAdminAsync =
     storeId: string,
     typeId: string,
     email: string | null
-  ): Promise<SockbaseTicketCreatedResult> => {
+  ): Promise<SockbaseAdminTicketCreateResult> => {
     const now = new Date()
 
     const user = email
@@ -191,7 +193,7 @@ const createTicketCoreAsync =
     isAnotherTicket: boolean,
     now: Date,
     createdUserId?: string
-  ): Promise<SockbaseTicketAddedResult & {
+  ): Promise<SockbaseTicketCreateResult & {
     ticketDoc: SockbaseTicketDocument
     ticketId: string
   }> => {
@@ -218,22 +220,23 @@ const createTicketCoreAsync =
       .add(ticketDoc)
     const ticketId = ticketResult.id
 
-    const bankTransferCode = PaymentService.generateBankTransferCode(now)
-    const paymentId = type.productInfo && !isAdmin && userId
-      ? await PaymentService.createPaymentAsync(
-        userId,
+    const bankTransferCode = generateBankTransferCode(now)
+    const createResult = type.price > 0 && !isAdmin && userId
+      ? await createCheckoutSessionAsync({
+        now,
+        userId: createdUserId ?? userId,
+        orgId: store._organization.id,
         paymentMethod,
+        paymentAmount: type.price,
         bankTransferCode,
-        type.productInfo.productId,
-        type.price,
-        'ticket',
-        ticketId
-      )
+        name: `${store.name} - ${type.name}`,
+        targetType: 'ticket',
+        targetId: ticketId
+      })
       : null
 
     await firestore
       .doc(`/_tickets/${ticketId}/private/usedStatus`)
-      .withConverter(ticketUsedStatusConverter)
       .set({
         used: false,
         usedAt: null
@@ -244,7 +247,7 @@ const createTicketCoreAsync =
       .set({
         hashId,
         ticketId,
-        paymentId
+        paymentId: createResult?.paymentId ?? null
       })
 
     await firestore
@@ -269,13 +272,14 @@ const createTicketCoreAsync =
       ticketId,
       ticketDoc,
       hashId,
-      bankTransferCode
+      bankTransferCode,
+      checkoutRequest: createResult?.checkoutRequest ?? null
     }
   }
 
 const generateTicketHashId = (now: Date): string => {
   const codeDigit = 12
-  const randomId = random.generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+  const randomId = generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
   const formatedDateTime = dayjs(now).tz().format('MMDD')
   const hashId = `ST${formatedDateTime}${randomId}`
   return hashId

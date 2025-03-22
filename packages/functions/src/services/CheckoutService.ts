@@ -1,46 +1,46 @@
+import dayjs from 'dayjs'
 import { type Response } from 'express'
-import { type UserRecord } from 'firebase-admin/auth'
 import { type https } from 'firebase-functions'
-import {
-  type SockbasePaymentResult,
-  type PaymentStatus,
-  type SockbasePaymentDocument
-} from 'sockbase'
 import { Stripe } from 'stripe'
+import { generateRandomCharacters } from '../helpers/random'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
-import { eventConverter, paymentConverter, storeConverter } from '../libs/converters'
+import { paymentConverter, paymentHashConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
+import { getApplicationByIdAsync } from '../models/application'
+import { getEventByIdAsync } from '../models/event'
+import { getStoreByIdAsync } from '../models/store'
+import { getTicketByIdAsync } from '../models/ticket'
+import type {
+  SockbasePaymentDocument,
+  SockbaseCheckoutResult,
+  SockbaseCheckoutRequest,
+  PaymentMethod
+} from 'sockbase'
 
 const firebaseProjectId = process.env.FUNC_FIREBASE_PROJECT_ID ?? ''
+const userAppURL = process.env.FUNC_USER_APP_URL ?? ''
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
-const auth = adminApp.auth()
 
 const HANDLEABLE_EVENTS = {
-  checkoutCompleted: 'checkout.session.completed',
-  asyncPaymentSuccessed: 'checkout.session.async_payment_succeeded',
-  asyncPaymentFailed: 'checkout.session.async_payment_failed',
-  chargeUpdated: 'charge.updated'
+  checkoutCompleted: 'checkout.session.completed'
 }
 
-enum Status {
-  Pending = 0,
-  Paid = 1,
-  PaymentFailure = 3
+const getStripe = (orgId: string): Stripe => {
+  return new Stripe(
+    orgId === 'npjpnet'
+      ? process.env.STRIPE_SECRET_KEY_NPJPNET ?? ''
+      : process.env.STRIPE_SECRET_KEY ?? '',
+    { apiVersion: '2025-02-24.acacia' })
 }
 
 const processCoreAsync = async (req: https.Request, res: Response): Promise<void> => {
   const now = new Date()
   const event = req.body
 
-  const orgId = req.query.orgId?.toString() || null
-
-  const stripe = new Stripe(
-    orgId === 'npjpnet'
-      ? process.env.STRIPE_SECRET_KEY_NPJPNET ?? ''
-      : process.env.STRIPE_SECRET_KEY ?? '',
-    { apiVersion: '2022-11-15' })
+  const orgId = req.query.orgId?.toString() || ''
+  const stripe = getStripe(orgId)
 
   const eventType = event.type as string
 
@@ -50,17 +50,9 @@ const processCoreAsync = async (req: https.Request, res: Response): Promise<void
   }
 
   switch (eventType) {
-    case HANDLEABLE_EVENTS.checkoutCompleted:
-    case HANDLEABLE_EVENTS.asyncPaymentSuccessed:
-    case HANDLEABLE_EVENTS.asyncPaymentFailed: {
+    case HANDLEABLE_EVENTS.checkoutCompleted: {
       const session = event.data.object as Stripe.Checkout.Session
       await applyCheckoutCompletedAsync(res, now, stripe, session, eventType, orgId)
-      break
-    }
-
-    case HANDLEABLE_EVENTS.chargeUpdated: {
-      const charge = event.data.object as Stripe.Charge
-      await applyResultAsync(res, now, stripe, charge)
       break
     }
   }
@@ -68,212 +60,301 @@ const processCoreAsync = async (req: https.Request, res: Response): Promise<void
 
 const applyCheckoutCompletedAsync =
   async (res: Response, now: Date, stripe: Stripe, session: Stripe.Checkout.Session, eventType: string, orgId: string | null): Promise<void> => {
+    const paymentSnapshot = await firestore.collection('_payments')
+      .withConverter(paymentConverter)
+      .where('checkoutSessionId', '==', session.id)
+      .get()
+    const payments = paymentSnapshot.docs
+      .map(p => p.data())
+    if (payments.length !== 1) {
+      res.status(204).send({ error: 'NotFound', detail: 'payment is not found' })
+      return
+    }
+
+    const payment = payments[0]
+
+    const paymentIntentId = session.payment_intent
+    if (!paymentIntentId) {
+      res.status(404).send({ error: 'NotFound', detail: 'paymentIntentId is not found' })
+      return
+    }
+    else if (typeof paymentIntentId !== 'string') {
+      res.status(500).send({ error: 'MissingType', detail: 'paymentIntentId type is missing' })
+      return
+    }
+
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
+
     if (!session.customer_details) {
       res.status(404).send({ error: 'NotFound', detail: 'customer is missing' })
       return
     }
 
-    const lineItems = await stripe.checkout.sessions.listLineItems(session.id)
-    const productItemIds = lineItems.data
-      .filter(p => p.price)
-      .map(p => p.price?.id ?? '')
-
-    const storeDocs = await firestore.collection('stores')
-      .withConverter(storeConverter)
-      .get()
-    const ticketTypeProductIds = storeDocs.docs
-      .map(s => s.data())
-      .map(s => s.types.map(t => t.productInfo?.productId))
-      .filter(id => id)
-      .reduce((p, c) => ([...p, ...c]), []) as string[]
-
-    const eventDocs = await firestore.collection('events')
-      .withConverter(eventConverter)
-      .get()
-    const spaceTypeProductIds = eventDocs.docs
-      .map(e => e.data())
-      .map(e => e.spaces.map(s => s.productInfo?.productId))
-      .filter(id => id)
-      .reduce((p, c) => ([...p, ...c]), []) as string[]
-
-    const productIds = [...ticketTypeProductIds, ...spaceTypeProductIds]
-
-    const systemExistProductIds = productItemIds
-      .map(id => productIds.includes(id))
-      .filter(exists => exists)
-      .length > 0
-    if (!systemExistProductIds) {
-      res.status(204).send()
+    const chargeId = paymentIntent.latest_charge
+    if (!chargeId) {
+      res.status(404).send({ error: 'NotFound', detail: 'paymentIntentId is not found' })
+      return
+    }
+    else if (typeof chargeId !== 'string') {
+      res.status(500).send({ error: 'MissingType', detail: 'chargeId type is missing' })
       return
     }
 
-    const paymentId = session.payment_intent
-    if (!paymentId) {
-      res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
-      return
-    }
-    else if (typeof paymentId !== 'string') {
-      res.status(500).send({ error: 'MissingType', detail: 'paymentId type is missing' })
-      return
-    }
+    const charge = await stripe.charges.retrieve(chargeId)
 
-    const email = session.customer_details.email
-    if (!email) {
-      res.status(400).send({ error: 'EmailIsMissing', detail: 'email is missing' })
-      noticeMessage(orgId, paymentId, 'email is missing')
-      return
-    }
-
-    const user = await getUser(email)
-    if (!user) {
-      res.send({ error: 'NotFound', detail: `user(${email}) is not found` })
-      noticeMessage(orgId, paymentId, `user(${email}) is not found`)
-      return
-    }
-
-    const payment = await collectPayment(user.uid, Status.Pending, productItemIds)
-    if (!payment) {
-      noticeMessage(orgId, paymentId, 'required payment is not found')
-      res.status(404).send({ error: 'NotFound', detail: 'required payment is not found' })
-      return
-    }
-
-    switch (eventType) {
-      case HANDLEABLE_EVENTS.checkoutCompleted: {
-      // クレカなどの即決済時のみ処理する
-      // 銀行振り込みなどの遅延決済時はなにも処理しない
-        if (session.payment_status !== 'paid') break
-
-        if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
-          res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-          noticeMessage(orgId, paymentId, 'required product item is not found')
-          return
-        }
-        break
-      }
-
-      case HANDLEABLE_EVENTS.asyncPaymentSuccessed: {
-        if (!await updateStatus(payment, lineItems.data, paymentId, Status.Paid, now)) {
-          res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-          noticeMessage(orgId, paymentId, 'required product item is not found')
-          return
-        }
-        break
-      }
-
-      case HANDLEABLE_EVENTS.asyncPaymentFailed: {
-        if (!await updateStatus(payment, lineItems.data, paymentId, Status.PaymentFailure, now)) {
-          res.status(404).send({ error: 'NotFound', detail: 'required product item is not found' })
-          noticeMessage(orgId, paymentId, 'required product item is not found')
-          return
-        }
-        break
-      }
-    }
+    await firestore
+      .doc(`/_payments/${payment.id}`)
+      .set({
+        paymentIntentId,
+        status: 1,
+        checkoutStatus: 1,
+        updatedAt: now,
+        purchasedAt: now,
+        cardBrand: charge.payment_method_details?.card?.brand ?? null
+      }, { merge: true })
 
     res.send({
       success: true,
-      userId: user.uid,
+      userId: payment.userId,
       paymentId: payment.id
     })
-    noticeMessage(orgId, paymentId, null)
+
+    noticeMessage(orgId, paymentIntentId, null)
   }
 
-const getUser = async (email: string): Promise<UserRecord | null> => {
-  const user = await auth.getUserByEmail(email)
-    .catch(() => null)
-  return user
-}
+const createCheckoutSessionAsync = async (
+  o: {
+    now: Date,
+    userId: string,
+    orgId: string,
+    paymentMethod: PaymentMethod,
+    paymentAmount: number,
+    bankTransferCode: string,
+    name: string,
+    targetType: 'circle' | 'ticket',
+    targetId: string
+  }
+): Promise<{ checkoutRequest: SockbaseCheckoutRequest | null, paymentId: string }> => {
+  const hashId = generateHashId(o.now)
 
-const collectPayment =
-  async (userId: string, status: number, productItemIds: Array<string | undefined>): Promise<SockbasePaymentDocument | null> => {
-    const paymentSnapshot = await firestore.collection('_payments')
+  const paymentBase: SockbasePaymentDocument = {
+    hashId,
+    userId: o.userId,
+    paymentAmount: o.paymentAmount,
+    paymentMethod: o.paymentMethod,
+    bankTransferCode: o.bankTransferCode,
+    applicationId: o.targetType === 'circle' ? o.targetId : null,
+    ticketId: o.targetType === 'ticket' ? o.targetId : null,
+    createdAt: o.now,
+    updatedAt: null,
+    purchasedAt: null,
+    id: '',
+    paymentIntentId: '',
+    checkoutSessionId: '',
+    status: 0,
+    checkoutStatus: 0,
+    cardBrand: null
+  }
+
+  if (o.paymentMethod === 2) {
+    const resultRef = firestore.collection('_payments')
       .withConverter(paymentConverter)
-      .where('userId', '==', userId)
-      .where('status', '==', status)
-      .where('paymentMethod', '==', 1)
-      .get()
-    const payments = paymentSnapshot.docs
-      .map(p => p.data())
-      .filter(p => productItemIds.includes(p.paymentProductId))
+      .doc()
+    const hashIdRef = firestore.doc(`_paymentHashes/${hashId}`)
+      .withConverter(paymentHashConverter)
 
-    return payments.length > 0 ? payments[0] : null
-  }
-
-const updateStatus = async (
-  payment: SockbasePaymentDocument,
-  productItems: Stripe.LineItem[],
-  paymentId: string,
-  status: PaymentStatus,
-  now: Date
-): Promise<boolean> => {
-  const productItemIds = productItems
-    .filter(p => p.price)
-    .map(p => p.price?.id)
-
-  if (!productItemIds.includes(payment.paymentProductId)) {
-    return false
-  }
-
-  await firestore.doc(`/_payments/${payment.id}`)
-    .set({
-      paymentId,
-      status,
-      updatedAt: now
-    }, {
-      merge: true
+    await firestore.runTransaction(async tx => {
+      tx.set(resultRef, paymentBase)
+      tx.set(hashIdRef, {
+        id: '',
+        paymentId: resultRef.id,
+        hashId,
+        userId: o.userId
+      })
     })
 
-  return true
-}
-
-const applyResultAsync = async (res: Response, now: Date, stripe: Stripe, charge: Stripe.Charge): Promise<void> => {
-  const paymentId = charge.payment_intent
-  if (!paymentId) {
-    res.status(404).send({ error: 'NotFound', detail: 'paymentId is not found' })
-    return
-  }
-  else if (typeof paymentId !== 'string') {
-    res.status(500).send({ error: 'MissingType', detail: 'paymentId type is missing' })
-    return
+    return {
+      checkoutRequest: {
+        paymentMethod: o.paymentMethod,
+        checkoutURL: '',
+        amount: o.paymentAmount
+      },
+      paymentId: resultRef.id
+    }
   }
 
-  const payment = await getPaymentAsync(paymentId)
-  if (!payment) {
-    noticeMessage(null, paymentId, 'payment document is not found', 1)
-    res.status(204).send()
-    return
-  }
+  const productName = o.targetType === 'circle'
+    ? `${o.name} (サークル参加)`
+    : o.targetType === 'ticket'
+      ? `${o.name} (チケット購入)`
+      : o.name
 
-  const paymentResultData: SockbasePaymentResult = {
-    cardBrand: charge.payment_method_details?.card?.brand ?? null,
-    receiptURL: charge.receipt_url
-  }
-
-  await firestore.doc(`/_payments/${payment.id}`)
-    .set({
-      paymentResult: paymentResultData,
-      updatedAt: now
-    }, {
-      merge: true
-    })
-
-  res.send({
-    success: true,
-    paymentId: payment.id,
-    paymentResult: paymentResultData
+  const stripe = getStripe(o.orgId)
+  const session = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [
+      {
+        price_data: {
+          currency: 'jpy',
+          product_data: {
+            name: productName
+          },
+          unit_amount: o.paymentAmount
+        },
+        quantity: 1
+      }
+    ],
+    success_url: `${userAppURL}/checkout?cs={CHECKOUT_SESSION_ID}`
   })
+
+  if (!session) {
+    throw new Error('session is not found')
+  }
+  else if (!session.url) {
+    throw new Error('session url is not found')
+  }
+
+  const payment: SockbasePaymentDocument = {
+    ...paymentBase,
+    checkoutSessionId: session.id
+  }
+
+  const resultRef = await firestore.collection('_payments')
+    .withConverter(paymentConverter)
+    .doc()
+  const hashIdRef = firestore.doc(`_paymentHashes/${hashId}`)
+    .withConverter(paymentHashConverter)
+
+  await firestore.runTransaction(async tx => {
+    tx.set(resultRef, payment)
+    tx.set(hashIdRef, {
+      id: '',
+      paymentId: resultRef.id,
+      hashId,
+      userId: o.userId
+    })
+  })
+
+  return {
+    checkoutRequest: {
+      paymentMethod: o.paymentMethod,
+      checkoutURL: session.url,
+      amount: o.paymentAmount
+    },
+    paymentId: resultRef.id
+  }
 }
 
-const getPaymentAsync = async (paymentId: string): Promise<SockbasePaymentDocument | null> => {
+const refreshCheckoutSessionAsync = async (userId: string, paymentId: string): Promise<SockbaseCheckoutRequest> => {
+  const now = new Date()
+
+  const paymentDoc = await firestore.doc(`_payments/${paymentId}`)
+    .withConverter(paymentConverter)
+    .get()
+  const payment = paymentDoc.data()
+  if (!payment || payment.userId !== userId) {
+    throw new Error('payment not found')
+  }
+  else if (payment.paymentMethod !== 1) {
+    throw new Error('payment method is not online payment')
+  }
+  else if (payment.checkoutStatus !== 0 || payment.status !== 0) {
+    throw new Error('checkout is complete')
+  }
+
+  if (payment.applicationId) {
+    const app = await getApplicationByIdAsync(payment.applicationId)
+    const event = await getEventByIdAsync(app.eventId)
+
+    const type = event.spaces.find(space => space.id === app.spaceId)
+    const name = `${event.name} - ${type!.name}`
+
+    return refreshCheckoutSessionCoreAsync(payment, event._organization.id, name, now)
+  }
+  else if (payment.ticketId) {
+    const ticket = await getTicketByIdAsync(payment.ticketId)
+    const store = await getStoreByIdAsync(ticket.storeId)
+
+    const type = store.types.find(type => type.id === ticket.typeId)
+    const name = `${store.name} - ${type!.name}`
+
+    return refreshCheckoutSessionCoreAsync(payment, store._organization.id, name, now)
+  }
+  else {
+    throw new Error('target is not found')
+  }
+}
+
+const refreshCheckoutSessionCoreAsync = async (payment: SockbasePaymentDocument, orgId: string, name: string, now: Date): Promise<SockbaseCheckoutRequest> => {
+  const stripe = getStripe(orgId)
+  if (payment.checkoutSessionId) {
+    const session = await stripe.checkout.sessions.retrieve(payment.checkoutSessionId)
+    if (session.status === 'open') {
+      return {
+        paymentMethod: payment.paymentMethod,
+        checkoutURL: session.url ?? '',
+        amount: payment.paymentAmount
+      }
+    }
+  }
+
+  const newSession = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [
+      {
+        price_data: {
+          currency: 'jpy',
+          product_data: {
+            name
+          },
+          unit_amount: payment.paymentAmount
+        },
+        quantity: 1
+      }
+    ],
+    success_url: `${userAppURL}/checkout?cs={CHECKOUT_SESSION_ID}`
+  })
+
+  await firestore.doc(`/_payments/${payment.id}`)
+    .set({
+      checkoutSessionId: newSession.id,
+      updatedAt: now
+    }, { merge: true })
+
+  return {
+    paymentMethod: payment.paymentMethod,
+    checkoutURL: newSession.url ?? '',
+    amount: payment.paymentAmount
+  }
+}
+
+const getCheckoutBySessionIdAsync = async (userId: string, sessionId: string): Promise<SockbaseCheckoutResult | null> => {
   const paymentSnapshot = await firestore.collection('_payments')
     .withConverter(paymentConverter)
-    .where('paymentId', '==', paymentId)
+    .where('userId', '==', userId)
+    .where('checkoutSessionId', '==', sessionId)
+    .where('paymentMethod', '==', 1)
     .get()
+
   const payments = paymentSnapshot.docs
     .map(p => p.data())
 
-  return payments.length > 0 ? payments[0] : null
+  if (payments.length !== 1) {
+    throw new Error('payment document is not found')
+  }
+
+  const payment = payments[0]
+
+  const result: SockbaseCheckoutResult = {
+    status: payment.checkoutStatus,
+    ticketHashId: payment.ticketId ? (await getTicketByIdAsync(payment.ticketId)).hashId : null,
+    applicaitonHashId: payment.applicationId ? (await getApplicationByIdAsync(payment.applicationId)).hashId : null
+  }
+
+  await firestore.doc(`/_payments/${payment.id}`)
+    .set({ checkoutStatus: 2 }, { merge: true })
+
+  return result
 }
 
 const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetail: string | null, noticeType?: number): void => {
@@ -329,6 +410,17 @@ const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetai
     .catch(err => { throw err })
 }
 
-export default {
-  processCoreAsync
+const generateHashId = (now: Date): string => {
+  const codeDigit = 12
+  const randomId = generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+  const formatedDateTime = dayjs(now).tz().format('MMDD')
+  const hashId = `SP${formatedDateTime}${randomId}`
+  return hashId
+}
+
+export {
+  processCoreAsync,
+  createCheckoutSessionAsync,
+  refreshCheckoutSessionAsync,
+  getCheckoutBySessionIdAsync
 }

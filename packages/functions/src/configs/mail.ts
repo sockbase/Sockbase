@@ -34,6 +34,8 @@ const manuallySuffix = [
   ...commonSuffix
 ]
 
+const userAppURL = process.env.FUNC_USER_APP_URL ?? ''
+
 const templates = {
   acceptApplication: (event: SockbaseEvent, app: SockbaseApplicationDocument) => ({
     subject: `[${event.name}] サークル参加申し込み 内容確認`,
@@ -52,14 +54,14 @@ const templates = {
       `会場: ${event.venue.name}`,
       '',
       'お申し込み内容の確認・変更は以下のURLよりご確認いただけます。',
-      `https://sockbase.net/dashboard/applications/${app.hashId}`,
+      `${userAppURL}/dashboard/applications/${app.hashId}`,
       '',
       '[サークルカットご提出のお願い]',
       'お申し込み時にサークルカットをご提出いただいていない場合、',
       'お申し込み内容確認ページの「サークルカットを差し替える」ボタンか、',
       '下記リンクからご提出いただくようお願いいたします。',
       '',
-      `https://sockbase.net/dashboard/applications/${app.hashId}/cut`,
+      `${userAppURL}/dashboard/applications/${app.hashId}/circlecut`,
       '',
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',
@@ -67,7 +69,7 @@ const templates = {
       ...autoSuffix
     ]
   }),
-  requestCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace, email: string) => ({
+  requestCirclePayment: (payment: SockbasePaymentDocument, app: SockbaseApplicationDocument, event: SockbaseEvent, space: SockbaseEventSpace) => ({
     subject: `[${event.name}] サークル参加費 お支払いのお願い`,
     body: [
       `この度は、${event.name}への参加申し込みをいただき、誠にありがとうございます。`,
@@ -83,9 +85,8 @@ const templates = {
       ...payment.paymentMethod === 1
         ? [
           '[オンライン決済]',
-          '下記URLからお支払いください。',
-          '＜重要＞ フォームに入力されているメールアドレスは変更しないでください。お支払いを確認することができなくなります。',
-          `${space.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(email ?? '')}`,
+          '決済履歴から「お支払い」をクリックし、お支払いください。',
+          `${userAppURL}/dashboard/payments`,
           ''
         ]
         : [
@@ -167,7 +168,7 @@ const templates = {
       `チケット種別: ${type.name}`,
       '',
       '購入したチケットは以下のURLからご確認いただけます。',
-      `https://sockbase.net/dashboard/tickets/${ticket.hashId}`,
+      `${userAppURL}/dashboard/tickets/${ticket.hashId}`,
       '',
       'お申し込みいただいた内容に誤りがある場合は、お手数ですがご連絡いただきますようお願いいたします。',
       '何かご不明点がありましたら、お気軽にご連絡ください。',
@@ -175,7 +176,7 @@ const templates = {
       ...autoSuffix
     ]
   }),
-  requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketDocument, store: SockbaseStore, type: SockbaseStoreType, email: string) => ({
+  requestTicketPayment: (payment: SockbasePaymentDocument, ticket: SockbaseTicketDocument, store: SockbaseStore, type: SockbaseStoreType) => ({
     subject: `[${store.name}] お支払いのお願い`,
     body: [
       `この度は、${store.name}への参加申し込みをいただき、誠にありがとうございます。`,
@@ -191,9 +192,8 @@ const templates = {
       ...payment.paymentMethod === 1
         ? [
           '[オンライン決済]',
-          '下記URLからお支払いください。',
-          '＜重要＞ フォームに入力されているメールアドレスは変更しないでください。お支払いを確認することができなくなります。',
-          `${type.productInfo?.paymentURL}?prefilled_email=${encodeURIComponent(email ?? '')}`,
+          '決済履歴から「お支払い」をクリックし、お支払いください。',
+          `${userAppURL}/dashboard/payments`,
           ''
         ]
         : [

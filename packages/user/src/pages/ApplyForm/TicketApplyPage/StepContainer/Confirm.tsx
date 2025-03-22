@@ -43,7 +43,7 @@ const Confirm: React.FC<Props> = props => {
     <>
       <h1>入力内容確認</h1>
 
-      {props.selectedType?.productInfo && (
+      {props.selectedType?.price && (
         <>
           <h2>参加費</h2>
           <h3>選択された参加種別</h3>
@@ -94,7 +94,6 @@ const Confirm: React.FC<Props> = props => {
       <FormSection>
         <FormItem>
           <FormButton
-            color="default"
             disabled={isProgress}
             onClick={props.prevStep}>
             <IconLabel

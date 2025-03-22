@@ -51,10 +51,6 @@ export interface SockbaseEventSpace {
   name: string
   description: string
   price: number
-  productInfo: {
-    productId: string
-    paymentURL: string
-  } | null
   isDualSpace: boolean
   passCount?: number
   acceptApplication: boolean | null
@@ -111,10 +107,6 @@ export interface SockbaseStoreType {
   name: string
   description: string
   price: number
-  productInfo: {
-    productId: string
-    paymentURL: string
-  } | null
   color: string
   isPublic: boolean
   anotherTicket: {
@@ -192,11 +184,45 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
 }
 
 /**
+ * 決済リクエスト
+ */
+export interface SockbaseCheckoutRequest {
+  paymentMethod: PaymentMethod
+  checkoutURL: string
+  amount: number
+}
+
+/**
+ * 決済情報取得ペイロード
+ */
+export interface SockbaseCheckoutGetPayload {
+  sessionId: string
+}
+
+/**
+ * 決済結果
+ */
+export interface SockbaseCheckoutResult {
+  status: CheckoutStatus | -1
+  applicaitonHashId: string | null
+  ticketHashId: string | null
+}
+
+/**
+ * 決済要求ステータス
+ * 0: 開始 (決済要求を作成した)
+ * 1: 決済完了
+ * 2: 終了 (決済完了ページを踏んだ)
+ */
+export type CheckoutStatus = 0 | 1 | 2
+
+/**
  * サークル申し込み作成リザルト
  */
-export interface SockbaseApplicationAddedResult {
+export interface SockbaseApplicationCreateResult {
   hashId: string
   bankTransferCode: string
+  checkoutRequest: SockbaseCheckoutRequest | null
 }
 
 /**
@@ -386,15 +412,16 @@ export interface SockbaseTicketHashIdDocument {
 /**
  * チケット作成リザルト
  */
-export interface SockbaseTicketAddedResult {
+export interface SockbaseTicketCreateResult {
   hashId: string
   bankTransferCode: string
+  checkoutRequest: SockbaseCheckoutRequest | null
 }
 
 /**
  * チケット作成リザルト(管理用)
  */
-export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
+export type SockbaseAdminTicketCreateResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
   email: string
   createdAt: number
 }
@@ -402,7 +429,7 @@ export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdA
 /**
  * サークル通行証発行リザルト
  */
-export interface SockbaseCirclePassCreatedResult {
+export interface SockbaseCirclePassCreateResult {
   circlePassCount: number
   anotherTicketCount: number
 }
@@ -475,18 +502,11 @@ export type PaymentStatus = 0 | 1 | 2 | 3 | 4
  */
 export interface SockbasePayment {
   userId: string
-  paymentProductId: string
   paymentMethod: PaymentMethod
   paymentAmount: number
   bankTransferCode: string
   applicationId: string | null
   ticketId: string | null
-  paymentResult: SockbasePaymentResult | null
-}
-
-export interface SockbasePaymentResult {
-  cardBrand: string | null
-  receiptURL: string | null
 }
 
 /**
@@ -494,10 +514,27 @@ export interface SockbasePaymentResult {
  */
 export type SockbasePaymentDocument = SockbasePayment & {
   id: string
-  paymentId: string
+  hashId: string
+  checkoutSessionId: string
+  paymentIntentId: string
   status: PaymentStatus
+  checkoutStatus: CheckoutStatus
+  cardBrand: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  purchasedAt: Date | null
+}
+
+/**
+ * 決済ハッシュ情報
+ */
+export interface SockbasePaymentHash {
+  userId: string
+  paymentId: string
+  hashId: string
+}
+export type SockbasePaymentHashDocument = SockbasePaymentHash & {
+  id: string
 }
 
 /**
@@ -629,4 +666,14 @@ export interface SockbaseDocLink {
  */
 export type SockbaseDocLinkDocument = SockbaseDocLink & {
   id: string
+}
+
+/**
+ * 領収書設定
+ */
+export interface SockbaseReceiptConfig {
+  name: string
+  websiteURL: string
+  email: string
+  registrationNumber: string
 }

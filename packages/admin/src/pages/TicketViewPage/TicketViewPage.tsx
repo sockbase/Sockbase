@@ -290,6 +290,10 @@ const TicketViewPage: React.FC = () => {
                 <th>決済 ID</th>
                 <td>{payment !== undefined ? payment?.id ?? '支払い必要なし' : <BlinkField />} <CopyToClipboard content={payment?.id} /></td>
               </tr>
+              <tr>
+                <th>決済内部 ID</th>
+                <td>{payment !== undefined ? payment?.hashId ?? '支払い必要なし' : <BlinkField />} <CopyToClipboard content={payment?.hashId} /></td>
+              </tr>
             </tbody>
           </table>
         </>

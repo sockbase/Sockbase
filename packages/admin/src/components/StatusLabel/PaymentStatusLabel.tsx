@@ -49,8 +49,8 @@ const PaymentStatusLabel: React.FC<Props> = props => {
 
   const icon2Element = useMemo(() => {
     if (!props.isShowBrand) return
-    if (props.payment?.paymentResult?.cardBrand) {
-      switch (props.payment.paymentResult.cardBrand) {
+    if (props.payment?.cardBrand) {
+      switch (props.payment.cardBrand) {
         case 'visa':
           return <SiVisa />
         case 'mastercard':
