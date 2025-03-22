@@ -106,26 +106,29 @@ const CircleApplication: React.FC<CircleApplicationProps> = props => {
 
   return (
     <>
-      {!circleCutURL
-        ? (
-          <CircleCutUploadForm
-            event={props.event}
-            hashId={props.hashId}
-            nextStep={props.nextStep} />
-        )
-        : (
-          <FormSection>
-            <FormItem>
-              <FormButton
-                color="primary"
-                onClick={props.nextStep}>
-                <IconLabel
-                  icon={<MdArrowForward />}
-                  label="次へ進む" />
-              </FormButton>
-            </FormItem>
-          </FormSection>
-        )}
+      {circleCutURL !== undefined && (
+        <>
+          {circleCutURL === null && (
+            <CircleCutUploadForm
+              event={props.event}
+              hashId={props.hashId}
+              nextStep={props.nextStep} />
+          )}
+          {circleCutURL && (
+            <FormSection>
+              <FormItem>
+                <FormButton
+                  color="primary"
+                  onClick={props.nextStep}>
+                  <IconLabel
+                    icon={<MdArrowForward />}
+                    label="次へ進む" />
+                </FormButton>
+              </FormItem>
+            </FormSection>
+          )}
+        </>
+      )}
     </>
   )
 }
