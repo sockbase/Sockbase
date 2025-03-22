@@ -64,10 +64,12 @@ export const requestPayment = firestore
 export const acceptPayment = firestore
   .document('/_payments/{paymentId}')
   .onUpdate(async (change: Change<QueryDocumentSnapshot>) => {
-    if (!change.after) return
+    if (!change.before || !change.after) return
 
-    const payment = change.after.data() as SockbasePaymentDocument
-    await MailService.sendMailAcceptPaymentAsync(payment)
+    const beforeStatus = change.before.data() as SockbasePaymentDocument
+    const afterPayment = change.after.data() as SockbasePaymentDocument
+
+    await MailService.sendMailAcceptPaymentAsync(beforeStatus.status, afterPayment)
   })
 
 export const acceptInquiry = firestore

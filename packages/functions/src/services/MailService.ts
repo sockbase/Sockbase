@@ -1,12 +1,3 @@
-import {
-  type SockbaseTicketDocument,
-  type SockbaseApplicationDocument,
-  type SockbasePaymentDocument,
-  type SockbaseInquiryDocument,
-  type SockbaseSendMailForEventPayload,
-  type SockbaseApplicationMeta,
-  type SockbaseAccountDocument
-} from 'sockbase'
 import mailConfig from '../configs/mail'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { getApplicaitonHashIdAsync, getApplicationByIdAsync, getApplicationMetaByAppIdAsync, getApplicationsByEventIdAsync } from '../models/application'
@@ -14,6 +5,16 @@ import { getEventByIdAsync } from '../models/event'
 import { getStoreByIdAsync } from '../models/store'
 import { getTicketByIdAsync } from '../models/ticket'
 import { getUserDataAsync } from '../models/user'
+import type {
+  SockbaseTicketDocument,
+  SockbaseApplicationDocument,
+  SockbasePaymentDocument,
+  SockbaseInquiryDocument,
+  SockbaseSendMailForEventPayload,
+  SockbaseApplicationMeta,
+  SockbaseAccountDocument,
+  PaymentStatus
+} from 'sockbase'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
@@ -78,8 +79,10 @@ const requestTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticke
   return mailConfig.templates.requestTicketPayment(payment, ticket, store, type)
 }
 
-const sendMailAcceptPaymentAsync = async (payment: SockbasePaymentDocument): Promise<void> => {
-  if (payment.status !== 1) return
+const sendMailAcceptPaymentAsync = async (beforeStatus: PaymentStatus, payment: SockbasePaymentDocument): Promise<void> => {
+  if (beforeStatus === payment.status || payment.status !== 1) {
+    return
+  }
 
   const emailAddress = await getEmailAddress(payment.userId)
   const template = payment.applicationId
