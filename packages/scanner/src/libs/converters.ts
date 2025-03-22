@@ -73,6 +73,7 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
         paymentAmount: payment.paymentAmount,
         totalAmount: payment.totalAmount,
         voucherAmount: payment.voucherAmount,
+        voucherId: payment.voucherId,
         bankTransferCode: payment.bankTransferCode,
         applicationId: payment.applicationId,
         ticketId: payment.ticketId,
