@@ -52,8 +52,8 @@ const StepContainer: React.FC<Props> = props => {
   const [app, setApp] = useState<SockbaseApplication>()
   const [links, setLinks] = useState<SockbaseApplicationLinks>()
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
-  const [voucherCode, setVoucherCode] = useState('')
 
+  const [voucherCode, setVoucherCode] = useState('')
   const [voucher, setVoucher] = useState<SockbaseVoucherDocument | null>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)

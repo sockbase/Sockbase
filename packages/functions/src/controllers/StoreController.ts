@@ -1,15 +1,15 @@
 import { type QueryDocumentSnapshot } from 'firebase-admin/firestore'
 import { firestore, https, type Change, type EventContext } from 'firebase-functions/v1'
-import {
-  type SockbaseTicketCreateResult,
-  type SockbaseTicket,
-  type SockbaseAdminTicketCreateResult,
-  type SockbaseTicketUsedStatus,
-  type SockbaseTicketUserDocument
-} from 'sockbase'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { storeConverter } from '../libs/converters'
 import StoreService from '../services/StoreService'
+import type {
+  SockbaseTicketCreateResult,
+  SockbaseAdminTicketCreateResult,
+  SockbaseTicketUsedStatus,
+  SockbaseTicketUserDocument,
+  SockbaseTicketApplyPayload
+} from 'sockbase'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const FirestoreDB = adminApp.firestore()
@@ -37,14 +37,14 @@ export const onTicketUserAssigned = firestore
   })
 
 export const createTicket = https.onCall(
-  async (ticket: SockbaseTicket, context: https.CallableContext): Promise<SockbaseTicketCreateResult> => {
+  async (payload: SockbaseTicketApplyPayload, context: https.CallableContext): Promise<SockbaseTicketCreateResult> => {
     if (!context.auth) {
       throw new https.HttpsError('permission-denied', 'Auth Error')
     }
 
     const userId = context.auth.uid
 
-    const result = await StoreService.createTicketAsync(userId, ticket)
+    const result = await StoreService.createTicketAsync(userId, payload)
     return result
   })
 

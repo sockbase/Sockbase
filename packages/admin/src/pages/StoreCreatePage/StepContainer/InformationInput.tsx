@@ -410,8 +410,6 @@ const InformationInput: React.FC<Props> = props => {
             <th style={{ width: '15%' }}>タイプ名</th>
             <th style={{ width: '10%' }}>説明</th>
             <th style={{ width: '10%' }}>価格</th>
-            <th>支払い URL</th>
-            <th>商品 ID</th>
             <th>チケットカラー</th>
             <th>アナザーチケットストア ID</th>
             <th>アナザーチケットタイプ ID</th>

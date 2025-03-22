@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MdArrowBack, MdArrowForward } from 'react-icons/md'
+import { MdArrowBack, MdArrowForward, MdCheck } from 'react-icons/md'
 import sockbaseShared from 'shared'
 import FormButton from '../../../../components/Form/FormButton'
 import FormCheckbox from '../../../../components/Form/FormCheckbox'
+import FormInput from '../../../../components/Form/FormInput'
 import FormItem from '../../../../components/Form/FormItem'
 import FormLabel from '../../../../components/Form/FormLabel'
 import FormRadio from '../../../../components/Form/FormRadio'
@@ -11,18 +12,35 @@ import Alert from '../../../../components/Parts/Alert'
 import IconLabel from '../../../../components/Parts/IconLabel'
 import UserDataForm from '../../../../components/UserDataForm'
 import useValidate from '../../../../hooks/useValidate'
-import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket } from 'sockbase'
+import useVoucher from '../../../../hooks/useVoucher'
+import AmountCalculator from '../../CircleApplyPage/StepContainer/AmountCalculator'
+import type {
+  SockbaseAccount,
+  SockbaseAccountSecure,
+  SockbaseStoreDocument,
+  SockbaseTicket,
+  SockbaseVoucherDocument
+} from 'sockbase'
 
 interface Props {
   store: SockbaseStoreDocument
   ticket: SockbaseTicket | undefined
   userData: SockbaseAccountSecure | undefined
   fetchedUserData: SockbaseAccount | null | undefined
+  voucher: SockbaseVoucherDocument | null | undefined
+  voucherCode: string
+  getVoucherByCodeAsync: (typeId: string, code: string) => Promise<void>
+  resetVoucher: () => void
   prevStep: () => void
-  nextStep: (ticket: SockbaseTicket, userData: SockbaseAccountSecure | undefined) => void
+  nextStep: (
+    ticket: SockbaseTicket,
+    userData: SockbaseAccountSecure | undefined,
+    voucherCode: string
+  ) => void
 }
 const Input: React.FC<Props> = props => {
   const validator = useValidate()
+  const { calculatePaymentAmount } = useVoucher()
 
   const initialTicket = useMemo(() => ({
     storeId: props.store.id,
@@ -33,22 +51,37 @@ const Input: React.FC<Props> = props => {
   const [ticket, setTicket] = useState(initialTicket)
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
+  const [isProcessVoucher, setIsProcessVoucher] = useState(false)
+  const [voucherCode, setVoucherCode] = useState('')
   const [isAgreed, setAgreed] = useState(false)
 
   const typeIds = useMemo(() => {
     return props.store.types.map(t => t.id)
   }, [props.store])
 
+  const usablePaymentMethods = useMemo(() => sockbaseShared.constants.payment.methods
+    .filter(m => m.id !== 'voucher')
+    .filter(m => m.id !== 'bankTransfer' || props.store.permissions.canUseBankTransfer)
+    .map(i => ({
+      text: i.description,
+      value: i.id
+    })), [props.store])
+  const paymentMethodIds = useMemo(() => usablePaymentMethods.map(p => p.value), [usablePaymentMethods])
+
   const selectedType = useMemo(() => {
     if (!ticket.typeId) return
     return props.store.types.find(t => t.id === ticket.typeId)
   }, [props.store, ticket])
 
+  const paymentAmount = useMemo(() => {
+    if (!selectedType) return
+    return calculatePaymentAmount(selectedType.price, props.voucher?.amount)
+  }, [selectedType, props.voucher])
+
   const errorCount = useMemo(() => {
     const validators = [
       validator.isIn(ticket.typeId, typeIds),
-      !selectedType?.price || props.store.permissions.canUseBankTransfer || ticket.paymentMethod === 'online',
-      !selectedType?.price || validator.isNotEmpty(ticket.paymentMethod),
+      !selectedType?.price || paymentAmount?.paymentAmount === 0 || validator.isIn(ticket.paymentMethod, paymentMethodIds),
       isAgreed
     ]
 
@@ -73,12 +106,37 @@ const Input: React.FC<Props> = props => {
       errorCount += userDataValidators.filter(v => !v).length
     }
     return errorCount
-  }, [props.fetchedUserData, isAgreed, ticket, typeIds, selectedType, userData])
+  }, [props.fetchedUserData, isAgreed, ticket, typeIds, selectedType, userData, paymentAmount, paymentMethodIds])
+
+  const handleGetVoucher = useCallback(async () => {
+    if (!selectedType || !voucherCode) return
+    setIsProcessVoucher(true)
+    props.getVoucherByCodeAsync(selectedType.id, voucherCode)
+      .finally(() => setIsProcessVoucher(false))
+  }, [selectedType, voucherCode, props.getVoucherByCodeAsync])
+
+  const handleChangeSpaceType = useCallback((typeId: string) => {
+    if (props.voucher) {
+      if (!confirm('チケット種別を変更するとバウチャーがリセットされます。\nチケット種別を変更してもよろしいですか？')) {
+        return false
+      }
+      props.resetVoucher()
+      setVoucherCode('')
+    }
+    setTicket(s => ({ ...s, typeId }))
+    return true
+  }, [props.voucher])
 
   const handleSubmit = useCallback(() => {
-    if (errorCount > 0) return
-    props.nextStep(ticket, userData)
-  }, [errorCount, ticket, userData])
+    if (errorCount > 0 || !paymentAmount) return
+
+    const sanitizedTicket: SockbaseTicket = {
+      ...ticket,
+      paymentMethod: paymentAmount.paymentAmount === 0 ? 'voucher' : ticket.paymentMethod
+    }
+
+    props.nextStep(sanitizedTicket, userData, voucherCode)
+  }, [errorCount, ticket, userData, voucherCode, paymentAmount])
 
   useEffect(() => {
     if (props.ticket) {
@@ -90,7 +148,16 @@ const Input: React.FC<Props> = props => {
     if (props.userData) {
       setUserData(props.userData)
     }
-  }, [props.ticket, props.userData])
+    if (props.voucherCode) {
+      setVoucherCode(props.voucherCode)
+    }
+  }, [props.ticket, props.userData, props.voucherCode])
+
+  useEffect(() => {
+    if (props.voucher === null) return
+    if (voucherCode === props.voucher?.voucherCode) return
+    props.resetVoucher()
+  }, [voucherCode, props.voucher])
 
   return (
     <>
@@ -104,13 +171,13 @@ const Input: React.FC<Props> = props => {
         </FormItem>
       </FormSection>
 
-      <h2>申し込む参加種別</h2>
+      <h2>申し込むチケット種別</h2>
       <FormSection>
         <FormItem>
-          <FormLabel>参加種別</FormLabel>
+          <FormLabel>チケット種別</FormLabel>
           <FormRadio
             name="type"
-            onChange={v => setTicket(s => ({ ...s, typeId: v }))}
+            onChange={handleChangeSpaceType}
             value={ticket.typeId}
             values={
               props.store.types
@@ -123,41 +190,73 @@ const Input: React.FC<Props> = props => {
         </FormItem>
       </FormSection>
 
-      {selectedType?.price && (
+      <UserDataForm
+        fetchedUserData={props.fetchedUserData}
+        setUserData={u => setUserData(u)}
+        userData={props.userData} />
+
+      {selectedType && selectedType.price > 0 && (
         <>
-          <h2>参加費お支払い方法</h2>
-          {selectedType
-            ? (
+          <h2>お支払い情報</h2>
+
+          <h3>バウチャー利用</h3>
+          <p>
+            バウチャーをお持ちの場合は、バウチャーコードを入力してください。
+          </p>
+          <FormSection>
+            <FormItem>
+              <FormLabel>バウチャーコード</FormLabel>
+              <FormInput
+                onChange={e => setVoucherCode(e.target.value)}
+                value={voucherCode} />
+            </FormItem>
+            <FormItem>
+              <FormButton
+                color="primary"
+                disabled={isProcessVoucher || !selectedType || !voucherCode || !!props.voucher}
+                onClick={handleGetVoucher}>
+                <IconLabel
+                  icon={<MdCheck />}
+                  label="バウチャー反映" />
+              </FormButton>
+            </FormItem>
+            <FormItem>
+              {!selectedType && (
+                <Alert
+                  title="バウチャーを利用するには、チケット種別を選択する必要があります"
+                  type="warning" />
+              )}
+              {props.voucher === undefined && !isProcessVoucher && selectedType && voucherCode && (
+                <Alert
+                  title="「バウチャー反映」を押してください"
+                  type="info" />
+              )}
+              {props.voucher === null && (
+                <Alert
+                  title="このバウチャーは使用できません"
+                  type="error" />
+              )}
+              {props.voucher && (
+                <Alert
+                  title="バウチャー利用額が反映されました"
+                  type="success">
+                バウチャーは申し込み情報の送信時に適用されます。<br />
+                バウチャーを適用できなかった場合、エラーが発生します。
+                </Alert>
+              )}
+            </FormItem>
+          </FormSection>
+
+          {paymentAmount && paymentAmount.paymentAmount > 0 && (
+            <>
+              <h3>お支払い方法</h3>
               <FormSection>
-                <FormItem>
-                  <table>
-                    <tbody>
-                      <tr>
-                        <th>申し込む種別</th>
-                        <td>{selectedType.name}</td>
-                      </tr>
-                      <tr>
-                        <th>詳細情報</th>
-                        <td>{selectedType.description}</td>
-                      </tr>
-                      <tr>
-                        <th>お支払い額</th>
-                        <td>{selectedType.price.toLocaleString()}円</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </FormItem>
                 <FormItem>
                   <FormRadio
                     name="paymentMethod"
-                    onChange={v => setTicket(s => ({ ...s, paymentMethod: v }))}
+                    onChange={paymentMethod => setTicket(s => ({ ...s, paymentMethod }))}
                     value={ticket.paymentMethod}
-                    values={sockbaseShared.constants.payment.methods
-                      .filter(i => i.id !== 'bankTransfer' || props.store.permissions.canUseBankTransfer)
-                      .map(i => ({
-                        text: i.description,
-                        value: i.id
-                      }))} />
+                    values={usablePaymentMethods} />
                 </FormItem>
                 {ticket.paymentMethod === 'bankTransfer' && (
                   <FormItem>
@@ -167,19 +266,30 @@ const Input: React.FC<Props> = props => {
                   </FormItem>
                 )}
               </FormSection>
-            )
-            : (
-              <Alert
-                title="申し込みたい参加種別を選択してください"
-                type="info" />
-            )}
+            </>
+          )}
+
+          <h3>お支払い内容確認</h3>
+          {!selectedType && (
+            <Alert
+              title="申し込みたいチケット種別を選択してください"
+              type="warning" />
+          )}
+          <table>
+            <tbody>
+              <tr>
+                <th>チケット種別</th>
+                <td>{selectedType?.name ?? '---'}</td>
+              </tr>
+              <tr>
+                <th>説明</th>
+                <td>{selectedType?.description ?? '---'}</td>
+              </tr>
+              <AmountCalculator paymentAmount={paymentAmount} />
+            </tbody>
+          </table>
         </>
       )}
-
-      <UserDataForm
-        fetchedUserData={props.fetchedUserData}
-        setUserData={u => setUserData(u)}
-        userData={props.userData} />
 
       <h2>注意事項</h2>
       <p>

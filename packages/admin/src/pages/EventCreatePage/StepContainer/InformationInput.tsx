@@ -541,8 +541,6 @@ const InformationImport: React.FC<Props> = props => {
             <th style={{ width: '10%' }}>名前</th>
             <th style={{ width: '25%' }}>説明</th>
             <th>参加費</th>
-            <th>支払い URL</th>
-            <th>商品 ID</th>
             <th>通行証枚数</th>
             <th />
             <th />

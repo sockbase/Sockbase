@@ -9,7 +9,8 @@ import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrap
 import ProgressBar from '../../../../components/Parts/ProgressBar'
 import UserDataView from '../../../../components/UserDataView'
 import useError from '../../../../hooks/useError'
-import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreType } from 'sockbase'
+import AmountCalculator from '../../CircleApplyPage/StepContainer/AmountCalculator'
+import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreType, VoucherAppliedAmount } from 'sockbase'
 
 interface Props {
   fetchedUserData: SockbaseAccount | null | undefined
@@ -17,6 +18,7 @@ interface Props {
   selectedType: SockbaseStoreType | undefined
   selectedPaymentMethod: { id: string, description: string } | undefined
   submitProgressPercent: number
+  paymentAmount: VoucherAppliedAmount | null | undefined
   submitAsync: () => Promise<void>
   prevStep: () => void
   nextStep: () => void
@@ -43,24 +45,26 @@ const Confirm: React.FC<Props> = props => {
     <>
       <h1>入力内容確認</h1>
 
+      <UserDataView
+        fetchedUserData={props.fetchedUserData}
+        userData={props.userData} />
+
       {props.selectedType?.price && (
         <>
-          <h2>参加費</h2>
+          <h2>お支払い情報</h2>
+
           <h3>選択された参加種別</h3>
           <table>
             <tbody>
               <tr>
-                <th>参加種別</th>
+                <th>チケット種別</th>
                 <td>{props.selectedType.name}</td>
               </tr>
               <tr>
-                <th>詳細</th>
+                <th>説明</th>
                 <td>{props.selectedType.description}</td>
               </tr>
-              <tr>
-                <th>参加費</th>
-                <td>{props.selectedType.price.toLocaleString()}円</td>
-              </tr>
+              <AmountCalculator paymentAmount={props.paymentAmount} />
             </tbody>
           </table>
 
@@ -70,10 +74,6 @@ const Confirm: React.FC<Props> = props => {
           </p>
         </>
       )}
-
-      <UserDataView
-        fetchedUserData={props.fetchedUserData}
-        userData={props.userData} />
 
       <h1>申し込み情報送信</h1>
       <p>

@@ -378,6 +378,14 @@ export interface SockbaseTicketHashIdDocument {
 }
 
 /**
+ * チケット申し込みペイロード
+ */
+export interface SockbaseTicketApplyPayload {
+  ticket: SockbaseTicket
+  voucherCode: string | null
+}
+
+/**
  * チケット作成リザルト
  */
 export interface SockbaseTicketCreateResult {
