@@ -9,6 +9,7 @@ import LoadingCircleWrapper from '../../../../components/Parts/LoadingCircleWrap
 import ProgressBar from '../../../../components/Parts/ProgressBar'
 import UserDataView from '../../../../components/UserDataView'
 import useError from '../../../../hooks/useError'
+import AmountCalculator from './AmountCalculator'
 import type {
   SockbaseEventDocument,
   SockbaseApplication,
@@ -16,7 +17,8 @@ import type {
   SockbaseAccount,
   SockbaseAccountSecure,
   SockbaseEventGenre,
-  SockbaseEventSpace
+  SockbaseEventSpace,
+  VoucherAppliedAmount
 } from 'sockbase'
 
 interface Props {
@@ -29,6 +31,7 @@ interface Props {
   selectedSpace: SockbaseEventSpace | undefined
   selectedPaymentMethod: { id: string, description: string } | undefined
   submitProgressPercent: number
+  paymentAmount: VoucherAppliedAmount | null | undefined
   submitAsync: () => Promise<void>
   prevStep: () => void
   nextStep: () => void
@@ -151,21 +154,19 @@ const Confirm: React.FC<Props> = props => {
       </p>
 
       <h2>サークル参加費</h2>
+
       <h3>選択されたスペース</h3>
       <table>
         <tbody>
           <tr>
-            <th>スペース</th>
-            <td>{props.selectedSpace?.name}</td>
+            <th>申込むスペース</th>
+            <td>{props.selectedSpace?.name ?? '---'}</td>
           </tr>
           <tr>
-            <th>詳細</th>
-            <td>{props.selectedSpace?.description}</td>
+            <th>スペース詳細情報</th>
+            <td>{props.selectedSpace?.description ?? '---'}</td>
           </tr>
-          <tr>
-            <th>参加費</th>
-            <td>{props.selectedSpace?.price.toLocaleString()}円</td>
-          </tr>
+          <AmountCalculator paymentAmount={props.paymentAmount} />
         </tbody>
       </table>
 

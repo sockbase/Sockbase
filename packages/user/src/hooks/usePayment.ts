@@ -3,10 +3,13 @@ import * as FirestoreDB from 'firebase/firestore'
 import { httpsCallable } from 'firebase/functions'
 import { applicationHashIdConverter, paymentConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseCheckoutGetPayload, SockbaseCheckoutRequest, SockbaseCheckoutResult, SockbasePaymentDocument, SockbasePaymentHashDocument } from 'sockbase'
+import type { SockbaseCheckoutGetPayload,
+  SockbaseCheckoutRequest,
+  SockbaseCheckoutResult,
+  SockbasePaymentDocument,
+  SockbasePaymentHashDocument } from 'sockbase'
 
 interface IUsePayment {
-  getPaymentIdByHashId: (hashId: string) => Promise<string>
   getPaymentsByUserId: (userId: string) => Promise<SockbasePaymentDocument[]>
   getPaymentAsync: (paymentId: string) => Promise<SockbasePaymentDocument>
   getPaymentHashAsync: (hashId: string) => Promise<SockbasePaymentHashDocument>
@@ -17,20 +20,6 @@ interface IUsePayment {
 const usePayment = (): IUsePayment => {
   const { getFirestore, getFunctions } = useFirebase()
   const db = getFirestore()
-
-  const getPaymentIdByHashId =
-    async (hashId: string): Promise<string> => {
-      const hashRef = FirestoreDB.doc(db, `/_applicationHashIds/${hashId}`)
-        .withConverter(applicationHashIdConverter)
-      const hashDoc = await FirestoreDB.getDoc(hashRef)
-
-      const hash = hashDoc.data()
-      if (!hash) {
-        throw new Error('hash not found')
-      }
-
-      return hash.paymentId
-    }
 
   const getPaymentsByUserId =
     async (userId: string): Promise<SockbasePaymentDocument[]> => {
@@ -101,7 +90,6 @@ const usePayment = (): IUsePayment => {
     }, [])
 
   return {
-    getPaymentIdByHashId,
     getPaymentsByUserId,
     getPaymentAsync,
     getPaymentHashAsync,

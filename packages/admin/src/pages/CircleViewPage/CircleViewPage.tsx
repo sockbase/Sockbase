@@ -135,11 +135,11 @@ const CircleViewPage: React.FC = () => {
     getCircleCutURLByHashIdNullableAsync(appHash.hashId)
       .then(setCircleCutURL)
       .catch(err => { throw err })
-    getPaymentByIdAsync(appHash.paymentId)
-      .then(setPayment)
-      .catch(err => { throw err })
     getOverviewByIdNullableAsync(appHash.applicationId)
       .then(setOverview)
+      .catch(err => { throw err })
+    getPaymentByIdAsync(appHash.paymentId)
+      .then(setPayment)
       .catch(err => { throw err })
 
     if (appHash.spaceId) {
@@ -192,11 +192,15 @@ const CircleViewPage: React.FC = () => {
               <tr>
                 <th>お支払い状況</th>
                 <td>
-                  {(payment && (
-                    <PaymentStatusLabel
-                      isShowBrand
-                      payment={payment} />
-                  )) ?? <BlinkField />}
+                  {
+                    payment !== undefined
+                      ? (
+                        <PaymentStatusLabel
+                          isShowBrand
+                          payment={payment} />
+                      )
+                      : <BlinkField />
+                  }
                 </td>
               </tr>
             </tbody>
@@ -245,15 +249,19 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>内部 ID</th>
-                <td>{app?.id ?? <BlinkField />}  <CopyToClipboard content={app?.id} /></td>
+                <td>{app ? app.id : <BlinkField />} <CopyToClipboard content={app?.id} /></td>
               </tr>
               <tr>
                 <th>決済 ID</th>
-                <td>{payment?.hashId ?? <BlinkField />}  <CopyToClipboard content={payment?.hashId} /></td>
+                <td>{payment ? payment.hashId : <BlinkField />} <CopyToClipboard content={payment?.hashId} /></td>
               </tr>
               <tr>
                 <th>決済内部 ID</th>
-                <td>{payment?.id ?? <BlinkField />}  <CopyToClipboard content={payment?.id} /></td>
+                <td>{payment ? payment.id : <BlinkField />} <CopyToClipboard content={payment?.id} /></td>
+              </tr>
+              <tr>
+                <th>使用バウチャー 内部ID</th>
+                <td>{payment ? payment.voucherId ?? '未使用' : <BlinkField />} <CopyToClipboard content={payment?.voucherId} /></td>
               </tr>
             </tbody>
           </table>
@@ -442,13 +450,15 @@ const CircleViewPage: React.FC = () => {
             </FormItem>
           </FormSection>
 
-          <PaymentStatusController
-            onChange={st => {
-              setPayment(s => s && ({ ...s, status: st }))
-              alert('支払いステータスを変更しました')
-            }}
-            paymentId={payment?.id}
-            status={payment?.status} />
+          {payment && (
+            <PaymentStatusController
+              onChange={st => {
+                setPayment(s => s && ({ ...s, status: st }))
+                alert('支払いステータスを変更しました')
+              }}
+              paymentId={payment?.id}
+              status={payment?.status} />
+          )}
         </>
 
         {isSystemAdmin && (
