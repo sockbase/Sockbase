@@ -123,8 +123,8 @@ const DashboardReceiptViewPage: React.FC = () => {
   const taxDetails = useMemo(() => {
     if (!payment?.paymentAmount) return
     const amount = payment.paymentAmount
-    const taxExcluded = Math.floor(amount / (1 + 0.1))
-    const taxAmount = amount - taxExcluded
+    const taxExcluded = Math.ceil(amount / (1 + 0.1))
+    const taxAmount = Math.floor(amount - taxExcluded)
     return { taxExcluded, taxAmount }
   }, [payment?.paymentAmount])
 
@@ -241,11 +241,8 @@ const DashboardReceiptViewPage: React.FC = () => {
         )}
         {payment && payment.paymentMethod !== 1 && (
           <Alert
-            title="銀行振込のため領収書を発行できません。"
-            type="warning">
-            銀行振込でお支払いいただいた場合、領収書を発行することができません。<br />
-            振り込み明細をご利用ください。
-          </Alert>
+            title="銀行振込・バウチャーでお支払いいただいているため、領収書を発行できません。"
+            type="warning" />
         )}
       </NoPrintArea>
       {Receipt}

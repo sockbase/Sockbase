@@ -129,6 +129,16 @@ const DashboardPaymentViewPage: React.FC = () => {
                 </td>
               </tr>
               <tr>
+                <th>バウチャー利用金額</th>
+                <td>
+                  {
+                    payment
+                      ? `${payment.voucherAmount.toLocaleString()}円`
+                      : <BlinkField />
+                  }
+                </td>
+              </tr>
+              <tr>
                 <th>決済依頼日時</th>
                 <td>
                   {

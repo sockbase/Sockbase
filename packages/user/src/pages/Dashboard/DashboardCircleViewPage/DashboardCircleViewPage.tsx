@@ -41,13 +41,13 @@ const DashboardCircleViewPage: React.FC = () => {
     getLinksByApplicationIdOptionalAsync,
     getOverviewByApplicationIdOptionalAsync
   } = useApplication()
-  const { getPaymentIdByHashId, getPaymentAsync } = usePayment()
+  const { getPaymentAsync } = usePayment()
   const { getEventByIdAsync, getSpaceOptionalAsync } = useEvent()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const { formatByDate } = useDayjs()
 
   const [app, setApp] = useState<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>()
-  const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
+  const [payment, setPayment] = useState<SockbasePaymentDocument>()
   const [event, setEvent] = useState<SockbaseEvent>()
   const [userData, setUserData] = useState<SockbaseAccount>()
   const [links, setLinks] = useState<SockbaseApplicationLinksDocument | null>()
@@ -81,8 +81,7 @@ const DashboardCircleViewPage: React.FC = () => {
         const fetchedAppHashDoc = await getApplicationIdByHashIdAsync(hashId)
         const fetchedApp = await getApplicationByIdAsync(fetchedAppHashDoc.applicationId)
 
-        const fetchedPaymentId = await getPaymentIdByHashId(hashId)
-        getPaymentAsync(fetchedPaymentId)
+        getPaymentAsync(fetchedAppHashDoc.paymentId)
           .then(fetchedPayment => setPayment(fetchedPayment))
           .catch(err => { throw err })
 
@@ -213,7 +212,7 @@ const DashboardCircleViewPage: React.FC = () => {
                           </Link>
                         )
                         : <PaymentStatusLabel payment={payment} />
-                      : 'お支払いいただく必要はありません'
+                      : 'お支払いは不要です'
                     : <BlinkField />}
                 </td>
               </tr>

@@ -21,6 +21,7 @@ const useError = (): IUseError => {
       'Missing or insufficient permissions.': '権限がありません',
       'firebase-app-check-token-is-invalid': '認証エラーです。キャッシュクリアや再読み込みすると解消する場合があります。',
       'invalid-action-code': 'トークンが無効です。',
+      'voucher_not_usable': 'このバウチャーは使用できません',
       'invalid_argument': `不正なリクエストです: ${errorMessage}`
     }
 

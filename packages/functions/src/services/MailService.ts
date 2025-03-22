@@ -52,6 +52,8 @@ const sendMailUpdateUnionCircleAsync = async (app: SockbaseApplicationDocument):
 }
 
 const sendMailRequestPaymentAsync = async (payment: SockbasePaymentDocument): Promise<void> => {
+  if (payment.paymentAmount === 0) return
+
   const emailAddress = await getEmailAddress(payment.userId)
   const template = payment.applicationId
     ? await requestCirclePaymentAsync(payment, payment.applicationId)
@@ -80,7 +82,7 @@ const requestTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticke
 }
 
 const sendMailAcceptPaymentAsync = async (beforeStatus: PaymentStatus, payment: SockbasePaymentDocument): Promise<void> => {
-  if (beforeStatus === payment.status || payment.status !== 1) {
+  if (beforeStatus === payment.status || payment.status !== 1 || payment.paymentAmount === 0) {
     return
   }
 

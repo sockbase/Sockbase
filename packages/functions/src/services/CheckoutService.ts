@@ -129,10 +129,13 @@ const createCheckoutSessionAsync = async (
     orgId: string,
     paymentMethod: PaymentMethod,
     paymentAmount: number,
+    totalAmount: number,
+    voucherAmount: number,
     bankTransferCode: string,
     name: string,
     targetType: 'circle' | 'ticket',
-    targetId: string
+    targetId: string,
+    voucherId: string | null
   }
 ): Promise<{ checkoutRequest: SockbaseCheckoutRequest | null, paymentId: string }> => {
   const hashId = generateHashId(o.now)
@@ -141,6 +144,9 @@ const createCheckoutSessionAsync = async (
     hashId,
     userId: o.userId,
     paymentAmount: o.paymentAmount,
+    totalAmount: o.totalAmount,
+    voucherAmount: o.voucherAmount,
+    voucherId: o.voucherId,
     paymentMethod: o.paymentMethod,
     bankTransferCode: o.bankTransferCode,
     applicationId: o.targetType === 'circle' ? o.targetId : null,
@@ -156,7 +162,7 @@ const createCheckoutSessionAsync = async (
     cardBrand: null
   }
 
-  if (o.paymentMethod === 2) {
+  if (o.paymentMethod === 2 || o.paymentMethod === 3) {
     const resultRef = firestore.collection('_payments')
       .withConverter(paymentConverter)
       .doc()
@@ -164,7 +170,12 @@ const createCheckoutSessionAsync = async (
       .withConverter(paymentHashConverter)
 
     await firestore.runTransaction(async tx => {
-      tx.set(resultRef, paymentBase)
+      tx.set(resultRef, {
+        ...paymentBase,
+        status: o.paymentMethod === 3 ? 1 : 0,
+        updatedAt: o.paymentMethod === 3 ? o.now : null,
+        purchasedAt: o.paymentMethod === 3 ? o.now : null
+      })
       tx.set(hashIdRef, {
         id: '',
         paymentId: resultRef.id,

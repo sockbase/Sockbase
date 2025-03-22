@@ -19,7 +19,8 @@ import type {
   SockbaseTicketUserDocument,
   SockbaseApplicationMeta,
   SockbaseTicketHashIdDocument,
-  SockbasePaymentHashDocument
+  SockbasePaymentHashDocument,
+  SockbaseVoucherDocument
 } from 'sockbase'
 
 export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> = {
@@ -32,6 +33,9 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
       checkoutSessionId: payment.checkoutSessionId,
       bankTransferCode: payment.bankTransferCode,
       paymentAmount: payment.paymentAmount,
+      totalAmount: payment.totalAmount,
+      voucherAmount: payment.voucherAmount,
+      voucherId: payment.voucherId,
       status: payment.status,
       checkoutStatus: payment.checkoutStatus,
       cardBrand: payment.cardBrand,
@@ -52,6 +56,9 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
       checkoutSessionId: data.checkoutSessionId,
       bankTransferCode: data.bankTransferCode,
       paymentAmount: data.paymentAmount,
+      totalAmount: data.totalAmount,
+      voucherAmount: data.voucherAmount,
+      voucherId: data.voucherId,
       status: data.status,
       checkoutStatus: data.checkoutStatus,
       cardBrand: data.cardBrand,
@@ -411,6 +418,26 @@ export const overviewConverter: FirestoreDataConverter<SockbaseApplicationOvervi
       applicationId: overview.applicationId,
       description: overview.description,
       totalAmount: overview.totalAmount
+    }
+  }
+}
+
+export const voucherConverter: FirestoreDataConverter<SockbaseVoucherDocument> = {
+  toFirestore: () => ({
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseVoucherDocument => {
+    const voucher = snapshot.data()
+    return {
+      id: snapshot.id,
+      voucherCode: voucher.voucherCode,
+      amount: voucher.amount,
+      usedCount: voucher.usedCount,
+      usedCountLimit: voucher.usedCountLimit,
+      targetType: voucher.targetType,
+      targetId: voucher.targetId,
+      targetTypeId: voucher.targetTypeId,
+      createdAt: new Date(voucher.createdAt.seconds * 1000),
+      updatedAt: voucher.updatedAt ? new Date(voucher.updatedAt.seconds * 1000) : null
     }
   }
 }

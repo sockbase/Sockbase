@@ -4,6 +4,7 @@ import useApplication from '../../../hooks/useApplication'
 import useEvent from '../../../hooks/useEvent'
 import useFirebase from '../../../hooks/useFirebase'
 import useUserData from '../../../hooks/useUserData'
+import useVoucher from '../../../hooks/useVoucher'
 import DefaultBaseLayout from '../../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import StepContainer from './StepContainer/StepContainer'
 import type {
@@ -32,6 +33,7 @@ const NewCircleApplyPage: React.FC = () => {
     logoutAsync
   } = useFirebase()
   const { getMyUserDataAsync, updateUserDataAsync } = useUserData()
+  const { getVoucherByCodeAsync } = useVoucher()
 
   const [event, setEvent] = useState<SockbaseEventDocument | null>()
   const [eyecatchURL, setEyecatchURL] = useState<string | null>()
@@ -57,6 +59,10 @@ const NewCircleApplyPage: React.FC = () => {
     setPastApps(null)
     setPastAppLinks(null)
     setPastEvents(null)
+  }, [])
+
+  const handleGetVoucherCodeAsync = useCallback(async (eventId: string, typeId: string, code: string) => {
+    return getVoucherByCodeAsync(1, eventId, typeId, code)
   }, [])
 
   useEffect(() => {
@@ -122,6 +128,7 @@ const NewCircleApplyPage: React.FC = () => {
         createUserAsync={createUserAsync}
         event={event}
         eyecatchURL={eyecatchURL}
+        getVoucherCodeAsync={handleGetVoucherCodeAsync}
         loginAsync={handleLoginAsync}
         logoutAsync={handleLogoutAsync}
         pastAppLinks={pastAppLinks}

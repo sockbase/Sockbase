@@ -130,7 +130,7 @@ const useApplication = (): IUseApplication => {
       const appRef = doc(db, `_applications/${appHash.applicationId}`)
       const appHashRef = doc(db, `_applicationHashIds/${appHash.hashId}`)
       const paymentRef = doc(db, `_payments/${payment.id}`)
-      const paymentHashRef = payment.hashId ? doc(db, `_paymentHashes/${payment.hashId}`) : null
+      const paymentHashRef = doc(db, `_paymentHashes/${payment.hashId}`)
 
       await runTransaction(db, async tx => {
         tx.delete(appOverviewRef)
@@ -139,10 +139,7 @@ const useApplication = (): IUseApplication => {
         tx.delete(appRef)
         tx.delete(appHashRef)
         tx.delete(paymentRef)
-
-        if (paymentHashRef) {
-          tx.delete(paymentHashRef)
-        }
+        tx.delete(paymentHashRef)
       })
         .catch(err => { throw err })
 

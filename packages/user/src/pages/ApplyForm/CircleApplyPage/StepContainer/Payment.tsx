@@ -29,6 +29,8 @@ const Payment: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
   const [checkedPayment, setCheckedPayment] = useState(false)
 
+  console.log(props.addedResult)
+
   return (
     <>
       <Alert
@@ -42,7 +44,7 @@ const Payment: React.FC<Props> = props => {
         申し込み内容の控えを入力していただいたメールアドレスに送信しましたのでご確認ください。
       </p>
 
-      {props.addedResult?.checkoutRequest
+      {props.addedResult?.checkoutRequest && props.addedResult.checkoutRequest.amount > 0
         ? (
           <>
             <h1>サークル参加費のお支払い</h1>
@@ -146,7 +148,6 @@ const Payment: React.FC<Props> = props => {
         )
         : (
           <p>
-            今回、事前にお支払いいただく必要はありません。<br />
             このまま次に進んでください。
           </p>
         )}
@@ -156,7 +157,7 @@ const Payment: React.FC<Props> = props => {
           <FormItem>
             <FormButton
               color="primary"
-              disabled={!!props.addedResult?.checkoutRequest && !checkedPayment}
+              disabled={!!props.addedResult?.checkoutRequest?.amount && !checkedPayment}
               onClick={props.nextStep}>
               <IconLabel
                 icon={<MdArrowForward />}

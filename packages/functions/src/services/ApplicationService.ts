@@ -10,6 +10,7 @@ import {
 import dayjs from '../helpers/dayjs'
 
 import { generateRandomCharacters } from '../helpers/random'
+import { calculatePaymentAmount } from '../helpers/voucher'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { applicationConverter, applicationLinksConverter, overviewConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
@@ -17,6 +18,7 @@ import { getApplicaitonHashIdAsync, getApplicationByIdAsync, getApplicationByUse
 import { getEventByIdAsync } from '../models/event'
 import { createCheckoutSessionAsync } from './CheckoutService'
 import { generateBankTransferCode } from './PaymentService'
+import { getVoucherByCodeAsync, useVoucherByCodeAsync } from './VoucherService'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
@@ -77,24 +79,48 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     throw new https.HttpsError('invalid-argument', 'invalid_argument_acceptApplication')
   }
 
-  const appDoc: SockbaseApplicationDocument = {
+  const voucher = payload.voucherCode
+    ? await getVoucherByCodeAsync(payload.voucherCode)
+    : undefined
+  if (voucher === null) {
+    throw new https.HttpsError('invalid-argument', 'voucher_not_found')
+  }
+
+  const paymentAmount = calculatePaymentAmount(space.price, voucher?.amount)
+  if (voucher !== undefined && paymentAmount.paymentAmount > 0 && payload.app.paymentMethod === 'voucher') {
+    throw new https.HttpsError('invalid-argument', 'voucher_not_usable')
+  }
+
+  const useVoucher = voucher
+    ? await useVoucherByCodeAsync(1, payload.app.eventId, payload.app.spaceId, voucher.id)
+    : null
+  if (useVoucher === false) {
+    throw new https.HttpsError('invalid-argument', 'voucher_not_usable')
+  }
+
+  const hashId = generateHashId(now)
+  const app: SockbaseApplicationDocument = {
     id: '',
     ...payload.app,
     circle: {
       ...payload.app.circle,
       hasAdult: event.permissions.allowAdult && payload.app.circle.hasAdult
     },
-    paymentMethod: (!event.permissions.canUseBankTransfer && 'online') || payload.app.paymentMethod,
+    paymentMethod: useVoucher
+      ? 'voucher'
+      : payload.app.paymentMethod,
     userId,
     createdAt: now,
     updatedAt: null,
-    hashId: null
+    hashId
   }
 
-  const addResult = await firestore.collection('_applications')
+  const appRef = firestore.collection('_applications')
     .withConverter(applicationConverter)
-    .add(appDoc)
-  const appId = addResult.id
+    .doc()
+  await appRef.set(app)
+
+  const appId = appRef.id
 
   await firestore
     .doc(`/_applications/${appId}/private/meta`)
@@ -117,40 +143,38 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     applicationId: appId,
     userId
   }
+
   await firestore
     .doc(`/_applicationOverviews/${appId}`)
     .withConverter(overviewConverter)
     .set(overview)
 
   const bankTransferCode = generateBankTransferCode(now)
-  const createResult = space.price > 0
-    ? await createCheckoutSessionAsync({
-      now,
-      userId,
-      orgId: event._organization.id,
-      paymentMethod: payload.app.paymentMethod === 'online' ? 1 : 2,
-      paymentAmount: space.price,
-      bankTransferCode,
-      targetType: 'circle',
-      targetId: appId,
-      name: `${event.name} - ${space.name}`
-    })
-    : null
-
-  const hashId = generateHashId(now)
-  await firestore.doc(`/_applications/${appId}`)
-    .set({
-      hashId
-    }, {
-      merge: true
-    })
+  const createResult = await createCheckoutSessionAsync({
+    now,
+    userId,
+    orgId: event._organization.id,
+    paymentMethod: payload.app.paymentMethod === 'voucher'
+      ? 3
+      : payload.app.paymentMethod === 'online'
+        ? 1
+        : 2,
+    paymentAmount: paymentAmount.paymentAmount,
+    voucherAmount: paymentAmount.voucherAmount ?? 0,
+    totalAmount: paymentAmount.spaceAmount,
+    voucherId: voucher?.id ?? null,
+    bankTransferCode,
+    targetType: 'circle',
+    targetId: appId,
+    name: `${event.name} - ${space.name}`
+  })
 
   await firestore.doc(`/_applicationHashIds/${hashId}`)
     .set({
       userId,
       hashId,
       applicationId: appId,
-      paymentId: createResult?.paymentId ?? null,
+      paymentId: createResult?.paymentId,
       spaceId: null,
       eventId: payload.app.eventId,
       organizationId: event._organization.id

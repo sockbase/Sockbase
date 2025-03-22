@@ -10,11 +10,13 @@ interface Props {
 }
 const PaymentStatusLabel: React.FC<Props> = props => {
   const statusTextLabel = useMemo(() => {
-    const paymentMethod = props.payment.paymentMethod === 1
-      ? 'オンライン決済'
-      : props.payment.paymentMethod === 2
-        ? '銀行振込'
-        : '-'
+    const paymentMethod = props.payment.paymentMethod === 3
+      ? 'バウチャー'
+      : props.payment.paymentMethod === 1
+        ? 'オンライン決済'
+        : props.payment.paymentMethod === 2
+          ? '銀行振込'
+          : '---'
     switch (props.payment.status) {
       case 0:
         return (

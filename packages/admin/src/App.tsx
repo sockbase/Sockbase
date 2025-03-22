@@ -30,6 +30,7 @@ import TicketCreatePage from './pages/TicketCreatePage/TicketCreatePage'
 import TicketTerminalPage from './pages/TicketTerminalPage/TicketTerminalPage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
 import UserListPage from './pages/UserListPage/UserListPage'
+import VoucherListPage from './pages/VoucherListPage/VoucherListPage'
 
 const Root: React.FC = () => {
   return (
@@ -159,6 +160,15 @@ const routes = createBrowserRouter([
           {
             path: ':hashId',
             element: <CircleViewPage />
+          }
+        ]
+      },
+      {
+        path: 'vouchers',
+        children: [
+          {
+            index: true,
+            element: <VoucherListPage />
           }
         ]
       },

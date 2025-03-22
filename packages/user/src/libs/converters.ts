@@ -23,7 +23,8 @@ import type {
   SockbaseInquiryMetaDocument,
   SockbasePaymentDocument,
   SockbaseInformationDocument,
-  SockbaseDocLinkDocument
+  SockbaseDocLinkDocument,
+  SockbaseVoucherDocument
 } from 'sockbase'
 
 export const accountConverter: FirestoreDataConverter<SockbaseAccount> = {
@@ -133,6 +134,9 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
         userId: payment.userId,
         paymentMethod: payment.paymentMethod,
         paymentAmount: payment.paymentAmount,
+        totalAmount: payment.totalAmount,
+        voucherAmount: payment.voucherAmount,
+        voucherId: payment.voucherId,
         bankTransferCode: payment.bankTransferCode,
         applicationId: payment.applicationId,
         ticketId: payment.ticketId,
@@ -403,6 +407,26 @@ export const docLinkConverter: FirestoreDataConverter<SockbaseDocLinkDocument> =
       name: link.name,
       url: link.url,
       order: link.order
+    }
+  }
+}
+
+export const voucherConverter: FirestoreDataConverter<SockbaseVoucherDocument> = {
+  toFirestore: () => ({
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseVoucherDocument => {
+    const voucher = snapshot.data()
+    return {
+      id: snapshot.id,
+      voucherCode: voucher.voucherCode,
+      amount: voucher.amount,
+      usedCount: voucher.usedCount,
+      usedCountLimit: voucher.usedCountLimit,
+      targetType: voucher.targetType,
+      targetId: voucher.targetId,
+      targetTypeId: voucher.targetTypeId,
+      createdAt: new Date(voucher.createdAt.seconds * 1000),
+      updatedAt: voucher.updatedAt ? new Date(voucher.updatedAt.seconds * 1000) : null
     }
   }
 }
