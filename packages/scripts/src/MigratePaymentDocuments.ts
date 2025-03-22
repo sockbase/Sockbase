@@ -14,7 +14,7 @@ const main = async () => {
   // fs.mkdirSync('out', { recursive: true })
   // fs.writeFile('out/payments.json', JSON.stringify(paymentsWithId, null, 2), () => {})
 
-  const targetPayments = mock.filter(p => !p.paymentIntentId || !p.checkoutSessionId || !p.checkoutStatus)
+  const targetPayments = mock.filter(p => !p.totalAmount)
     .map(p => ({
       id: p.id,
       hashId: generateHashId(new Date(p.createdAt._seconds * 1000)),
@@ -22,7 +22,9 @@ const main = async () => {
       userId: p.userId,
       checkoutSessionId: p.checkoutSessionId ?? '',
       paymentIntentId: p.paymentIntentId ?? '',
-      checkoutStatus: p.status === 0 ? 0 : 2
+      checkoutStatus: p.status === 0 ? 0 : 2,
+      totalAmount: p.paymentAmount,
+      voucherAmount: 0
     }))
 
   console.log(targetPayments)
@@ -35,7 +37,9 @@ const main = async () => {
   //       purchasedAt: p.purchasedAt,
   //       checkoutSessionId: p.checkoutSessionId,
   //       paymentIntentId: p.paymentIntentId,
-  //       checkoutStatus: p.checkoutStatus
+  //       checkoutStatus: p.checkoutStatus,
+  //       totalAmount: p.totalAmount,
+  //       voucherAmount: p.voucherAmount
   //     }, { merge: true })
 
   //     const paymentHashRef = db.doc(`_paymentHashes/${p.hashId}`)
