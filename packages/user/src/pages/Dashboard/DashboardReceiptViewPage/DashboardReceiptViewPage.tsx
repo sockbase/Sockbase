@@ -6,6 +6,7 @@ import LogotypeSVG from '../../../assets/logotype.svg'
 import Alert from '../../../components/Parts/Alert'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import useApplication from '../../../hooks/useApplication'
+import useConfig from '../../../hooks/useConfig'
 import useDayjs from '../../../hooks/useDayjs'
 import useEvent from '../../../hooks/useEvent'
 import usePayment from '../../../hooks/usePayment'
@@ -13,7 +14,15 @@ import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import DashboardPrintLayout from '../../../layouts/DashboardPrintLayout/DashboardPrintLayout'
-import type { SockbaseAccount, SockbasePaymentDocument, SockbasePaymentHashDocument } from 'sockbase'
+import type {
+  SockbaseEventDocument,
+  SockbaseReceiptConfig,
+  SockbaseStoreDocument,
+  SockbaseTicketDocument,
+  SockbaseAccount,
+  SockbasePaymentDocument,
+  SockbasePaymentHashDocument
+} from 'sockbase'
 
 const DashboardReceiptViewPage: React.FC = () => {
   const { hashId } = useParams<{ hashId: string }>()
@@ -23,12 +32,21 @@ const DashboardReceiptViewPage: React.FC = () => {
   const { getEventByIdAsync } = useEvent()
   const { getTicketByIdAsync, getStoreByIdAsync } = useStore()
   const { formatByDate } = useDayjs()
+  const {
+    getReceiptConfigForNectaritionAsync,
+    getReceiptConfigForNPJPNetAsync
+  } = useConfig()
 
   const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [paymentHash, setPaymentHash] = useState<SockbasePaymentHashDocument>()
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
+  const [ticket, setTicket] = useState<SockbaseTicketDocument>()
+  const [event, setEvent] = useState<SockbaseEventDocument>()
+  const [store, setStore] = useState<SockbaseStoreDocument>()
+  const [config, setConfig] = useState<SockbaseReceiptConfig>()
 
   const [targetName, setTargetName] = useState<string>()
+  const [orgId, setOrgId] = useState<string>()
 
   const targetType = useMemo(() => {
     if (!payment) return
@@ -61,22 +79,46 @@ const DashboardReceiptViewPage: React.FC = () => {
       getApplicationByIdAsync(payment.applicationId)
         .then(app => {
           getEventByIdAsync(app.eventId)
-            .then(event => {
-              setTargetName(event.name)
-            })
+            .then(setEvent)
+            .catch(err => { throw err })
         })
     }
     else if (payment.ticketId) {
       getTicketByIdAsync(payment.ticketId)
         .then(ticket => {
+          setTicket(ticket)
           getStoreByIdAsync(ticket.storeId)
-            .then(store => {
-              const type = store.types.find(t => t.id === ticket.typeId)
-              setTargetName(`${store.name} (${type!.name})`)
-            })
+            .then(setStore)
+            .catch(err => { throw err })
         })
     }
   }, [payment])
+
+  useEffect(() => {
+    if (!event && !store && !ticket) return
+    if (event) {
+      setTargetName(event.name)
+      setOrgId(event._organization.id)
+    }
+    else if (store && ticket) {
+      const type = store.types.find(type => type.id === ticket.typeId)
+      setTargetName(`${store.name} - ${type!.name}`)
+      setOrgId(store._organization.id)
+    }
+  }, [event, store, ticket])
+
+  useEffect(() => {
+    if (!orgId) return
+    if (orgId === 'npjpnet') {
+      getReceiptConfigForNPJPNetAsync()
+        .then(setConfig)
+        .catch(err => { throw err })
+      return
+    }
+    getReceiptConfigForNectaritionAsync()
+      .then(setConfig)
+      .catch(err => { throw err })
+  }, [orgId])
 
   const taxDetails = useMemo(() => {
     if (!payment?.paymentAmount) return
@@ -139,22 +181,33 @@ const DashboardReceiptViewPage: React.FC = () => {
               </TaxCell>
               <DescriptionCell>
                 <Description>
-                但し {targetType} として<br />
-                上記正に領収しました。
+                  但し {targetType} として<br />
+                  上記正に領収しました。
                 </Description>
               </DescriptionCell>
               <FooterCell>
                 <ItemTable>
                   <tbody>
-                    <tr>
-                      <th>ねくたりしょん (NCオフィス)</th>
-                    </tr>
-                    <tr>
-                      <td>Web/ https://nectarition.jp/</td>
-                    </tr>
-                    <tr>
-                      <td>Mail/ contact@office.nectarition.jp</td>
-                    </tr>
+                    {config?.name && (
+                      <tr>
+                        <th>{config.name}</th>
+                      </tr>
+                    )}
+                    {config?.registrationNumber && (
+                      <tr>
+                        <td><small>登録番号 {config.registrationNumber}</small></td>
+                      </tr>
+                    )}
+                    {config?.websiteURL && (
+                      <tr>
+                        <td>Web/ {config.websiteURL}</td>
+                      </tr>
+                    )}
+                    {config?.email && (
+                      <tr>
+                        <td>Mail/ {config.email}</td>
+                      </tr>
+                    )}
                   </tbody>
                 </ItemTable>
               </FooterCell>
@@ -164,7 +217,7 @@ const DashboardReceiptViewPage: React.FC = () => {
         </Scrollable>
       </PrintOnlyArea>
     )
-  }, [userData, hashId, payment?.updatedAt, payment?.paymentAmount, taxDetails, targetType])
+  }, [userData, hashId, payment?.updatedAt, payment?.paymentAmount, taxDetails, targetType, config])
 
   return (
     <DashboardPrintLayout title="領収書">
