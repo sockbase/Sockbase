@@ -8,6 +8,7 @@ import BlinkField from '../../components/Parts/BlinkField'
 import LoadingCircleContainer from '../../components/Parts/LoadingCircleContainer'
 import LoadingCircleWrapper from '../../components/Parts/LoadingCircleWrapper'
 import useApplication from '../../hooks/useApplication'
+import useError from '../../hooks/useError'
 import useEvent from '../../hooks/useEvent'
 import usePayment from '../../hooks/usePayment'
 import useStore from '../../hooks/useStore'
@@ -21,12 +22,13 @@ const PayPage: React.FC = () => {
   const { getApplicationByIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getTicketByIdAsync, getStoreByIdAsync } = useStore()
+  const { convertErrorMessage } = useError()
 
   const [paymentHash, setPaymentHash] = useState<SockbasePaymentHashDocument | null>()
   const [payment, setPayment] = useState<SockbasePaymentDocument | null>()
-
   const [targetName, setTargetName] = useState<string>()
-  const [checkoutRequest, setCheckoutRequest] = useState<SockbaseCheckoutRequest>()
+  const [checkoutRequest, setCheckoutRequest] = useState<SockbaseCheckoutRequest | null>()
+  const [errorMessage, setErrorMessage] = useState<string>()
 
   useEffect(() => {
     if (!hashId) return
@@ -77,7 +79,11 @@ const PayPage: React.FC = () => {
     if (payment?.status !== 0) return
     refreshCheckoutSessionAsync(payment.id)
       .then(setCheckoutRequest)
-      .catch(err => { throw err })
+      .catch(err => {
+        setErrorMessage(convertErrorMessage(err))
+        setCheckoutRequest(null)
+        throw err
+      })
   }, [payment])
 
   return (
@@ -128,7 +134,7 @@ const PayPage: React.FC = () => {
                 <FormItem>
                   <LoadingCircleWrapper
                     inlined
-                    isLoading={!checkoutRequest}>
+                    isLoading={checkoutRequest === undefined}>
                     <AnchorButton
                       color="primary"
                       disabled={!checkoutRequest}
@@ -138,10 +144,17 @@ const PayPage: React.FC = () => {
                   </LoadingCircleWrapper>
                 </FormItem>
               </FormSection>
-              {!checkoutRequest && (
+              {checkoutRequest === undefined && (
                 <Alert
                   title="現在お支払いリンクを作成しています。今しばらくお待ちください。"
                   type="info" />
+              )}
+              {errorMessage && (
+                <Alert
+                  title="エラーが発生しました"
+                  type="error">
+                  {errorMessage}
+                </Alert>
               )}
             </>
           )}
