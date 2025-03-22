@@ -287,43 +287,44 @@ const refreshCheckoutSessionAsync = async (userId: string, paymentId: string): P
 
 const refreshCheckoutSessionCoreAsync = async (payment: SockbasePaymentDocument, orgId: string, name: string, now: Date): Promise<SockbaseCheckoutRequest> => {
   const stripe = getStripe(orgId)
-  const session = await stripe.checkout.sessions.retrieve(payment.checkoutSessionId)
-  if (session.status === 'open') {
-    return {
-      paymentMethod: payment.paymentMethod,
-      checkoutURL: session.url ?? '',
-      amount: payment.paymentAmount
+  if (payment.checkoutSessionId) {
+    const session = await stripe.checkout.sessions.retrieve(payment.checkoutSessionId)
+    if (session.status === 'open') {
+      return {
+        paymentMethod: payment.paymentMethod,
+        checkoutURL: session.url ?? '',
+        amount: payment.paymentAmount
+      }
     }
   }
-  else {
-    const newSession = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      line_items: [
-        {
-          price_data: {
-            currency: 'jpy',
-            product_data: {
-              name
-            },
-            unit_amount: payment.paymentAmount
+
+  const newSession = await stripe.checkout.sessions.create({
+    mode: 'payment',
+    line_items: [
+      {
+        price_data: {
+          currency: 'jpy',
+          product_data: {
+            name
           },
-          quantity: 1
-        }
-      ],
-      success_url: `${userAppURL}/checkout?cs={CHECKOUT_SESSION_ID}`
-    })
+          unit_amount: payment.paymentAmount
+        },
+        quantity: 1
+      }
+    ],
+    success_url: `${userAppURL}/checkout?cs={CHECKOUT_SESSION_ID}`
+  })
 
-    await firestore.doc(`/_payments/${payment.id}`)
-      .set({
-        checkoutSessionId: newSession.id,
-        updatedAt: now
-      }, { merge: true })
+  await firestore.doc(`/_payments/${payment.id}`)
+    .set({
+      checkoutSessionId: newSession.id,
+      updatedAt: now
+    }, { merge: true })
 
-    return {
-      paymentMethod: payment.paymentMethod,
-      checkoutURL: newSession.url ?? '',
-      amount: payment.paymentAmount
-    }
+  return {
+    paymentMethod: payment.paymentMethod,
+    checkoutURL: newSession.url ?? '',
+    amount: payment.paymentAmount
   }
 }
 
