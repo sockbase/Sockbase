@@ -11,7 +11,7 @@ interface IUsePayment {
   getPaymentAsync: (paymentId: string) => Promise<SockbasePaymentDocument>
   getPaymentHashAsync: (hashId: string) => Promise<SockbasePaymentHashDocument>
   getCheckoutSessionAsync: (sessionId: string) => Promise<SockbaseCheckoutResult | null>
-  hoge: () => Promise<SockbaseCheckoutRequest>
+  refreshCheckoutSessionAsync: (paymentId: string) => Promise<SockbaseCheckoutRequest>
 }
 
 const usePayment = (): IUsePayment => {
@@ -88,15 +88,15 @@ const usePayment = (): IUsePayment => {
       return checkoutResult.data
     }, [])
 
-  const hoge =
-    useCallback(async (): Promise<SockbaseCheckoutRequest> => {
+  const refreshCheckoutSessionAsync =
+    useCallback(async (paymentId: string): Promise<SockbaseCheckoutRequest> => {
       const functions = getFunctions()
-      const createCheckoutFunction = httpsCallable<
-        void,
+      const refreshCheckoutSessionFunction = httpsCallable<
+        { paymentId: string },
         SockbaseCheckoutRequest
-      >(functions, 'checkout-hoge')
+      >(functions, 'checkout-refreshCheckoutSession')
 
-      const checkoutResult = await createCheckoutFunction()
+      const checkoutResult = await refreshCheckoutSessionFunction({ paymentId })
       return checkoutResult.data
     }, [])
 
@@ -106,7 +106,7 @@ const usePayment = (): IUsePayment => {
     getPaymentAsync,
     getPaymentHashAsync,
     getCheckoutSessionAsync,
-    hoge
+    refreshCheckoutSessionAsync
   }
 }
 

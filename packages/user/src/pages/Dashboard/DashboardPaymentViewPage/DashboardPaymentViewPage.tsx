@@ -9,6 +9,7 @@ import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
 import IconLabel from '../../../components/Parts/IconLabel'
 import PaymentStatusLabel from '../../../components/Parts/StatusLabel/PaymentStatusLabel'
 import useApplication from '../../../hooks/useApplication'
+import useDayjs from '../../../hooks/useDayjs'
 import useEvent from '../../../hooks/useEvent'
 import usePayment from '../../../hooks/usePayment'
 import useStore from '../../../hooks/useStore'
@@ -24,6 +25,7 @@ const DashboardPaymentViewPage: React.FC = () => {
   const { getApplicationByIdAsync } = useApplication()
   const { getEventByIdAsync } = useEvent()
   const { getTicketByIdAsync, getStoreByIdAsync } = useStore()
+  const { formatByDate } = useDayjs()
 
   const [paymentHash, setPaymentHash] = useState<SockbasePaymentHashDocument>()
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
@@ -77,10 +79,10 @@ const DashboardPaymentViewPage: React.FC = () => {
   }, [payment])
 
   return (
-    <DashboardBaseLayout title="お支払い詳細情報">
+    <DashboardBaseLayout title="決済詳細情報">
       <Breadcrumbs>
         <li><Link to="/dashboard">ダッシュボード</Link></li>
-        <li><Link to="/dashboard/payments">お支払い一覧</Link></li>
+        <li><Link to="/dashboard/payments">決済履歴</Link></li>
       </Breadcrumbs>
 
       <PageTitle
@@ -91,7 +93,9 @@ const DashboardPaymentViewPage: React.FC = () => {
 
       <FormSection>
         <FormItem>
-          <AnchorButton href={`/dashboard/payments/${hashId}/receipt`}>
+          <AnchorButton
+            disabled={payment?.status !== 1}
+            href={`/dashboard/payments/${hashId}/receipt`}>
             <IconLabel
               icon={<MdReceiptLong />}
               label="領収書を表示" />
@@ -125,11 +129,31 @@ const DashboardPaymentViewPage: React.FC = () => {
                 </td>
               </tr>
               <tr>
+                <th>決済依頼日時</th>
+                <td>
+                  {
+                    payment
+                      ? payment.createdAt ? formatByDate(payment.createdAt) : '---'
+                      : <BlinkField />
+                  }
+                </td>
+              </tr>
+              <tr>
+                <th>更新日時</th>
+                <td>
+                  {
+                    payment
+                      ? payment.updatedAt ? formatByDate(payment.updatedAt) : '---'
+                      : <BlinkField />
+                  }
+                </td>
+              </tr>
+              <tr>
                 <th>決済日時</th>
                 <td>
                   {
                     payment
-                      ? payment.updatedAt?.toLocaleString() ?? '---'
+                      ? payment.purchasedAt ? formatByDate(payment.purchasedAt) : '---'
                       : <BlinkField />
                   }
                 </td>

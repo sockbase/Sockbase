@@ -7,6 +7,8 @@ import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { paymentConverter, paymentHashConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import { getApplicationByIdAsync } from '../models/application'
+import { getEventByIdAsync } from '../models/event'
+import { getStoreByIdAsync } from '../models/store'
 import { getTicketByIdAsync } from '../models/ticket'
 import type {
   SockbasePaymentDocument,
@@ -107,6 +109,7 @@ const applyCheckoutCompletedAsync =
         status: 1,
         checkoutStatus: 1,
         updatedAt: now,
+        purchasedAt: now,
         cardBrand: charge.payment_method_details?.card?.brand ?? null
       }, { merge: true })
 
@@ -144,6 +147,7 @@ const createCheckoutSessionAsync = async (
     ticketId: o.targetType === 'ticket' ? o.targetId : null,
     createdAt: o.now,
     updatedAt: null,
+    purchasedAt: null,
     id: '',
     paymentIntentId: '',
     checkoutSessionId: '',
@@ -188,7 +192,6 @@ const createCheckoutSessionAsync = async (
   const stripe = getStripe(o.orgId)
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
-    payment_method_types: ['card'],
     line_items: [
       {
         price_data: {
@@ -239,6 +242,88 @@ const createCheckoutSessionAsync = async (
       amount: o.paymentAmount
     },
     paymentId: resultRef.id
+  }
+}
+
+const refreshCheckoutSessionAsync = async (userId: string, paymentId: string): Promise<SockbaseCheckoutRequest> => {
+  const now = new Date()
+
+  const paymentDoc = await firestore.doc(`_payments/${paymentId}`)
+    .withConverter(paymentConverter)
+    .get()
+  const payment = paymentDoc.data()
+  if (!payment || payment.userId !== userId) {
+    throw new Error('payment not found')
+  }
+  else if (payment.paymentMethod !== 1) {
+    throw new Error('payment method is not online payment')
+  }
+  else if (payment.checkoutStatus !== 0 || payment.status !== 0) {
+    throw new Error('checkout is complete')
+  }
+
+  if (payment.applicationId) {
+    const app = await getApplicationByIdAsync(payment.applicationId)
+    const event = await getEventByIdAsync(app.eventId)
+
+    const type = event.spaces.find(space => space.id === app.spaceId)
+    const name = `${event.name} - ${type!.name}`
+
+    return refreshCheckoutSessionCoreAsync(payment, event._organization.id, name, now)
+  }
+  else if (payment.ticketId) {
+    const ticket = await getTicketByIdAsync(payment.ticketId)
+    const store = await getStoreByIdAsync(ticket.storeId)
+
+    const type = store.types.find(type => type.id === ticket.typeId)
+    const name = `${store.name} - ${type!.name}`
+
+    return refreshCheckoutSessionCoreAsync(payment, store._organization.id, name, now)
+  }
+  else {
+    throw new Error('target is not found')
+  }
+}
+
+const refreshCheckoutSessionCoreAsync = async (payment: SockbasePaymentDocument, orgId: string, name: string, now: Date): Promise<SockbaseCheckoutRequest> => {
+  const stripe = getStripe(orgId)
+  const session = await stripe.checkout.sessions.retrieve(payment.checkoutSessionId)
+  if (session.status === 'open') {
+    return {
+      paymentMethod: payment.paymentMethod,
+      checkoutURL: session.url ?? '',
+      amount: payment.paymentAmount
+    }
+  }
+  else {
+    const newSession = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: 'jpy',
+            product_data: {
+              name
+            },
+            unit_amount: payment.paymentAmount
+          },
+          quantity: 1
+        }
+      ],
+      success_url: `${userAppURL}/checkout?cs={CHECKOUT_SESSION_ID}`
+    })
+
+    await firestore.doc(`/_payments/${payment.id}`)
+      .set({
+        checkoutSessionId: newSession.id,
+        updatedAt: now
+      }, { merge: true })
+
+    return {
+      paymentMethod: payment.paymentMethod,
+      checkoutURL: newSession.url ?? '',
+      amount: payment.paymentAmount
+    }
   }
 }
 
@@ -335,5 +420,6 @@ const generateHashId = (now: Date): string => {
 export {
   processCoreAsync,
   createCheckoutSessionAsync,
+  refreshCheckoutSessionAsync,
   getCheckoutBySessionIdAsync
 }

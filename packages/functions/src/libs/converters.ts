@@ -58,7 +58,8 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
       applicationId: data.applicationId,
       ticketId: data.ticketId,
       createdAt: data.createdAt ? new Date(data.createdAt.seconds * 1000) : null,
-      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null
+      updatedAt: data.updatedAt ? new Date(data.updatedAt.seconds * 1000) : null,
+      purchasedAt: data.purchasedAt ? new Date(data.purchasedAt.seconds * 1000) : null
     }
   }
 }

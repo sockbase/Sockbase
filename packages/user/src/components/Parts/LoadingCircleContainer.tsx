@@ -1,23 +1,23 @@
 import styled from 'styled-components'
 
-const Loading: React.FC = () => {
+interface Props {
+  children: React.ReactNode
+}
+const LoadingCircleContainer: React.FC<Props> = props => {
   return (
     <Container>
-      <LoadingContainer>
-        <LoadingCircle />
-        <Message>
-        決済情報を読み込んでいます<br />
-        今しばらくお待ちください。
-        </Message>
-      </LoadingContainer>
+      <LoadingCircle />
+      <Message>
+        {props.children}
+      </Message>
     </Container>
   )
 }
 
-export default Loading
+export default LoadingCircleContainer
 
-const Container = styled.div``
-const LoadingContainer = styled.div`
+const Container = styled.div`
+  margin-bottom: 20px;
   display: flex;
   padding: 20px;
   gap: 20px;
@@ -25,6 +25,11 @@ const LoadingContainer = styled.div`
   align-items: center;
   background-color: var(--panel-background-color);
   border-radius: 5px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
   @media screen and (max-width: 840px) {
     flex-direction: column-reverse;
     gap: 10px;

@@ -31,6 +31,7 @@ import IndexPage from './pages/IndexPage/IndexPage'
 import InformationViewPage from './pages/InformationViewPage/InformationViewPage'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
 import PasswordResetPage from './pages/PasswordResetPage/PasswordResetPage'
+import PayPage from './pages/PayPage/PayPage'
 import PrivacyPolicyPage from './pages/Static/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/Static/TermsOfServicePage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
@@ -81,6 +82,10 @@ const router = createBrowserRouter([
       {
         path: 'hoge',
         element: <HogePage />
+      },
+      {
+        path: 'pay/:hashId',
+        element: <PayPage />
       },
       {
         path: 'checkout',

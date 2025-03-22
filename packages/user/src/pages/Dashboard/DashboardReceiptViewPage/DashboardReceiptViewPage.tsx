@@ -3,9 +3,13 @@ import { MdReceiptLong } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
 import styled from 'styled-components'
 import LogotypeSVG from '../../../assets/logotype.svg'
+import Alert from '../../../components/Parts/Alert'
 import Breadcrumbs from '../../../components/Parts/Breadcrumbs'
+import useApplication from '../../../hooks/useApplication'
 import useDayjs from '../../../hooks/useDayjs'
+import useEvent from '../../../hooks/useEvent'
 import usePayment from '../../../hooks/usePayment'
+import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
 import PageTitle from '../../../layouts/DashboardBaseLayout/PageTitle'
 import DashboardPrintLayout from '../../../layouts/DashboardPrintLayout/DashboardPrintLayout'
@@ -15,11 +19,21 @@ const DashboardReceiptViewPage: React.FC = () => {
   const { hashId } = useParams<{ hashId: string }>()
   const { getMyUserDataAsync } = useUserData()
   const { getPaymentHashAsync, getPaymentAsync } = usePayment()
+  const { getApplicationByIdAsync } = useApplication()
+  const { getEventByIdAsync } = useEvent()
+  const { getTicketByIdAsync, getStoreByIdAsync } = useStore()
   const { formatByDate } = useDayjs()
 
   const [userData, setUserData] = useState<SockbaseAccount | null>()
   const [paymentHash, setPaymentHash] = useState<SockbasePaymentHashDocument>()
   const [payment, setPayment] = useState<SockbasePaymentDocument>()
+
+  const [targetName, setTargetName] = useState<string>()
+
+  const targetType = useMemo(() => {
+    if (!payment) return
+    return payment.applicationId ? 'イベント参加費' : 'チケット購入費'
+  }, [payment])
 
   useEffect(() => {
     getMyUserDataAsync()
@@ -41,6 +55,29 @@ const DashboardReceiptViewPage: React.FC = () => {
       .catch(err => { throw err })
   }, [paymentHash])
 
+  useEffect(() => {
+    if (!payment) return
+    if (payment.applicationId) {
+      getApplicationByIdAsync(payment.applicationId)
+        .then(app => {
+          getEventByIdAsync(app.eventId)
+            .then(event => {
+              setTargetName(event.name)
+            })
+        })
+    }
+    else if (payment.ticketId) {
+      getTicketByIdAsync(payment.ticketId)
+        .then(ticket => {
+          getStoreByIdAsync(ticket.storeId)
+            .then(store => {
+              const type = store.types.find(t => t.id === ticket.typeId)
+              setTargetName(`${store.name} (${type!.name})`)
+            })
+        })
+    }
+  }, [payment])
+
   const taxDetails = useMemo(() => {
     if (!payment?.paymentAmount) return
     const amount = payment.paymentAmount
@@ -49,19 +86,10 @@ const DashboardReceiptViewPage: React.FC = () => {
     return { taxExcluded, taxAmount }
   }, [payment?.paymentAmount])
 
-  return (
-    <DashboardPrintLayout title="領収書">
-      <NoPrintArea>
-        <Breadcrumbs>
-          <li><Link to="/dashboard">マイページ</Link></li>
-          <li><Link to="/dashboard/payments">決済履歴</Link></li>
-          <li><Link to={`/dashboard/payments/${hashId}`}>お支払い詳細情報</Link></li>
-        </Breadcrumbs>
-        <PageTitle
-          description="領収書"
-          icon={<MdReceiptLong />}
-          title="○○へのお支払い" />
-      </NoPrintArea>
+  const Receipt = useMemo(() => {
+    if (payment?.status !== 1 || payment?.paymentMethod !== 1) return
+
+    return (
       <PrintOnlyArea>
         <Scrollable>
           <A4Page>
@@ -87,7 +115,7 @@ const DashboardReceiptViewPage: React.FC = () => {
                     </tr>
                     <tr>
                       <th>領収日</th>
-                      <td>{formatByDate(payment?.updatedAt, 'YYYY年 M月 D日')}</td>
+                      <td>{formatByDate(payment?.purchasedAt, 'YYYY年 M月 D日')}</td>
                     </tr>
                   </tbody>
                 </ItemTable>
@@ -111,7 +139,7 @@ const DashboardReceiptViewPage: React.FC = () => {
               </TaxCell>
               <DescriptionCell>
                 <Description>
-                但し イベント参加費 として<br />
+                但し {targetType} として<br />
                 上記正に領収しました。
                 </Description>
               </DescriptionCell>
@@ -119,10 +147,13 @@ const DashboardReceiptViewPage: React.FC = () => {
                 <ItemTable>
                   <tbody>
                     <tr>
-                      <th>NCオフィス, ねくたりしょん</th>
+                      <th>ねくたりしょん (NCオフィス)</th>
                     </tr>
                     <tr>
                       <td>info@nectarition.jp</td>
+                    </tr>
+                    <tr>
+                      <td>https://nectarition.jp/</td>
                     </tr>
                   </tbody>
                 </ItemTable>
@@ -132,6 +163,39 @@ const DashboardReceiptViewPage: React.FC = () => {
           </A4Page>
         </Scrollable>
       </PrintOnlyArea>
+    )
+  }, [userData, hashId, payment?.updatedAt, payment?.paymentAmount, taxDetails, targetType])
+
+  return (
+    <DashboardPrintLayout title="領収書">
+      <NoPrintArea>
+        <Breadcrumbs>
+          <li><Link to="/dashboard">マイページ</Link></li>
+          <li><Link to="/dashboard/payments">決済履歴</Link></li>
+          <li><Link to={`/dashboard/payments/${hashId}`}>決済詳細情報</Link></li>
+        </Breadcrumbs>
+        <PageTitle
+          description="領収書"
+          icon={<MdReceiptLong />}
+          isLoading={!targetName}
+          title={targetName} />
+        {payment && payment.status !== 1 && (
+          <Alert
+            title="お支払いが未完了です"
+            type="warning">
+            お支払いが完了していないため、領収書を発行できません。
+          </Alert>
+        )}
+        {payment && payment.paymentMethod !== 1 && (
+          <Alert
+            title="銀行振込のため領収書を発行できません。"
+            type="warning">
+            銀行振込でお支払いいただいた場合、領収書を発行することができません。<br />
+            振り込み明細をご利用ください。
+          </Alert>
+        )}
+      </NoPrintArea>
+      {Receipt}
     </DashboardPrintLayout>
   )
 }

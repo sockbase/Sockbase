@@ -94,7 +94,6 @@ const Confirm: React.FC<Props> = props => {
       <FormSection>
         <FormItem>
           <FormButton
-            color="default"
             disabled={isProgress}
             onClick={props.prevStep}>
             <IconLabel
