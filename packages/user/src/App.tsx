@@ -9,6 +9,8 @@ import ActionPage from './pages/ActionPage/ActionPage'
 import CircleApplyPage from './pages/ApplyForm/CircleApplyPage/CircleApplyPage'
 import TicketApplyPage from './pages/ApplyForm/TicketApplyPage/TicketApplyPage'
 import TicketAssignPage from './pages/ApplyForm/TicketAssignPage/TicketAssignPage'
+import CheckoutProcessPage from './pages/CheckoutProcessPage/CheckoutProcessPage'
+import HogePage from './pages/CheckoutProcessPage/HogePage'
 import DashboardCircleEditLinksPage from './pages/Dashboard/DashboardCircleEditLinksPage/DashboardCircleEditLinksPage'
 import DashboardCircleEditOverviewPage from './pages/Dashboard/DashboardCircleEditOverviewPage/DashboardCircleEditOverviewPage'
 import DashboardCircleListPage from './pages/Dashboard/DashboardCircleListPage/DashboardCircleListPage'
@@ -19,6 +21,8 @@ import DashboardContactPage from './pages/Dashboard/DashboardContactPage/Dashboa
 import DashboardMyTicketListPage from './pages/Dashboard/DashboardMyTicketListPage/DashboardMyTicketListPage'
 import DashboardMyTicketViewPage from './pages/Dashboard/DashboardMyTicketViewPage/DashboardMyTicketViewPage'
 import DashboardPaymentListPage from './pages/Dashboard/DashboardPaymentListPage/DashboardPaymentListPage'
+import DashboardPaymentViewPage from './pages/Dashboard/DashboardPaymentViewPage/DashboardPaymentViewPage'
+import DashboardReceiptViewPage from './pages/Dashboard/DashboardReceiptViewPage/DashboardReceiptViewPage'
 import DashboardSettingPage from './pages/Dashboard/DashboardSettingPage/DashboardSettingPage'
 import DashboardTicketListPage from './pages/Dashboard/DashboardTicketListPage/DashboardTicketListPage'
 import DashboardTicketViewPage from './pages/Dashboard/DashboardTicketViewPage/DashboardTicketViewPage'
@@ -27,6 +31,7 @@ import IndexPage from './pages/IndexPage/IndexPage'
 import InformationViewPage from './pages/InformationViewPage/InformationViewPage'
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage'
 import PasswordResetPage from './pages/PasswordResetPage/PasswordResetPage'
+import PayPage from './pages/PayPage/PayPage'
 import PrivacyPolicyPage from './pages/Static/PrivacyPolicyPage'
 import TermsOfServicePage from './pages/Static/TermsOfServicePage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
@@ -73,6 +78,18 @@ const router = createBrowserRouter([
       {
         path: 'action',
         element: <ActionPage />
+      },
+      {
+        path: 'hoge',
+        element: <HogePage />
+      },
+      {
+        path: 'pay/:hashId',
+        element: <PayPage />
+      },
+      {
+        path: 'checkout',
+        element: <CheckoutProcessPage />
       },
       {
         path: 'events',
@@ -196,6 +213,19 @@ const router = createBrowserRouter([
               {
                 index: true,
                 element: <DashboardPaymentListPage />
+              },
+              {
+                path: ':hashId',
+                children: [
+                  {
+                    index: true,
+                    element: <DashboardPaymentViewPage />
+                  },
+                  {
+                    path: 'receipt',
+                    element: <DashboardReceiptViewPage />
+                  }
+                ]
               }
             ]
           }

@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import sockbaseShared from 'shared'
+import TicketApplicationComplete from '../../../../components/CommonComplete/TicketApplicationComplete'
 import Alert from '../../../../components/Parts/Alert'
 import Loading from '../../../../components/Parts/Loading'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
 import CheckAccount from './CheckAccount'
-import Complete from './Complete'
 import Confirm from './Confirm'
 import Input from './Input'
 import Introduction from './Introduction'
 import Payment from './Payment'
 import type { User } from 'firebase/auth'
-import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket, SockbaseTicketAddedResult } from 'sockbase'
+import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket, SockbaseTicketCreateResult } from 'sockbase'
 
 const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
 
@@ -23,7 +23,7 @@ interface Props {
   logoutAsync: () => Promise<void>
   createUserAsync: (email: string, password: string) => Promise<User>
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
-  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
+  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketCreateResult>
 }
 const StepContainer: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
@@ -34,7 +34,7 @@ const StepContainer: React.FC<Props> = props => {
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
-  const [addedResult, setAddedResult] = useState<SockbaseTicketAddedResult>()
+  const [addedResult, setAddedResult] = useState<SockbaseTicketCreateResult>()
 
   const selectedType = useMemo(() => {
     if (!props.store || !ticket) return
@@ -123,8 +123,8 @@ const StepContainer: React.FC<Props> = props => {
         store={props.store}
         ticket={ticket}
         user={props.user} />,
-      <Complete
-        addedResult={addedResult}
+      <TicketApplicationComplete
+        hashId={addedResult?.hashId}
         key="complete" />
     ])
   }, [

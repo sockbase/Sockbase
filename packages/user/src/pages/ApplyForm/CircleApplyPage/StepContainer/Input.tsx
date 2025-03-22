@@ -120,8 +120,6 @@ const Input: React.FC<Props> = props => {
       isAgreed
     ]
 
-    console.log(validators)
-
     let errorCount = validators.filter(v => !v).length
 
     if (props.fetchedUserData) {

@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type User } from 'firebase/auth'
 import sockbaseShared from 'shared'
+import CircleApplicationComplete from '../../../../components/CommonComplete/CircleApplicationComplete'
 import Alert from '../../../../components/Parts/Alert'
 import Loading from '../../../../components/Parts/Loading'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
 import CheckAccount from './CheckAccount'
-import CircleCut from './CircleCut'
-import Complete from './Complete'
 import Confirm from './Confirm'
 import Input from './Input'
 import Introduction from './Introduction'
 import Payment from './Payment'
+import ThankYouPayment from './ThankYouPayment'
 import type {
   SockbaseAccount,
   SockbaseAccountSecure,
   SockbaseApplication,
-  SockbaseApplicationAddedResult,
+  SockbaseApplicationCreateResult,
   SockbaseApplicationDocument,
   SockbaseApplicationLinks,
   SockbaseApplicationPayload,
@@ -37,7 +37,7 @@ interface Props {
   logoutAsync: () => Promise<void>
   createUserAsync: (email: string, password: string) => Promise<User>
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
-  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationAddedResult>
+  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationCreateResult>
   updateCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
 }
 const StepContainer: React.FC<Props> = props => {
@@ -50,7 +50,7 @@ const StepContainer: React.FC<Props> = props => {
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
-  const [addedResult, setAddedResult] = useState<SockbaseApplicationAddedResult>()
+  const [addedResult, setAddedResult] = useState<SockbaseApplicationCreateResult>()
 
   const selectedGenre = useMemo(() => {
     if (!props.event || !app) return
@@ -156,15 +156,15 @@ const StepContainer: React.FC<Props> = props => {
         nextStep={() => setStep(5)}
         selectedSpace={selectedSpace}
         user={props.user} />,
-      <CircleCut
+      <ThankYouPayment
         addedResult={addedResult}
         app={app}
         event={props.event}
         key="circle-cut"
         nextStep={() => setStep(6)} />,
-      <Complete
-        addedResult={addedResult}
+      <CircleApplicationComplete
         event={props.event}
+        hashId={addedResult?.hashId}
         key="complete" />
     ])
   }, [

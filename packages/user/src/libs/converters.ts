@@ -128,23 +128,28 @@ export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> =
     fromFirestore: (snapshot: QueryDocumentSnapshot): SockbasePaymentDocument => {
       const payment = snapshot.data()
       return {
+        id: snapshot.id,
+        hashId: payment.hashId,
         userId: payment.userId,
-        paymentProductId: payment.paymentProductId,
         paymentMethod: payment.paymentMethod,
         paymentAmount: payment.paymentAmount,
         bankTransferCode: payment.bankTransferCode,
         applicationId: payment.applicationId,
         ticketId: payment.ticketId,
-        id: snapshot.id,
-        paymentId: payment.paymentId,
+        paymentIntentId: payment.paymentIntentId,
+        checkoutSessionId: payment.checkoutSessionId,
         status: payment.status,
+        checkoutStatus: payment.checkoutStatus,
+        cardBrand: payment.cardBrand,
         createdAt: payment.createdAt
           ? new Date(payment.createdAt.seconds * 1000)
           : null,
         updatedAt: payment.updatedAt
           ? new Date(payment.updatedAt.seconds * 1000)
           : null,
-        paymentResult: payment.paymentResult ?? null
+        purchasedAt: payment.purchasedAt
+          ? new Date(payment.purchasedAt.seconds * 1000)
+          : null
       }
     }
   }
