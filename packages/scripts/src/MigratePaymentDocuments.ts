@@ -11,7 +11,8 @@ const mock = []
 const main = async () => {
   // const payments = await db.collection('_payments').get()
   // const paymentsWithId = payments.docs.map(doc => ({ ...doc.data(), id: doc.id }))
-  // fs.writeFile('payments.json', JSON.stringify(paymentsWithId, null, 2), () => {})
+  // fs.mkdirSync('out', { recursive: true })
+  // fs.writeFile('out/payments.json', JSON.stringify(paymentsWithId, null, 2), () => {})
 
   const targetPayments = mock.filter(p => !p.paymentIntentId || !p.checkoutSessionId || !p.checkoutStatus)
     .map(p => ({
