@@ -274,19 +274,79 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>X</th>
-                <td>{appLinks ? appLinks.twitterScreenName || '(空欄)' : <BlinkField />}</td>
+                <td>
+                  {appLinks
+                    ? (
+                      appLinks.twitterScreenName
+                        ? (
+                          <a
+                            href={`https://twitter.com/${appLinks.twitterScreenName}`}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            @{appLinks.twitterScreenName}
+                          </a>
+                        )
+                        : '(空欄)'
+                    )
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>pixiv</th>
-                <td>{appLinks ? appLinks.pixivUserId || '(空欄)' : <BlinkField />}</td>
+                <td>
+                  {appLinks
+                    ? (
+                      appLinks.pixivUserId
+                        ? (
+                          <a
+                            href={`https://www.pixiv.net/users/${appLinks.pixivUserId}`}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            users/{appLinks.pixivUserId}
+                          </a>
+                        )
+                        : '(空欄)'
+                    )
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>Web</th>
-                <td>{appLinks ? appLinks.websiteURL || '(空欄)' : <BlinkField />}</td>
+                <td>
+                  {appLinks
+                    ? (
+                      appLinks.websiteURL
+                        ? (
+                          <a
+                            href={appLinks.websiteURL}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            {appLinks.websiteURL}
+                          </a>
+                        )
+                        : '(空欄)'
+                    )
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>お品書き URL</th>
-                <td>{appLinks ? appLinks.menuURL || '(空欄)' : <BlinkField />}</td>
+                <td>
+                  {appLinks
+                    ? (
+                      appLinks.menuURL
+                        ? (
+                          <a
+                            href={appLinks.menuURL}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            {appLinks.menuURL}
+                          </a>
+                        )
+                        : '(空欄)'
+                    )
+                    : <BlinkField />}
+                </td>
               </tr>
             </tbody>
           </table>
