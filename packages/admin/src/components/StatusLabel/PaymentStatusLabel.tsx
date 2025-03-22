@@ -92,7 +92,7 @@ const PaymentStatusLabel: React.FC<Props> = props => {
         : (
           <BlinkField />
         )
-      : '不要'
+      : <>不要</>
   )
 }
 
