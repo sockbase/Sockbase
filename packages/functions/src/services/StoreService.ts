@@ -221,7 +221,7 @@ const createTicketCoreAsync =
     const ticketId = ticketResult.id
 
     const bankTransferCode = generateBankTransferCode(now)
-    const createResult = type.productInfo && !isAdmin && userId
+    const createResult = type.price > 0 && !isAdmin && userId
       ? await createCheckoutSessionAsync({
         now,
         userId: createdUserId ?? userId,

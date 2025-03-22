@@ -123,7 +123,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .set(overview)
 
   const bankTransferCode = generateBankTransferCode(now)
-  const createResult = space.productInfo
+  const createResult = space.price > 0
     ? await createCheckoutSessionAsync({
       now,
       userId,

@@ -41,14 +41,14 @@ const Input: React.FC<Props> = props => {
 
   const selectedType = useMemo(() => {
     if (!ticket.typeId) return
-    return props.store.types.filter(t => t.id === ticket.typeId)[0]
+    return props.store.types.find(t => t.id === ticket.typeId)
   }, [props.store, ticket])
 
   const errorCount = useMemo(() => {
     const validators = [
       validator.isIn(ticket.typeId, typeIds),
-      !selectedType?.productInfo || props.store.permissions.canUseBankTransfer || ticket.paymentMethod === 'online',
-      !selectedType?.productInfo || validator.isNotEmpty(ticket.paymentMethod),
+      !selectedType?.price || props.store.permissions.canUseBankTransfer || ticket.paymentMethod === 'online',
+      !selectedType?.price || validator.isNotEmpty(ticket.paymentMethod),
       isAgreed
     ]
 
@@ -123,7 +123,7 @@ const Input: React.FC<Props> = props => {
         </FormItem>
       </FormSection>
 
-      {selectedType?.productInfo && (
+      {selectedType?.price && (
         <>
           <h2>参加費お支払い方法</h2>
           {selectedType
