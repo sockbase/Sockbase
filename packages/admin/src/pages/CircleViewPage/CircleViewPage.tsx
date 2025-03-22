@@ -249,6 +249,10 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>決済 ID</th>
+                <td>{payment?.hashId ?? <BlinkField />}  <CopyToClipboard content={payment?.hashId} /></td>
+              </tr>
+              <tr>
+                <th>決済内部 ID</th>
                 <td>{payment?.id ?? <BlinkField />}  <CopyToClipboard content={payment?.id} /></td>
               </tr>
             </tbody>
