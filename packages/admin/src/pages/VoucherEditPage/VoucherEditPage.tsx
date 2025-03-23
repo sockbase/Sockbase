@@ -37,7 +37,9 @@ const VoucherEditPage: React.FC = () => {
   }, [voucherId])
 
   return (
-    <DefaultLayout title="バウチャー編集">
+    <DefaultLayout
+      requireSystemRole={2}
+      title="バウチャー編集">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/vouchers">バウチャー一覧</Link></li>

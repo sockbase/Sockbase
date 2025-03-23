@@ -61,7 +61,9 @@ const VoucherListPage: React.FC = () => {
   }, [voucherCodes])
 
   return (
-    <DefaultLayout title="バウチャー一覧">
+    <DefaultLayout
+      requireSystemRole={2}
+      title="バウチャー一覧">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
       </Breadcrumbs>

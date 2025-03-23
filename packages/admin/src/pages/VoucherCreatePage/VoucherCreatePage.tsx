@@ -22,7 +22,9 @@ const VoucherCreatePage: React.FC = () => {
   }, [])
 
   return (
-    <DefaultLayout title="バウチャー作成">
+    <DefaultLayout
+      requireSystemRole={2}
+      title="バウチャー作成">
       <Breadcrumbs>
         <li><Link to="/">ホーム</Link></li>
         <li><Link to="/vouchers">バウチャー一覧</Link></li>
