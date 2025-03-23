@@ -18,7 +18,7 @@ import { getApplicaitonHashIdAsync, getApplicationByIdAsync, getApplicationByUse
 import { getEventByIdAsync } from '../models/event'
 import { createCheckoutSessionAsync } from './CheckoutService'
 import { generateBankTransferCode } from './PaymentService'
-import { getVoucherByCodeAsync, useVoucherByCodeAsync } from './VoucherService'
+import { getVoucherAsync, useVoucherAsync } from './VoucherService'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
@@ -79,8 +79,8 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     throw new https.HttpsError('invalid-argument', 'invalid_argument_acceptApplication')
   }
 
-  const voucher = payload.voucherCode
-    ? await getVoucherByCodeAsync(payload.voucherCode)
+  const voucher = payload.voucherId
+    ? await getVoucherAsync(payload.voucherId)
     : undefined
   if (voucher === null) {
     throw new https.HttpsError('invalid-argument', 'voucher_not_found')
@@ -92,7 +92,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
   }
 
   const useVoucher = voucher
-    ? await useVoucherByCodeAsync(1, payload.app.eventId, payload.app.spaceId, voucher.id)
+    ? await useVoucherAsync(1, payload.app.eventId, payload.app.spaceId, voucher.id)
     : null
   if (useVoucher === false) {
     throw new https.HttpsError('invalid-argument', 'voucher_not_usable')

@@ -8,7 +8,7 @@ import { storeConverter, ticketConverter, ticketUserConverter, userConverter } f
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import { createCheckoutSessionAsync } from './CheckoutService'
 import { generateBankTransferCode } from './PaymentService'
-import { getVoucherByCodeAsync, useVoucherByCodeAsync } from './VoucherService'
+import { getVoucherAsync, useVoucherAsync } from './VoucherService'
 import type {
   SockbaseTicketDocument,
   SockbaseTicketCreateResult,
@@ -52,8 +52,8 @@ const createTicketAsync = async (userId: string, payload: SockbaseTicketApplyPay
     throw new https.HttpsError('not-found', 'type')
   }
 
-  const voucher = payload.voucherCode
-    ? await getVoucherByCodeAsync(payload.voucherCode)
+  const voucher = payload.voucherId
+    ? await getVoucherAsync(payload.voucherId)
     : undefined
   if (voucher === null) {
     throw new https.HttpsError('invalid-argument', 'voucher_not_found')
@@ -65,7 +65,7 @@ const createTicketAsync = async (userId: string, payload: SockbaseTicketApplyPay
   }
 
   const useVoucher = voucher
-    ? await useVoucherByCodeAsync(2, payload.ticket.storeId, payload.ticket.typeId, voucher.id)
+    ? await useVoucherAsync(2, payload.ticket.storeId, payload.ticket.typeId, voucher.id)
     : null
   if (useVoucher === false) {
     throw new https.HttpsError('invalid-argument', 'voucher_not_usable')

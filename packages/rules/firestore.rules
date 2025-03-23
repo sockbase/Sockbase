@@ -245,6 +245,11 @@ service cloud.firestore {
 
     match /vouchers/{voucherId} {
       allow get: if request.auth != null;
+      allow write: if isSystemAdmin(request.auth.uid);
+    }
+
+    match /voucherCodes/{code} {
+      allow get: if request.auth != null;
       allow list: if isSystemAdmin(request.auth.uid);
       allow write: if isSystemAdmin(request.auth.uid);
     }

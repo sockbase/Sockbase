@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
-import { collection, getDocs, query, where } from 'firebase/firestore'
-import { voucherConverter } from '../libs/converters'
+import { doc, getDoc } from 'firebase/firestore'
+import { voucherCodeConverter, voucherConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
-import type { SockbaseVoucherDocument, VoucherAppliedAmount, VoucherTargetType } from 'sockbase'
+import type { SockbaseVoucherCodeDocument, SockbaseVoucherDocument, VoucherAppliedAmount, VoucherTargetType } from 'sockbase'
 
 interface IUseVoucher {
-  getVoucherByCodeAsync: (targetType: VoucherTargetType, targetId: string, typeId: string, code: string) => Promise<SockbaseVoucherDocument | null>
+  getVoucherByCodeAsync: (targetType: VoucherTargetType, targetId: string, typeId: string, code: string) => Promise<{ voucher: SockbaseVoucherDocument, voucherCode: SockbaseVoucherCodeDocument } | null>
   calculatePaymentAmount: (price: number, voucherAmount: number | null | undefined) => VoucherAppliedAmount
 }
 const useVoucher = (): IUseVoucher => {
@@ -14,25 +14,32 @@ const useVoucher = (): IUseVoucher => {
   const db = getFirestore()
 
   const getVoucherByCodeAsync = useCallback(async (targetType: VoucherTargetType, targetId: string, typeId: string, code: string) => {
-    const vouchersRef = collection(db, 'vouchers')
-      .withConverter(voucherConverter)
-    const voucherQuery = query(vouchersRef, where('voucherCode', '==', code))
-    const voucherSnapshot = await getDocs(voucherQuery)
+    const voucherCodeRef = doc(db, `voucherCodes/${code}`)
+      .withConverter(voucherCodeConverter)
+    const voucherCodeDoc = await getDoc(voucherCodeRef)
       .catch(err => {
         console.error(err)
         return null
       })
-    if (voucherSnapshot === null) {
+
+    const voucherCode = voucherCodeDoc?.data()
+    if (!voucherCode) {
       return null
     }
 
-    const voucherDocs = voucherSnapshot.docs
-      .map(doc => doc.data())
-    if (voucherDocs.length !== 1) {
+    const voucherRef = doc(db, `vouchers/${voucherCode.voucherId}`)
+      .withConverter(voucherConverter)
+    const voucherDoc = await getDoc(voucherRef)
+      .catch(err => {
+        console.error(err)
+        return null
+      })
+
+    const voucher = voucherDoc?.data()
+    if (!voucher) {
       return null
     }
 
-    const voucher = voucherDocs[0]
     if (voucher.targetType !== targetType || voucher.targetId !== targetId || (voucher.targetTypeId != null && voucher.targetTypeId !== typeId)) {
       return null
     }
@@ -40,7 +47,10 @@ const useVoucher = (): IUseVoucher => {
       return null
     }
 
-    return voucher
+    return {
+      voucher,
+      voucherCode
+    }
   }, [])
 
   const calculatePaymentAmount = useCallback((price: number, voucherAmount: number | null | undefined): VoucherAppliedAmount => {

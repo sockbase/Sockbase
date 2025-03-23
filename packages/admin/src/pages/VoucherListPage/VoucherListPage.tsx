@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MdLocalActivity } from 'react-icons/md'
 import { Link } from 'react-router-dom'
-import { SockbaseVoucherDocument, VoucherTargetType } from 'sockbase'
 import Breadcrumbs from '../../components/Parts/Breadcrumbs'
 import PageTitle from '../../components/Parts/PageTitle'
 import useVoucher from '../../hooks/useVoucher'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
+import type { SockbaseVoucherCodeDocument, SockbaseVoucherDocument, VoucherTargetType } from 'sockbase'
 
 const VoucherListPage: React.FC = () => {
-  const { getVouchersAsync } = useVoucher()
+  const { getVoucherCodesAsync, getVoucherAsync } = useVoucher()
 
-  const [vouchers, setVouchers] = useState<SockbaseVoucherDocument[]>()
+  const [voucherCodes, setVoucherCodes] = useState<SockbaseVoucherCodeDocument[]>()
+  const [vouchers, setVouchers] = useState<Record<string, SockbaseVoucherDocument>>()
 
   const getTargetType = useCallback((targetType: VoucherTargetType) => {
     switch (targetType) {
@@ -24,10 +25,22 @@ const VoucherListPage: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    getVouchersAsync()
-      .then(setVouchers)
+    getVoucherCodesAsync()
+      .then(setVoucherCodes)
       .catch(err => { throw err })
   }, [])
+
+  useEffect(() => {
+    if (!voucherCodes) return
+    Promise.all(voucherCodes.map(async voucherCode => ({
+      id: voucherCode.voucherId,
+      data: await getVoucherAsync(voucherCode.voucherId)
+    })))
+      .then(result => {
+        setVouchers(result.reduce((p, c) => ({ ...p, [c.id]: c.data }), {} as Record<string, SockbaseVoucherDocument>))
+      })
+      .catch(err => { throw err })
+  }, [voucherCodes])
 
   return (
     <DefaultLayout title="バウチャー一覧">
@@ -56,27 +69,30 @@ const VoucherListPage: React.FC = () => {
               <td colSpan={6}>読み込み中...</td>
             </tr>
           )}
-          {vouchers?.length === 0 && (
+          {vouchers && Object.keys(vouchers).length === 0 && (
             <tr>
               <td colSpan={6}>データがありません</td>
             </tr>
           )}
-          {vouchers?.map(voucher => (
-            <tr key={voucher.id}>
-              <td><code>{voucher.voucherCode}</code></td>
-              <td>{getTargetType(voucher.targetType)}</td>
-              <td>{voucher.targetId}</td>
-              <td>{voucher.targetTypeId ?? '(全てのタイプ)'}</td>
-              <td>{voucher.amount ? `${voucher.amount?.toLocaleString()}円` : '全額'}</td>
-              <td>
-                {
-                  voucher.usedCountLimit !== null
-                    ? `${voucher.usedCount} / ${voucher.usedCountLimit}`
-                    : voucher.usedCount
-                }
-              </td>
-            </tr>
-          ))}
+          {vouchers && voucherCodes?.map(code => {
+            const voucher = vouchers[code.voucherId]
+            return (
+              <tr key={voucher.id}>
+                <td><code>{code.id}</code></td>
+                <td>{getTargetType(voucher.targetType)}</td>
+                <td>{voucher.targetId}</td>
+                <td>{voucher.targetTypeId ?? '(全てのタイプ)'}</td>
+                <td>{voucher.amount ? `${voucher.amount?.toLocaleString()}円` : '全額'}</td>
+                <td>
+                  {
+                    voucher.usedCountLimit !== null
+                      ? `${voucher.usedCount} / ${voucher.usedCountLimit}`
+                      : voucher.usedCount
+                  }
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </DefaultLayout>
