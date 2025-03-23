@@ -30,6 +30,8 @@ import TicketCreatePage from './pages/TicketCreatePage/TicketCreatePage'
 import TicketTerminalPage from './pages/TicketTerminalPage/TicketTerminalPage'
 import TicketViewPage from './pages/TicketViewPage/TicketViewPage'
 import UserListPage from './pages/UserListPage/UserListPage'
+import VoucherCreatePage from './pages/VoucherCreatePage/VoucherCreatePage'
+import VoucherEditPage from './pages/VoucherEditPage/VoucherEditPage'
 import VoucherListPage from './pages/VoucherListPage/VoucherListPage'
 
 const Root: React.FC = () => {
@@ -169,6 +171,14 @@ const routes = createBrowserRouter([
           {
             index: true,
             element: <VoucherListPage />
+          },
+          {
+            path: 'create',
+            element: <VoucherCreatePage />
+          },
+          {
+            path: ':voucherId',
+            element: <VoucherEditPage />
           }
         ]
       },
