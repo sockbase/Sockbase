@@ -78,7 +78,11 @@ const useVoucher = (): IUseVoucher => {
   const updateVoucherAsync = useCallback(async (voucherId: string, voucher: SockbaseVoucher) => {
     const voucherRef = doc(db, `vouchers/${voucherId}`)
     await setDoc(voucherRef, {
-      ...voucher,
+      amount: voucher.amount,
+      targetType: voucher.targetType,
+      targetId: voucher.targetId,
+      targetTypeId: voucher.targetTypeId,
+      usedCountLimit: voucher.usedCountLimit,
       updatedAt: new Date()
     }, { merge: true })
   }, [])
