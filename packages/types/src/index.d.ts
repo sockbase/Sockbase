@@ -691,8 +691,6 @@ export interface SockbaseVoucher {
   targetTypeId: string | null
   usedCount: number
   usedCountLimit: number | null
-  createdAt: Date
-  updatedAt: Date | null
 }
 
 /**
@@ -700,6 +698,8 @@ export interface SockbaseVoucher {
  */
 export type SockbaseVoucherDocument = SockbaseVoucher & {
   id: string
+  createdAt: Date
+  updatedAt: Date | null
 }
 
 /**

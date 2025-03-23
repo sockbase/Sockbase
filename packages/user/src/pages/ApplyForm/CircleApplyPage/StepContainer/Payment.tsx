@@ -29,8 +29,6 @@ const Payment: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
   const [checkedPayment, setCheckedPayment] = useState(false)
 
-  console.log(props.addedResult)
-
   return (
     <>
       <Alert

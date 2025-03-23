@@ -8,6 +8,7 @@ import type { SockbaseApplicationStatus, SockbaseStore, SockbaseStoreDocument, S
 
 interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
+  getStoresAsync: () => Promise<SockbaseStoreDocument[]>
   getStoresByOrganizationIdAsync: (organizationId: string) => Promise<SockbaseStoreDocument[]>
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
@@ -38,6 +39,16 @@ const useStore = (): IUseStore => {
         throw new Error('store not found')
       }
       return storeDoc.data()
+    }, [])
+
+  const getStoresAsync =
+    useCallback(async () => {
+      const storesRef = collection(db, 'stores')
+        .withConverter(storeConverter)
+      const storesSnapshot = await getDocs(storesRef)
+      const queryDocs = storesSnapshot.docs
+        .map(doc => doc.data())
+      return queryDocs
     }, [])
 
   const getStoresByOrganizationIdAsync =
@@ -214,6 +225,7 @@ const useStore = (): IUseStore => {
 
   return {
     getStoreByIdAsync,
+    getStoresAsync,
     getStoresByOrganizationIdAsync,
     getTicketByIdAsync,
     getTicketIdByHashIdAsync,

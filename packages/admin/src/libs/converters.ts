@@ -488,7 +488,15 @@ export const docLinkConverter: FirestoreDataConverter<SockbaseDocLinkDocument> =
 }
 
 export const voucherConverter: FirestoreDataConverter<SockbaseVoucherDocument> = {
-  toFirestore: () => ({
+  toFirestore: (data: SockbaseVoucherDocument) => ({
+    amount: data.amount,
+    usedCount: data.usedCount,
+    usedCountLimit: data.usedCountLimit,
+    targetType: data.targetType,
+    targetId: data.targetId,
+    targetTypeId: data.targetTypeId,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt
   }),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseVoucherDocument => {
     const voucher = snapshot.data()
@@ -507,7 +515,8 @@ export const voucherConverter: FirestoreDataConverter<SockbaseVoucherDocument> =
 }
 
 export const voucherCodeConverter: FirestoreDataConverter<SockbaseVoucherCodeDocument> = {
-  toFirestore: () => ({
+  toFirestore: (data: SockbaseVoucherCodeDocument) => ({
+    voucherId: data.voucherId
   }),
   fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseVoucherCodeDocument => {
     const voucher = snapshot.data()
