@@ -20,7 +20,8 @@ import type {
   SockbaseApplicationMeta,
   SockbaseTicketHashIdDocument,
   SockbasePaymentHashDocument,
-  SockbaseVoucherDocument
+  SockbaseVoucherDocument,
+  SockbaseVoucherCodeDocument
 } from 'sockbase'
 
 export const paymentConverter: FirestoreDataConverter<SockbasePaymentDocument> = {
@@ -429,7 +430,6 @@ export const voucherConverter: FirestoreDataConverter<SockbaseVoucherDocument> =
     const voucher = snapshot.data()
     return {
       id: snapshot.id,
-      voucherCode: voucher.voucherCode,
       amount: voucher.amount,
       usedCount: voucher.usedCount,
       usedCountLimit: voucher.usedCountLimit,
@@ -438,6 +438,18 @@ export const voucherConverter: FirestoreDataConverter<SockbaseVoucherDocument> =
       targetTypeId: voucher.targetTypeId,
       createdAt: new Date(voucher.createdAt.seconds * 1000),
       updatedAt: voucher.updatedAt ? new Date(voucher.updatedAt.seconds * 1000) : null
+    }
+  }
+}
+
+export const voucherCodeConverter: FirestoreDataConverter<SockbaseVoucherCodeDocument> = {
+  toFirestore: () => ({
+  }),
+  fromFirestore: (snapshot: QueryDocumentSnapshot): SockbaseVoucherCodeDocument => {
+    const voucher = snapshot.data()
+    return {
+      id: snapshot.id,
+      voucherId: voucher.voucherId
     }
   }
 }

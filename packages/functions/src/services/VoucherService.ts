@@ -6,7 +6,7 @@ import { voucherConverter } from '../libs/converters'
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
 
-const useVoucherByCodeAsync = async (targetType: VoucherTargetType, targetId: string, targetTypeId: string, voucherId: string) => {
+const useVoucherAsync = async (targetType: VoucherTargetType, targetId: string, targetTypeId: string, voucherId: string) => {
   const voucherRef = firestore.doc(`vouchers/${voucherId}`)
   const useResult = await firestore.runTransaction(async tx => {
     const voucherDoc = await tx.get(voucherRef)
@@ -32,22 +32,19 @@ const useVoucherByCodeAsync = async (targetType: VoucherTargetType, targetId: st
   return true
 }
 
-const getVoucherByCodeAsync = async (code: string) => {
-  const vouchersRef = firestore.collection('vouchers')
+const getVoucherAsync = async (voucherId: string) => {
+  const voucherDoc = await firestore
+    .doc(`vouchers/${voucherId}`)
     .withConverter(voucherConverter)
-  const vouchersSnapshot = await vouchersRef
-    .where('voucherCode', '==', code)
     .get()
-  const voucherDocs = vouchersSnapshot.docs
-    .map(v => v.data())
-  if (voucherDocs.length !== 1) {
+  const voucher = voucherDoc.data()
+  if (!voucher) {
     return null
   }
-
-  return voucherDocs[0]
+  return voucher
 }
 
 export {
-  useVoucherByCodeAsync,
-  getVoucherByCodeAsync
+  useVoucherAsync,
+  getVoucherAsync
 }

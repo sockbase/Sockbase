@@ -25,6 +25,7 @@ import type {
   SockbaseApplicationDocument,
   SockbaseApplicationLinks,
   SockbaseEventDocument,
+  SockbaseVoucherCodeDocument,
   SockbaseVoucherDocument
 } from 'sockbase'
 
@@ -66,7 +67,8 @@ interface Props {
   pastEvents: Record<string, SockbaseEventDocument> | null | undefined
   fetchedUserData: SockbaseAccount | null | undefined
   voucher: SockbaseVoucherDocument | null | undefined
-  voucherCode: string
+  voucherCode: SockbaseVoucherCodeDocument | null | undefined
+  inputtedVoucherCode: string
   getVoucherByCodeAsync: (typeId: string, code: string) => Promise<void>
   resetVoucher: () => void
   prevStep: () => void
@@ -268,16 +270,16 @@ const Input: React.FC<Props> = props => {
       setUserData(props.userData)
     }
 
-    if (props.voucherCode) {
-      setVoucherCode(props.voucherCode)
+    if (props.inputtedVoucherCode) {
+      setVoucherCode(props.inputtedVoucherCode)
     }
-  }, [props.app, props.links, props.event, props.userData])
+  }, [props.app, props.links, props.event, props.userData, props.inputtedVoucherCode])
 
   useEffect(() => {
-    if (props.voucher === null) return
-    if (voucherCode === props.voucher?.voucherCode) return
+    if (props.voucherCode === null) return
+    if (voucherCode === props.voucherCode?.id) return
     props.resetVoucher()
-  }, [voucherCode, props.voucher])
+  }, [voucherCode, props.voucherCode])
 
   return (
     <>

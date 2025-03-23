@@ -264,7 +264,7 @@ export interface SockbaseApplicationHashIdDocument {
 export interface SockbaseApplicationPayload {
   app: SockbaseApplication
   links: SockbaseApplicationLinks
-  voucherCode: string | null
+  voucherId: string | null
 }
 
 /**
@@ -382,7 +382,7 @@ export interface SockbaseTicketHashIdDocument {
  */
 export interface SockbaseTicketApplyPayload {
   ticket: SockbaseTicket
-  voucherCode: string | null
+  voucherId: string | null
 }
 
 /**
@@ -685,7 +685,6 @@ export type CheckoutStatus = 0 | 1 | 2
  * バウチャー
  */
 export interface SockbaseVoucher {
-  voucherCode: string
   amount: number | null
   targetType: VoucherTargetType
   targetId: string
@@ -700,6 +699,20 @@ export interface SockbaseVoucher {
  * バウチャー(DB取得)
  */
 export type SockbaseVoucherDocument = SockbaseVoucher & {
+  id: string
+}
+
+/**
+ * バウチャーコード
+ */
+export interface SockbaseVoucherCode {
+  voucherId: string
+}
+
+/**
+ * バウチャーコード(DB取得)
+ */
+export type SockbaseVoucherCodeDocument = SockbaseVoucherCode & {
   id: string
 }
 
