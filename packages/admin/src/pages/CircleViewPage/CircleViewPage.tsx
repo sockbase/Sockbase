@@ -135,11 +135,11 @@ const CircleViewPage: React.FC = () => {
     getCircleCutURLByHashIdNullableAsync(appHash.hashId)
       .then(setCircleCutURL)
       .catch(err => { throw err })
-    getPaymentByIdAsync(appHash.paymentId)
-      .then(setPayment)
-      .catch(err => { throw err })
     getOverviewByIdNullableAsync(appHash.applicationId)
       .then(setOverview)
+      .catch(err => { throw err })
+    getPaymentByIdAsync(appHash.paymentId)
+      .then(setPayment)
       .catch(err => { throw err })
 
     if (appHash.spaceId) {
@@ -192,11 +192,15 @@ const CircleViewPage: React.FC = () => {
               <tr>
                 <th>お支払い状況</th>
                 <td>
-                  {(payment && (
-                    <PaymentStatusLabel
-                      isShowBrand
-                      payment={payment} />
-                  )) ?? <BlinkField />}
+                  {
+                    payment !== undefined
+                      ? (
+                        <PaymentStatusLabel
+                          isShowBrand
+                          payment={payment} />
+                      )
+                      : <BlinkField />
+                  }
                 </td>
               </tr>
             </tbody>
@@ -245,11 +249,19 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>内部 ID</th>
-                <td>{app?.id ?? <BlinkField />}  <CopyToClipboard content={app?.id} /></td>
+                <td>{app ? app.id : <BlinkField />} <CopyToClipboard content={app?.id} /></td>
               </tr>
               <tr>
                 <th>決済 ID</th>
-                <td>{payment?.id ?? <BlinkField />}  <CopyToClipboard content={payment?.id} /></td>
+                <td>{payment ? payment.hashId : <BlinkField />} <CopyToClipboard content={payment?.hashId} /></td>
+              </tr>
+              <tr>
+                <th>決済内部 ID</th>
+                <td>{payment ? payment.id : <BlinkField />} <CopyToClipboard content={payment?.id} /></td>
+              </tr>
+              <tr>
+                <th>使用バウチャー 内部ID</th>
+                <td>{payment ? payment.voucherId ?? '未使用' : <BlinkField />} <CopyToClipboard content={payment?.voucherId} /></td>
               </tr>
             </tbody>
           </table>
@@ -270,19 +282,79 @@ const CircleViewPage: React.FC = () => {
               </tr>
               <tr>
                 <th>X</th>
-                <td>{appLinks ? appLinks.twitterScreenName || '(空欄)' : <BlinkField />}</td>
+                <td>
+                  {appLinks
+                    ? (
+                      appLinks.twitterScreenName
+                        ? (
+                          <a
+                            href={`https://twitter.com/${appLinks.twitterScreenName}`}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            @{appLinks.twitterScreenName}
+                          </a>
+                        )
+                        : '(空欄)'
+                    )
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>pixiv</th>
-                <td>{appLinks ? appLinks.pixivUserId || '(空欄)' : <BlinkField />}</td>
+                <td>
+                  {appLinks
+                    ? (
+                      appLinks.pixivUserId
+                        ? (
+                          <a
+                            href={`https://www.pixiv.net/users/${appLinks.pixivUserId}`}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            users/{appLinks.pixivUserId}
+                          </a>
+                        )
+                        : '(空欄)'
+                    )
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>Web</th>
-                <td>{appLinks ? appLinks.websiteURL || '(空欄)' : <BlinkField />}</td>
+                <td>
+                  {appLinks
+                    ? (
+                      appLinks.websiteURL
+                        ? (
+                          <a
+                            href={appLinks.websiteURL}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            {appLinks.websiteURL}
+                          </a>
+                        )
+                        : '(空欄)'
+                    )
+                    : <BlinkField />}
+                </td>
               </tr>
               <tr>
                 <th>お品書き URL</th>
-                <td>{appLinks ? appLinks.menuURL || '(空欄)' : <BlinkField />}</td>
+                <td>
+                  {appLinks
+                    ? (
+                      appLinks.menuURL
+                        ? (
+                          <a
+                            href={appLinks.menuURL}
+                            rel="noopener noreferrer"
+                            target="_blank">
+                            {appLinks.menuURL}
+                          </a>
+                        )
+                        : '(空欄)'
+                    )
+                    : <BlinkField />}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -378,13 +450,15 @@ const CircleViewPage: React.FC = () => {
             </FormItem>
           </FormSection>
 
-          <PaymentStatusController
-            onChange={st => {
-              setPayment(s => s && ({ ...s, status: st }))
-              alert('支払いステータスを変更しました')
-            }}
-            paymentId={payment?.id}
-            status={payment?.status} />
+          {payment && (
+            <PaymentStatusController
+              onChange={st => {
+                setPayment(s => s && ({ ...s, status: st }))
+                alert('支払いステータスを変更しました')
+              }}
+              paymentId={payment?.id}
+              status={payment?.status} />
+          )}
         </>
 
         {isSystemAdmin && (

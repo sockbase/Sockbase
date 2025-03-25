@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { MdArrowBack, MdArrowForward, MdFileOpen } from 'react-icons/md'
+import { MdArrowBack, MdArrowForward, MdCheck, MdFileOpen } from 'react-icons/md'
 import sockbaseShared from 'shared'
 import FormButton from '../../../../components/Form/FormButton'
 import FormCheckbox from '../../../../components/Form/FormCheckbox'
@@ -16,13 +16,17 @@ import IconLabel from '../../../../components/Parts/IconLabel'
 import UserDataForm from '../../../../components/UserDataForm'
 import useDayjs from '../../../../hooks/useDayjs'
 import useValidate from '../../../../hooks/useValidate'
+import useVoucher from '../../../../hooks/useVoucher'
+import AmountCalculator from './AmountCalculator'
 import type {
   SockbaseAccount,
   SockbaseAccountSecure,
   SockbaseApplication,
   SockbaseApplicationDocument,
   SockbaseApplicationLinks,
-  SockbaseEventDocument
+  SockbaseEventDocument,
+  SockbaseVoucherCodeDocument,
+  SockbaseVoucherDocument
 } from 'sockbase'
 
 const initialAppBase = {
@@ -62,16 +66,23 @@ interface Props {
   pastAppLinks: Record<string, SockbaseApplicationLinks | null> | null | undefined
   pastEvents: Record<string, SockbaseEventDocument> | null | undefined
   fetchedUserData: SockbaseAccount | null | undefined
+  voucher: SockbaseVoucherDocument | null | undefined
+  voucherCode: SockbaseVoucherCodeDocument | null | undefined
+  inputtedVoucherCode: string
+  getVoucherByCodeAsync: (typeId: string, code: string) => Promise<void>
+  resetVoucher: () => void
   prevStep: () => void
   nextStep: (
     app: SockbaseApplication,
     links: SockbaseApplicationLinks,
-    userData: SockbaseAccountSecure | undefined
+    userData: SockbaseAccountSecure | undefined,
+    voucherCode: string
   ) => void
 }
 
 const Input: React.FC<Props> = props => {
   const validator = useValidate()
+  const { calculatePaymentAmount } = useVoucher()
   const { formatByDate } = useDayjs()
 
   const initialApp = useMemo(() => ({
@@ -82,22 +93,34 @@ const Input: React.FC<Props> = props => {
 
   const [app, setApp] = useState(initialApp)
   const [links, setLinks] = useState(initialAppLinksBase)
+  const [isProcessVoucher, setIsProcessVoucher] = useState(false)
+  const [voucherCode, setVoucherCode] = useState('')
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
-  const [isAgreed, setAgreed] = useState(false)
+  const [isAgreed, setIsAgreed] = useState(false)
 
   const [pastAppId, setPastAppId] = useState('')
-  const [isAppliedPastApp, setAppliedPastApp] = useState(false)
+  const [isAppliedPastApp, setIsAppliedPastApp] = useState(false)
 
   const spaceIds = useMemo(() => props.event.spaces.map(s => s.id), [props.event])
   const genreIds = useMemo(() => props.event.genres.map(g => g.id), [props.event])
-  const paymentMethodIds = useMemo(() => sockbaseShared.constants.payment.methods
-    .filter(p => p.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
-    .map(p => p.id), [props.event])
+  const usablePaymentMethods = useMemo(() => sockbaseShared.constants.payment.methods
+    .filter(m => m.id !== 'voucher')
+    .filter(m => m.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
+    .map(i => ({
+      text: i.description,
+      value: i.id
+    })), [props.event])
+  const paymentMethodIds = useMemo(() => usablePaymentMethods.map(p => p.value), [usablePaymentMethods])
 
   const selectedSpace = useMemo(() => {
-    const space = props.event.spaces.filter(s => s.id === app.spaceId)[0]
+    const space = props.event.spaces.find(s => s.id === app.spaceId)
     return space
   }, [props.event, app.spaceId])
+
+  const paymentAmount = useMemo(() => {
+    if (!selectedSpace) return
+    return calculatePaymentAmount(selectedSpace.price, props.voucher?.amount)
+  }, [selectedSpace, props.voucher])
 
   const errorCount = useMemo(() => {
     const validators = [
@@ -109,18 +132,15 @@ const Input: React.FC<Props> = props => {
       validator.isIn(app.circle.genre, genreIds),
       validator.isNotEmpty(app.overview.description),
       validator.isNotEmpty(app.overview.totalAmount),
-      validator.isIn(app.paymentMethod, paymentMethodIds),
+      paymentAmount?.paymentAmount === 0 || validator.isIn(app.paymentMethod, paymentMethodIds),
       !app.unionCircleId || validator.isApplicationHashId(app.unionCircleId),
       !links.twitterScreenName || validator.isTwitterScreenName(links.twitterScreenName),
       !links.pixivUserId || validator.isOnlyNumber(links.pixivUserId),
       !links.websiteURL || validator.isURL(links.websiteURL),
       !links.menuURL || validator.isURL(links.menuURL),
       !app.circle.hasAdult || app.circle.hasAdult === 'no' || (props.event.permissions.allowAdult && app.circle.hasAdult === 'yes'),
-      props.event.permissions.canUseBankTransfer || app.paymentMethod === 'online',
       isAgreed
     ]
-
-    console.log(validators)
 
     let errorCount = validators.filter(v => !v).length
 
@@ -154,24 +174,26 @@ const Input: React.FC<Props> = props => {
     app,
     userData,
     links,
-    isAgreed
+    isAgreed,
+    paymentAmount
   ])
 
   const handleSubmit = useCallback(() => {
-    if (errorCount > 0) return
+    if (errorCount > 0 || !paymentAmount) return
 
     const sanitizedApp: SockbaseApplication = {
       ...app,
       circle: {
         ...app.circle,
         hasAdult: props.event.permissions.allowAdult && app.circle.hasAdult === 'yes'
-      }
+      },
+      paymentMethod: paymentAmount.paymentAmount === 0 ? 'voucher' : app.paymentMethod
     }
     const sanitizedLinks: SockbaseApplicationLinks = {
       ...links
     }
-    props.nextStep(sanitizedApp, sanitizedLinks, userData)
-  }, [errorCount, props.event, app, links, userData])
+    props.nextStep(sanitizedApp, sanitizedLinks, userData, voucherCode)
+  }, [errorCount, props.event, app, links, userData, voucherCode, paymentAmount])
 
   const handleApplyPastApp = useCallback(() => {
     if (!pastAppId) return
@@ -180,6 +202,7 @@ const Input: React.FC<Props> = props => {
     const pastApp = props.pastApps?.filter(a => a.id === pastAppId)[0]
     if (!pastApp) return
     if (!confirm(`${pastApp.circle.name} (${props.pastEvents[pastApp.eventId].name}) から申し込み情報を引用します。\nよろしいですか？`)) return
+    if (!handleChangeSpaceType('')) return
 
     setApp({
       ...pastApp,
@@ -204,9 +227,28 @@ const Input: React.FC<Props> = props => {
       setLinks(pastLinks)
     }
 
-    setAppliedPastApp(true)
+    setIsAppliedPastApp(true)
     setPastAppId('')
   }, [pastAppId, props.pastApps, props.pastAppLinks, props.pastEvents])
+
+  const handleGetVoucher = useCallback(async () => {
+    if (!selectedSpace || !voucherCode) return
+    setIsProcessVoucher(true)
+    props.getVoucherByCodeAsync(selectedSpace.id, voucherCode)
+      .finally(() => setIsProcessVoucher(false))
+  }, [selectedSpace, voucherCode, props.getVoucherByCodeAsync])
+
+  const handleChangeSpaceType = useCallback((spaceId: string) => {
+    if (props.voucher) {
+      if (!confirm('スペースを変更するとバウチャーがリセットされます。\nスペースを変更してもよろしいですか？')) {
+        return false
+      }
+      props.resetVoucher()
+      setVoucherCode('')
+    }
+    setApp(s => ({ ...s, spaceId }))
+    return true
+  }, [props.voucher])
 
   useEffect(() => {
     if (props.app) {
@@ -227,7 +269,17 @@ const Input: React.FC<Props> = props => {
     if (props.userData) {
       setUserData(props.userData)
     }
-  }, [props.app, props.links, props.event, props.userData])
+
+    if (props.inputtedVoucherCode) {
+      setVoucherCode(props.inputtedVoucherCode)
+    }
+  }, [props.app, props.links, props.event, props.userData, props.inputtedVoucherCode])
+
+  useEffect(() => {
+    if (props.voucherCode === null) return
+    if (voucherCode === props.voucherCode?.id) return
+    props.resetVoucher()
+  }, [voucherCode, props.voucherCode])
 
   return (
     <>
@@ -280,7 +332,7 @@ const Input: React.FC<Props> = props => {
           <FormRadio
             hasError={isAppliedPastApp && !app.spaceId}
             name="space"
-            onChange={spaceId => setApp(s => ({ ...s, spaceId }))}
+            onChange={handleChangeSpaceType}
             value={app.spaceId}
             values={
               props.event.spaces
@@ -493,40 +545,68 @@ const Input: React.FC<Props> = props => {
         setUserData={u => setUserData(u)}
         userData={props.userData} />
 
-      <h2>サークル参加費お支払い方法</h2>
-      {selectedSpace
-        ? (
+      <h2>お支払い情報</h2>
+
+      <h3>バウチャー利用</h3>
+      <p>
+        バウチャーをお持ちの場合は、バウチャーコードを入力してください。
+      </p>
+      <FormSection>
+        <FormItem>
+          <FormLabel>バウチャーコード</FormLabel>
+          <FormInput
+            onChange={e => setVoucherCode(e.target.value)}
+            value={voucherCode} />
+        </FormItem>
+        <FormItem>
+          <FormButton
+            color="primary"
+            disabled={isProcessVoucher || !selectedSpace || !voucherCode || !!props.voucher}
+            onClick={handleGetVoucher}>
+            <IconLabel
+              icon={<MdCheck />}
+              label="バウチャー反映" />
+          </FormButton>
+        </FormItem>
+        <FormItem>
+          {!selectedSpace && (
+            <Alert
+              title="バウチャーを利用するには、スペースを選択する必要があります"
+              type="warning" />
+          )}
+          {props.voucher === undefined && !isProcessVoucher && selectedSpace && voucherCode && (
+            <Alert
+              title="「バウチャー反映」を押してください"
+              type="info" />
+          )}
+          {props.voucher === null && (
+            <Alert
+              title="このバウチャーは使用できません"
+              type="error" />
+          )}
+          {props.voucher && (
+            <Alert
+              title="バウチャー利用額が反映されました"
+              type="success">
+                バウチャーは申し込み情報の送信時に適用されます。<br />
+                バウチャーを適用できなかった場合、エラーが発生します。
+            </Alert>
+          )}
+        </FormItem>
+      </FormSection>
+
+      {paymentAmount && paymentAmount.paymentAmount > 0 && (
+        <>
+          <h3>お支払い方法</h3>
+
           <FormSection>
-            <FormItem>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>申込むスペース</th>
-                    <td>{selectedSpace.name}</td>
-                  </tr>
-                  <tr>
-                    <th>スペース詳細情報</th>
-                    <td>{selectedSpace.description}</td>
-                  </tr>
-                  <tr>
-                    <th>お支払い額</th>
-                    <td>{selectedSpace.price.toLocaleString()}円</td>
-                  </tr>
-                </tbody>
-              </table>
-            </FormItem>
             <FormItem>
               <FormRadio
                 hasError={isAppliedPastApp && !app.paymentMethod}
                 name="paymentMethod"
                 onChange={paymentMethod => setApp(s => ({ ...s, paymentMethod }))}
                 value={app.paymentMethod}
-                values={sockbaseShared.constants.payment.methods
-                  .filter(i => i.id !== 'bankTransfer' || props.event.permissions.canUseBankTransfer)
-                  .map(i => ({
-                    text: i.description,
-                    value: i.id
-                  }))} />
+                values={usablePaymentMethods} />
             </FormItem>
             {app.paymentMethod === 'bankTransfer' && (
               <FormItem>
@@ -536,12 +616,30 @@ const Input: React.FC<Props> = props => {
               </FormItem>
             )}
           </FormSection>
-        )
-        : (
-          <Alert
-            title="申し込みたいスペース数を選択してください"
-            type="info" />
-        )}
+        </>
+      )}
+
+      <h3>お支払い内容確認</h3>
+
+      {!selectedSpace && (
+        <Alert
+          title="申し込みたいスペース数を選択してください"
+          type="warning" />
+      )}
+
+      <table>
+        <tbody>
+          <tr>
+            <th>申込むスペース</th>
+            <td>{selectedSpace?.name ?? '---'}</td>
+          </tr>
+          <tr>
+            <th>スペース詳細情報</th>
+            <td>{selectedSpace?.description ?? '---'}</td>
+          </tr>
+          <AmountCalculator paymentAmount={paymentAmount} />
+        </tbody>
+      </table>
 
       <h2>通信欄</h2>
       <p>申し込みにあたり運営チームへの要望等がありましたら入力してください。</p>
@@ -579,7 +677,7 @@ const Input: React.FC<Props> = props => {
             checked={isAgreed}
             label="同意します"
             name="isAggreed"
-            onChange={checked => setAgreed(checked)} />
+            onChange={checked => setIsAgreed(checked)} />
         </FormItem>
       </FormSection>
 

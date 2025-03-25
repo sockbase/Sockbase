@@ -18,6 +18,9 @@ const constants = {
       {
         id: 'bankTransfer',
         description: '銀行振込'
+      }, {
+        id: 'voucher',
+        description: 'バウチャー'
       }
     ]
   }

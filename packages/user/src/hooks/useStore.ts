@@ -12,21 +12,21 @@ import {
 import useFirebase from './useFirebase'
 import type {
   SockbaseStoreDocument,
-  SockbaseTicket,
-  SockbaseTicketAddedResult,
+  SockbaseTicketCreateResult,
   SockbaseTicketHashIdDocument,
   SockbaseTicketDocument,
   SockbaseTicketMeta,
   SockbaseTicketUserDocument,
   SockbaseTicketUsedStatus,
-  SockbaseAccount
+  SockbaseAccount,
+  SockbaseTicketApplyPayload
 } from 'sockbase'
 
 interface IUseStore {
   getStoreByIdAsync: (storeId: string) => Promise<SockbaseStoreDocument>
   getStoreByIdOptionalAsync: (storeId: string) => Promise<SockbaseStoreDocument | null>
   getStoresByOrganizationIdAsync: (organizationId: string) => Promise<SockbaseStoreDocument[]>
-  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
+  createTicketAsync: (payload: SockbaseTicketApplyPayload) => Promise<SockbaseTicketCreateResult>
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
   getTicketIdByHashIdNullableAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument | null>
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
@@ -88,14 +88,14 @@ const useStore = (): IUseStore => {
     }
 
   const createTicketAsync =
-    async (ticket: SockbaseTicket): Promise<SockbaseTicketAddedResult> => {
+    async (payload: SockbaseTicketApplyPayload): Promise<SockbaseTicketCreateResult> => {
       const functions = getFunctions()
       const createTicketFunction = FirebaseFunctions.httpsCallable<
-        SockbaseTicket,
-        SockbaseTicketAddedResult
+        SockbaseTicketApplyPayload,
+        SockbaseTicketCreateResult
       >(functions, 'store-createTicket')
 
-      const appResult = await createTicketFunction(ticket)
+      const appResult = await createTicketFunction(payload)
       return appResult.data
     }
 

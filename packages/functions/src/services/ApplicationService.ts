@@ -2,20 +2,23 @@ import { https } from 'firebase-functions'
 import {
   type SockbaseApplicationLinksDocument,
   type SockbaseAccount,
-  type SockbaseApplicationAddedResult,
+  type SockbaseApplicationCreateResult,
   type SockbaseApplicationDocument,
   type SockbaseApplicationPayload,
   type SockbaseApplicationOverviewDocument
 } from 'sockbase'
 import dayjs from '../helpers/dayjs'
 
-import random from '../helpers/random'
+import { generateRandomCharacters } from '../helpers/random'
+import { calculatePaymentAmount } from '../helpers/voucher'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { applicationConverter, applicationLinksConverter, overviewConverter } from '../libs/converters'
 import { sendMessageToDiscord } from '../libs/sendWebhook'
 import { getApplicaitonHashIdAsync, getApplicationByIdAsync, getApplicationByUserIdAndEventIdAsync } from '../models/application'
 import { getEventByIdAsync } from '../models/event'
-import PaymentService from './PaymentService'
+import { createCheckoutSessionAsync } from './CheckoutService'
+import { generateBankTransferCode } from './PaymentService'
+import { getVoucherAsync, useVoucherAsync } from './VoucherService'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
@@ -32,7 +35,7 @@ const fetchUserDataForEventAsync = async (userId: string, eventId: string): Prom
     .set(userData)
 }
 
-const createApplicationAsync = async (userId: string, payload: SockbaseApplicationPayload): Promise<SockbaseApplicationAddedResult> => {
+const createApplicationAsync = async (userId: string, payload: SockbaseApplicationPayload): Promise<SockbaseApplicationCreateResult> => {
   const now = new Date()
   const timestamp = now.getTime()
 
@@ -76,24 +79,48 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     throw new https.HttpsError('invalid-argument', 'invalid_argument_acceptApplication')
   }
 
-  const appDoc: SockbaseApplicationDocument = {
+  const voucher = payload.voucherId
+    ? await getVoucherAsync(payload.voucherId)
+    : undefined
+  if (voucher === null) {
+    throw new https.HttpsError('invalid-argument', 'voucher_not_found')
+  }
+
+  const paymentAmount = calculatePaymentAmount(space.price, voucher?.amount)
+  if (voucher !== undefined && paymentAmount.paymentAmount > 0 && payload.app.paymentMethod === 'voucher') {
+    throw new https.HttpsError('invalid-argument', 'voucher_not_usable')
+  }
+
+  const useVoucher = voucher
+    ? await useVoucherAsync(1, payload.app.eventId, payload.app.spaceId, voucher.id)
+    : null
+  if (useVoucher === false) {
+    throw new https.HttpsError('invalid-argument', 'voucher_not_usable')
+  }
+
+  const hashId = generateHashId(now)
+  const app: SockbaseApplicationDocument = {
     id: '',
     ...payload.app,
     circle: {
       ...payload.app.circle,
       hasAdult: event.permissions.allowAdult && payload.app.circle.hasAdult
     },
-    paymentMethod: (!event.permissions.canUseBankTransfer && 'online') || payload.app.paymentMethod,
+    paymentMethod: useVoucher
+      ? 'voucher'
+      : payload.app.paymentMethod,
     userId,
     createdAt: now,
     updatedAt: null,
-    hashId: null
+    hashId
   }
 
-  const addResult = await firestore.collection('_applications')
+  const appRef = firestore.collection('_applications')
     .withConverter(applicationConverter)
-    .add(appDoc)
-  const appId = addResult.id
+    .doc()
+  await appRef.set(app)
+
+  const appId = appRef.id
 
   await firestore
     .doc(`/_applications/${appId}/private/meta`)
@@ -116,38 +143,38 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     applicationId: appId,
     userId
   }
+
   await firestore
     .doc(`/_applicationOverviews/${appId}`)
     .withConverter(overviewConverter)
     .set(overview)
 
-  const bankTransferCode = PaymentService.generateBankTransferCode(now)
-  const paymentId = space.productInfo
-    ? await PaymentService.createPaymentAsync(
-      userId,
-      payload.app.paymentMethod === 'online' ? 1 : 2,
-      bankTransferCode,
-      space.productInfo.productId,
-      space.price,
-      'circle',
-      appId
-    )
-    : null
-
-  const hashId = generateHashId(now)
-  await firestore.doc(`/_applications/${appId}`)
-    .set({
-      hashId
-    }, {
-      merge: true
-    })
+  const bankTransferCode = generateBankTransferCode(now)
+  const createResult = await createCheckoutSessionAsync({
+    now,
+    userId,
+    orgId: event._organization.id,
+    paymentMethod: payload.app.paymentMethod === 'voucher'
+      ? 3
+      : payload.app.paymentMethod === 'online'
+        ? 1
+        : 2,
+    paymentAmount: paymentAmount.paymentAmount,
+    voucherAmount: paymentAmount.voucherAmount ?? 0,
+    totalAmount: paymentAmount.spaceAmount,
+    voucherId: voucher?.id ?? null,
+    bankTransferCode,
+    targetType: 'circle',
+    targetId: appId,
+    name: `${event.name} - ${space.name}`
+  })
 
   await firestore.doc(`/_applicationHashIds/${hashId}`)
     .set({
       userId,
       hashId,
       applicationId: appId,
-      paymentId,
+      paymentId: createResult?.paymentId,
       spaceId: null,
       eventId: payload.app.eventId,
       organizationId: event._organization.id
@@ -206,9 +233,10 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
     .then(() => console.log('sent webhook'))
     .catch(err => { throw err })
 
-  const result: SockbaseApplicationAddedResult = {
+  const result: SockbaseApplicationCreateResult = {
     hashId,
-    bankTransferCode
+    bankTransferCode,
+    checkoutRequest: createResult?.checkoutRequest ?? null
   }
 
   return result
@@ -216,7 +244,7 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
 
 const generateHashId = (now: Date): string => {
   const codeDigit = 12
-  const randomId = random.generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+  const randomId = generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
   const formatedDateTime = dayjs(now).tz().format('MMDD')
   const hashId = `SC${formatedDateTime}${randomId}`
   return hashId

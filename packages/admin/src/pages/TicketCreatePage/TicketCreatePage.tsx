@@ -22,7 +22,7 @@ import useFirebaseError from '../../hooks/useFirebaseError'
 import useStore from '../../hooks/useStore'
 import useValidate from '../../hooks/useValidate'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
-import type { SockbaseStoreDocument, SockbaseTicketCreatedResult } from 'sockbase'
+import type { SockbaseStoreDocument, SockbaseAdminTicketCreateResult } from 'sockbase'
 
 const TicketCreatePage: React.FC = () => {
   const { storeId } = useParams()
@@ -33,7 +33,7 @@ const TicketCreatePage: React.FC = () => {
 
   const [store, setStore] = useState<SockbaseStoreDocument>()
 
-  const [createdTickets, setCreatedTickets] = useState<SockbaseTicketCreatedResult[]>([])
+  const [createdTickets, setCreatedTickets] = useState<SockbaseAdminTicketCreateResult[]>([])
   const [createTicketData, setCreateTicketData] = useState<{ email: string | null, typeId: string }>({
     email: '',
     typeId: ''
@@ -128,7 +128,7 @@ const TicketCreatePage: React.FC = () => {
                 value={createTicketData.typeId}>
                 <option value="">チケット種別を選択してください</option>
                 {store?.types
-                  .filter(t => !t.productInfo)
+                  .filter(t => t.price === 0)
                   .map((t, i) => (
                     <option
                       key={t.id}

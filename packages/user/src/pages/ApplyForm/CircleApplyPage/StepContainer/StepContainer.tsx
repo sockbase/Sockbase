@@ -1,26 +1,29 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { type User } from 'firebase/auth'
+import { User } from 'firebase/auth'
 import sockbaseShared from 'shared'
+import CircleApplicationComplete from '../../../../components/CommonComplete/CircleApplicationComplete'
 import Alert from '../../../../components/Parts/Alert'
 import Loading from '../../../../components/Parts/Loading'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
+import useVoucher from '../../../../hooks/useVoucher'
 import CheckAccount from './CheckAccount'
-import CircleCut from './CircleCut'
-import Complete from './Complete'
 import Confirm from './Confirm'
 import Input from './Input'
 import Introduction from './Introduction'
 import Payment from './Payment'
+import ThankYouPayment from './ThankYouPayment'
 import type {
+  SockbaseVoucherCodeDocument,
   SockbaseAccount,
   SockbaseAccountSecure,
   SockbaseApplication,
-  SockbaseApplicationAddedResult,
+  SockbaseApplicationCreateResult,
   SockbaseApplicationDocument,
   SockbaseApplicationLinks,
   SockbaseApplicationPayload,
-  SockbaseEventDocument
+  SockbaseEventDocument,
+  SockbaseVoucherDocument
 } from 'sockbase'
 
 const stepProgresses = ['説明', '入力', '確認', '決済', '提出']
@@ -37,29 +40,40 @@ interface Props {
   logoutAsync: () => Promise<void>
   createUserAsync: (email: string, password: string) => Promise<User>
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
-  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationAddedResult>
+  submitApplicationAsync: (payload: SockbaseApplicationPayload) => Promise<SockbaseApplicationCreateResult>
   updateCircleCutFileAsync: (appHashId: string, circleCutFile: File) => Promise<void>
+  getVoucherCodeAsync: (eventId: string, typeId: string, code: string) => Promise<{ voucher: SockbaseVoucherDocument, voucherCode: SockbaseVoucherCodeDocument } | null>
 }
 const StepContainer: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
+  const { calculatePaymentAmount } = useVoucher()
 
   const [step, setStep] = useState(0)
 
   const [app, setApp] = useState<SockbaseApplication>()
   const [links, setLinks] = useState<SockbaseApplicationLinks>()
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
+  const [inputtedVoucherCode, setInputtedVoucherCode] = useState('')
+
+  const [voucher, setVoucher] = useState<SockbaseVoucherDocument | null>()
+  const [voucherCode, setVoucherCode] = useState<SockbaseVoucherCodeDocument | null>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
-  const [addedResult, setAddedResult] = useState<SockbaseApplicationAddedResult>()
-
-  const selectedGenre = useMemo(() => {
-    if (!props.event || !app) return
-    return props.event.genres.filter(g => g.id === app.circle.genre)[0]
-  }, [props.event, app])
+  const [addedResult, setAddedResult] = useState<SockbaseApplicationCreateResult>()
 
   const selectedSpace = useMemo(() => {
     if (!props.event || !app) return
     return props.event.spaces.filter(s => s.id === app.spaceId)[0]
+  }, [props.event, app])
+
+  const paymentAmount = useMemo(() => {
+    if (!selectedSpace) return
+    return calculatePaymentAmount(selectedSpace.price, voucher?.amount)
+  }, [selectedSpace, voucher])
+
+  const selectedGenre = useMemo(() => {
+    if (!props.event || !app) return
+    return props.event.genres.filter(g => g.id === app.circle.genre)[0]
   }, [props.event, app])
 
   const selectedPaymentMethod = useMemo(() => {
@@ -89,14 +103,29 @@ const StepContainer: React.FC<Props> = props => {
 
     setSubmitProgressPercent(50)
 
-    await props.submitApplicationAsync({ app, links })
+    await props.submitApplicationAsync({
+      app,
+      links,
+      voucherId: voucher?.id ?? null
+    })
       .then(async result => {
         setSubmitProgressPercent(100)
         setAddedResult(result)
         await (new Promise(resolve => setTimeout(resolve, 2000)))
       })
       .catch(err => { throw err })
-  }, [app, links, userData])
+  }, [app, links, voucher, userData])
+
+  const getVoucherCodeAsync = useCallback(async (typeId: string, code: string) => {
+    if (!props.event) return
+    const eventId = props.event.id
+    props.getVoucherCodeAsync(eventId, typeId, code)
+      .then(result => {
+        setVoucher(result?.voucher ?? null)
+        setVoucherCode(result?.voucherCode ?? null)
+      })
+      .catch(err => { throw err })
+  }, [props.event])
 
   useEffect(() => window.scrollTo(0, 0), [step])
 
@@ -121,19 +150,28 @@ const StepContainer: React.FC<Props> = props => {
         app={app}
         event={props.event}
         fetchedUserData={props.userData}
+        getVoucherByCodeAsync={getVoucherCodeAsync}
+        inputtedVoucherCode={inputtedVoucherCode}
         key="input"
         links={links}
-        nextStep={(a, l, u) => {
+        nextStep={(a, l, u, v) => {
           setApp(a)
           setLinks(l)
           setUserData(u)
           setStep(3)
+          setInputtedVoucherCode(v)
         }}
         pastAppLinks={props.pastAppLinks}
         pastApps={props.pastApps}
         pastEvents={props.pastEvents}
         prevStep={() => setStep(1)}
-        userData={userData} />,
+        resetVoucher={() => {
+          setVoucher(undefined)
+          setVoucherCode(undefined)
+        }}
+        userData={userData}
+        voucher={voucher}
+        voucherCode={voucherCode} />,
       <Confirm
         app={app}
         event={props.event}
@@ -141,6 +179,7 @@ const StepContainer: React.FC<Props> = props => {
         key="confirm"
         links={links}
         nextStep={() => setStep(4)}
+        paymentAmount={paymentAmount}
         prevStep={() => setStep(2)}
         selectedGenre={selectedGenre}
         selectedPaymentMethod={selectedPaymentMethod}
@@ -156,15 +195,15 @@ const StepContainer: React.FC<Props> = props => {
         nextStep={() => setStep(5)}
         selectedSpace={selectedSpace}
         user={props.user} />,
-      <CircleCut
+      <ThankYouPayment
         addedResult={addedResult}
         app={app}
         event={props.event}
         key="circle-cut"
         nextStep={() => setStep(6)} />,
-      <Complete
-        addedResult={addedResult}
+      <CircleApplicationComplete
         event={props.event}
+        hashId={addedResult?.hashId}
         key="complete" />
     ])
   }, [
@@ -178,12 +217,16 @@ const StepContainer: React.FC<Props> = props => {
     app,
     links,
     userData,
+    inputtedVoucherCode,
+    voucher,
+    voucherCode,
     selectedSpace,
     selectedGenre,
     selectedPaymentMethod,
     handleSubmitAsync,
     submitProgressPercent,
-    addedResult
+    addedResult,
+    paymentAmount
   ])
 
   const now = new Date().getTime()

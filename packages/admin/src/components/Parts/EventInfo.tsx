@@ -145,8 +145,6 @@ const EventInfo: React.FC<Props> = props => {
             <th style={{ width: '20%' }}>名前</th>
             <th style={{ width: '30%' }}>説明</th>
             <th>参加費</th>
-            <th>支払いURL</th>
-            <th>商品 ID</th>
             <th>通行証発券枚数</th>
             <th>2 スペース</th>
             <th>受入</th>
@@ -160,8 +158,6 @@ const EventInfo: React.FC<Props> = props => {
                 <td>{s.name}</td>
                 <td>{s.description}</td>
                 <td>{s.price.toLocaleString()}円</td>
-                <td>{s.productInfo?.paymentURL ?? '-'}</td>
-                <td>{s.productInfo?.productId ?? '-'}</td>
                 <td>{s.passCount?.toLocaleString() ?? 0}枚</td>
                 <td>{s.isDualSpace ? '2 スペース' : '-'}</td>
                 <td>{s.acceptApplication ? '受入' : '-'}</td>
