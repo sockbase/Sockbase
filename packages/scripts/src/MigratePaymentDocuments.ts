@@ -22,7 +22,6 @@ const main = async () => {
   // fs.mkdirSync('out', { recursive: true })
   // fs.writeFile('out/payments.json', JSON.stringify(paymentsWithId, null, 2), () => {})
 
-  // const targetPayments = mock.filter(p => p.status === 1 && p.paymentMethod === 1 && !p.updatedAt)
   const targetPayments = mock.filter(p => !p.voucherId)
     .map(p => ({
       id: p.id,
@@ -54,9 +53,9 @@ const main = async () => {
   //       voucherId: p.voucherId
   //     }, { merge: true })
 
-  //   const paymentHashRef = db.doc(`_paymentHashes/${p.hashId}`)
-  //   tx.set(paymentHashRef, { userId: p.userId, paymentId: p.id, hashId: p.hashId })
-  // })
+  //     const paymentHashRef = db.doc(`_paymentHashes/${p.hashId}`)
+  //     tx.set(paymentHashRef, { userId: p.userId, paymentId: p.id, hashId: p.hashId })
+  //   })
   // })
 }
 
