@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore'
 import { paymentConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
 import type { PaymentStatus, SockbasePaymentDocument } from 'sockbase'
@@ -29,7 +29,12 @@ const usePayment = (): IUsePayment => {
     useCallback(async (paymentId: string, status: PaymentStatus): Promise<void> => {
       const paymentRef = doc(db, `/_payments/${paymentId}`)
         .withConverter(paymentConverter)
-      await setDoc(paymentRef, { status }, { merge: true })
+      await setDoc(paymentRef, {
+        status,
+        checkoutStatus: status === 1 ? 2 : 0,
+        updatedAt: serverTimestamp(),
+        purchasedAt: status === 1 ? serverTimestamp() : null
+      }, { merge: true })
     }, [])
 
   return {
