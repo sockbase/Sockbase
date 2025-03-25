@@ -55,7 +55,7 @@ jobs:
             STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}\n\
             STRIPE_SECRET_KEY_NPJPNET=${{ secrets.STRIPE_SECRET_KEY_NPJPNET }}\n\
             FUNC_FIREBASE_PROJECT_ID=${{ vars.VITE_FIREBASE_PROJECT_ID }}\n\
-            FUNC_USER_APP_URL=${{ vars.VITE_USER_APP_URL }}\n
+            FUNC_USER_APP_URL=${{ vars.USER_APP_URL }}\n
             " >> ./packages/functions/.env
 
       - name: Deploy to firebase
