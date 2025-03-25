@@ -5,7 +5,7 @@ import { ref, uploadBytes } from 'firebase/storage'
 import { docLinkConverter, eventConverter, spaceConverter, spaceHashConverter } from '../libs/converters'
 import useFirebase from './useFirebase'
 import type {
-  SockbaseCirclePassCreatedResult,
+  SockbaseCirclePassCreateResult,
   SockbaseDocLink,
   SockbaseDocLinkDocument,
   SockbaseEvent,
@@ -15,6 +15,7 @@ import type {
 
 interface IUseEvent {
   getEventByIdAsync: (eventId: string) => Promise<SockbaseEventDocument>
+  getEventsAsync: () => Promise<SockbaseEventDocument[]>
   getEventsByOrganizationIdAsync: (organizationId: string) => Promise<SockbaseEventDocument[]>
   getSpaceByIdAsync: (spaceId: string) => Promise<SockbaseSpaceDocument>
   getSpaceByIdNullableAsync: (spaceId: string) => Promise<SockbaseSpaceDocument | null>
@@ -23,7 +24,7 @@ interface IUseEvent {
   addDocLinkAsync: (docLink: SockbaseDocLink) => Promise<string>
   updateDocLinkAsync: (docLink: SockbaseDocLinkDocument) => Promise<void>
   deleteDocLinkAsync: (eventId: string, docLinkId: string) => Promise<void>
-  createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreatedResult>
+  createPassesAsync: (eventId: string) => Promise<SockbaseCirclePassCreateResult>
   createEventAsync: (eventId: string, event: SockbaseEvent) => Promise<void>
   uploadEventEyecatchAsync: (eventId: string, eyecatchFile: File) => Promise<void>
 }
@@ -45,6 +46,16 @@ const useEvent = (): IUseEvent => {
       }
 
       return eventDoc.data()
+    }, [])
+
+  const getEventsAsync =
+    useCallback(async () => {
+      const eventsRef = collection(db, 'events')
+        .withConverter(eventConverter)
+      const eventsSnapshot = await getDocs(eventsRef)
+      const queryDocs = eventsSnapshot.docs
+        .map(doc => doc.data())
+      return queryDocs
     }, [])
 
   const getEventsByOrganizationIdAsync =
@@ -130,7 +141,7 @@ const useEvent = (): IUseEvent => {
 
   const createPassesAsync =
   useCallback(async (eventId: string) => {
-    const createPassesFunction = httpsCallable<string, SockbaseCirclePassCreatedResult>(
+    const createPassesFunction = httpsCallable<string, SockbaseCirclePassCreateResult>(
       functions,
       'event-createPasses')
     const createResult = await createPassesFunction(eventId)
@@ -153,6 +164,7 @@ const useEvent = (): IUseEvent => {
 
   return {
     getEventByIdAsync,
+    getEventsAsync,
     getEventsByOrganizationIdAsync,
     getSpaceByIdAsync,
     getSpaceByIdNullableAsync,

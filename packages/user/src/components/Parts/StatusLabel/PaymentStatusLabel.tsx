@@ -10,45 +10,47 @@ interface Props {
 }
 const PaymentStatusLabel: React.FC<Props> = props => {
   const statusTextLabel = useMemo(() => {
-    const paymentMethod = props.payment.paymentMethod === 1
-      ? 'オンライン決済'
-      : props.payment.paymentMethod === 2
-        ? '銀行振込'
-        : '-'
+    const paymentMethod = props.payment.paymentMethod === 3
+      ? 'バウチャー'
+      : props.payment.paymentMethod === 1
+        ? 'オンライン決済'
+        : props.payment.paymentMethod === 2
+          ? '銀行振込'
+          : '---'
     switch (props.payment.status) {
       case 0:
         return (
           <IconLabel
             icon={<MdOutlinePendingActions />}
-            label={`お支払い待ち（${paymentMethod}）`} />
+            label={`お支払い待ち (${paymentMethod})`} />
         )
 
       case 1:
         return (
           <IconLabel
             icon={<MdCheck />}
-            label={`お支払い済み（${paymentMethod}）`} />
+            label={`お支払い済み (${paymentMethod})`} />
         )
 
       case 2:
         return (
           <IconLabel
             icon={<MdUndo />}
-            label={`返金済み（${paymentMethod}）`} />
+            label={`返金済み (${paymentMethod})`} />
         )
 
       case 3:
         return (
           <IconLabel
             icon={<MdClose />}
-            label={`お支払い失敗（${paymentMethod}）`} />
+            label={`お支払い失敗 (${paymentMethod})`} />
         )
 
       case 4:
         return (
           <IconLabel
             icon={<MdClose />}
-            label={`キャンセル済み（${paymentMethod}）`} />
+            label={`キャンセル済み (${paymentMethod})`} />
         )
     }
   }, [props.payment])

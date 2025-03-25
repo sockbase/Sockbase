@@ -1,12 +1,3 @@
-import {
-  type SockbaseTicketDocument,
-  type SockbaseApplicationDocument,
-  type SockbasePaymentDocument,
-  type SockbaseInquiryDocument,
-  type SockbaseSendMailForEventPayload,
-  type SockbaseApplicationMeta,
-  type SockbaseAccountDocument
-} from 'sockbase'
 import mailConfig from '../configs/mail'
 import FirebaseAdmin from '../libs/FirebaseAdmin'
 import { getApplicaitonHashIdAsync, getApplicationByIdAsync, getApplicationMetaByAppIdAsync, getApplicationsByEventIdAsync } from '../models/application'
@@ -14,6 +5,16 @@ import { getEventByIdAsync } from '../models/event'
 import { getStoreByIdAsync } from '../models/store'
 import { getTicketByIdAsync } from '../models/ticket'
 import { getUserDataAsync } from '../models/user'
+import type {
+  SockbaseTicketDocument,
+  SockbaseApplicationDocument,
+  SockbasePaymentDocument,
+  SockbaseInquiryDocument,
+  SockbaseSendMailForEventPayload,
+  SockbaseApplicationMeta,
+  SockbaseAccountDocument,
+  PaymentStatus
+} from 'sockbase'
 
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
@@ -51,35 +52,39 @@ const sendMailUpdateUnionCircleAsync = async (app: SockbaseApplicationDocument):
 }
 
 const sendMailRequestPaymentAsync = async (payment: SockbasePaymentDocument): Promise<void> => {
+  if (payment.paymentAmount === 0) return
+
   const emailAddress = await getEmailAddress(payment.userId)
   const template = payment.applicationId
-    ? await requestCirclePaymentAsync(payment, payment.applicationId, emailAddress)
+    ? await requestCirclePaymentAsync(payment, payment.applicationId)
     : payment.ticketId
-      ? await requestTicketPaymentAsync(payment, payment.ticketId, emailAddress)
+      ? await requestTicketPaymentAsync(payment, payment.ticketId)
       : null
   if (!template) return
 
   await addQueueAsync(emailAddress, template)
 }
 
-const requestCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId: string, email: string): Promise<{ subject: string, body: string[] }> => {
+const requestCirclePaymentAsync = async (payment: SockbasePaymentDocument, appId: string): Promise<{ subject: string, body: string[] }> => {
   const app = await getApplicationByIdAsync(appId)
   const event = await getEventByIdAsync(app.eventId)
   const space = event.spaces.filter(s => s.id === app.spaceId)[0]
 
-  return mailConfig.templates.requestCirclePayment(payment, app, event, space, email)
+  return mailConfig.templates.requestCirclePayment(payment, app, event, space)
 }
 
-const requestTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticketId: string, email: string): Promise<{ subject: string, body: string[] }> => {
+const requestTicketPaymentAsync = async (payment: SockbasePaymentDocument, ticketId: string): Promise<{ subject: string, body: string[] }> => {
   const ticket = await getTicketByIdAsync(ticketId)
   const store = await getStoreByIdAsync(ticket.storeId)
   const type = store.types.filter(t => t.id === ticket.typeId)[0]
 
-  return mailConfig.templates.requestTicketPayment(payment, ticket, store, type, email)
+  return mailConfig.templates.requestTicketPayment(payment, ticket, store, type)
 }
 
-const sendMailAcceptPaymentAsync = async (payment: SockbasePaymentDocument): Promise<void> => {
-  if (payment.status !== 1) return
+const sendMailAcceptPaymentAsync = async (beforeStatus: PaymentStatus, payment: SockbasePaymentDocument): Promise<void> => {
+  if (beforeStatus === payment.status || payment.status !== 1 || payment.paymentAmount === 0) {
+    return
+  }
 
   const emailAddress = await getEmailAddress(payment.userId)
   const template = payment.applicationId

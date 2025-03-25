@@ -94,8 +94,6 @@ const StoreInfo: React.FC<Props> = props => {
             <th style={{ width: '25%' }}>タイプ名</th>
             <th style={{ width: '25%' }}>説明</th>
             <th style={{ width: '20%' }}>価格</th>
-            <th style={{ width: '10%' }}>支払い URL</th>
-            <th style={{ width: '10%' }}>商品 ID</th>
             <th>アナザーチケットストア ID</th>
             <th>アナザーチケットタイプ ID</th>
             <th>公開？</th>
@@ -112,8 +110,6 @@ const StoreInfo: React.FC<Props> = props => {
                 </td>
                 <td>{t.description}</td>
                 <td>{t.price.toLocaleString()}円</td>
-                <td>{t.productInfo?.paymentURL}</td>
-                <td>{t.productInfo?.productId}</td>
                 <td>{t.anotherTicket?.storeId}</td>
                 <td>{t.anotherTicket?.typeId}</td>
                 <td>{t.isPublic ? '公開' : '非公開'}</td>

@@ -7,12 +7,12 @@ import StoreService from './StoreService'
 import type {
   SockbaseAccountDocument,
   SockbaseApplicationMeta,
-  SockbaseCirclePassCreatedResult,
+  SockbaseCirclePassCreateResult,
   SockbaseStoreDocument,
   SockbaseStoreType
 } from 'sockbase'
 
-const createPassesAsync = async (userId: string, eventId: string): Promise<SockbaseCirclePassCreatedResult> => {
+const createPassesAsync = async (userId: string, eventId: string): Promise<SockbaseCirclePassCreateResult> => {
   const now = new Date()
 
   const event = await getEventByIdAsync(eventId)
@@ -89,6 +89,10 @@ const createPassesAsync = async (userId: string, eventId: string): Promise<Sockb
         type,
         1,
         false,
+        0,
+        0,
+        0,
+        null,
         now,
         userId
       )
@@ -104,6 +108,10 @@ const createPassesAsync = async (userId: string, eventId: string): Promise<Sockb
           anotherTicketType,
           1,
           true,
+          0,
+          0,
+          0,
+          null,
           now,
           userId
         )
@@ -117,7 +125,7 @@ const createPassesAsync = async (userId: string, eventId: string): Promise<Sockb
         : 0
     }
   }))
-    .then(addedResults => addedResults.reduce<SockbaseCirclePassCreatedResult>(
+    .then(addedResults => addedResults.reduce<SockbaseCirclePassCreateResult>(
       (p, c) => ({
         circlePassCount: p.circlePassCount + c.circlePassCount,
         anotherTicketCount: p.anotherTicketCount + c.anotherTicketCount

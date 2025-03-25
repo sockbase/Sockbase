@@ -10,7 +10,10 @@ const RequiredLogin: React.FC = () => {
 
   useEffect((): void => {
     if (isLoggedIn === undefined) return
-    if (!isLoggedIn) navigate('/', { state: { from: location }, replace: true })
+    if (!isLoggedIn) {
+      const searchParams = location.search
+      navigate(`/?redirect=${encodeURIComponent(location.pathname + searchParams)}`, { replace: true })
+    }
   }, [isLoggedIn])
 
   return null

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { MdCheck, MdClose, MdCreditCard, MdOutlineQuestionMark, MdPayments, MdPendingActions } from 'react-icons/md'
+import { MdCheck, MdClose, MdCreditCard, MdLocalActivity, MdOutlineQuestionMark, MdPayments, MdPendingActions } from 'react-icons/md'
 import { SiAmericanexpress, SiJcb, SiMastercard, SiVisa } from 'react-icons/si'
 import styled from 'styled-components'
 import BlinkField from '../Parts/BlinkField'
@@ -7,7 +7,7 @@ import IconLabel from '../Parts/IconLabel'
 import type { PaymentStatus, SockbasePaymentDocument } from 'sockbase'
 
 interface Props {
-  payment: SockbasePaymentDocument | undefined
+  payment: SockbasePaymentDocument | null | undefined
   isShowBrand?: boolean
   isOnlyIcon?: boolean
 }
@@ -49,8 +49,8 @@ const PaymentStatusLabel: React.FC<Props> = props => {
 
   const icon2Element = useMemo(() => {
     if (!props.isShowBrand) return
-    if (props.payment?.paymentResult?.cardBrand) {
-      switch (props.payment.paymentResult.cardBrand) {
+    if (props.payment?.cardBrand) {
+      switch (props.payment.cardBrand) {
         case 'visa':
           return <SiVisa />
         case 'mastercard':
@@ -69,6 +69,8 @@ const PaymentStatusLabel: React.FC<Props> = props => {
           return <MdCreditCard />
         case 2:
           return <MdPayments />
+        case 3:
+          return <MdLocalActivity />
         default:
           return <MdOutlineQuestionMark />
       }
@@ -76,19 +78,21 @@ const PaymentStatusLabel: React.FC<Props> = props => {
   }, [props.payment])
 
   return (
-    props.payment?.status !== undefined
-      ? (
-        <Container status={props.payment.status}>
-          <IconLabel
-            icon={iconElement}
-            icon2={icon2Element}
-            isOnlyIcon={props.isOnlyIcon}
-            label={labelText} />
-        </Container>
-      )
-      : (
-        <BlinkField />
-      )
+    props.payment !== null
+      ? props.payment?.status !== undefined
+        ? (
+          <Container status={props.payment.status}>
+            <IconLabel
+              icon={iconElement}
+              icon2={icon2Element}
+              isOnlyIcon={props.isOnlyIcon}
+              label={labelText} />
+          </Container>
+        )
+        : (
+          <BlinkField />
+        )
+      : <>不要</>
   )
 }
 

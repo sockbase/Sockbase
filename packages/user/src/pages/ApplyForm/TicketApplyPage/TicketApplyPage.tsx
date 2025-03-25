@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import useFirebase from '../../../hooks/useFirebase'
 import useStore from '../../../hooks/useStore'
 import useUserData from '../../../hooks/useUserData'
+import useVoucher from '../../../hooks/useVoucher'
 import DefaultBaseLayout from '../../../layouts/DefaultBaseLayout/DefaultBaseLayout'
 import StepContainer from './StepContainer/StepContainer'
 import type { SockbaseAccount, SockbaseStoreDocument } from 'sockbase'
@@ -17,6 +18,7 @@ const TicketApplyPage: React.FC = () => {
   } = useFirebase()
   const { getStoreByIdOptionalAsync, createTicketAsync } = useStore()
   const { updateUserDataAsync, getMyUserDataAsync } = useUserData()
+  const { getVoucherByCodeAsync } = useVoucher()
 
   const [store, setStore] = useState<SockbaseStoreDocument | null>()
 
@@ -35,6 +37,10 @@ const TicketApplyPage: React.FC = () => {
   const handleLogoutAsync = useCallback(async () => {
     logoutAsync()
       .catch(err => { throw err })
+  }, [])
+
+  const handleGetVoucherCodeAsync = useCallback(async (eventId: string, typeId: string, code: string) => {
+    return getVoucherByCodeAsync(2, eventId, typeId, code)
   }, [])
 
   useEffect(() => {
@@ -67,6 +73,7 @@ const TicketApplyPage: React.FC = () => {
       <StepContainer
         createTicketAsync={createTicketAsync}
         createUserAsync={createUserAsync}
+        getVoucherCodeAsync={handleGetVoucherCodeAsync}
         loginAsync={handleLoginAsync}
         logoutAsync={handleLogoutAsync}
         store={store}

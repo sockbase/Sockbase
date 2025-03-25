@@ -51,10 +51,6 @@ export interface SockbaseEventSpace {
   name: string
   description: string
   price: number
-  productInfo: {
-    productId: string
-    paymentURL: string
-  } | null
   isDualSpace: boolean
   passCount?: number
   acceptApplication: boolean | null
@@ -111,10 +107,6 @@ export interface SockbaseStoreType {
   name: string
   description: string
   price: number
-  productInfo: {
-    productId: string
-    paymentURL: string
-  } | null
   color: string
   isPublic: boolean
   anotherTicket: {
@@ -194,9 +186,10 @@ export type SockbaseApplicationDocument = SockbaseApplication & {
 /**
  * サークル申し込み作成リザルト
  */
-export interface SockbaseApplicationAddedResult {
+export interface SockbaseApplicationCreateResult {
   hashId: string
   bankTransferCode: string
+  checkoutRequest: SockbaseCheckoutRequest | null
 }
 
 /**
@@ -271,6 +264,7 @@ export interface SockbaseApplicationHashIdDocument {
 export interface SockbaseApplicationPayload {
   app: SockbaseApplication
   links: SockbaseApplicationLinks
+  voucherId: string | null
 }
 
 /**
@@ -384,17 +378,26 @@ export interface SockbaseTicketHashIdDocument {
 }
 
 /**
+ * チケット申し込みペイロード
+ */
+export interface SockbaseTicketApplyPayload {
+  ticket: SockbaseTicket
+  voucherId: string | null
+}
+
+/**
  * チケット作成リザルト
  */
-export interface SockbaseTicketAddedResult {
+export interface SockbaseTicketCreateResult {
   hashId: string
   bankTransferCode: string
+  checkoutRequest: SockbaseCheckoutRequest | null
 }
 
 /**
  * チケット作成リザルト(管理用)
  */
-export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
+export type SockbaseAdminTicketCreateResult = Omit<SockbaseTicketDocument, 'createdAt' | 'updatedAt'> & {
   email: string
   createdAt: number
 }
@@ -402,7 +405,7 @@ export type SockbaseTicketCreatedResult = Omit<SockbaseTicketDocument, 'createdA
 /**
  * サークル通行証発行リザルト
  */
-export interface SockbaseCirclePassCreatedResult {
+export interface SockbaseCirclePassCreateResult {
   circlePassCount: number
   anotherTicketCount: number
 }
@@ -456,8 +459,9 @@ export type SockbaseRole = 0 | 1 | 2
  *
  * online: 1
  * bankTransfer: 2
+ * voucher: 3
  */
-export type PaymentMethod = 1 | 2
+export type PaymentMethod = 1 | 2 | 3
 
 /**
  * 決済ステータス
@@ -475,18 +479,14 @@ export type PaymentStatus = 0 | 1 | 2 | 3 | 4
  */
 export interface SockbasePayment {
   userId: string
-  paymentProductId: string
   paymentMethod: PaymentMethod
   paymentAmount: number
+  totalAmount: number
+  voucherAmount: number
+  voucherId: string | null
   bankTransferCode: string
   applicationId: string | null
   ticketId: string | null
-  paymentResult: SockbasePaymentResult | null
-}
-
-export interface SockbasePaymentResult {
-  cardBrand: string | null
-  receiptURL: string | null
 }
 
 /**
@@ -494,10 +494,27 @@ export interface SockbasePaymentResult {
  */
 export type SockbasePaymentDocument = SockbasePayment & {
   id: string
-  paymentId: string
+  hashId: string
+  checkoutSessionId: string
+  paymentIntentId: string
   status: PaymentStatus
+  checkoutStatus: CheckoutStatus
+  cardBrand: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  purchasedAt: Date | null
+}
+
+/**
+ * 決済ハッシュ情報
+ */
+export interface SockbasePaymentHash {
+  userId: string
+  paymentId: string
+  hashId: string
+}
+export type SockbasePaymentHashDocument = SockbasePaymentHash & {
+  id: string
 }
 
 /**
@@ -629,4 +646,98 @@ export interface SockbaseDocLink {
  */
 export type SockbaseDocLinkDocument = SockbaseDocLink & {
   id: string
+}
+
+/**
+ * 決済リクエスト
+ */
+export interface SockbaseCheckoutRequest {
+  paymentMethod: PaymentMethod
+  checkoutURL: string
+  amount: number
+}
+
+/**
+ * 決済情報取得ペイロード
+ */
+export interface SockbaseCheckoutGetPayload {
+  sessionId: string
+}
+
+/**
+ * 決済結果
+ */
+export interface SockbaseCheckoutResult {
+  status: CheckoutStatus | -1
+  applicaitonHashId: string | null
+  ticketHashId: string | null
+}
+
+/**
+ * 決済要求ステータス
+ * 0: 開始 (決済要求を作成した)
+ * 1: 決済完了
+ * 2: 終了 (決済完了ページを踏んだ)
+ */
+export type CheckoutStatus = 0 | 1 | 2
+
+/**
+ * バウチャー
+ */
+export interface SockbaseVoucher {
+  amount: number | null
+  targetType: VoucherTargetType
+  targetId: string
+  targetTypeId: string | null
+  usedCount: number
+  usedCountLimit: number | null
+}
+
+/**
+ * バウチャー(DB取得)
+ */
+export type SockbaseVoucherDocument = SockbaseVoucher & {
+  id: string
+  createdAt: Date
+  updatedAt: Date | null
+}
+
+/**
+ * バウチャーコード
+ */
+export interface SockbaseVoucherCode {
+  voucherId: string
+}
+
+/**
+ * バウチャーコード(DB取得)
+ */
+export type SockbaseVoucherCodeDocument = SockbaseVoucherCode & {
+  id: string
+}
+
+/**
+ * バウチャー対象
+ * 1: イベント
+ * 2: チケットストア
+ */
+export type VoucherTargetType = 1 | 2
+
+/**
+ * 領収書設定
+ */
+export interface SockbaseReceiptConfig {
+  name: string
+  websiteURL: string
+  email: string
+  registrationNumber: string
+}
+
+/**
+ * バウチャー計算
+ */
+export interface VoucherAppliedAmount {
+  spaceAmount: number,
+  voucherAmount: number | null,
+  paymentAmount: number
 }

@@ -5,6 +5,7 @@ import {
   MdHome,
   MdInbox,
   MdInfo,
+  MdLocalActivity,
   MdLogin,
   MdLogout,
   MdManageAccounts,
@@ -40,6 +41,7 @@ const menuLinks = [
     requireCommonRole: null,
     requireSystemRole: 2,
     items: [
+      { to: '/vouchers', icon: <MdLocalActivity />, label: 'バウチャー管理' },
       { to: '/inquiries', icon: <MdInbox />, label: '問い合わせ管理' },
       { to: '/informations', icon: <MdInfo />, label: 'お知らせ管理' },
       { to: '/users', icon: <MdManageAccounts />, label: 'ユーザ管理' },

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   MdAddCircleOutline,
   MdDataset,
-  MdHowToReg,
   MdOpenInNew,
   MdRefresh,
   MdStore
@@ -399,14 +398,14 @@ const StoreViewPage: React.FC = () => {
                 </td>
                 <td>
                   {ticket.hashId && ticketUsers?.[ticket.hashId]?.isStandalone
-                    ? <MdHowToReg />
+                    ? '(スタンドアロン)'
                     : ticket.hashId && ticketUsers && ticket.userId && userDataSet
                       ? userDataSet[ticket.userId].name
                       : <BlinkField />}
                 </td>
                 <td>
                   {ticket.hashId && ticketUsers?.[ticket.hashId]?.isStandalone
-                    ? <MdHowToReg />
+                    ? '(スタンドアロン)'
                     : ticket.hashId && ticketUsers && ticketUsers[ticket.hashId]?.userId && userDataSet
                       ? userDataSet[ticketUsers[ticket.hashId].userId ?? ''].name
                       : <BlinkField />}

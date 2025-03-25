@@ -57,7 +57,8 @@ service cloud.firestore {
     }
     
     match /stores/{storeId} {
-      allow read: if isOrganizationStaff(request.auth.uid, resource.data._organization.id) || resource.data.isPublic;
+      allow read: if isSystemAdmin(request.auth.uid)
+        || isOrganizationStaff(request.auth.uid, resource.data._organization.id) || resource.data.isPublic;
       allow write: if isSystemAdmin(request.auth.uid);
 
       match /_users/{userId} {
@@ -69,7 +70,8 @@ service cloud.firestore {
     }
     
   	match /events/{eventId} {
-    	allow read: if isOrganizationStaff(request.auth.uid, resource.data._organization.id) || resource.data.isPublic;
+    	allow read: if isSystemAdmin(request.auth.uid)
+        || isOrganizationStaff(request.auth.uid, resource.data._organization.id) || resource.data.isPublic;
       allow write: if isSystemAdmin(request.auth.uid);
 
       match /_users/{userId} {
@@ -217,6 +219,11 @@ service cloud.firestore {
       allow delete: if isSystemAdmin(request.auth.uid);
     }
 
+    match /_paymentHashes/{hashId} {
+      allow read: if request.auth.uid == resource.data.userId || isSystemAdmin(request.auth.uid);
+      allow delete: if isSystemAdmin(request.auth.uid);
+    }
+
     match /_inquiries/{inquiryId} {
       allow create: if request.auth.uid == request.resource.data.userId;
       allow read: if isSystemAdmin(request.auth.uid);
@@ -230,6 +237,22 @@ service cloud.firestore {
     match /informations/{informationId} {
       allow read: if resource.data.isPublished
         || isSystemAdmin(request.auth.uid);
+      allow write: if isSystemAdmin(request.auth.uid);
+    }
+
+    match /configs/{configId} {
+      allow read: if request.auth != null;
+      allow write: if isSystemAdmin(request.auth.uid);
+    }
+
+    match /vouchers/{voucherId} {
+      allow get: if request.auth != null;
+      allow write: if isSystemAdmin(request.auth.uid);
+    }
+
+    match /voucherCodes/{code} {
+      allow get: if request.auth != null;
+      allow list: if isSystemAdmin(request.auth.uid);
       allow write: if isSystemAdmin(request.auth.uid);
     }
     

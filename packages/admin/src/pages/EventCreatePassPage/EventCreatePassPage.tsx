@@ -14,7 +14,7 @@ import TwoColumnLayout from '../../components/TwoColumnLayout'
 import useApplication from '../../hooks/useApplication'
 import useEvent from '../../hooks/useEvent'
 import DefaultLayout from '../../layouts/DefaultLayout/DefaultLayout'
-import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseCirclePassCreatedResult, SockbaseEvent } from 'sockbase'
+import type { SockbaseApplicationDocument, SockbaseApplicationMeta, SockbaseCirclePassCreateResult, SockbaseEvent } from 'sockbase'
 
 const EventCreatePassPage: React.FC = () => {
   const { eventId } = useParams()
@@ -30,7 +30,7 @@ const EventCreatePassPage: React.FC = () => {
   const [apps, setApps] = useState<Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
 
   const [isProgress, setProgress] = useState(false)
-  const [addedResult, setAddedResult] = useState<SockbaseCirclePassCreatedResult>()
+  const [addedResult, setAddedResult] = useState<SockbaseCirclePassCreateResult>()
 
   const getPassCount = useCallback((spaceId: string | null) => {
     if (!event || !apps) return

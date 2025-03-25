@@ -1,17 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import sockbaseShared from 'shared'
+import TicketApplicationComplete from '../../../../components/CommonComplete/TicketApplicationComplete'
 import Alert from '../../../../components/Parts/Alert'
 import Loading from '../../../../components/Parts/Loading'
 import StepProgress from '../../../../components/Parts/StepProgress'
 import useDayjs from '../../../../hooks/useDayjs'
+import useVoucher from '../../../../hooks/useVoucher'
 import CheckAccount from './CheckAccount'
-import Complete from './Complete'
 import Confirm from './Confirm'
 import Input from './Input'
 import Introduction from './Introduction'
 import Payment from './Payment'
 import type { User } from 'firebase/auth'
-import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket, SockbaseTicketAddedResult } from 'sockbase'
+import type { SockbaseAccount, SockbaseAccountSecure, SockbaseStoreDocument, SockbaseTicket, SockbaseTicketApplyPayload, SockbaseTicketCreateResult, SockbaseVoucherCodeDocument, SockbaseVoucherDocument } from 'sockbase'
 
 const stepProgresses = ['説明', '入力', '確認', '決済', '完了']
 
@@ -23,23 +24,34 @@ interface Props {
   logoutAsync: () => Promise<void>
   createUserAsync: (email: string, password: string) => Promise<User>
   updateUserDataAsync: (userId: string, userData: SockbaseAccount) => Promise<void>
-  createTicketAsync: (ticket: SockbaseTicket) => Promise<SockbaseTicketAddedResult>
+  createTicketAsync: (payload: SockbaseTicketApplyPayload) => Promise<SockbaseTicketCreateResult>
+  getVoucherCodeAsync: (storeId: string, typeId: string, code: string) => Promise<{ voucher: SockbaseVoucherDocument, voucherCode: SockbaseVoucherCodeDocument } | null>
 }
 const StepContainer: React.FC<Props> = props => {
   const { formatByDate } = useDayjs()
+  const { calculatePaymentAmount } = useVoucher()
 
   const [step, setStep] = useState(0)
 
   const [ticket, setTicket] = useState<SockbaseTicket>()
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
+  const [inputtedVoucherCode, setInputtedVoucherCode] = useState('')
+
+  const [voucher, setVoucher] = useState<SockbaseVoucherDocument | null>()
+  const [voucherCode, setVoucherCode] = useState<SockbaseVoucherCodeDocument | null>()
 
   const [submitProgressPercent, setSubmitProgressPercent] = useState(0)
-  const [addedResult, setAddedResult] = useState<SockbaseTicketAddedResult>()
+  const [addedResult, setAddedResult] = useState<SockbaseTicketCreateResult>()
 
   const selectedType = useMemo(() => {
     if (!props.store || !ticket) return
     return props.store.types.filter(t => t.id === ticket.typeId)[0]
   }, [props.store, ticket])
+
+  const paymentAmount = useMemo(() => {
+    if (!selectedType) return
+    return calculatePaymentAmount(selectedType.price, voucher?.amount)
+  }, [selectedType, voucher])
 
   const selectedPaymentMethod = useMemo(() => {
     if (!ticket) return
@@ -68,13 +80,27 @@ const StepContainer: React.FC<Props> = props => {
 
     setSubmitProgressPercent(50)
 
-    await props.createTicketAsync(ticket)
+    await props.createTicketAsync({
+      ticket,
+      voucherId: voucher?.id ?? null
+    })
       .then(async result => {
         setAddedResult(result)
         setSubmitProgressPercent(100)
         await (new Promise(resolve => setTimeout(resolve, 2000)))
       })
-  }, [props.user, props.userData, ticket, userData])
+  }, [props.user, props.userData, ticket, userData, voucher])
+
+  const getVoucherCodeAsync = useCallback(async (typeId: string, code: string) => {
+    if (!props.store) return
+    const storeId = props.store.id
+    props.getVoucherCodeAsync(storeId, typeId, code)
+      .then(result => {
+        setVoucher(result?.voucher ?? null)
+        setVoucherCode(result?.voucherCode ?? null)
+      })
+      .catch(err => { throw err })
+  }, [props.store])
 
   useEffect(() => window.scrollTo(0, 0), [step])
 
@@ -94,20 +120,30 @@ const StepContainer: React.FC<Props> = props => {
         store={props.store} />,
       <Input
         fetchedUserData={props.userData}
+        getVoucherByCodeAsync={getVoucherCodeAsync}
+        inputtedVoucherCode={inputtedVoucherCode}
         key="input"
-        nextStep={(t, u) => {
+        nextStep={(t, u, v) => {
           setTicket(t)
           setUserData(u)
+          setInputtedVoucherCode(v)
           setStep(3)
         }}
         prevStep={() => setStep(1)}
+        resetVoucher={() => {
+          setVoucher(undefined)
+          setVoucherCode(undefined)
+        }}
         store={props.store}
         ticket={ticket}
-        userData={userData} />,
+        userData={userData}
+        voucher={voucher}
+        voucherCode={voucherCode} />,
       <Confirm
         fetchedUserData={props.userData}
         key="confirm"
         nextStep={() => setStep(4)}
+        paymentAmount={paymentAmount}
         prevStep={() => setStep(2)}
         selectedPaymentMethod={selectedPaymentMethod}
         selectedType={selectedType}
@@ -123,8 +159,8 @@ const StepContainer: React.FC<Props> = props => {
         store={props.store}
         ticket={ticket}
         user={props.user} />,
-      <Complete
-        addedResult={addedResult}
+      <TicketApplicationComplete
+        hashId={addedResult?.hashId}
         key="complete" />
     ])
   }, [
@@ -136,7 +172,12 @@ const StepContainer: React.FC<Props> = props => {
     selectedType,
     selectedPaymentMethod,
     submitProgressPercent,
-    addedResult
+    paymentAmount,
+    addedResult,
+    inputtedVoucherCode,
+    voucher,
+    voucherCode,
+    getVoucherCodeAsync
   ])
 
   const now = new Date().getTime()
