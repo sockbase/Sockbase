@@ -30,6 +30,7 @@ import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import TwoColumnLayout from '../../components/TwoColumnLayout'
 import envHelper from '../../helpers/envHelper'
 import useApplication from '../../hooks/useApplication'
+import useDayjs from '../../hooks/useDayjs'
 import useEvent from '../../hooks/useEvent'
 import usePayment from '../../hooks/usePayment'
 import useRole from '../../hooks/useRole'
@@ -54,6 +55,7 @@ const CircleViewPage: React.FC = () => {
   const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
   const { isSystemAdmin } = useRole()
+  const { formatByDate } = useDayjs()
 
   const [appHash, setAppHash] = useState<SockbaseApplicationHashIdDocument>()
   const [event, setEvent] = useState<SockbaseEventDocument>()
@@ -246,6 +248,10 @@ const CircleViewPage: React.FC = () => {
                     )
                     : <BlinkField />}
                 </td>
+              </tr>
+              <tr>
+                <th>申し込み日時</th>
+                <td>{app ? formatByDate(app.createdAt) : <BlinkField />}</td>
               </tr>
               <tr>
                 <th>内部 ID</th>
