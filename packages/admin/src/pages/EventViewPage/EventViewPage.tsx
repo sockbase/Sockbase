@@ -27,6 +27,7 @@ import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStat
 import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
 import envHelper from '../../helpers/envHelper'
 import useApplication from '../../hooks/useApplication'
+import useDayjs from '../../hooks/useDayjs'
 import useEvent from '../../hooks/useEvent'
 import usePayment from '../../hooks/usePayment'
 import useUserData from '../../hooks/useUserData'
@@ -51,6 +52,7 @@ const EventViewPage: React.FC = () => {
   } = useApplication()
   const { getPaymentByIdAsync } = usePayment()
   const { getUserDataByUserIdAndEventIdAsync } = useUserData()
+  const { formatByDate } = useDayjs()
 
   const [event, setEvent] = useState<SockbaseEventDocument>()
   const [apps, setApps] = useState<Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
@@ -235,6 +237,7 @@ const EventViewPage: React.FC = () => {
             <th>スペース</th>
             <th>ID</th>
             <th>責任者</th>
+            <th>申し込み日時</th>
           </tr>
         </thead>
         <tbody>
@@ -268,6 +271,7 @@ const EventViewPage: React.FC = () => {
               <td>{getSpaceType(app.spaceId)?.name}</td>
               <td><Link to={`/circles/${app.hashId}`}>{app.hashId ?? '---'}</Link></td>
               <td>{userDataSet?.[app.userId].name ?? <BlinkField />}</td>
+              <td>{app ? formatByDate(app.createdAt) : <BlinkField />} </td>
             </tr>
           ))}
         </tbody>
