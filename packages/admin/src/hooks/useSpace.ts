@@ -121,7 +121,8 @@ const useSpace = (): IUseSpace => {
             a.circle.hasAdult ? '有り' : '無し',
             genre?.name ?? a.circle.genre,
             overview?.description ?? a.overview.description,
-            overview?.totalAmount ?? a.overview.totalAmount
+            overview?.totalAmount ?? a.overview.totalAmount,
+            a.remarks
           ]
         })
 
@@ -140,7 +141,8 @@ const useSpace = (): IUseSpace => {
           '成人向け',
           'ジャンル',
           '頒布物概要',
-          '総搬入量'
+          '総搬入量',
+          '通信欄'
         ],
         ...appsArray
       ])
