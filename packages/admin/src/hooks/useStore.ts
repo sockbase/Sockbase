@@ -12,6 +12,8 @@ interface IUseStore {
   getStoresByOrganizationIdAsync: (organizationId: string) => Promise<SockbaseStoreDocument[]>
   getTicketByIdAsync: (ticketId: string) => Promise<SockbaseTicketDocument>
   getTicketIdByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketHashIdDocument>
+  getTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketDocument[]>
+  getUsableTicketsByUserIdAsync: (userId: string) => Promise<SockbaseTicketUserDocument[]>
   getTicketsByStoreIdAsync: (storeId: string) => Promise<SockbaseTicketDocument[]>
   getTicketMetaByIdAsync: (ticketId: string) => Promise<SockbaseTicketMeta>
   getTicketUserByHashIdAsync: (ticketHashId: string) => Promise<SockbaseTicketUserDocument>
@@ -87,6 +89,42 @@ const useStore = (): IUseStore => {
         throw new Error('store not found')
       }
       return ticketDoc.data()
+    }, [])
+
+  const getTicketsByUserIdAsync =
+  async (userId: string): Promise<SockbaseTicketDocument[]> => {
+    const db = getFirestore()
+    const ticketsRef = collection(db, '_tickets')
+      .withConverter(ticketConverter)
+
+    const ticketsQuery = query(
+      ticketsRef,
+      where('userId', '==', userId)
+    )
+    const ticketsSnapshot = await getDocs(ticketsQuery)
+    const ticketsDocs = ticketsSnapshot.docs
+      .filter(doc => doc.exists())
+      .map(doc => doc.data())
+
+    return ticketsDocs
+  }
+
+  const getUsableTicketsByUserIdAsync =
+    useCallback(async (userId: string): Promise<SockbaseTicketUserDocument[]> => {
+      const db = getFirestore()
+      const ticketUsersRef = collection(db, '_ticketUsers')
+        .withConverter(ticketUserConverter)
+
+      const ticketUsersQuery = query(
+        ticketUsersRef,
+        where('usableUserId', '==', userId)
+      )
+      const ticketUsersSnapshot = await getDocs(ticketUsersQuery)
+      const ticketUsersDocs = ticketUsersSnapshot.docs
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
+
+      return ticketUsersDocs
     }, [])
 
   const getTicketsByStoreIdAsync =
@@ -229,6 +267,8 @@ const useStore = (): IUseStore => {
     getStoresByOrganizationIdAsync,
     getTicketByIdAsync,
     getTicketIdByHashIdAsync,
+    getTicketsByUserIdAsync,
+    getUsableTicketsByUserIdAsync,
     getTicketsByStoreIdAsync,
     getTicketMetaByIdAsync,
     getTicketUserByHashIdAsync,
