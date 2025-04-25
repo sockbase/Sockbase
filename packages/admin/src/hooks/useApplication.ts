@@ -22,6 +22,7 @@ interface IUseApplication {
   getApplicationIdByHashIdAsync: (appHashId: string) => Promise<SockbaseApplicationHashIdDocument>
   getApplicationByIdAsync: (appId: string) => Promise<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
   getApplicationsByEventIdAsync: (eventId: string) => Promise<Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>
+  getApplicationsByUserIdAsync: (userId: string) => Promise<SockbaseApplicationDocument[]>
   getLinksByApplicationIdAsync: (appId: string) => Promise<SockbaseApplicationLinksDocument | null>
   setApplicationStatusByIdAsync: (appId: string, status: SockbaseApplicationStatus) => Promise<void>
   deleteApplicationAsync: (appHashId: string) => Promise<void>
@@ -93,6 +94,23 @@ const useApplication = (): IUseApplication => {
         .catch(err => { throw err })
       return apps
     }, [])
+
+  const getApplicationsByUserIdAsync =
+    async (userId: string): Promise<SockbaseApplicationDocument[]> => {
+      const db = getFirestore()
+      const appsRef = collection(db, '_applications')
+        .withConverter(applicationConverter)
+
+      const appsQuery = query(
+        appsRef,
+        where('userId', '==', userId))
+      const querySnapshot = await getDocs(appsQuery)
+      const queryDocs = querySnapshot.docs
+        .filter(doc => doc.exists())
+        .map(doc => doc.data())
+
+      return queryDocs
+    }
 
   const getLinksByApplicationIdAsync =
     useCallback(async (appId: string): Promise<SockbaseApplicationLinksDocument | null> => {
@@ -180,6 +198,7 @@ const useApplication = (): IUseApplication => {
     getApplicationIdByHashIdAsync,
     getApplicationByIdAsync,
     getApplicationsByEventIdAsync,
+    getApplicationsByUserIdAsync,
     getLinksByApplicationIdAsync,
     setApplicationStatusByIdAsync,
     deleteApplicationAsync,
