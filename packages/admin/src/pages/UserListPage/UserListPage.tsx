@@ -46,7 +46,7 @@ const UserListPage: React.FC = () => {
           )}
           {users?.map(user => (
             <tr key={user.id}>
-              <td>{user.id}</td>
+              <td><Link to={user.id}>{user.id}</Link></td>
               <td>{user.name}</td>
               <td>{user.email}</td>
             </tr>
