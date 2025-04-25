@@ -25,6 +25,7 @@ import PageTitle from '../../components/Parts/PageTitle'
 import SortButton from '../../components/Parts/SortButton'
 import ApplicationStatusLabel from '../../components/StatusLabel/ApplicationStatusLabel'
 import PaymentStatusLabel from '../../components/StatusLabel/PaymentStatusLabel'
+import TwoColumnLayout from '../../components/TwoColumnLayout'
 import envHelper from '../../helpers/envHelper'
 import useApplication from '../../hooks/useApplication'
 import useDayjs from '../../hooks/useDayjs'
@@ -62,6 +63,21 @@ const EventViewPage: React.FC = () => {
   const [payments, setPayments] = useState<Record<string, SockbasePaymentDocument>>()
 
   const [isActiveSort, setIsActiveSort] = useState(false)
+
+  const aggregatedApps = useMemo(() => {
+    if (!event || !apps) return
+    const confirmedCircle = apps.filter(a => a.meta.applicationStatus === 2)
+    return {
+      totalCircleCount: apps.filter(a => a.meta.applicationStatus !== 1).length,
+      confirmedCircleCount: confirmedCircle.length,
+      confirmedSpaceCount: confirmedCircle
+        .reduce((p, c) => {
+          const space = event.spaces.find(s => s.id === c.spaceId)
+          const spaceCount = space?.isDualSpace ? 2 : 1
+          return p + spaceCount
+        }, 0)
+    }
+  }, [event, apps])
 
   const getSpace = useCallback((appHashId: string) => {
     const app = appHashes?.find(app => app.hashId === appHashId)
@@ -218,6 +234,32 @@ const EventViewPage: React.FC = () => {
           </AnchorButton>
         </FormItem>
       </FormSection>
+
+      <h2>統計情報</h2>
+
+      <TwoColumnLayout>
+        <>
+          <table>
+            <tbody>
+              <tr>
+                <th>サークル数 (仮申し込み含む)</th>
+                <td>{aggregatedApps ? `${aggregatedApps.totalCircleCount} サークル` : <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>確定サークル数</th>
+                <td>{aggregatedApps ? `${aggregatedApps.confirmedCircleCount} サークル` : <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>スペース数</th>
+                <td>{aggregatedApps ? `${aggregatedApps.confirmedSpaceCount} スペース` : <BlinkField />}</td>
+              </tr>
+            </tbody>
+          </table>
+        </>
+        <></>
+      </TwoColumnLayout>
+
+      <h2>申し込み一覧</h2>
 
       <table>
         <thead>
