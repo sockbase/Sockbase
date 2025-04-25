@@ -37,7 +37,8 @@ interface IUseSpace {
   downloadSpaceDataXLSX: (
     eventId: string,
     event: SockbaseEvent,
-    apps: Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
+    apps: Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>,
+    overviews: Record<string, SockbaseApplicationOverviewDocument | null>
   ) => void
   readSpaceDataXLSXAsync: (eventId: string, spaceFile: ArrayBuffer) => Promise<{ eventId: string, spaces: ImportedSpace[] }>
   updateSpaceDataAsync: (eventId: string, spaces: ImportedSpace[]) => Promise<void>
@@ -92,7 +93,8 @@ const useSpace = (): IUseSpace => {
     useCallback((
       eventId: string,
       event: SockbaseEvent,
-      apps: Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>
+      apps: Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>,
+      overviews: Record<string, SockbaseApplicationOverviewDocument | null>
     ) => {
       const now = new Date().getTime()
 
@@ -101,13 +103,25 @@ const useSpace = (): IUseSpace => {
       const appsArray = apps
         .filter(a => a.meta.applicationStatus === 2)
         .map(a => {
+          const overview = overviews[a.id]
+          const space = event.spaces.find(s => s.id === a.spaceId)
+          const genre = event.genres.find(g => g.id === a.circle.genre)
+
           return [
             null,
             a.hashId,
-            a.spaceId,
+            space
+              ? space?.isDualSpace
+                ? 2
+                : 1
+              : '-',
             a.circle.name,
             a.circle.yomi,
-            a.circle.penName
+            a.circle.penName,
+            a.circle.hasAdult ? '有り' : '無し',
+            genre?.name ?? a.circle.genre,
+            overview?.description ?? a.overview.description,
+            overview?.totalAmount ?? a.overview.totalAmount
           ]
         })
 
@@ -122,7 +136,11 @@ const useSpace = (): IUseSpace => {
           'スペース',
           'サークル名',
           'サークル名よみ',
-          'ペンネーム'
+          'ペンネーム',
+          '成人向け',
+          'ジャンル',
+          '頒布物概要',
+          '総搬入量'
         ],
         ...appsArray
       ])
