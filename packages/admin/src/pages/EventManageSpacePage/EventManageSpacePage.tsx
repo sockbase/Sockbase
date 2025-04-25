@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MdAssignmentTurnedIn, MdCheck, MdDownload } from 'react-icons/md'
 import { Link, useParams } from 'react-router-dom'
-import { type SockbaseApplicationDocument, type SockbaseSpaceDocument, type SockbaseApplicationMeta, type SockbaseEventDocument, SockbaseApplicationOverviewDocument } from 'sockbase'
+import { type SockbaseApplicationDocument, type SockbaseSpaceDocument, type SockbaseApplicationMeta, type SockbaseEventDocument, SockbaseApplicationOverviewDocument, SockbaseApplicationLinksDocument } from 'sockbase'
 import { type ImportedSpace } from '../../@types'
 import FormButton from '../../components/Form/FormButton'
 import FormInput from '../../components/Form/FormInput'
@@ -25,7 +25,7 @@ const EventManageSpacePage: React.FC = () => {
   const { eventId } = useParams()
 
   const { getEventByIdAsync, getSpacesByEventIdAsync } = useEvent()
-  const { getApplicationsByEventIdAsync, getOverviewByIdNullableAsync } = useApplication()
+  const { getApplicationsByEventIdAsync, getOverviewByIdNullableAsync, getLinksByApplicationIdAsync } = useApplication()
   const {
     downloadSpaceDataXLSX,
     readSpaceDataXLSXAsync,
@@ -40,6 +40,7 @@ const EventManageSpacePage: React.FC = () => {
   const [event, setEvent] = useState<SockbaseEventDocument>()
   const [spaces, setSpaces] = useState<SockbaseSpaceDocument[]>()
   const [apps, setApps] = useState<Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>>()
+  const [links, setLinks] = useState<Record<string, SockbaseApplicationLinksDocument | null>>()
   const [overviews, setOverviews] = useState<Record<string, SockbaseApplicationOverviewDocument | null>>()
 
   const [spaceDataFile, setSpaceDataFile] = useState<File | null>()
@@ -49,9 +50,9 @@ const EventManageSpacePage: React.FC = () => {
   const [isProgress, setProgress] = useState(false)
 
   const handleDownload = useCallback(() => {
-    if (!eventId || !event || !spaces || !apps || !overviews) return
-    downloadSpaceDataXLSX(eventId, event, apps, overviews)
-  }, [eventId, event, spaces, apps, overviews])
+    if (!eventId || !event || !spaces || !apps || !overviews || !links) return
+    downloadSpaceDataXLSX(eventId, event, apps, links, overviews)
+  }, [eventId, event, spaces, apps, links, overviews])
 
   const getAppByHashId = useCallback((appHashId: string) => {
     return apps?.find(a => a.hashId === appHashId)
@@ -89,11 +90,14 @@ const EventManageSpacePage: React.FC = () => {
     const appIds = [...new Set(apps.map(a => a.id))]
     Promise.all(appIds.map(async id => ({
       id,
-      data: await getOverviewByIdNullableAsync(id)
+      overview: await getOverviewByIdNullableAsync(id),
+      links: await getLinksByApplicationIdAsync(id)
     })))
       .then(results => {
-        const resultMap = Object.fromEntries(results.map(r => [r.id, r.data]))
-        setOverviews(resultMap)
+        const mappedOverviews = Object.fromEntries(results.map(r => [r.id, r.overview]))
+        const mappedLinks = Object.fromEntries(results.map(r => [r.id, r.links]))
+        setOverviews(mappedOverviews)
+        setLinks(mappedLinks)
       })
       .catch(err => { throw err })
   }, [apps])

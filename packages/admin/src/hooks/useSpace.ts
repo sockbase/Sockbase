@@ -38,6 +38,7 @@ interface IUseSpace {
     eventId: string,
     event: SockbaseEvent,
     apps: Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>,
+    links: Record<string, SockbaseApplicationLinksDocument | null>,
     overviews: Record<string, SockbaseApplicationOverviewDocument | null>
   ) => void
   readSpaceDataXLSXAsync: (eventId: string, spaceFile: ArrayBuffer) => Promise<{ eventId: string, spaces: ImportedSpace[] }>
@@ -94,6 +95,7 @@ const useSpace = (): IUseSpace => {
       eventId: string,
       event: SockbaseEvent,
       apps: Array<SockbaseApplicationDocument & { meta: SockbaseApplicationMeta }>,
+      links: Record<string, SockbaseApplicationLinksDocument | null>,
       overviews: Record<string, SockbaseApplicationOverviewDocument | null>
     ) => {
       const now = new Date().getTime()
@@ -104,6 +106,7 @@ const useSpace = (): IUseSpace => {
         .filter(a => a.meta.applicationStatus === 2)
         .map(a => {
           const overview = overviews[a.id]
+          const link = links[a.id]
           const space = event.spaces.find(s => s.id === a.spaceId)
           const genre = event.genres.find(g => g.id === a.circle.genre)
 
@@ -122,6 +125,7 @@ const useSpace = (): IUseSpace => {
             genre?.name ?? a.circle.genre,
             overview?.description ?? a.overview.description,
             overview?.totalAmount ?? a.overview.totalAmount,
+            link?.twitterScreenName ?? '',
             a.remarks
           ]
         })
@@ -142,6 +146,7 @@ const useSpace = (): IUseSpace => {
           'ジャンル',
           '頒布物概要',
           '総搬入量',
+          'X',
           '通信欄'
         ],
         ...appsArray
