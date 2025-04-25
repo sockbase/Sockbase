@@ -113,6 +113,7 @@ const useSpace = (): IUseSpace => {
           return [
             null,
             a.hashId,
+            a.unionCircleId,
             space
               ? space?.isDualSpace
                 ? 2
@@ -138,6 +139,7 @@ const useSpace = (): IUseSpace => {
         [
           'スペース番号',
           '申し込みID',
+          '合体ID',
           'スペース',
           'サークル名',
           'サークル名よみ',
