@@ -242,7 +242,7 @@ const EventViewPage: React.FC = () => {
           <table>
             <tbody>
               <tr>
-                <th>サークル数 (仮申し込み含む)</th>
+                <th>申し込みサークル数</th>
                 <td>{aggregatedApps ? `${aggregatedApps.totalCircleCount} サークル` : <BlinkField />}</td>
               </tr>
               <tr>
@@ -250,7 +250,7 @@ const EventViewPage: React.FC = () => {
                 <td>{aggregatedApps ? `${aggregatedApps.confirmedCircleCount} サークル` : <BlinkField />}</td>
               </tr>
               <tr>
-                <th>スペース数</th>
+                <th>確定スペース数</th>
                 <td>{aggregatedApps ? `${aggregatedApps.confirmedSpaceCount} スペース` : <BlinkField />}</td>
               </tr>
             </tbody>
