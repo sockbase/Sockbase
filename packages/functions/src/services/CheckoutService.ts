@@ -422,9 +422,9 @@ const noticeMessage = (orgId: string | null, stripePaymentId: string, errorDetai
 }
 
 const generateHashId = (now: Date): string => {
-  const codeDigit = 12
+  const codeDigit = 10
   const randomId = generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-  const formatedDateTime = dayjs(now).tz().format('MMDD')
+  const formatedDateTime = dayjs(now).tz().format('YYMMDD')
   const hashId = `SP${formatedDateTime}${randomId}`
   return hashId
 }
