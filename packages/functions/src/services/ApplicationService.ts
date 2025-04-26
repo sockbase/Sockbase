@@ -243,9 +243,9 @@ const createApplicationAsync = async (userId: string, payload: SockbaseApplicati
 }
 
 const generateHashId = (now: Date): string => {
-  const codeDigit = 12
+  const codeDigit = 10
   const randomId = generateRandomCharacters(codeDigit, '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-  const formatedDateTime = dayjs(now).tz().format('MMDD')
+  const formatedDateTime = dayjs(now).tz().format('YYMMDD')
   const hashId = `SC${formatedDateTime}${randomId}`
   return hashId
 }
