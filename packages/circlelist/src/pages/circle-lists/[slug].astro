@@ -269,7 +269,7 @@ const spaces = props.listControl.type === 1
   <ResponsiveTable>
     <thead>
       <tr>
-        <th>イベント</th>
+        {props.listControl.showEventName && <th>イベント</th>}
         {props.listControl.type === 1 && <th>配置番号</th>}
         <th>サークル</th>
         <th>ペンネーム</th>
