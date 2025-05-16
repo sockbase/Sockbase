@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { MdInfo } from 'react-icons/md'
 import { Link } from 'react-router-dom'
 import FormInput from '../Form/FormInput'
@@ -6,13 +7,16 @@ import FormSection from '../Form/FormSection'
 import AnchorButton from '../Parts/AnchorButton'
 import CopyToClipboard from '../Parts/CopyToClipboard'
 import IconLabel from '../Parts/IconLabel'
-import type { SockbaseTicketCreateResult } from 'sockbase'
 
 interface Props {
-  addedResult: SockbaseTicketCreateResult | undefined
+  hashId: string | undefined
   isOnlineCheckout?: boolean
 }
 const TicketApplicationComplete: React.FC<Props> = props => {
+  const assignURL = useMemo(() =>
+    (props.hashId && `${location.protocol}//${location.host}/assign-tickets?thi=${props.hashId}`) || '',
+  [props.hashId])
+
   return (
     <>
       <h1>お申し込みが完了しました</h1>
@@ -32,27 +36,27 @@ const TicketApplicationComplete: React.FC<Props> = props => {
 
       <h2>チケットの使い方</h2>
 
-      {!props.addedResult?.assignURL && (
-        <ol>
-          <li>マイページのメニューから「マイチケット」を選択します。</li>
-          <li>使用したいチケットを選択します。</li>
-          <li>「チケットを表示する」を選択し、表示された QR コードをスタッフにご提示ください。</li>
-        </ol>
-      )}
+      <h3>自分で使用する場合</h3>
 
-      {props.addedResult?.assignURL && (
-        <FormSection>
-          <FormItem>
-            以下の URL をチケットを渡したい方へご送付ください。
-          </FormItem>
-          <FormItem>
-            <FormInput value={props.addedResult.assignURL} />
-          </FormItem>
-          <FormItem>
-            リンクをコピー <CopyToClipboard content={props.addedResult.assignURL} />
-          </FormItem>
-        </FormSection>
-      )}
+      <ol>
+        <li>マイページのメニューから「マイチケット」を選択します。</li>
+        <li>使用したいチケットを選択します。</li>
+        <li>「チケットを表示する」を選択し、表示された QR コードをスタッフにご提示ください。</li>
+      </ol>
+
+      <h3>他の方が使用する場合 (チケットの譲渡)</h3>
+
+      <FormSection>
+        <FormItem>
+          チケットを渡したい方へ以下の URL を送付してください。
+        </FormItem>
+        <FormItem>
+          <FormInput value={assignURL} />
+        </FormItem>
+        <FormItem>
+          リンクをコピー <CopyToClipboard content={assignURL} />
+        </FormItem>
+      </FormSection>
 
       <FormSection>
         <FormItem>

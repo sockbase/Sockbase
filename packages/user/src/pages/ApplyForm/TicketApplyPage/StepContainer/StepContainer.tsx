@@ -165,7 +165,7 @@ const StepContainer: React.FC<Props> = props => {
         ticket={ticket}
         user={props.user} />,
       <TicketApplicationComplete
-        addedResult={addedResult}
+        hashId={addedResult?.hashId}
         key="complete" />
     ])
   }, [
