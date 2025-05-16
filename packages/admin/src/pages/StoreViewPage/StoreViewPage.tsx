@@ -106,7 +106,6 @@ const StoreViewPage: React.FC = () => {
   }, [tickets])
 
   const handleRefresh = useCallback((storeId: string) => {
-    setTickets(undefined)
     getTicketsByStoreIdAsync(storeId)
       .then(setTickets)
       .catch(err => { throw err })
