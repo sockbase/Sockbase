@@ -259,8 +259,7 @@ export const storeConverter: FirestoreDataConverter<SockbaseStoreDocument> = {
       schedules: store.schedules,
       _organization: store._organization,
       permissions: {
-        canUseBankTransfer: store.permissions.canUseBankTransfer ?? false,
-        ticketUserAutoAssign: store.permissions.ticketUserAutoAssign ?? false
+        canUseBankTransfer: store.permissions.canUseBankTransfer ?? false
       },
       isPublic: store.isPublic
     }

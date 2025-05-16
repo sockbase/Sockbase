@@ -87,7 +87,6 @@ export interface SockbaseStore {
   }
   permissions: {
     canUseBankTransfer: boolean
-    ticketUserAutoAssign: boolean
   }
   isPublic: boolean
 }
@@ -382,6 +381,7 @@ export interface SockbaseTicketHashIdDocument {
  */
 export interface SockbaseTicketApplyPayload {
   ticket: SockbaseTicket
+  useMySelf: boolean
   voucherId: string | null
 }
 
@@ -392,6 +392,7 @@ export interface SockbaseTicketCreateResult {
   hashId: string
   bankTransferCode: string
   checkoutRequest: SockbaseCheckoutRequest | null
+  assignURL: string | null
 }
 
 /**

@@ -161,7 +161,7 @@ const TicketView: React.FC<Props> = props => {
           {ticketUser?.usableUserId === props.userId && (
             <>
               <p>
-                上の QR コードを入口スタッフまでご提示ください。<br />
+                上の QR コードをスタッフまでご提示ください。<br />
                 QR コードを提示できない場合は、この画面を印刷しご持参ください。
               </p>
             </>

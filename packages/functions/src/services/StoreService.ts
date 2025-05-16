@@ -21,6 +21,8 @@ import type {
   SockbaseTicketApplyPayload
 } from 'sockbase'
 
+const userAppURL = process.env.FUNC_USER_APP_URL ?? ''
+
 const adminApp = FirebaseAdmin.getFirebaseAdmin()
 const firestore = adminApp.firestore()
 const auth = adminApp.auth()
@@ -85,7 +87,8 @@ const createTicketAsync = async (userId: string, payload: SockbaseTicketApplyPay
     paymentAmount.spaceAmount,
     paymentAmount.voucherAmount ?? 0,
     voucher?.id ?? null,
-    now)
+    now,
+    payload.useMySelf)
   await updateTicketUserDataAsync(userId, store.id)
 
   if (type.anotherTicket?.storeId && type.anotherTicket?.typeId) {
@@ -112,7 +115,8 @@ const createTicketAsync = async (userId: string, payload: SockbaseTicketApplyPay
       0,
       0,
       null,
-      now)
+      now,
+      payload.useMySelf)
     await updateTicketUserDataAsync(userId, anotherTicketStore.id)
   }
 
@@ -144,7 +148,8 @@ const createTicketAsync = async (userId: string, payload: SockbaseTicketApplyPay
   return {
     hashId: createdResult.hashId,
     bankTransferCode: createdResult.bankTransferCode,
-    checkoutRequest: createdResult.checkoutRequest
+    checkoutRequest: createdResult.checkoutRequest,
+    assignURL: createdResult.assignURL
   }
 }
 
@@ -195,6 +200,7 @@ const createTicketForAdminAsync =
       0,
       null,
       now,
+      false,
       createdUserId)
 
     if (user) {
@@ -226,6 +232,7 @@ const createTicketForAdminAsync =
         0,
         null,
         now,
+        false,
         createdUserId)
       await updateTicketUserDataAsync(user.uid, anotherTicketStore.id)
     }
@@ -250,6 +257,7 @@ const createTicketCoreAsync =
     voucherAmount: number,
     voucherId: string | null,
     now: Date,
+    useMySelf?: boolean,
     createdUserId?: string
   ): Promise<SockbaseTicketCreateResult & {
     ticketDoc: SockbaseTicketDocument
@@ -323,7 +331,7 @@ const createTicketCoreAsync =
         userId,
         storeId: store.id,
         typeId: type.id,
-        usableUserId: store.permissions.ticketUserAutoAssign ? userId : null,
+        usableUserId: useMySelf ? userId : null,
         used: false,
         usedAt: null,
         isStandalone
@@ -334,7 +342,8 @@ const createTicketCoreAsync =
       ticketDoc,
       hashId,
       bankTransferCode,
-      checkoutRequest: createResult?.checkoutRequest ?? null
+      checkoutRequest: createResult?.checkoutRequest ?? null,
+      assignURL: !useMySelf ? `${userAppURL}/assign-tickets?thi=${hashId}` : null
     }
   }
 

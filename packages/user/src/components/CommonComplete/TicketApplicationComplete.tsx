@@ -1,12 +1,15 @@
 import { MdInfo } from 'react-icons/md'
 import { Link } from 'react-router-dom'
+import FormInput from '../Form/FormInput'
 import FormItem from '../Form/FormItem'
 import FormSection from '../Form/FormSection'
 import AnchorButton from '../Parts/AnchorButton'
+import CopyToClipboard from '../Parts/CopyToClipboard'
 import IconLabel from '../Parts/IconLabel'
+import type { SockbaseTicketCreateResult } from 'sockbase'
 
 interface Props {
-  hashId: string | null | undefined
+  addedResult: SockbaseTicketCreateResult | undefined
   isOnlineCheckout?: boolean
 }
 const TicketApplicationComplete: React.FC<Props> = props => {
@@ -29,29 +32,38 @@ const TicketApplicationComplete: React.FC<Props> = props => {
 
       <h2>チケットの使い方</h2>
 
-      <h3>自分で使う場合</h3>
-      <ol>
-        <li>チケット情報ページを開き、「自分で使う」をクリックします。</li>
-        <li>「チケットを表示」をクリックし、表示された画面を入口スタッフまでご提示ください。</li>
-      </ol>
+      {!props.addedResult?.assignURL && (
+        <ol>
+          <li>マイページのメニューから「マイチケット」を選択します。</li>
+          <li>使用したいチケットを選択します。</li>
+          <li>「チケットを表示する」を選択し、表示された QR コードをスタッフにご提示ください。</li>
+        </ol>
+      )}
 
-      <h3>他の方に譲渡する場合</h3>
-      <ol>
-        <li>チケット情報ページを開き、「他の方へ割り当てる」をクリックします。</li>
-        <li>表示された URL を譲渡したい方へ渡します。</li>
-        <li>参加者情報を入力していただきます。</li>
-      </ol>
+      {props.addedResult?.assignURL && (
+        <FormSection>
+          <FormItem>
+            以下の URL をチケットを渡したい方へご送付ください。
+          </FormItem>
+          <FormItem>
+            <FormInput value={props.addedResult.assignURL} />
+          </FormItem>
+          <FormItem>
+            リンクをコピー <CopyToClipboard content={props.addedResult.assignURL} />
+          </FormItem>
+        </FormSection>
+      )}
 
       <FormSection>
         <FormItem>
           <AnchorButton
             color="primary"
-            href={`/dashboard/tickets/${props.hashId}`}
+            href="/dashboard/tickets"
             rel="noreferrer"
             target="_blank">
             <IconLabel
               icon={<MdInfo />}
-              label="チケット情報ページを開く" />
+              label="マイページを開く" />
           </AnchorButton>
         </FormItem>
       </FormSection>

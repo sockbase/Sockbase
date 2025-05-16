@@ -17,6 +17,7 @@ interface Props {
   userData: SockbaseAccountSecure | undefined
   selectedType: SockbaseStoreType | undefined
   selectedPaymentMethod: { id: string, description: string } | undefined
+  useMySelf: boolean | undefined
   submitProgressPercent: number
   paymentAmount: VoucherAppliedAmount | null | undefined
   submitAsync: () => Promise<void>
@@ -45,25 +46,36 @@ const Confirm: React.FC<Props> = props => {
     <>
       <h1>入力内容確認</h1>
 
+      <h2>申し込むチケット種別</h2>
+      <table>
+        <tbody>
+          <tr>
+            <th>チケット種別</th>
+            <td>{props.selectedType?.name}</td>
+          </tr>
+          <tr>
+            <th>説明</th>
+            <td>{props.selectedType?.description}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>チケットの使用者</h2>
+      <p>
+        {props.useMySelf ? '自分で使用する' : '他の方が使用する (チケットを譲渡する)'}
+      </p>
+
       <UserDataView
         fetchedUserData={props.fetchedUserData}
         userData={props.userData} />
 
-      {props.selectedType?.price && (
+      {props.selectedType && props.selectedType.price > 0 && (
         <>
           <h2>お支払い情報</h2>
 
-          <h3>選択された参加種別</h3>
+          <h3>お支払い金額</h3>
           <table>
             <tbody>
-              <tr>
-                <th>チケット種別</th>
-                <td>{props.selectedType.name}</td>
-              </tr>
-              <tr>
-                <th>説明</th>
-                <td>{props.selectedType.description}</td>
-              </tr>
               <AmountCalculator paymentAmount={props.paymentAmount} />
             </tbody>
           </table>

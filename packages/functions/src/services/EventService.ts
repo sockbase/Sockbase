@@ -94,6 +94,7 @@ const createPassesAsync = async (userId: string, eventId: string): Promise<Sockb
         0,
         null,
         now,
+        false,
         userId
       )
     }
@@ -113,6 +114,7 @@ const createPassesAsync = async (userId: string, eventId: string): Promise<Sockb
           0,
           null,
           now,
+          false,
           userId
         )
       }

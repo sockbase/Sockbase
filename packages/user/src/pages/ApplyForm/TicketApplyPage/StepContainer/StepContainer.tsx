@@ -34,6 +34,7 @@ const StepContainer: React.FC<Props> = props => {
   const [step, setStep] = useState(0)
 
   const [ticket, setTicket] = useState<SockbaseTicket>()
+  const [useMySelf, setUseMySelf] = useState<boolean>()
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
   const [inputtedVoucherCode, setInputtedVoucherCode] = useState('')
 
@@ -60,7 +61,7 @@ const StepContainer: React.FC<Props> = props => {
   }, [ticket])
 
   const handleSubmitAsync = useCallback(async () => {
-    if (!ticket) return
+    if (!ticket || useMySelf === undefined) return
 
     setSubmitProgressPercent(10)
 
@@ -82,6 +83,7 @@ const StepContainer: React.FC<Props> = props => {
 
     await props.createTicketAsync({
       ticket,
+      useMySelf,
       voucherId: voucher?.id ?? null
     })
       .then(async result => {
@@ -89,7 +91,7 @@ const StepContainer: React.FC<Props> = props => {
         setSubmitProgressPercent(100)
         await (new Promise(resolve => setTimeout(resolve, 2000)))
       })
-  }, [props.user, props.userData, ticket, userData, voucher])
+  }, [props.user, props.userData, ticket, useMySelf, userData, voucher])
 
   const getVoucherCodeAsync = useCallback(async (typeId: string, code: string) => {
     if (!props.store) return
@@ -123,8 +125,9 @@ const StepContainer: React.FC<Props> = props => {
         getVoucherByCodeAsync={getVoucherCodeAsync}
         inputtedVoucherCode={inputtedVoucherCode}
         key="input"
-        nextStep={(t, u, v) => {
+        nextStep={(t, m, u, v) => {
           setTicket(t)
+          setUseMySelf(m)
           setUserData(u)
           setInputtedVoucherCode(v)
           setStep(3)
@@ -136,6 +139,7 @@ const StepContainer: React.FC<Props> = props => {
         }}
         store={props.store}
         ticket={ticket}
+        useMySelf={useMySelf}
         userData={userData}
         voucher={voucher}
         voucherCode={voucherCode} />,
@@ -149,6 +153,7 @@ const StepContainer: React.FC<Props> = props => {
         selectedType={selectedType}
         submitAsync={handleSubmitAsync}
         submitProgressPercent={submitProgressPercent}
+        useMySelf={useMySelf}
         userData={userData} />,
       <Payment
         addedResult={addedResult}
@@ -160,7 +165,7 @@ const StepContainer: React.FC<Props> = props => {
         ticket={ticket}
         user={props.user} />,
       <TicketApplicationComplete
-        hashId={addedResult?.hashId}
+        addedResult={addedResult}
         key="complete" />
     ])
   }, [
@@ -177,7 +182,8 @@ const StepContainer: React.FC<Props> = props => {
     inputtedVoucherCode,
     voucher,
     voucherCode,
-    getVoucherCodeAsync
+    getVoucherCodeAsync,
+    useMySelf
   ])
 
   const now = new Date().getTime()
