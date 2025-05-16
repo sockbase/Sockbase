@@ -90,9 +90,6 @@ const EventViewPage: React.FC = () => {
   }, [event])
 
   const handleRefresh = useCallback((eventId: string) => {
-    setApps(undefined)
-    setSpaces(undefined)
-
     getApplicationsByEventIdAsync(eventId)
       .then(setApps)
       .catch(err => { throw err })
