@@ -66,9 +66,16 @@ const EventViewPage: React.FC = () => {
 
   const aggregatedApps = useMemo(() => {
     if (!event || !apps) return
+    const pendingAndConfirmedCircle = apps.filter(a => a.meta.applicationStatus !== 1)
     const confirmedCircle = apps.filter(a => a.meta.applicationStatus === 2)
     return {
-      totalCircleCount: apps.filter(a => a.meta.applicationStatus !== 1).length,
+      totalCircleCount: pendingAndConfirmedCircle.length,
+      totalSpaceCount: pendingAndConfirmedCircle
+        .reduce((p, c) => {
+          const space = event.spaces.find(s => s.id === c.spaceId)
+          const spaceCount = space?.isDualSpace ? 2 : 1
+          return p + spaceCount
+        }, 0),
       confirmedCircleCount: confirmedCircle.length,
       confirmedSpaceCount: confirmedCircle
         .reduce((p, c) => {
@@ -241,6 +248,10 @@ const EventViewPage: React.FC = () => {
               <tr>
                 <th>申し込みサークル数</th>
                 <td>{aggregatedApps ? `${aggregatedApps.totalCircleCount} サークル` : <BlinkField />}</td>
+              </tr>
+              <tr>
+                <th>申し込みスペース数</th>
+                <td>{aggregatedApps ? `${aggregatedApps.totalSpaceCount} スペース` : <BlinkField />}</td>
               </tr>
               <tr>
                 <th>確定サークル数</th>
