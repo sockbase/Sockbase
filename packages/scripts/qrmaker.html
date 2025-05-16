@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QRコード生成</title>
+    <style>
+        #qr-canvas {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+            background-color: #f8f8f8;
+        }
+    </style>
+</head>
+<body>
+    <h1>QRコード生成</h1>
+    <div>
+        <label for="qr-content">QRコードの内容:</label>
+        <input type="text" id="qr-content" value="ST0305WMQ4CAUGXFLM">
+    </div>
+    <div>
+        <label for="bg-color">背景色:</label>
+        <input type="color" id="bg-color" value="#e0e0e0">
+    </div>
+    <div>
+        <label for="canvas-width-mm">キャンバス幅 (mm):</label>
+        <input type="number" id="canvas-width-mm" value="55">
+        <label for="canvas-height-mm">キャンバス高さ (mm):</label>
+        <input type="number" id="canvas-height-mm" value="91">
+    </div>
+    <div>
+      <label for="ticket-store">チケットストア名</label>
+      <input type="text" id="ticket-store" value="うちのこどーぞ！">
+      <label for="ticket-type">チケット種別名</label>
+      <input type="text" id="ticket-type" value="サークル">
+    </div>
+    <button id="generate-btn">生成</button>
+    <button id="download-btn">ダウンロード</button>
+    <button id="print-btn">印刷</button>
+    <canvas id="qr-canvas"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script>
+        const inch = 25.4, dpi = 350;
+        const canvas = document.getElementById('qr-canvas');
+        const ctx = canvas.getContext('2d');
+
+        const getCanvasSize = () => {
+            const widthMm = parseFloat(document.getElementById('canvas-width-mm').value);
+            const heightMm = parseFloat(document.getElementById('canvas-height-mm').value);
+            return {
+                width: Math.round((widthMm / inch) * dpi),
+                height: Math.round((heightMm / inch) * dpi),
+                widthMm, heightMm
+            };
+        };
+
+        const drawQR = (qrContent, bgColor, width) => {
+            QRCode.toCanvas(
+                document.createElement('canvas'),
+                qrContent,
+                { width: width * 0.6, margin: width * 0.6 * 0.005, color: { dark: '#000000', light: '#ffffff' } },
+                (error, qrCanvas) => {
+                    if (error) return console.error(error);
+                    ctx.drawImage(qrCanvas, (canvas.width - width * 0.6) / 2, (canvas.width - width * 0.6) / 2);
+                }
+            );
+        };
+
+        const generateQR = () => {
+            const { width, height, widthMm, heightMm } = getCanvasSize();
+            canvas.width = width; canvas.height = height;
+            canvas.style.width = `${widthMm * 3}mm`; canvas.style.height = `${heightMm * 3}mm`;
+
+            const descriptionAreaStartWidth = width * 0.075;
+            const descriptionAreaStartHeight = width + width * 0.1;
+
+            const qrContent = document.getElementById('qr-content').value;
+            const bgColor = document.getElementById('bg-color').value;
+            const ticketStoreName = document.getElementById('ticket-store').value;
+            const ticketTypeName = document.getElementById('ticket-type').value;
+
+            ctx.fillStyle = '#f8f8f8';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, width, width);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 20px "Noto Sans JP"';
+            ctx.textAlign = 'center';
+            ctx.fillText(qrContent, width / 2, width * 0.9);
+
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'left';
+            ctx.font = 'bold 30px "Noto Sans JP"';
+            ctx.fillText(ticketStoreName, descriptionAreaStartWidth, descriptionAreaStartHeight);
+            ctx.font = 'bold 45px "Noto Sans JP"';
+            ctx.fillText(ticketTypeName, descriptionAreaStartWidth, descriptionAreaStartHeight + 60);
+
+            drawQR(qrContent, bgColor, width);
+        };
+
+        const downloadCanvasAsPNG = () => {
+            const downloadCanvas = document.createElement('canvas');
+            downloadCanvas.width = canvas.width;
+            downloadCanvas.height = canvas.height;
+            const downloadCtx = downloadCanvas.getContext('2d');
+            downloadCtx.fillStyle = '#ffffff';
+            downloadCtx.fillRect(0, 0, downloadCanvas.width, downloadCanvas.height);
+            downloadCtx.drawImage(canvas, 0, 0);
+
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = downloadCanvas.toDataURL('image/png');
+            link.click();
+        };
+
+        const printCanvas = () => {
+            const { widthMm, heightMm } = getCanvasSize();
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <style>
+                    @page { size: ${widthMm}mm ${heightMm}mm; margin: 0; }
+                    body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+                    img { width: 100%; height: auto; }
+                </style>
+                <img src="${canvas.toDataURL('image/png')}">
+            `);
+            printWindow.document.close();
+            printWindow.print();
+            printWindow.close();
+        };
+
+        document.getElementById('generate-btn').addEventListener('click', generateQR);
+        document.getElementById('download-btn').addEventListener('click', downloadCanvasAsPNG);
+        document.getElementById('print-btn').addEventListener('click', printCanvas);
+    </script>
+</body>
+</html>

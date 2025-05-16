@@ -304,13 +304,13 @@ const DashboardTicketViewPage: React.FC = () => {
                 {openAssignPanel && (
                   <>
                     <FormItem>
-                  チケットを渡したい方へ以下の URL を送付してください。
+                      チケットを渡したい方へ以下の URL を送付してください。
                     </FormItem>
                     <FormItem>
                       <FormInput value={assignURL} />
                     </FormItem>
                     <FormItem>
-                  リンクをコピー <CopyToClipboard content={assignURL} />
+                      リンクをコピー <CopyToClipboard content={assignURL} />
                     </FormItem>
                   </>
                 )}

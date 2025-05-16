@@ -23,9 +23,15 @@ import type {
   SockbaseVoucherDocument
 } from 'sockbase'
 
+const ticketUsers = [
+  { text: '自分で使用する', value: 'myself' },
+  { text: '他の方が使用する (チケットを譲渡する)', value: 'anyself' }
+]
+
 interface Props {
   store: SockbaseStoreDocument
   ticket: SockbaseTicket | undefined
+  useMySelf: boolean | undefined
   userData: SockbaseAccountSecure | undefined
   fetchedUserData: SockbaseAccount | null | undefined
   voucher: SockbaseVoucherDocument | null | undefined
@@ -36,6 +42,7 @@ interface Props {
   prevStep: () => void
   nextStep: (
     ticket: SockbaseTicket,
+    useMySelf: boolean,
     userData: SockbaseAccountSecure | undefined,
     voucherCode: string
   ) => void
@@ -51,6 +58,7 @@ const Input: React.FC<Props> = props => {
   }), [props.store])
 
   const [ticket, setTicket] = useState(initialTicket)
+  const [ticketUser, setTicketUser] = useState('')
   const [userData, setUserData] = useState<SockbaseAccountSecure>()
 
   const [isProcessVoucher, setIsProcessVoucher] = useState(false)
@@ -83,6 +91,7 @@ const Input: React.FC<Props> = props => {
   const errorCount = useMemo(() => {
     const validators = [
       validator.isIn(ticket.typeId, typeIds),
+      validator.isIn(ticketUser, ['myself', 'anyself']),
       !selectedType?.price || paymentAmount?.paymentAmount === 0 || validator.isIn(ticket.paymentMethod, paymentMethodIds),
       isAgreed
     ]
@@ -108,7 +117,7 @@ const Input: React.FC<Props> = props => {
       errorCount += userDataValidators.filter(v => !v).length
     }
     return errorCount
-  }, [props.fetchedUserData, isAgreed, ticket, typeIds, selectedType, userData, paymentAmount, paymentMethodIds])
+  }, [props.fetchedUserData, isAgreed, ticket, ticketUser, typeIds, selectedType, userData, paymentAmount, paymentMethodIds])
 
   const handleGetVoucher = useCallback(async () => {
     if (!selectedType || !voucherCode) return
@@ -132,13 +141,13 @@ const Input: React.FC<Props> = props => {
   const handleSubmit = useCallback(() => {
     if (errorCount > 0 || !paymentAmount) return
 
-    const sanitizedTicket: SockbaseTicket = {
+    const sanitizedTicket = {
       ...ticket,
       paymentMethod: paymentAmount.paymentAmount === 0 ? 'voucher' : ticket.paymentMethod
     }
 
-    props.nextStep(sanitizedTicket, userData, voucherCode)
-  }, [errorCount, ticket, userData, voucherCode, paymentAmount])
+    props.nextStep(sanitizedTicket, ticketUser === 'myself', userData, voucherCode)
+  }, [errorCount, ticket, ticketUser, userData, voucherCode, paymentAmount])
 
   useEffect(() => {
     if (props.ticket) {
@@ -147,13 +156,18 @@ const Input: React.FC<Props> = props => {
         paymentMethod: (!props.store.permissions.canUseBankTransfer && 'online') || props.ticket.paymentMethod
       })
     }
+    setTicketUser(props.useMySelf === undefined
+      ? ''
+      : props.useMySelf
+        ? 'myself'
+        : 'anyself')
     if (props.userData) {
       setUserData(props.userData)
     }
     if (props.inputtedVoucherCode) {
       setVoucherCode(props.inputtedVoucherCode)
     }
-  }, [props.ticket, props.userData, props.inputtedVoucherCode])
+  }, [props.ticket, props.useMySelf, props.userData, props.inputtedVoucherCode])
 
   useEffect(() => {
     if (props.voucherCode === null) return
@@ -189,6 +203,21 @@ const Input: React.FC<Props> = props => {
                   value: t.id
                 }))
             } />
+        </FormItem>
+      </FormSection>
+
+      <h2>チケットの使用者</h2>
+      <p>
+        チケットの使用者を選択してください。<br />
+        申し込み者とチケット使用者が異なる場合は「他の方が使用する (チケットを譲渡する)」を選択してください。
+      </p>
+      <FormSection>
+        <FormItem>
+          <FormRadio
+            name="ticketUser"
+            onChange={setTicketUser}
+            value={ticketUser}
+            values={ticketUsers} />
         </FormItem>
       </FormSection>
 
